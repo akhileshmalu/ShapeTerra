@@ -1,0 +1,123 @@
+<?php
+session_start();
+$error =array();
+$errorflag = 0;
+
+$login_fname = $_SESSION['login_fname'];
+
+if(isset($_POST['reset'])){
+    if (empty($_POST['password'])) {
+        $error[0] = " Please enter existing password.";
+        $errorflag = 1;
+    }
+    if (empty($_POST['newpassword'])) {
+        $error[1] = " Please enter new password.";
+        $errorflag = 1;
+    }
+    if (empty($_POST['confirmpassword'])) {
+        $error[2] = " Please confirm new password.";
+        $errorflag = 1;
+    }
+    if (strcmp($_POST['newpassword'],$_POST['confirmpassword'])) {
+        $error[3] = " Confirmed Password does not match with new Password.";
+        $errorflag = 1;
+    }
+    if($errorflag == 0) {
+
+        require_once("connect.php");
+        $password = test_input($_POST['password']);
+        $newpassword = test_input($_POST['newpassword']);
+        $email = $_SESSION['login_email'];
+
+        $sql = "SELECT password,email FROM user WHERE password = '$password' and email = '$email'";
+        $result = $mysqli->query($sql);
+        $record = $result->fetch_assoc();
+        $rows = $result->num_rows;
+
+        // If there exist any record with username and password
+        if ($rows != 0) {
+             $sql = "UPDATE user SET password = '$newpassword' WHERE email = '$email'";
+            if ($mysqli->query($sql)) {
+
+                //Confirmation Mail Variables
+                $sub = "You have successfully updated your password.";
+                $msg = "Hello $login_fname" . "<br/>" ."<br/>";
+                $msg .= "You new Password is: $newpassword" . "<br/><br/>" . "Thank you for giving us chance to serve you";
+                mail($email, $sub, $msg, $headers);
+
+                $error[0] = "Password Updated Successfully";
+            } else {
+                $error[0] = "Password could not be updated. Please retry";
+            }
+
+        } else {
+            $error[0] = "Incorrect Password.";
+            $mysqli->close();
+            unset($record);
+            unset($rows);
+            unset($result);
+        }
+    }
+}
+
+?>
+
+
+<!doctype html>
+<html>
+<head>
+    <link href="layout.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <title>Account Page</title>
+</head>
+
+<body>
+<div id="Holder">
+   <!-- <div id="Header"></div> -->
+    <div id="NavBar">
+        <nav>
+            <ul>
+                <li> <a href="logout.php">Log out</a></li>
+                <!--
+                <li> <a href="Register.php">Register</a></li>
+                <li> <a href="ForgotPassword.php">Fogot Password</a></li> -->
+            </ul>
+        </nav>
+    </div>
+    <div id="Content">
+        <div id="PageHeading">
+            <h1>Welcome <?php echo $_SESSION['login_fname']; ?> ,</h1>				<!-- User first name Display -->
+        </div>
+        <div id="ContentLeft">
+            <label for="accountlink">Account Links:<br> </label><br/><br/><br/>
+            <a href="account.php" id="linkbutton">Home Page</a></><br>
+        </div>
+        <div id="ContentRight">
+            <form ACTION="" id="resetpassword" name="resetpasswordform" method="POST">
+                <table width="400" border="0" align="center">
+                    <tbody>
+                    <tr>
+                        <td><input name="password" type="password" placeholder="Enter your current password" class="StyleSheettext1" id="password" required></td><br>
+                    </tr>
+                    <tr>
+                        <td><input name="newpassword" type="password" placeholder="Enter your New password" class="StyleSheettext1" id="newpassword" required></td>
+                    </tr>
+                    <tr>
+                        <td><input name="confirmpassword" type="password" placeholder="Confirm your new password" class="StyleSheettext1" id="conpassword" required></td>
+                    </tr>
+                    <tr>
+                        <td> <br> <input type="submit" name="reset" id="reset" class = "StyleSheettext2" value="Reset Password"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br> <label id="error"> <?php foreach ($error as $value)echo $value; ?> <br> </label>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    <div id="Footer"></div>
+</div>
+</body>
+</html>
