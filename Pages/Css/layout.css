@@ -1,7 +1,7 @@
 body {
     margin:0;
     padding:0;
-    background-color:lightgray;
+    /*background-color:lightgray;*/
 }
 #Container{
     width:360px;
@@ -66,34 +66,9 @@ body {
 #Footer {
     height : 100px;
 }
-#login{
-    width : 100px;
-    height: 40px;
-    float : left;
-    margin-left: 30px;
-}
 
-#login-form{
-    display: block;
-    background-color: #fff;
-}
 
-#login-form input{
-    margin-bottom: 20px;
-}
 
-#signup{
-    border : 1px solid rgb(242,242,242);
-    border-radius : 6px;
-    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size:14px;
-    line-height:20px;
-    padding-left:6px;
-    width : 100px;
-    height: 40px;
-    float: right;
-    margin-right:30px;
-}
 h1 {
     margin : 0;
     font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -208,15 +183,7 @@ nav ul li:hover a{
     text-decoration: underline;
 }
 
-#link{
-    text-decoration: none;
-    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size:17px;
-    color:#921E21;
-}
-#link:hover{
-    text-decoration: underline;
-}
+
 
 #error{
     margin:0;
