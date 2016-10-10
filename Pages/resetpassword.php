@@ -1,15 +1,11 @@
 <?php
 session_start();
-$error =array();
+$error = array();
 $errorflag = 0;
 
-$login_fname = $_SESSION['login_fname'];
+
 
 if(isset($_POST['reset'])){
-    if (empty($_POST['password'])) {
-        $error[0] = " Please enter existing password.";
-        $errorflag = 1;
-    }
     if (empty($_POST['newpassword'])) {
         $error[1] = " Please enter new password.";
         $errorflag = 1;
@@ -24,45 +20,34 @@ if(isset($_POST['reset'])){
     }
     if($errorflag == 0) {
 
-        require_once("connect.php");
-        $password = test_input($_POST['password']);
-        $newpassword = test_input($_POST['newpassword']);
+        require_once("../Resources/includes/connect.php");
+        $newpassword = md5(test_input($_POST['newpassword']));
         $email = $_SESSION['login_email'];
 
-        $sql = "SELECT password,email FROM user WHERE password = '$password' and email = '$email'";
-        $result = $mysqli->query($sql);
-        $record = $result->fetch_assoc();
-        $rows = $result->num_rows;
+        $sql = "UPDATE user SET password = '$newpassword' WHERE email = '$email'";
+        if ($mysqli->query($sql)) {
 
-        // If there exist any record with username and password
-        if ($rows != 0) {
-             $sql = "UPDATE user SET password = '$newpassword' WHERE email = '$email'";
-            if ($mysqli->query($sql)) {
+            //Confirmation Mail Variables
+            $sub = "You have successfully updated your password.";
+            $msg = "Hello" . "<br/>" ."<br/>";
+            $msg .= "You have succesfully updated your password"."<br>". "You may login with your new password."."<br/><br/>" . "Thank you for giving us a chance to serve you";
+            mail($email, $sub, $msg, $headers);
 
-                //Confirmation Mail Variables
-                $sub = "You have successfully updated your password.";
-                $msg = "Hello $login_fname" . "<br/>" ."<br/>";
-                $msg .= "You new Password is: $newpassword" . "<br/><br/>" . "Thank you for giving us chance to serve you";
-                mail($email, $sub, $msg, $headers);
-
-                $error[0] = "Password Updated Successfully";
-            } else {
-                $error[0] = "Password could not be updated. Please retry";
-            }
-
+            $error[0] = "Password Updated Successfully";
         } else {
-            $error[0] = "Incorrect Password.";
-            $mysqli->close();
-            unset($record);
-            unset($rows);
-            unset($result);
+            $error[0] = "Password could not be updated. Please retry";
         }
+
+
+        $mysqli->close();
+
+
     }
 }
-
+require_once ("../Resources/Includes/header.php");
 ?>
 
-
+<!--
 <!doctype html>
 <html>
 <head>
@@ -70,7 +55,7 @@ if(isset($_POST['reset'])){
     <meta charset="UTF-8">
     <title>Account Page</title>
 </head>
-
+-->
 <body>
 <div id="Holder">
    <!-- <div id="Header"></div> -->
@@ -86,7 +71,7 @@ if(isset($_POST['reset'])){
     </div>
     <div id="Content">
         <div id="PageHeading">
-            <h1>Welcome <?php echo $_SESSION['login_fname']; ?> ,</h1>				<!-- User first name Display -->
+            <h1>Welcome ,</h1>				<!-- User first name Display -->
         </div>
         <div id="ContentLeft">
             <label for="accountlink">Account Links:<br> </label><br/><br/><br/>
@@ -96,9 +81,6 @@ if(isset($_POST['reset'])){
             <form ACTION="" id="resetpassword" name="resetpasswordform" method="POST">
                 <table width="400" border="0" align="center">
                     <tbody>
-                    <tr>
-                        <td><input name="password" type="password" placeholder="Enter your current password" class="StyleSheettext1" id="password" required></td><br>
-                    </tr>
                     <tr>
                         <td><input name="newpassword" type="password" placeholder="Enter your New password" class="StyleSheettext1" id="newpassword" required></td>
                     </tr>
@@ -119,5 +101,6 @@ if(isset($_POST['reset'])){
         </div>
     <div id="Footer"></div>
 </div>
-</body>
-</html>
+<?php
+require_once("../Resources/Includes/footer.php");
+?>

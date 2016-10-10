@@ -325,7 +325,7 @@ require_once("../Resources/Includes/header.php");
         <input id ="email" type="email"  placeholder="Email" name="email" class = "col-xs-12" required />  
         <input id="password" type="password" placeholder="Password" name="password" class ="col-xs-12" required/>
         <input id="confirm-password" type="password" placeholder="Confirm Password" name="confirmPassword" class ="col-xs-12 hidden"/>
-        <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a></h2>
+        <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a>
 
         
         <input type="submit" name = "login" class = "col-xs-12" value="Login" id ="login-button">
@@ -337,7 +337,7 @@ require_once("../Resources/Includes/header.php");
         <button type ="submit"  name = "signup" class = "col-xs-12 hidden" id="signup">
             Sign Up
         </button>
-        <a href="login.php"  id="back-link" class="col-xs-12 hidden">Go Back</a></h2>
+        <a href="login.php"  id="back-link" class="col-xs-12 hidden">Go Back</a>
     </form>
     </div>
 
