@@ -337,7 +337,7 @@ require_once("../Resources/Includes/header.php");
         <button type ="submit"  name = "signup" class = "col-xs-12 hidden" id="signup">
             Sign Up
         </button>
-        <a href="#" onclick="return false;" id="back-link" class="col-xs-12 hidden">Go Back</a></h2>
+        <a href="login.php"  id="back-link" class="col-xs-12 hidden">Go Back</a></h2>
     </form>
     </div>
 
