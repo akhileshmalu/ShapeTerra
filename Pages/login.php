@@ -1,42 +1,127 @@
 <?php
 
-date_default_timezone_set("America/New_York");                  //Setting time zone to EST time
+date_default_timezone_set("America/New_York");                  	//Setting time zone to EST time
 
-session_start();                                      		    // Session Initiation
+session_start();                                      		    	// Session Initiation
 $error =array();                                 		  		    //Variable to store error msg
 
 if(isset($_POST['login'])) {
     if ( empty($_POST['email']) || ( empty($_POST['password']) ) ) {
         $error[0] =  "Invalid Email Address or password";
     } else {
-        require_once ("../Resources/Includes/connect.php");                               //Instance of Object class-connection Created
+        require_once ("../Resources/Includes/connect.php");         //Instance of Object class-connection Created
         $email = test_input($_POST['email']);                       // Secured Input
-        $password = test_input($_POST['password']);
+        $password = md5(test_input($_POST['password']));
 
         //Query into database for record check
-        $sql =  "SELECT * FROM user where email ='$email' AND password ='$password'";
+        $sql =  "SELECT * FROM user where email ='$email' AND password ='$password' ";
 
         $result = $mysqli -> query($sql);                             //Query Execution
         $row_cnt = $result -> num_rows;                               //count no of rows in result object.
         if ($row_cnt >= '1') {                                        //If there exist one or more records
-            $_SESSION['login_email'] = $email;                   //session variable register
-            //header("location:admin.php");                           //redirect to account page
-            header("location:account.php");                           //redirect to account page
 
-        } else {
+            $record = $result->fetch_assoc();
+            /*
+             User shall be allowed to login as per below Status of Account
+             1 = Active
+             0 = Inactive (need email verification) -Default in Database.
+             -1 = Terminated (deleted User)
+             */
+
+            if($record['status']== '1') {
+                $_SESSION['login_email'] = $email;                   //session variable register
+                header("location:account.php");                           //redirect to account page
+            } else {
+            	if($record['status']== '0') {
+                	$error [0] = "Please activate your account by link provided in your email.";
+            	}
+            	// If User has been Terminated i.e. active = '-1'
+            	else {
+                	$error[0] = "Incorrect Email address or Password! ";
+            	}
+			}
+
+        }
+        else {
             $error[0] = "Incorrect Email address or Password! ";
         }
-
-
         $mysqli->close();								               //Close Connection
     }
+}
 
+if(isset($_POST['signup'])) {
+
+    if (empty($_POST['email'])) {
+        $error[0] = " Please enter email address.";
+        $errorflag = 1;
+    }else{
+        if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)){
+            $error[0] = "Invalid Email Address.";
+            $errorflag = 1;
+
+        }
+    }
+    if (empty($_POST['password'])) {
+        $error[1] = " Please enter password.";
+        $errorflag = 1;
+    }
+    if (empty($_POST['confirmPassword'])) {
+        $error[2] = " Please confirm password.";
+        $errorflag = 1;
+    }
+    if (strcmp($_POST['password'],$_POST['confirmPassword'])) {
+        $error[3] = " Confirm Password does not match with Password.";
+        $errorflag = 1;
+    }
+
+
+    if($errorflag == 0){
+
+        require_once ("../Resources/Includes/connect.php");                          // Established Connection
+
+        //Secured Input
+        $email = test_input($_POST['email']);
+        $password = md5(test_input($_POST['password']));
+        $hash = md5( rand(0,1000));
+        $type = 1;
+
+
+        $sql = "INSERT INTO user(password,email,hash) VALUES ('$password','$email','$hash')";
+
+        if($mysqli -> query($sql)) {
+            $error[0] = "User Registered Successfully.";
+            $error[0].="Kindly confirm your profile by logging to your email.";
+            //Confirmation Mail Variables
+            $sub = "Congratulations! You have successfully registered.";
+            $msg = "Hello User"."<br/>"."<br/>";
+            $msg .= "Please activate your profile by clicking over below link"."<br/>";
+            $link = "http://shapeterra.com/Pages/verify.php?email=$email&hash=$hash&type=$type";
+			
+			$msg .= "<a href='". $link. "'>" ."Activate your Account". "</a>\n\n";
+         
+            $msg .= "<br/>"."Thank you";
+            mail($email,$sub,$msg,$headers);
+			
+			mkdir("../User/"."$email",755);
+
+			
+        } else $error [0] = "Registration Failed. Please retry";
+
+        $mysqli ->close();
+
+    }
 }
 
 require_once("../Resources/Includes/header.php");
-
-
 ?>
+
+
+
+
+
+require_once("../Resources/Includes/header.php");
+?>
+
 
 <link href="css/login.css" rel="stylesheet" type="text/css" />
 
