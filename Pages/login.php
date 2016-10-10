@@ -116,13 +116,6 @@ require_once("../Resources/Includes/header.php");
 ?>
 
 
-
-
-
-require_once("../Resources/Includes/header.php");
-?>
-
-
 <link href="css/login.css" rel="stylesheet" type="text/css" />
 
 </head>
