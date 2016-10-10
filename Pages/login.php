@@ -116,7 +116,7 @@ require_once("../Resources/Includes/header.php");
 ?>
 
 
-<link href="css/login.css" rel="stylesheet" type="text/css" />
+<link href="Css/login.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
@@ -329,7 +329,12 @@ require_once("../Resources/Includes/header.php");
 
         
         <input type="submit" name = "login" class = "col-xs-12" value="Login" id ="login-button">
-        <button type ="button"  name = "signup" class = "col-xs-12" id="signup">
+
+        <button type="button" class="col-xs-12" id="signupShow">
+            Sign Up
+        </button>
+
+        <button type ="submit"  name = "signup" class = "col-xs-12 hidden" id="signup">
             Sign Up
         </button>
         <a href="#" onclick="return false;" id="back-link" class="col-xs-12 hidden">Go Back</a></h2>

@@ -1,5 +1,7 @@
 $(function() {
-	$("#signup").click(function() {
+	$("#signupShow").click(function() {
+        $("#signupShow").addClass("hidden");
+        $("#signup").removeClass("hidden");
   		$("#forgot-link").addClass("hidden");
         $("#confirm-password").addClass("animated fadeInDown")
         $("#confirm-password").removeClass("hidden");

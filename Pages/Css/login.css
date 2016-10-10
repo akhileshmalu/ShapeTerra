@@ -53,6 +53,29 @@ input{
     font-size:14px;
 }
 
+#signupShow{
+    background-color: #60010C;
+    border:none;
+    color:#fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size:18px;
+    text-align: center;
+}
+
+#signupShow:hover{
+    background-color: #73000a;
+    border:none;
+    color:#fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size:18px;
+}
+
 #signup{
     background-color: #60010C;
     border:none;
@@ -62,6 +85,7 @@ input{
     font-family: 'Open Sans', sans-serif;
     font-weight: 600;
     font-size:18px;
+    text-align: center;
 }
 
 #signup:hover{
