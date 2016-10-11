@@ -4,7 +4,7 @@ $error ="";
 <!DOCTYPE HTML>
 <html>
 <head>
-    <link href="layout.css" rel="stylesheet" type="text/css" />
+    <link href="../Pages/Css/layout.css" rel="stylesheet" type="text/css" />
     <meta charset="UTF-8">
     <title>Console for Database</title>
 </head>
@@ -12,7 +12,7 @@ $error ="";
 <div id="NavBar">
     <nav>
         <ul>
-            <li> <a href="login.php">Login</a></li>
+            <li> <a href="../Pages/login.php">Login</a></li>
             <!--
             <li> <a href="Register.php">Register</a></li>
             <li> <a href="ForgotPassword.php">Fogot Password</a></li> -->
@@ -30,7 +30,7 @@ $error ="";
         Display Result <br>
         <label id="error">
             <?php
-            require_once ("connect.php");
+            require_once("../Resources/Includes/connect.php");
             $error ="";
 
             if(isset($_POST['submit'])){

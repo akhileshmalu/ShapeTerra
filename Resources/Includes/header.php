@@ -7,9 +7,9 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="../Library/css/bootstrap.css">
-  <link rel="stylesheet" href="../Library/css/bootstrap-theme.css">
-  <link rel="stylesheet" href="../Library/css/animate.css">
+  <link rel="stylesheet" href="../Resources/Library/css/bootstrap.css">
+  <link rel="stylesheet" href="../Resources/Library/css/bootstrap-theme.css">
+  <link rel="stylesheet" href="../Resources/Library/css/animate.css">
 
   
 

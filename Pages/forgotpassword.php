@@ -20,7 +20,7 @@ if(isset($_POST['forgot'])){
     if($errorflag == 0){
 
         //Establish Connection
-        require_once ("connect.php");
+        require_once ("../Resources/Includes/connect.php");
         $email = test_input($_POST['email']);
 
         $sql ="select fname, password FROM user where email = '$email'";
@@ -56,7 +56,7 @@ require_once("../Resources/Includes/header.php");
 
 ?>
 
-<link href="css/forgotpassword.css" rel="stylesheet" type="text/css" />
+<link href="Css/forgotpassword.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body>

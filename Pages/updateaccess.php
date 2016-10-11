@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once ("../Resources/includes/connect.php");
+require_once ("../Resources/Includes/connect.php");
 $error =array();
 
 $sql = "Select * from user";

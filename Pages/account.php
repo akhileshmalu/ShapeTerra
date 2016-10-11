@@ -1,6 +1,6 @@
 <?php
 session_start();											  	//session Started
-require_once ("../Resources/includes/connect.php");          	//Instance of Object class-connection Created
+require_once ("../Resources/Includes/connect.php");          	//Instance of Object class-connection Created
 $email = $_SESSION['login_email'];					  			//Session Variable store
 $sql = " SELECT fname, email FROM user where email ='$email' ";														//Query to Database
 $result = $mysqli->query($sql);                             	// Query Execution
