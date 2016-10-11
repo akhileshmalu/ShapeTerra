@@ -66,6 +66,7 @@ require_once("../Resources/Includes/header.php");
     <title>User Management Portal</title>
 </head> -->
 
+<link href="Css/layout.css" rel="stylesheet" type="text/css" />
 <body>
 
 <div id ="Container">

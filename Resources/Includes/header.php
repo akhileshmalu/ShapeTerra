@@ -7,10 +7,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="../Resources/Library/css/bootstrap.css">
-  <link rel="stylesheet" href="../Resources/Library/css/bootstrap-theme.css">
-  <link rel="stylesheet" href="../Resources/Library/css/animate.css">
-  <link href="css/layout.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="../Library/css/bootstrap.css">
+  <link rel="stylesheet" href="../Library/css/bootstrap-theme.css">
+  <link rel="stylesheet" href="../Library/css/animate.css">
+
   
 
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>

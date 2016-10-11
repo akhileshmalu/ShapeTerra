@@ -70,6 +70,7 @@ require_once("../Resources/Includes/header.php");
 <title>Account Page</title>
 </head>
 -->
+<link href="Css/layout.css" rel="stylesheet" type="text/css" />
 <body>
 <div id="Holder">
 	<!--<div id="Header">-->

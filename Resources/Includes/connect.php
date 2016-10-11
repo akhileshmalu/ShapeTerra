@@ -19,7 +19,6 @@ function test_input($data){
 //Global Email Variable
 $headers = "MIME-Version: 1.0" . "\r\n";
 $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-$headers .= 'From: UserManagement <admin@user.com>' . "\r\n";
-$headers .= 'Cc: owner@user.com' . "\r\n";
+$headers .= 'From: ShapeTerra <admin@ShapeTerra.com>' . "\r\n";
 
 ?>
