@@ -30,12 +30,23 @@ if(isset($_POST['forgot'])){
         if($rows != 0){
             while($record =$result ->fetch_assoc()) {
                 $fname = $record['fname'];
-                $password = $record['password'];
+                $hash = md5( rand(0,1000));
+                $type = 0;
+
+                /* Type is defined as request type for email link verification
+                1-  Active Account Verification
+                0-  Forgot Password Verification
+                 */
+
+                $sql = "update user SET hash = $hash where email='$email'";
+                $mysqli->query($sql);
 
                 //Confirmation Mail Variables
                 $sub = "You have successfully retrieved password.";
                 $msg = "Hello $fname" . "<br/>" . "<br/>";
-                $msg .= "You Password is: $password" . "<br/><br/>" . "Thank you for giving us chance to serve you";
+                $msg .= "Please reset your password by clicking over below link"."<br/>";
+                $msg .= "http://".$site."/Pages/verify.php?email=$email&hash=$hash&type=$type";
+
                 mail($email, $sub, $msg, $headers);
                 $error[0] = "Your Password has been sent to registered email id";
             }

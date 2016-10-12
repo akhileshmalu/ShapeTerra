@@ -4,6 +4,7 @@ date_default_timezone_set("America/New_York");                  	//Setting time 
 
 session_start();                                      		    	// Session Initiation
 $error =array();                                 		  		    //Variable to store error msg
+$errorflag = "";
 
 if(isset($_POST['login'])) {
     if ( empty($_POST['email']) || ( empty($_POST['password']) ) ) {
@@ -95,7 +96,8 @@ if(isset($_POST['signup'])) {
             $sub = "Congratulations! You have successfully registered.";
             $msg = "Hello User"."<br/>"."<br/>";
             $msg .= "Please activate your profile by clicking over below link"."<br/>";
-            $link = "http://shapeterra.com/Pages/verify.php?email=$email&hash=$hash&type=$type";
+
+            $link = "http://".$site."/Pages/verify.php?email=$email&hash=$hash&type=$type";
 			
 			$msg .= "<a href='". $link. "'>" ."Activate your Account". "</a>\n\n";
          
