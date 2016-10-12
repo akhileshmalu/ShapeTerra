@@ -2,7 +2,7 @@
 
 // Connect to MySql Database
 $mysqli = new mysqli("localhost","provostuser","91Na$3qyfR(7","provostdata");
-$site = “https://shapeterra.com”;
+$site = “shapeterra.com”;
 
 // Check Connection Status
 if($mysqli -> connect_error){
