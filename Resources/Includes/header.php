@@ -10,9 +10,9 @@
   <link rel="stylesheet" href="../Resources/Library/css/bootstrap.css">
   <link rel="stylesheet" href="../Resources/Library/css/bootstrap-theme.css">
   <link rel="stylesheet" href="../Resources/Library/css/animate.css">
-  <link href="css/layout.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="../Resources/Library/css/general.css">
+
   
 
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-
 

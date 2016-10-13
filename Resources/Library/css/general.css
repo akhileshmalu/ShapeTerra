@@ -1,0 +1,14 @@
+@font-face{
+	font-family:'dripicons';
+	src:url('../../Fonts/dripicons-v2.ttf');
+}
+
+.icon{
+	font-family: 'dripicons';
+}
+
+h1,h2,h3,h4,h5,h6,p,a,li{
+	font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+
+}
