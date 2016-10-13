@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once ("../Resources/includes/connect.php");
+require_once ("../Resources/Includes/connect.php");
 $error =array();
 
 $sql = "Select * from user";
@@ -70,6 +70,7 @@ require_once("../Resources/Includes/header.php");
 <title>Account Page</title>
 </head>
 -->
+<link href="Css/layout.css" rel="stylesheet" type="text/css" />
 <body>
 <div id="Holder">
 	<!--<div id="Header">-->

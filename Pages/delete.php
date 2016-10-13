@@ -17,7 +17,6 @@ if(isset($_POST['submit'])){
 
             if ($mysqli->query($sql)) {
                 $error[0] = "User account has been successfully deleted.";
-                rmdir("../user/"."$email".session_id());
             } else {
                 $error[0] = "User account could not be deleted. Please retry";
             }
@@ -42,6 +41,7 @@ require_once("../Resources/Includes/header.php");
 <title>Account Page</title>
 </head>
 -->
+<link href="Css/layout.css" rel="stylesheet" type="text/css" />
 <body>
 <div id="Holder">
     <!--<div id="Header">-->

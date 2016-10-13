@@ -1,1 +1,0 @@
-[30-Sep-2016 21:09:17 UTC] PHP Fatal error:  Call to a member function fetch_assoc() on a non-object in /home/uscme/public_html/shapeterra.com/public_html/console.php on line 42
