@@ -1,8 +1,15 @@
 <?php
 
 // Connect to MySql Database
-$mysqli = new mysqli("localhost","provostuser","91Na$3qyfR(7","provostdata");
-$site = “shapeterra.com”;
+$mysqli = new mysqli("localhost","root","root","TESTDB");
+$site = "localhost:8888";
+
+/*
+ * Menu directive for local server
+ * Menu.php will utilize navdir variable to redirect to local host pages.
+ * Server does not need navdir path.
+ */
+$navdir = "Shapeterra/";
 
 // Check Connection Status
 if($mysqli -> connect_error){

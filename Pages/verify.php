@@ -271,7 +271,7 @@ require_once("../Resources/Includes/header.php");
     </switch>
         <div id="login-form" class="col-xs-6 col-xs-offset-3 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
             <form name = "loginform" action ="login.php" method="POST">
-                <label id="error" class="text-center"> <?php foreach ($error as $value)echo $value; ?> </label>
+                <label id="error" class="text-center"> <?php foreach ($error as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
                 <input id ="email" type="email"  placeholder="Email" name="email" class = "col-xs-12" required />
                 <input id="password" type="password" placeholder="Password" name="password" class ="col-xs-12" required/>
                 <input id="confirm-password" type="password" placeholder="Confirm Password" name="confirmPassword" class ="col-xs-12 hidden"/>

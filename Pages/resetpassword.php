@@ -2,25 +2,26 @@
 session_start();
 $error = array();
 $errorflag = 0;
-
+$fname = $_SESSION['login_fname'];
 
 
 if(isset($_POST['reset'])){
     if (empty($_POST['newpassword'])) {
-        $error[1] = " Please enter new password.";
+        $error[0] = " Please enter new password.";
         $errorflag = 1;
     }
     if (empty($_POST['confirmpassword'])) {
-        $error[2] = " Please confirm new password.";
+        $error[1] = " Please confirm new password.";
         $errorflag = 1;
     }
     if (strcmp($_POST['newpassword'],$_POST['confirmpassword'])) {
-        $error[3] = " Confirmed Password does not match with new Password.";
+        $error[2] = " Confirmed Password does not match with new Password.";
         $errorflag = 1;
     }
     if($errorflag == 0) {
 
-        require_once("../Resources/includes/connect.php");
+        require_once("../Resources/Includes/connect.php");
+
         $newpassword = md5(test_input($_POST['newpassword']));
         $email = $_SESSION['login_email'];
 
@@ -46,62 +47,31 @@ if(isset($_POST['reset'])){
 }
 require_once ("../Resources/Includes/header.php");
 ?>
-
-<!--
-<!doctype html>
-<html>
-<head>
-    <link href="layout.css" rel="stylesheet" type="text/css" />
-    <meta charset="UTF-8">
-    <title>Account Page</title>
 </head>
--->
-    <link href="Css/layout.css" rel="stylesheet" type="text/css" />
-    <body>
-<div id="Holder">
-   <!-- <div id="Header"></div> -->
-    <div id="NavBar">
-        <nav>
-            <ul>
-                <li> <a href="logout.php">Log out</a></li>
-                <!--
-                <li> <a href="Register.php">Register</a></li>
-                <li> <a href="ForgotPassword.php">Fogot Password</a></li> -->
-            </ul>
-        </nav>
-    </div>
-    <div id="Content">
-        <div id="PageHeading">
-            <h1>Welcome ,</h1>				<!-- User first name Display -->
-        </div>
-        <div id="ContentLeft">
-            <label for="accountlink">Account Links:<br> </label><br/><br/><br/>
-            <a href="account.php" id="linkbutton">Home Page</a></><br>
-        </div>
-        <div id="ContentRight">
-            <form ACTION="" id="resetpassword" name="resetpasswordform" method="POST">
-                <table width="400" border="0" align="center">
-                    <tbody>
-                    <tr>
-                        <td><input name="newpassword" type="password" placeholder="Enter your New password" class="StyleSheettext1" id="newpassword" required></td>
-                    </tr>
-                    <tr>
-                        <td><input name="confirmpassword" type="password" placeholder="Confirm your new password" class="StyleSheettext1" id="conpassword" required></td>
-                    </tr>
-                    <tr>
-                        <td> <br> <input type="submit" name="reset" id="reset" class = "StyleSheettext2" value="Reset Password"></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <br> <label id="error"> <?php foreach ($error as $value)echo $value; ?> <br> </label>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </form>
-        </div>
-    <div id="Footer"></div>
-</div>
+<body>
 <?php
+// Include Menu and Top Bar
+require_once("../Resources/Includes/menu.php");
+?>
+    <div class="col-lg-offset-3 col-lg-3 col-md-6 col-xs-9" id="ContentRight">
+        <form action ="" method="POST">
+            <div class="form-group">
+                <label for="newpass">Enter New Password:</label>
+                <input name="newpassword" type="password" class="form-control" id="newpass" >
+            </div>
+            <div class="form-group">
+                <label for="confirmpass">Confirm your Password:</label>
+                <input name="confirmpassword" type="password" class="form-control" id="confirmpass" >
+            </div>
+            <?php if(isset($_POST['reset'])) { ?>
+                <div class="alert alert-danger">
+                    <span class="icon">&#xe063;</span> <?php foreach ($error as $value)echo $value."<br>"; ?>
+                </div>
+            <?php } ?>
+            <input type="submit" name="reset" value="Reset Password" class="btn-primary btn-sm">
+        </form>
+    </div>
+<?php
+//Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>

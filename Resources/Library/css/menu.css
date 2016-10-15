@@ -81,3 +81,9 @@ nav span.icon{
 	padding-right: 10px;
 	vertical-align: middle;
 }
+#ContentRight{
+	float:left;
+	margin-top:5%;
+	margin-left:10%;
+
+}

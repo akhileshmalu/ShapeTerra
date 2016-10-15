@@ -2,9 +2,12 @@
 session_start();
 require_once ("../Resources/Includes/connect.php");
 $error =array();
+$fname = $_SESSION['login_fname'];
+$approver = $_SESSION['login_email'];
 
-$sql = "Select * from user";
+$sql = "Select email,rights from requestpanel where reqstatus = '1' and approver='$approver'";
 $result = $mysqli->query($sql);
+//$rows = $result->fetch_assoc();
 
 if(isset($_POST['submit'])){
 
@@ -34,9 +37,10 @@ if(isset($_POST['submit'])){
                     break;
             }
 
-            $sql = "UPDATE user SET rights='$rights' where email='$email'";
+            $sql = "UPDATE user SET rights='$rights' where email='$email';";
+            $sql .= "UPDATE requestpanel SET reqstatus='2' where email='$email';";
 
-            if ($mysqli->query($sql)) {
+            if ($mysqli->multi_query($sql)) {
 
                 //Confirmation Mail Variables
                 $sub = "Your privileges has been changed successfully.";
@@ -56,77 +60,95 @@ if(isset($_POST['submit'])){
     }
 
 }
+if(isset($_POST['reject'])){
+
+    if(!empty($_POST['email']))
+    {
+        $email = $_POST['email'];
+        $rights = $_POST['requestedright'];
+        $rightdefine="";
+
+        switch ($rights){
+            case '1':
+                $rightdefine ="User";
+                break;
+            case '2':
+                $rightdefine = "Super User";
+                break;
+            case '3':
+                $rightdefine = "Admin";
+                break;
+            case '4':
+                $rightdefine = "Super Admin";
+                break;
+            default:
+                $rightdefine="Undefined";
+                break;
+            }
+
+            $sql = "UPDATE requestpanel SET reqstatus='3' where email='$email'";
+
+            if ($mysqli->query($sql)) {
+
+                //Confirmation Mail Variables
+                $sub = "Your privilege request has been rejected.";
+                $msg = "Hello" . "<br/>" ."<br/>";
+                $msg .= "Approver has rejected your privileges request for '$rightdefine' level"."<br>"."<br/><br/>"."Thank you for giving us a chance to serve you";
+                mail($email, $sub, $msg, $headers);
+
+                $error[0] = "Request rejected Successfully";
+            } else {
+                $error[0] = "Request could not be rejected. Please retry";
+            }
+
+    } else {
+        $error[0] = "Please select a user";
+    }
+
+}
+
 
 require_once("../Resources/Includes/header.php");
 ?>
 
 
-<!--
-<!doctype html>
-<html>
-<head>
-<link href="Css/layout.css" rel="stylesheet" type="text/css" />
-<meta charset="UTF-8">
-<title>Account Page</title>
 </head>
--->
-<link href="Css/layout.css" rel="stylesheet" type="text/css" />
 <body>
-<div id="Holder">
-	<!--<div id="Header">-->
-	<div id="NavBar">
-	<nav>
-		<ul>
-            <li> <a href="profile.php">Profile</a></li>
-            <li> <a href="logout.php">Log out</a></li>
-		</ul>
-	</nav>
-</div>
-<div id="Content">
-	<div id="PageHeading">
-	  <h1>Welcome <?php echo $_SESSION['login_fname']; ?> ,</h1>				<!-- User first name Display -->
-</div>
-<div id="ContentLeft">
-    <label for="accountlink">Account Links:<br> </label><br/><br/>
-    <!--<h6> <b id="Welcome"> Tools  </b>  </h6> -->
-    <br/> <br/>
-    <a href="resetpassword.php" id="linkbutton">Reset Password </a> <br/> <br/>
-    <a href="account.php" id = "linkbutton">Home Page</a>
-
-</div>
-<div id="ContentRight"></div>
-<form action ="" method="POST">
-
-    <label>Please select User: </label> <br>
-    <select name="email" class="StyleSheettext1" >
-        <option value =""></option>
-        <?php while($row = $result ->fetch_array(MYSQLI_NUM)): if(strcmp($row[0],$_SESSION['login_email'])) {; ?>
-            <option value="<?php echo $row[0]; ?>"> <?php echo $row[0]; ?> </option>
-        <?php } else { continue;} endwhile; ?>
-    </select>
-    <br>
-    <label>Please select Privilege level: </label> <br>
-    <select name="rights" class="StyleSheettext1">
-        <option value=''>  </option>
-        <option value='1'> User </option>
-        <option value='2'> Super User </option>
-        <option value='3'> Admin </option>
-        <option value='4'> Super Admin </option>
-    </select>
-
-    <br>
-    <label id="error"> <?php foreach ($error as $value)echo $value; ?> <br> </label> <br>
-    <input type="submit" name="submit" value="update" id="reset" class="StyleSheettext2">
-    <br>
-</form>
-
-
-</div>
+<?php
+// Include Menu and Top Bar
+require_once("../Resources/Includes/menu.php");
+?>
+<div class="col-lg-offset-3 col-lg-3 col-md-6 col-xs-9" id="ContentRight">
+    <form action ="" method="POST">
+        <div class="form-group">
+            <label for="privilege">Please select User:</label>
+            <select name="email" class="form-control" >
+                <option value =""></option>
+                <?php while($row = $result ->fetch_array(MYSQLI_NUM)): if(strcmp($row[0],$_SESSION['login_email'])) {; ?>
+                    <option value="<?php echo $row[0]; ?>"> <?php echo $row[0]; ?> </option>
+                <?php } else { continue;} endwhile; ?>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="approver">Please select Privilege level for User:</label>
+            <select name="rights" class="form-control">
+                <option value=''>  </option>
+                <option value='1'> User </option>
+                <option value='2'> Super User </option>
+                <option value='3'> Admin </option>
+                <option value='4'> Super Admin </option>
+            </select>
+        </div>
+        <?php if(isset($_POST['submit'])) { ?>
+            <div class="alert alert-danger">
+                <span class="icon">&#xe063;</span> <?php foreach ($error as $value)echo $value; ?>
+            </div>
+        <?php } ?>
+        <input type="submit" name="submit" value="Accept"  class="btn-primary btn-sm">
+        <input type="submit" name="reject" value="Reject"  class="btn-primary btn-sm">
+    </form>
 </div>
 <?php
+//Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
-<!--
-</body>
-</html>
--->

@@ -1,7 +1,15 @@
 <?php
+
 session_start();
 $error = array();                                               //Error Array Created
 $errorflag = 0;                                                 //Flag Create
+
+require_once ("../Resources/Includes/connect.php");          	//Instance of Object class-connection Created
+$email = $_SESSION['login_email'];					  			//Session Variable store
+$sql = " SELECT fname, lname,email,rights FROM user where email ='$email' ";														//Query to Database
+$result = $mysqli->query($sql);                             	// Query Execution
+$rows = $result -> fetch_assoc();
+
 
 if(isset($_POST['submit'])) {
     if (empty($_POST['fname'])) {                            //Error handling via error array
@@ -21,10 +29,13 @@ if(isset($_POST['submit'])) {
         $email = $_SESSION['login_email'];
 
 
-        $sql = "Update user SET fname = '$fname' where email = '$email'";
-
-        if($mysqli -> query($sql)) {
+        $sql = "Update user SET fname = '$fname' where email = '$email';";
+        $sql .= "Update user SET lname = '$lname' where email = '$email';";
+        if($mysqli -> multi_query($sql)) {
             $error[0] = "Profile Updated Successfully.";
+            $_SESSION['login_fname'] = $fname;
+            $_SESSION['login_lname'] = $lname;
+
         } else $error [0] = "Registration Failed. Please retry";
 
         $mysqli ->close();
@@ -35,61 +46,32 @@ if(isset($_POST['submit'])) {
 require_once ("../Resources/Includes/header.php");
 ?>
 
-    <!--
-    <!doctype html>
-    <html>
-    <head>
-        <link href="layout.css" rel="stylesheet" type="text/css" />
-        <meta charset="UTF-8">
-        <title>Account Page</title>
-    </head>
-    -->
-    <link href="Css/layout.css" rel="stylesheet" type="text/css" />
+
+</head>
 <body>
-<div id="Holder">
-    <!-- <div id="Header"></div> -->
-    <div id="NavBar">
-        <nav>
-            <ul>
-                <li> <a href="logout.php">Log out</a></li>
-                <!--
-                <li> <a href="Register.php">Register</a></li>
-                <li> <a href="ForgotPassword.php">Fogot Password</a></li> -->
-            </ul>
-        </nav>
-    </div>
-    <div id="Content">
-        <div id="PageHeading">
-            <h1>Welcome ,</h1>				<!-- User first name Display -->
-        </div>
-        <div id="ContentLeft">
-            <label for="accountlink">Account Links:<br> </label><br/><br/><br/>
-            <a href="account.php" id="linkbutton">Home Page</a></><br>
-    </div>
-    <div id="ContentRight">
-        <form ACTION="" id="updateprofile" name="updateprofileform" method="POST">
-            <table width="400" border="0" align="center">
-                <tbody>
-                <tr>
-                    <td><input name="fname" type="text" placeholder="Enter your First Name" class="StyleSheettext1" id="newpassword" required></td>
-                </tr>
-                <tr>
-                    <td><input name="lname" type="text" placeholder="Enter your Last name" class="StyleSheettext1" id="conpassword" required></td>
-                </tr>
-                <tr>
-                    <td> <br> <input type="submit" name="submit" id="reset" class = "StyleSheettext2" value="Update"></td>
-                </tr>
-                <tr>
-                    <td>
-                        <br> <label id="error"> <?php foreach ($error as $value)echo $value; ?> <br> </label>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+<?php
+// Include Menu and Top Bar
+require_once("../Resources/Includes/menu.php");
+?>
+    <div class="col-lg-offset-3 col-lg-3 col-md-6 col-xs-9" id="ContentRight">
+        <form action ="" method="POST">
+            <div class="form-group">
+                <label for="fn">Enter your First Name:</label>
+                <input name="fname" type="text" placeholder="<?php echo $rows['fname']?>" class="form-control" id="fn" required>
+            </div>
+            <div class="form-group">
+                <label for="ln">Enter your Last Name:</label>
+                <input name="lname" type="text" placeholder="<?php echo $rows['lname']?>" class="form-control" id="ln" required>
+            </div>
+            <?php if(isset($_POST['submit'])) { ?>
+                <div class="alert alert-danger">
+                    <span class="icon">&#xe063;</span><?php foreach ($error as $value)echo $value."<br/>"; ?>
+                </div>
+            <?php } ?>
+            <input type="submit" name="submit" value="Update"  class="btn-primary btn-lg">
         </form>
     </div>
-    <div id="Footer"></div>
-</div>
 <?php
+//Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
