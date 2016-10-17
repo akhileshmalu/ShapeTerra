@@ -6,17 +6,17 @@
 * add an array inside the menu array
 * array(Display Name, href link, icon , menu position, selected)
 * Icon is represented by a character, list can be found here http://demo.amitjakhu.com/dripicons/
-* menu position: main, admin
+* menu position: main, goal
 * selected is either true or false, set initial to false and selected will be determined by page
 *
 */
 require_once ("../Resources/Includes/connect.php");
 $menu = array(
-	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main", true),
+	array("Dashboard", "../navdir"."Pages/account.php", "&#xe002;" ,"main", true),
 	array("Add Goals", "#", "&#xe002;" ,"goal", false),
-	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin", false),
-	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin", false),
-	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user", false),
+	array("Approve Request", "../navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin", false),
+	array("Deactivate Users", "../navdir"."Pages/delete.php", "&#xe053;" ,"admin", false),
+	array("Request privilege", "../navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user", false),
 	);
 
 ?>
@@ -32,12 +32,27 @@ $menu = array(
 	</svg>
 	<h1 class="hidde">Academic<span>Blueprint</span></h1>
 
+	<!-- 
+	Username
+	-->
 	<div id="user-name" class="dropdown">
 	  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	    <span class='icon'>&#xe056;</span><?php echo $_SESSION['login_lname'].", ".$_SESSION['login_fname']?>
+	    <span class='icon'>&#xe056;</span>Blake Finn
 	    <span class="caret"></span>
 	  </button>
-	  <ul class="dropdown-menu" aria-labelledby="dLabel">
+	
+	<!-- 
+	Logout
+	-->
+
+	  <a id="log-out" href="../Pages/logout.php">
+	  	<span class="icon">=</span> Logout
+	  </a>
+
+	<!-- 
+	Username Dropdown
+	-->
+	  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
 	    <li><a href="../Pages/profile.php"><span class="icon">&#xe058;</span>Profile</a></li>
 		  <li><a href="../Pages/resetpassword.php"><span class="icon">&#xe014;</span>Reset Password</a></li>
 		  <?php if($rows['rights'] == '4') { ?>
@@ -66,24 +81,27 @@ $menu = array(
 
 </div>
 
+	<!-- 
+	Menu
+	-->
+
 <nav class="col-xs-2" id="menu">
 	<ul class="col-xs-12 col-lg-10 col-lg-offset- col-md-offset-">
-	<li clas="" id="header">Main</li>
+	<li clas="" id="header"><a class="main" href="#" onclick="return false">Main <span id="main" class="caret"></span></a></li>
 	<?php
 		for($i = 0; $i < count($menu); $i++){
 			if($menu[$i][3] == "main"){
-				echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+				echo "<li><a id ='". $menu[$i][3] ."' class = '". ($menu[$i][4] ? "selected" : "") ." hidden'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
 			}
 		}
 	?>
-	<li clas="" id="header">Goal Management</li>
+	<li clas="" id="header"><a class="goal" href="#" onclick="return false">Goal Management <span span id="goal" class="caret"></span></a></li>
 	<?php
 	for($i = 0; $i < count($menu); $i++){
 		if($menu[$i][3] == "goal"){
-			echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+			echo "<li><a id ='". $menu[$i][3] ."' class = '". ($menu[$i][4] ? "selected" : "") ." hidden'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
 		}
 	}
 	?>
 	</ul>
 </nav>
-

@@ -46,11 +46,20 @@ nav ul{
 	padding-left: 0;
 }
 
-nav ul li#header{
+nav ul li#header a{
 	color: #fff;
-	font-size: 11;
+	font-size: 14px;
 	font-weight: 800;
 	margin-bottom: 10px;
+}
+
+nav ul li#header a:hover, nav ul li#header a:visited, nav ul li#header a:active, nav ul li#header a:link{
+	text-decoration: none;
+}
+
+.caret.caret-reversed {
+    border-top-width: 0;
+    border-bottom: 4px solid #fff;
 }
 
 nav ul li{
@@ -68,6 +77,12 @@ nav ul li a{
 
 nav ul li a.selected{
 	color: #fff;
+	font-weight: 600;
+}
+
+nav ul li a:hover{
+	text-decoration: none;
+	color: #fff;
 }
 
 #top-bar span.icon{
@@ -75,6 +90,19 @@ nav ul li a.selected{
 	padding-right: 10px;
 	vertical-align: middle;
 }
+
+#log-out{
+	font-weight: 400;
+	color: #000;
+	padding-left: 20px;
+}
+
+#log-out:hover{
+	text-decoration: none;
+	color: #000;
+	font-weight: 600;
+}
+
 
 nav span.icon{
 	font-size:26px;
