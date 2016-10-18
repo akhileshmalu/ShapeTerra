@@ -68,7 +68,7 @@ require_once("../Resources/Includes/menu.php");
                     <span class="icon">&#xe063;</span><?php foreach ($error as $value)echo $value."<br/>"; ?>
                 </div>
             <?php } ?>
-            <input type="submit" name="submit" value="Update"  class="btn-primary btn-lg">
+            <input type="submit" name="submit" value="Update"  class="btn-primary btn-sm">
         </form>
     </div>
 <?php

@@ -2,7 +2,7 @@
 
 // Connect to MySql Database
 $mysqli = new mysqli("localhost","root","root","TESTDB");
-$site = "localhost:8888";
+$site = "localhost:8888/shapeterra";
 
 /*
  * Menu directive for local server

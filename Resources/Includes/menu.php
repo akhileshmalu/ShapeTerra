@@ -12,11 +12,11 @@
 */
 require_once ("../Resources/Includes/connect.php");
 $menu = array(
-	array("Dashboard", "../navdir"."Pages/account.php", "&#xe002;" ,"main", true),
+	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main", true),
 	array("Add Goals", "#", "&#xe002;" ,"goal", false),
-	array("Approve Request", "../navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin", false),
-	array("Deactivate Users", "../navdir"."Pages/delete.php", "&#xe053;" ,"admin", false),
-	array("Request privilege", "../navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user", false),
+	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin", false),
+	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin", false),
+	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user", false),
 	);
 
 ?>
@@ -37,7 +37,7 @@ $menu = array(
 	-->
 	<div id="user-name" class="dropdown">
 	  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	    <span class='icon'>&#xe056;</span>Blake Finn
+	    <span class='icon'>&#xe056;</span><?php echo $_SESSION['login_lname'].", ".$_SESSION['login_fname']; ?>
 	    <span class="caret"></span>
 	  </button>
 	
@@ -46,7 +46,7 @@ $menu = array(
 	-->
 
 	  <a id="log-out" href="../Pages/logout.php">
-	  	<span class="icon">=</span> Logout
+	  	<span class="icon">=</span>
 	  </a>
 
 	<!-- 
