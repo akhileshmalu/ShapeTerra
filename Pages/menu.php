@@ -11,14 +11,9 @@
 *
 */
 require_once ("../Resources/Includes/connect.php");
-$email = $_SESSION['login_email'];
-$sql = "Select * from user where email = '$email'; ";
-$result = $mysqli->query($sql);
-$rows = $result->fetch_assoc();
-
 $menu = array(
 	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main", true),
-	array("Add Goals", "../$navdir"."Pages/addgoal.php", "&#xe002;" ,"goal", false),
+	array("Add Goals", "#", "&#xe002;" ,"goal", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin", false),
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin", false),
 	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user", false),
@@ -60,7 +55,7 @@ $menu = array(
 	  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
 	    <li><a href="../Pages/profile.php"><span class="icon">&#xe058;</span>Profile</a></li>
 		  <li><a href="../Pages/resetpassword.php"><span class="icon">&#xe014;</span>Reset Password</a></li>
-		  <?php if($rows['rights'] =='4') { ?>
+		  <?php if($rows['rights'] == '4') { ?>
 			  <li role="separator" class="divider"></li>
 			  <?php
 			  for($i = 0; $i < count($menu); $i++){
