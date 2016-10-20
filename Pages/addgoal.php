@@ -6,7 +6,7 @@ $goalstatement="";
 $goaltitle="";
 
 require_once ("../Resources/Includes/connect.php");
-$sql = "Select * from AcademicYears where ID_ACAD_YEAR > 1600;";
+$sql = "Select * from AcademicYears where ID_ACAD_YEAR > '1600' AND GOAL_STATUS_ID is null;";
 $result = $mysqli->query($sql);
 
 if(isset($_POST['submit'])) {
@@ -27,7 +27,7 @@ if(isset($_POST['submit'])) {
 
         $ay = test_input($_POST['AY']);
         $goaltitle = test_input($_POST['goaltitle']);
-        $goalstatement = test_input($_POST['goalstatement']);
+        $goalstatement = mynl2br($_POST['goalstatement']);
         $sql = "SELECT max(ID_UNIV_GOAL) AS lastid FROM UniversityGoals;";
         $result = $mysqli->query($sql);
         $row = $result->fetch_assoc();
@@ -42,12 +42,13 @@ if(isset($_POST['submit'])) {
             $error[0] = "Goal has been successfully added.";
 
 
-//        $id= stringtoid($_POST['AY']);
+        $id= stringtoid($_POST['AY']);
 //        $academicstartdate="20".($id /100)."-08-16";
 //        $academicenddate="20".($id%100)."-08-15";
 //
 //        $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END) VALUES ('$id','$ay','$academicstartdate','$academicenddate');";
-//        $mysqli->query($sql);
+          $sql = "Update AcademicYears SET GOAL_STATUS_ID = 06 where ID_ACAD_YEAR = '$id'";
+            $mysqli->query($sql);
 
         } else {
             $error[0] = "Goal could not be added.";
@@ -68,6 +69,9 @@ function stringtoid ($string){
     $id = intval(substr($string,4,2));
     $id = ($id*100)+$id+1;
     return $id;
+}
+function mynl2br($text) {
+    return strtr($text, array("\r\n" => '<br />', "\r" => '<br />', "\n" => '<br />'));
 }
 
 ?>
@@ -93,7 +97,7 @@ require_once("../Resources/Includes/menu.php");
         </div>
         <div class="form-group">
             <label for="goalstatement">Please Enter Goal Statement:</label>
-            <input type = "text" class="form-control" name="goalstatement" id ="goalstatement" required>
+            <textarea  class="form-control" name="goalstatement" id ="goalstatement" required></textarea>
         </div>
 
         <?php if(isset($_POST['submit'])) { ?>

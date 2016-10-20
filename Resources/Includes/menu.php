@@ -19,6 +19,7 @@ $rows1 = $result1->fetch_assoc();
 $menu = array(
 	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main", true),
 	array("Add Goals", "../$navdir"."Pages/addgoal.php", "&#xe002;" ,"goal", false),
+	array("View Goals", "../$navdir"."Pages/viewgoals.php", "&#xe002;" ,"goal", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin", false),
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin", false),
 	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user", false),
