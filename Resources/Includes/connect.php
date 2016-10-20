@@ -4,6 +4,7 @@
 $mysqli = new mysqli("localhost","root","root","TESTDB");
 $site = "localhost:8888/shapeterra";
 
+$menucon= new mysqli("localhost","root","root","TESTDB");
 /*
  * Menu directive for local server
  * Menu.php will utilize navdir variable to redirect to local host pages.

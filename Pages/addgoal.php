@@ -10,10 +10,10 @@ $sql = "Select * from AcademicYears where ID_ACAD_YEAR > 1600;";
 $result = $mysqli->query($sql);
 
 if(isset($_POST['submit'])) {
-    if (empty($_POST['AY'])) {
-        $error[0] = " Please select a Academic Year";
-        $errorflag = 1;
-    }
+//    if (empty($_POST['AY'])) {
+//        $error[0] = " Please select a Academic Year";
+//        $errorflag = 1;
+//    }
     if (empty($_POST['goaltitle'])) {
         $error[0] = " Please enter goal title.";
         $errorflag = 1;

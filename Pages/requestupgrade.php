@@ -3,7 +3,7 @@ session_start();
 $error = array();
 
 require_once ("../Resources/Includes/connect.php");
-$sql ="select email from user where rights='4'";
+$sql ="select email from user where rights ='4'";
 $result = $mysqli->query($sql);
 
 if(isset($_POST['request'])){
@@ -100,8 +100,8 @@ require_once("../Resources/Includes/menu.php");
                 <label for="approver">Please select Approver:</label>
                 <select name="approver" class="form-control" id="approver" >
                     <option value =""></option>
-                    <?php while($row = $result ->fetch_array(MYSQLI_NUM)): if(strcmp($row[0],$_SESSION['login_email'])) {; ?>
-                        <option value="<?php echo $row[0]; ?>"> <?php echo $row[0]; ?> </option>
+                    <?php while($row = $result ->fetch_array(MYSQLI_NUM)): if(strcmp($row[0],$_SESSION['login_email'])) { ?>
+                        <option value="<?php echo $row[0]; ?>"> <?php echo $row[0]; ?></option>
                     <?php } else { continue;} endwhile; ?>
                 </select>
             </div>
