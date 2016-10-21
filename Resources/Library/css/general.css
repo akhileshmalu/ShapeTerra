@@ -43,6 +43,18 @@ h1,h2,h3,h4,h5,h6,p,a,li{
 	z-index: -1;
 }
 
+
+label{
+	color:#000;
+	font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+}
+
+input,select,textarea{
+	border: 1px #979797 solid !important;
+	box-shadow: none !important;
+}
+
 .btn-primary{
 	background-color: #4A90E2;
 	padding: 12px 40px;
@@ -52,7 +64,8 @@ h1,h2,h3,h4,h5,h6,p,a,li{
 	font-family: 'Open Sans', sans-serif;
 	float: right;
 	background-image: none;
-	border:none;
+	border:none !important;
 	text-shadow: none;
 	box-shadow: none;
 }
+
