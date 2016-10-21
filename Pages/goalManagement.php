@@ -35,7 +35,7 @@
     	<div role="tabpanel" class="tab-pane fade " id="view">
 			<?php
 				// Include view Goals
-				require_once("viewgoals.php");
+				require_once("../Pages/viewgoals.php");
 			?>
     	<div>
 
