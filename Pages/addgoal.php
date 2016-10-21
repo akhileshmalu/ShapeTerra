@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 $error = array();
 $errorflag = 0;
 $goalstatement="";
@@ -105,7 +105,7 @@ require_once("../Resources/Includes/menu.php");
                 <?php foreach ($error as $value)echo $value; ?>
             </div>
         <?php } ?>
-        <input type="submit" name="submit" value="submit" class="btn-primary btn-sm">
+        <input type="submit" name="submit" value="Submit" class="btn-primary btn-sm">
     </form>
 </div>
 

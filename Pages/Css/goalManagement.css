@@ -1,0 +1,21 @@
+#title{
+	margin-bottom: 36px;
+	margin-top: 25px;
+	font-weight: 400;
+}
+
+
+
+li.active a{
+	background-color: transparent !important;
+	color: #333 !important;
+	border-bottom: #4A90E2 3px solid;
+	border-radius: 0;
+	padding-bottom: 5px !important;
+}
+
+ul#tabs li a:hover{
+	background-color: transparent !important;
+	color: #4A90E2 !important;
+
+}

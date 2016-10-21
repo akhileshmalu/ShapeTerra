@@ -1,3 +1,16 @@
+/********************************************************
+* This is the general css class to effect the entire site
+*
+*
+*
+*
+* Font color: #ccc;
+* blue color: #4A90E2;
+* grey color: #979797;
+*
+*
+*/
+
 @font-face{
 	font-family:'dripicons';
 	src:url('../../Fonts/dripicons-v2.ttf');
@@ -16,4 +29,30 @@ h1,h2,h3,h4,h5,h6,p,a,li{
 .row{
 	margin-left: 0;
 	margin-right: 0;
+}
+
+#main-content{
+	padding-left: 100px;
+}
+
+.hr{
+	border-bottom: 1px #979797 solid;
+	position: absolute;
+	top:201px;
+	width: 100%;
+	z-index: -1;
+}
+
+.btn-primary{
+	background-color: #4A90E2;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	float: right;
+	background-image: none;
+	border:none;
+	text-shadow: none;
+	box-shadow: none;
 }
