@@ -10,8 +10,7 @@
   <link rel="stylesheet" href="../Resources/Library/css/bootstrap.css">
   <link rel="stylesheet" href="../Resources/Library/css/bootstrap-theme.css">
   <link rel="stylesheet" href="../Resources/Library/css/animate.css">
-  <link rel="stylesheet" href="../Resources/Library/css/general.css">
-
+  <link rel="stylesheet" href="../Resources/Library/css/general.css"><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
   
 

@@ -1,7 +1,6 @@
 <?php
 
 date_default_timezone_set("America/New_York");                  	//Setting time zone to EST time
-
 session_start();                                      		    	// Session Initiation
 $error =array();                                 		  		    //Variable to store error msg
 $errorflag = "";
@@ -345,7 +344,6 @@ require_once("../Resources/Includes/header.php");
 
     </div>
 </div>
-
 
 
 <?php
