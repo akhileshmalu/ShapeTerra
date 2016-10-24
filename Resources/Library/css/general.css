@@ -20,7 +20,7 @@
 	font-family: 'dripicons';
 }
 
-h1,h2,h3,h4,h5,h6,p,a,li{
+h1,h2,h3,h4,h5,h6,p,a,li,button{
 	font-family: 'Open Sans', sans-serif;
     font-weight: 600;
     color:#333;
@@ -32,7 +32,7 @@ h1,h2,h3,h4,h5,h6,p,a,li{
 }
 
 #main-content{
-	padding-left: 100px;
+	padding-left: 0;
 }
 
 .hr{

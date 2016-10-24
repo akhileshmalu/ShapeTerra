@@ -21,6 +21,13 @@
 	font-weight: 800;
 }
 
+#generate-pdf{
+	float: right;
+	vertical-align: middle;
+	margin-top: 5px;
+	margin-right:20px;
+}
+
 #user-name{
 	float: right;
 	margin-top: 5px;

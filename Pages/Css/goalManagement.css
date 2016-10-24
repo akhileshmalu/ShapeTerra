@@ -2,20 +2,66 @@
 	margin-bottom: 36px;
 	margin-top: 25px;
 	font-weight: 400;
+	padding-left: 55px;
 }
 
-
-
-li.active a{
-	background-color: transparent !important;
-	color: #333 !important;
-	border-bottom: #4A90E2 3px solid;
-	border-radius: 0;
-	padding-bottom: 5px !important;
+button#add-goal{
+	margin-top: 25px;
 }
 
-ul#tabs li a:hover{
-	background-color: transparent !important;
-	color: #4A90E2 !important;
+button span{
+	vertical-align: middle;
+}
 
+#table-container{
+	padding-left: 0;
+	margin-top: 37px;
+	border-top: 1px #979797 solid;
+	border-right:1px #979797 solid;
+	padding-right: 0;
+	/*Arbitrary height until content is added to match*/
+	height: 1860px;
+}
+
+table th{
+	background-color: #C6CACD;
+	padding: 20px !important;
+	padding-left: 55px !important;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 600;
+}
+
+table td{
+	padding: 20px !important;
+	padding-left: 55px !important;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+}
+
+aside{
+	position: absolute !important;
+	height:1500px;
+	margin-top: 15px;
+	top:120px;
+	right: -850px;
+	z-index: 20;
+	overflow-y:scroll; 
+	overflow-x: hidden;
+	padding-top: 25px;
+}
+
+aside h1{
+	text-align: center;
+	color: #4A90E2;
+	margin-top: 5px;
+}
+
+aside h5{
+	font-size: 14px;
+	color: #7C888A;
+	font-weight: 400;
+}
+
+aside p{
+	margin-top: 50px;
 }
