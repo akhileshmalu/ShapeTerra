@@ -29,7 +29,7 @@
     	<div role="tabpanel" class="tab-pane active fade in" id="add">
     		<?php
 				// Include Add Goals
-				require_once("addgoal.php");
+				require_once("../Pages/addgoal.php");
 			?>
     	</div>
     	<div role="tabpanel" class="tab-pane fade " id="view">

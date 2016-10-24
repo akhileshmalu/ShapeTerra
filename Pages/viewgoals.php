@@ -6,7 +6,26 @@ require_once ("../Resources/Includes/connect.php");
 $sql = "Select * from AcademicYears where  GOAL_STATUS_ID = 6;";
 $result = $mysqli->query($sql);
 
+if(isset($_POST['submit'])) {
+//    if (empty($_POST['AY'])) {
+//        $error[0] = " Please select a Academic Year";
+//        $errorflag = 1;
+//    }
+//    if($errorflag != 1){
 
+//    $ay = $_POST['AY'];
+//    $sql = "select * from UniversityGoals where find_in_set ('$ay',GOAL_ACAD_YEARS)>0;";
+//    $result = $mysqli->query($sql);
+//
+//    while($rows = $result->fetch_assoc()){
+//        echo $rows['GOAL_TITLE'];
+//    }
+//
+
+  //  }
+
+
+}
 
 
 require_once("../Resources/Includes/header.php");
