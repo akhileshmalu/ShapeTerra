@@ -1,4 +1,8 @@
 <?php
+/*
+ * This Page controls addition of Academic Year module.
+ */
+
 
 require_once("../Resources/Includes/header.php");
 
@@ -63,8 +67,8 @@ require_once("../Resources/Includes/menu.php");
         <div class='col-lg-6'>
             <label for="datetimepicker1">Please Select Academic Year Start date :</label>
             <div class="form-group">
-                <div class='input-group date' id='datetimepicker1'>
-                    <input type='text' name="startdate" class="form-control" required/>
+                <div class='input-group date'  id='datetimepicker1'>
+                    <input type='text' name="startdate"  class="form-control" required/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -101,3 +105,9 @@ require_once("../Resources/Includes/menu.php");
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
+
+<!--Calender Bootstrap inclusion for date picker INPUT-->
+
+<script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
+<script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
+<script src="../Resources/Library/js/calender.js"></script>

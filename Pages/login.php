@@ -1,4 +1,15 @@
 <?php
+/*
+ * This page controlls Login and Registration menu of Academic BluePrint System.
+ *
+ * ----------Note 1 ----------------------------------------------------
+ * <variable:status> User shall be allowed to login as per below Status of Account
+ *          1 = Active
+ *          0 = Inactive (need email verification) - Default in Database.
+ *         -1 = Terminated (deleted User)
+ *  -------- Note 1 Finished--------------------------------------------
+ */
+
 
 date_default_timezone_set("America/New_York");                  	//Setting time zone to EST time
 
@@ -23,10 +34,7 @@ if(isset($_POST['login'])) {
 
             $record = $result->fetch_assoc();
             /*
-             User shall be allowed to login as per below Status of Account
-             1 = Active
-             0 = Inactive (need email verification) -Default in Database.
-             -1 = Terminated (deleted User)
+             Refer to Note 1 for status variable in instruction
              */
 
             if($record['status']== '1') {
@@ -62,6 +70,10 @@ if(isset($_POST['signup'])) {
 
         }
     }
+
+    /*
+     * Manual Exception handling in case of browser not supporting HTML5.0
+     */
     if (empty($_POST['password'])) {
         $error[1] = " Please enter password.";
         $errorflag = 1;
@@ -92,6 +104,8 @@ if(isset($_POST['signup'])) {
         if($mysqli -> query($sql)) {
             $error[0] = "User Registered Successfully.";
             $error[0].="Kindly confirm your profile by logging to your email.";
+
+
             //Confirmation Mail Variables
             $sub = "Congratulations! You have successfully registered.";
             $msg = "Hello User"."<br/>"."<br/>";

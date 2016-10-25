@@ -1,6 +1,8 @@
 <?php
 
-
+/*
+ * Creating one master file to generate any standard report via TCPDF.
+ */
 require_once('../Resources/tcpdf/tcpdf.php');
 
 define("PDF_HEADER_TITLE","Print" );

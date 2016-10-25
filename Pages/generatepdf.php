@@ -27,3 +27,4 @@ while($row = $result ->fetch_array(MYSQLI_NUM)) {
     $obj_pdf->Output('GoalSheet.pdf', 'I');
 
 ?>
+
