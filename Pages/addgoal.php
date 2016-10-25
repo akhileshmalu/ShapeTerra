@@ -59,6 +59,10 @@ if(isset($_POST['submit'])) {
 }
 
 require_once("../Resources/Includes/header.php");
+/*
+ * Function to obtain String from ID and ID from String.
+ */
+
 function idtostring ($id){
     $id= $id %100;
     $string = "AY20".$id."-20".($id+1);
@@ -70,6 +74,9 @@ function stringtoid ($string){
     $id = ($id*100)+$id+1;
     return $id;
 }
+/*
+ * Function for taking paragraph with lines input in goal statement
+ */
 function mynl2br($text) {
     return strtr($text, array("\r\n" => '<br />', "\r" => '<br />', "\n" => '<br />'));
 }
