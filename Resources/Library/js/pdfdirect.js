@@ -1,4 +1,5 @@
 function gotopdf()
 {
-    window.location.href="../Pages/generatepdf.php";
+    window.open("../Pages/generatepdf.php", "_blank");
+
 }

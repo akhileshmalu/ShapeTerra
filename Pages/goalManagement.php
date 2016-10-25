@@ -48,14 +48,10 @@
             				<h1><?php echo $rows['GOAL_TITLE']; ?></h1>	
             				<p><?php echo $rows['GOAL_STATEMENT']; ?></p>
 						</aside>
-                		
-                		
             	<?php 
             		} endwhile; 
             		mysqli_data_seek($result, 0);
             	?>
-		
-
 
   	</div>
 

@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 $error = array();
 $errorflag = 0;
 $goalstatement="";
