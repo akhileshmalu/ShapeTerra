@@ -91,7 +91,7 @@ $menu = array(
 	  </ul>
 	</div>
 
-	<button id="generate-pdf" type="button" class="btn-link">
+	<button id="generate-pdf" type="button" class="btn-link" onclick="gotopdf()">
 	    <span class='icon'>:</span>Generate PDF
 	</button>	
 

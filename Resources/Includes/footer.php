@@ -4,5 +4,6 @@
     <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
     <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
     <script src="../Resources/Library/js/calender.js"></script>
+    <script src="../Resources/Library/js/pdfdirect.js"></script>
     </body>
 </html>
