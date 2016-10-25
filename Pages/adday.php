@@ -1,4 +1,7 @@
 <?php
+
+require_once("../Resources/Includes/header.php");
+
 session_start();
 $error = array();
 $errorflag ='';
@@ -8,6 +11,7 @@ if(isset($_POST['submit'])) {
         $error[0]= "Please select a Start date for Academic Year";
         $errorflag = 1;
     }
+
     if($errorflag!=1){
         $startdate = $_POST['startdate'];
         $enddate = $_POST['enddate'];
@@ -24,7 +28,11 @@ if(isset($_POST['submit'])) {
     }
 }
 
-require_once("../Resources/Includes/header.php");
+
+/*
+ * Function to obtain String from ID and ID from String.
+ */
+
 function stringtoid ($string1, $string2){
 
     $id1 = intval(substr($string1,2,2));

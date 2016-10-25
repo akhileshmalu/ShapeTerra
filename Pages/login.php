@@ -78,7 +78,7 @@ if(isset($_POST['signup'])) {
 
     if($errorflag == 0){
 
-        require_once ("../Resources/Includes/connect.php");                          // Established Connection
+        require_once ("../Resources/Includes/connect.php");               // Established Connection
 
         //Secured Input
         $email = test_input($_POST['email']);
