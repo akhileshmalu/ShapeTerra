@@ -17,13 +17,13 @@ $result1 = $menucon->query($sql1);
 $rows1 = $result1->fetch_assoc();
 
 $menu = array(
-	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main", true),
-	array("Add Goals", "../$navdir"."Pages/addgoal.php", "&#xe002;" ,"goal", false),
-	array("View Goals", "../$navdir"."Pages/goalManagement.php#view", "&#xe002;" ,"goal", false),
-	array("Add Academic Year", "../$navdir"."Pages/adday.php", "&#xe002;" ,"goal", false),
-	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin", false),
-	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin", false),
-	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user", false),
+	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
+	array("Add Goals", "../$navdir"."Pages/addgoal.php", "&#xe002;" ,"goal","basic",false),
+	array("View Goals", "../$navdir"."Pages/goalManagement.php#view", "&#xe002;","goal","basic", false),
+	array("Initiate Academic BluePrint", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","superadmin", false),
+	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin","superadmin", false),
+	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin","superadmin", false),
+	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user","basic", false),
 	);
 
 ?>
@@ -105,11 +105,17 @@ $menu = array(
 	<ul class="col-xs-12 col-lg-10 col-lg-offset- col-md-offset-">
 	<li clas="" id="header"><a class="main" href="#" onclick="return false">Main <span id="main" class="caret"></span></a></li>
 	<?php
-		for($i = 0; $i < count($menu); $i++){
-			if($menu[$i][3] == "main"){
-				echo "<li><a id ='". $menu[$i][3] ."' class = '". ($menu[$i][4] ? "selected" : "") ." hidden'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+	for ($i = 0; $i < count($menu); $i++) {
+		if($rows1['rights'] =='4') {
+			if ($menu[$i][3] == "main" && $menu[$i][4] == "superadmin") {
+				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+			}
+		} else {
+			if ($menu[$i][3] == "main" && $menu[$i][4] <> "superadmin") {
+				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 			}
 		}
+	}
 	?>
 	<li clas="" id="header"><a class="goal" href="#" onclick="return false">Goal Management <span span id="goal" class="caret"></span></a></li>
 	<?php

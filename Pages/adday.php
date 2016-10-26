@@ -1,14 +1,21 @@
 <?php
+require_once("../Resources/Includes/header.php");
 /*
  * This Page controls addition of Academic Year module.
  */
 
 
-require_once("../Resources/Includes/header.php");
-
 session_start();
 $error = array();
 $errorflag ='';
+$ouname][]="";
+
+require_once ("../Resources/Includes/connect.php");
+$sql = "Select * from Hierarchy";
+$result = $mysqli->query($sql);
+
+
+
 
 if(isset($_POST['submit'])) {
     if(!isset($_POST['startdate'])){
@@ -20,9 +27,10 @@ if(isset($_POST['submit'])) {
         $startdate = $_POST['startdate'];
         $enddate = $_POST['enddate'];
         $censusdate = $_POST['censusdate'];
+
         $id = stringtoid($startdate,$enddate);
         $desc = idtostring($id);
-        require_once ("../Resources/Includes/connect.php");
+
         $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
         if($mysqli->query($sql)){
             $error[0] = "Academic Year Added Successfully.";
@@ -62,7 +70,7 @@ require_once("../Resources/Includes/menu.php");
 ?>
 
 
-<div class="col-lg-offset-3 col-lg-6 col-md-6 col-xs-9" id="ContentRight">
+<div class="col-lg-6 col-md-6 col-xs-12" id="ContentRight">
     <form action ="" method="POST">
         <div class='col-lg-6'>
             <label for="datetimepicker1">Please Select Academic Year Start date :</label>
@@ -92,6 +100,12 @@ require_once("../Resources/Includes/menu.php");
                     </span>
                 </div>
             </div>
+            <label for="ouname">Please Select Organization Unit(s)</label>
+            <?php while($row = $result->fetch_array(MYSQLI_NUM)): { ?>
+                <div class="checkbox" id="ouname">
+                <label><input type="checkbox" name="ou_name[]" value="<?php echo $row[0]; ?>"><?php echo $row[1]; ?></label>
+            </div>
+            <?php } endwhile;?>
             <?php if(isset($_POST['submit'])) { ?>
                 <div class="alert alert-warning">
                     <?php foreach ($error as $value)echo $value; ?>
