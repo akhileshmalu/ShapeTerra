@@ -23,7 +23,7 @@ if(isset($_POST['forgot'])){
         require_once ("../Resources/Includes/connect.php");
         $email = test_input($_POST['email']);
 
-        $sql ="select fname, password FROM user where email = '$email'";
+        $sql ="select FNAME,PW_DEV FROM PermittedUsers where NETWORK_USERNAME = '$email'";
         $result = $mysqli -> query($sql);
         $rows = $result -> num_rows;
 
@@ -38,7 +38,7 @@ if(isset($_POST['forgot'])){
                 0-  Forgot Password Verification
                  */
 
-                $sql = "update user SET hash = $hash where email='$email'";
+                $sql = "update PermittedUsers SET HASH = $hash where NETWORK_USERNAME ='$email'";
                 $mysqli->query($sql);
 
                 //Confirmation Mail Variables

@@ -26,7 +26,7 @@ if(isset($_POST['login'])) {
         $password = md5(test_input($_POST['password']));
 
         //Query into database for record check
-        $sql =  "SELECT * FROM user where email ='$email' AND password ='$password' ";
+        $sql =  "SELECT * FROM PermittedUsers where NETWORK_USERNAME ='$email' AND PW_DEV ='$password' ";
 
         $result = $mysqli -> query($sql);                             //Query Execution
         $row_cnt = $result -> num_rows;                               //count no of rows in result object.
@@ -37,11 +37,11 @@ if(isset($_POST['login'])) {
              Refer to Note 1 for status variable in instruction
              */
 
-            if($record['status']== '1') {
+            if($record['USER_STATUS']== '1') {
                 $_SESSION['login_email'] = $email;                   //session variable register
                 header("location:account.php");                           //redirect to account page
             } else {
-            	if($record['status']== '0') {
+            	if($record['USER_STATUS']== '0') {
                 	$error [0] = "Please activate your account by link provided in your email.";
             	}
             	// If User has been Terminated i.e. active = '-1'
@@ -97,9 +97,11 @@ if(isset($_POST['signup'])) {
         $password = md5(test_input($_POST['password']));
         $hash = md5( rand(0,1000));
         $type = 1;
+        $today = date("Y-m-d");
 
 
-        $sql = "INSERT INTO user(password,email,hash) VALUES ('$password','$email','$hash')";
+        $sql = "INSERT INTO PermittedUsers
+(NETWORK_USERNAME,PW_DEV,DATE_BEGIN,HASH) VALUES ('$email','$password','$today','$hash')";
 
         if($mysqli -> query($sql)) {
             $error[0] = "User Registered Successfully.";

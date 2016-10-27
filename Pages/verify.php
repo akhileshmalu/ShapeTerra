@@ -14,16 +14,16 @@ if(isset($_GET['email']) && !empty($_GET['email']) AND isset($_GET['hash']) && !
 
         $email = test_input($_GET['email']);
         $hash = $_GET['hash'];
-        $sql = "Select * from user where email = '$email' and hash ='$hash' ";
+        $sql = "Select * from PermittedUsers where NETWORK_USERNAME = '$email' and HASH ='$hash' ";
         $result = $mysqli->query($sql);
 
         if ($result->num_rows) {
-            $sql = "UPDATE user SET status = '1' where email = '$email' and hash ='$hash' ";
+            $sql = "UPDATE PermittedUsers SET USER_STATUS = '1' where NETWORK_USERNAME = '$email' and HASH ='$hash' ";
             $mysqli->query($sql);
             $error[0] = "User Activated Successfully";
 
             // Link shall be used only once.
-            $sql = "UPDATE user SET hash = '$newhash' where email = '$email'";
+            $sql = "UPDATE PermittedUsers  SET HASH = '$newhash' where NETWORK_USERNAME = '$email'";
             $mysqli->query($sql);
 
         } else {
@@ -36,13 +36,13 @@ if(isset($_GET['email']) && !empty($_GET['email']) AND isset($_GET['hash']) && !
         $email = test_input($_GET['email']);
         $hash = $_GET['hash'];
 
-        $sql = "select * FROM user where email = '$email' and hash ='$hash'";
+        $sql = "select * FROM PermittedUsers where NETWORK_USERNAME = '$email' and hash ='$hash'";
         $result = $mysqli->query($sql);
 
         if ($result->num_rows) {
 
             // Link shall be used only once.
-            $sql = "UPDATE user SET hash = '$newhash' where email = '$email'";
+            $sql = "UPDATE PermittedUsers SET HASH = '$newhash' where NETWORK_USERNAME = '$email'";
             $mysqli->query($sql);
 
             $_SESSION['login_email'] = $email;

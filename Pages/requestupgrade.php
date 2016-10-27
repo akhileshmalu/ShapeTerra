@@ -3,8 +3,17 @@ session_start();
 $error = array();
 
 require_once ("../Resources/Includes/connect.php");
-$sql ="select email from user where rights ='4'";
+$sql ="select NETWORK_USERNAME from PermittedUsers where SYS_USER_ROLE ='admin_user'";
 $result = $mysqli->query($sql);
+
+
+$rightsql ="select ID_USER_RIGHT,USER_RIGHT from UserRights";
+$rightresult = $mysqli1->query($rightsql);
+
+
+
+$rolesql ="select ID_USER_ROLE, USER_ROLE from UserRoles";
+$roleresult = $mysqli2->query($rolesql);
 
 if(isset($_POST['request'])){
 
@@ -15,7 +24,7 @@ if(isset($_POST['request'])){
             $email = $_SESSION['login_email'];
             $approver = $_POST['approver'];
             $rights = $_POST['rights'];
-            $rightdefine="";
+            $role = $_POST['role'];
             $reqstatus = '1';
 
             /*
@@ -26,38 +35,21 @@ if(isset($_POST['request'])){
              *
              */
 
-            switch ($rights){
-                case '1':
-                    $rightdefine ="User";
-                    break;
-                case '2':
-                    $rightdefine = "Super User";
-                    break;
-                case '3':
-                    $rightdefine = "Admin";
-                    break;
-                case '4':
-                    $rightdefine = "Super Admin";
-                    break;
-                default:
-                    $rightdefine="Undefined";
-                    break;
-            }
 
-            $sql = "INSERT INTO requestpanel (email,rights,reqstatus,approver) VALUES ('$email','$rights','$reqstatus','$approver')";
+            $sql = "INSERT INTO requestpanel (email,rights,role,reqstatus,approver) VALUES ('$email','$rights','$role','$reqstatus','$approver')";
             if ($mysqli->query($sql)) {
 
                 //Confirmation Mail Variables to User
                 $sub = "Your privileges change request has been submitted successfully.";
                 $msg = "Hello" . "<br/>" ."<br/>";
-                $msg .= "You have requeted for '$rightdefine' level privilege to Approver: '$approver' "."<br>"."<br/><br/>"."Thank you for giving us a chance to serve you";
+                $msg .= "You have requeted for upgrade in privilege to Approver: '$approver' "."<br>"."<br/><br/>"."Thank you for giving us a chance to serve you";
                 mail($email, $sub, $msg, $headers);
 
 
                 //Confirmation Mail Variable to Approver
                 $sub = "You have a request pending for approval";
                 $msg = "Hello" . "<br/>"."<br/>";
-                $msg .= "User: '$email' has requeted for '$rightdefine' level privilege"."<br>"."<br/><br/>"."Please action the request through your dashboard.";
+                $msg .= "User: '$email' has requeted for privilege upgrade"."<br>"."<br/><br/>"."Please action the request through your dashboard.";
                 mail($approver, $sub, $msg, $headers);
 
                 $error[0] = "Request submitted Successfully";
@@ -87,13 +79,21 @@ require_once("../Resources/Includes/menu.php");
     <div class="col-lg-offset-3 col-lg-3 col-md-6 col-xs-9" id="ContentRight">
         <form action ="" method="POST">
             <div class="form-group">
-                <label for="privilege">Please select desired Privilege level:</label>
+                <label for="privilege">Please select desired Privilege <b>Role</b>:</label>
+                <select name="role" class="form-control" id="privilege">
+                    <option value =""></option>
+                    <?php while($row1 = $roleresult ->fetch_array(MYSQLI_NUM)):   ?>
+                        <option value="<?php echo $row1[0]; ?>"> <?php echo $row1[1]; ?></option>
+                    <?php  endwhile; ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="privilege">Please select desired Privilege <b>Right</b>:</label>
                 <select name="rights" class="form-control" id="privilege">
-                    <option value=''>  </option>
-                    <option value='1'> User </option>
-                    <option value='2'> Super User </option>
-                    <option value='3'> Admin </option>
-                    <option value='4'> Super Admin </option>
+                    <option value =""></option>
+                    <?php while($row2 = $rightresult ->fetch_array(MYSQLI_NUM)):   ?>
+                        <option value="<?php echo $row2[0]; ?>"> <?php echo $row2[1]; ?></option>
+                    <?php  endwhile; ?>
                 </select>
             </div>
             <div class="form-group">

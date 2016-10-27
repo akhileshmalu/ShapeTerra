@@ -6,7 +6,7 @@ $errorflag = 0;                                                 //Flag Create
 
 require_once ("../Resources/Includes/connect.php");          	//Instance of Object class-connection Created
 $email = $_SESSION['login_email'];					  			//Session Variable store
-$sql = " SELECT fname, lname,email,rights FROM user where email ='$email' ";														//Query to Database
+$sql = " SELECT FNAME, LNAME FROM PermittedUsers where NETWORK_USERNAME ='$email' ";														//Query to Database
 $result = $mysqli->query($sql);                             	// Query Execution
 $rows = $result -> fetch_assoc();
 
@@ -29,8 +29,8 @@ if(isset($_POST['submit'])) {
         $email = $_SESSION['login_email'];
 
 
-        $sql = "Update user SET fname = '$fname' where email = '$email';";
-        $sql .= "Update user SET lname = '$lname' where email = '$email';";
+        $sql = "Update PermittedUsers SET FNAME = '$fname' where NETWORK_USERNAME = '$email';";
+        $sql .= "Update PermittedUsers SET LNAME = '$lname' where NETWORK_USERNAME = '$email';";
         if($mysqli -> multi_query($sql)) {
             $error[0] = "Profile Updated Successfully.";
             $_SESSION['login_fname'] = $fname;
@@ -57,11 +57,11 @@ require_once("../Resources/Includes/menu.php");
         <form action ="" method="POST">
             <div class="form-group">
                 <label for="fn">Enter your First Name:</label>
-                <input name="fname" type="text" placeholder="<?php echo $rows['fname']?>" class="form-control" id="fn" required>
+                <input name="fname" type="text" placeholder="<?php echo $rows['FNAME']?>" class="form-control" id="fn" required>
             </div>
             <div class="form-group">
                 <label for="ln">Enter your Last Name:</label>
-                <input name="lname" type="text" placeholder="<?php echo $rows['lname']?>" class="form-control" id="ln" required>
+                <input name="lname" type="text" placeholder="<?php echo $rows['LNAME']?>" class="form-control" id="ln" required>
             </div>
             <?php if(isset($_POST['submit'])) { ?>
                 <div class="alert alert-danger">

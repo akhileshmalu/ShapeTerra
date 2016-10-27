@@ -25,7 +25,7 @@ if(isset($_POST['reset'])){
         $newpassword = md5(test_input($_POST['newpassword']));
         $email = $_SESSION['login_email'];
 
-        $sql = "UPDATE user SET password = '$newpassword' WHERE email = '$email'";
+        $sql = "UPDATE PermittedUsers SET PW_DEV = '$newpassword' WHERE NETWORK_USERNAME = '$email'";
         if ($mysqli->query($sql)) {
 
             //Confirmation Mail Variables
