@@ -18,8 +18,7 @@ $rows1 = $result1->fetch_assoc();
 
 $menu = array(
 	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
-	array("Add Goals", "../$navdir"."Pages/addgoal.php", "&#xe002;" ,"goal","basic",false),
-	array("View Goals", "../$navdir"."Pages/goalManagement.php#view", "&#xe002;","goal","basic", false),
+	array("Goals", "../$navdir"."Pages/goalManagement.php", "&#xe002;","goal","basic", false),
 	array("Initiate Academic BluePrint", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","superadmin", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin","superadmin", false),
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin","superadmin", false),

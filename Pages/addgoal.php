@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 $error = array();
 $errorflag = 0;
 $goalstatement="";
@@ -83,11 +83,8 @@ function mynl2br($text) {
 
 ?>
 
-<?php
-require_once("../Resources/Includes/menu.php");
-?>
 
-<div class="col-lg-offset-3 col-lg-3 col-md-6 col-xs-9" id="ContentRight">
+<div class="col-xs-12">
     <form action ="" method="POST">
         <div class="form-group">
             <label for="AYgoal">Please select Academic Year:</label>
@@ -117,6 +114,4 @@ require_once("../Resources/Includes/menu.php");
 </div>
 
 
-<?php
-require_once("../Resources/Includes/footer.php");
-?>
+

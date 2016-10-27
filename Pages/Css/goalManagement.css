@@ -9,6 +9,10 @@ button#add-goal{
 	margin-top: 25px;
 }
 
+.alert{
+	margin-top: 25px;
+}
+
 button span{
 	vertical-align: middle;
 }
@@ -47,21 +51,27 @@ aside{
 	z-index: 20;
 	overflow-y:scroll; 
 	overflow-x: hidden;
-	padding-top: 25px;
 }
 
-aside h1{
-	text-align: center;
-	color: #4A90E2;
-	margin-top: 5px;
+h3.title{
+	color:#4A90E2;
+	font-size: 13px;
+	margin-bottom: 7px;
+	margin-top: 40px;
+	font-weight: 400;
 }
 
-aside h5{
-	font-size: 14px;
-	color: #7C888A;
+aside h2{
+	margin-top: 0;
+	font-size: 24px;
 	font-weight: 400;
 }
 
 aside p{
-	margin-top: 50px;
+	font-weight: 400;
+	font-size: 18px;
+}
+
+.modal-footer{
+	border-top:none;
 }
