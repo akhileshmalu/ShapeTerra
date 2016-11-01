@@ -84,7 +84,7 @@ function mynl2br($text) {
 ?>
 
 
-<div class="col-xs-12">
+<div  class="col-xs-12" >
     <form action ="" method="POST">
         <div class="form-group">
             <label for="AYgoal">Please select Academic Year:</label>

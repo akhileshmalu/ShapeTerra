@@ -8,7 +8,7 @@ require_once("../Resources/Includes/header.php");
 session_start();
 $error = array();
 $errorflag ='';
-$ouname][]="";
+$ouname[]="";
 
 require_once ("../Resources/Includes/connect.php");
 $sql = "Select * from Hierarchy";

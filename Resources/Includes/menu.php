@@ -4,24 +4,26 @@
 *
 * To add menu items
 * add an array inside the menu array
-* array(Display Name, href link, icon , menu position, selected)
+* array(Display Name, href link, icon , menu div position,role control, selected)
 * Icon is represented by a character, list can be found here http://demo.amitjakhu.com/dripicons/
-* menu position: main, goal
+* menu div position: main, goal;				role Control : Provost, basic
 * selected is either true or false, set initial to false and selected will be determined by page
 *
 */
 require_once ("../Resources/Includes/connect.php");
 $email = $_SESSION['login_email'];
-$sql1 = "Select * from user where email = '$email'; ";
-$result1 = $menucon->query($sql1);
-$rows1 = $result1->fetch_assoc();
+$sql1 = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE, OU_ABBREV from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
+inner join UserRoles on PermittedUsers.SYS_USER_ROLE = UserRoles.ID_USER_ROLE
+inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY WHERE  NETWORK_USERNAME ='$email';";
+$resultmenu = $menucon->query($sql1);
+$rowsmenu = $resultmenu ->fetch_assoc();
 
 $menu = array(
 	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
 	array("Goals", "../$navdir"."Pages/goalManagement.php", "&#xe002;","goal","basic", false),
-	array("Initiate Academic BluePrint", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","superadmin", false),
-	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin","superadmin", false),
-	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin","superadmin", false),
+	array("Initiate Academic BluePrint", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","Provost", false),
+	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin","basic", false),
+	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin","basic", false),
 	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user","basic", false),
 	);
 
@@ -40,7 +42,6 @@ $menu = array(
 
 	<h1 class="hidde">Academic<span>Blueprint</span></h1>
 
-	
 
 
 	<!-- 
@@ -64,35 +65,58 @@ $menu = array(
 	Username Dropdown
 	-->
 	  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
-	    <li><a href="../Pages/profile.php"><span class="icon">&#xe058;</span>Profile</a></li>
+
+<!--		  User info -->
+		  <li><p class="text-muted h6" style="margin-left:20px">Org Unit : <?php echo $rowsmenu['OU_ABBREV']; ?></p></li>
+		  <li><p class="text-muted h6" style="margin-left:20px">Role : <?php echo $rowsmenu['SYS_USER_ROLE']; ?></p> </li>
+		  <li><p class="text-muted h6" style="margin-left:20px">Right desc : <?php echo $rowsmenu['USER_RIGHT']; ?></p> </li>
+
+		   <li role="separator" class="divider"></li>
+
+
+		  <li><a href="../Pages/profile.php"><span class="icon">&#xe058;</span>Profile</a></li>
 		  <li><a href="../Pages/resetpassword.php"><span class="icon">&#xe014;</span>Reset Password</a></li>
-		  <?php if($rows1['rights'] =='4') { ?>
-			  <li role="separator" class="divider"></li>
-			  <?php
-			  for($i = 0; $i < count($menu); $i++){
-				  if($menu[$i][3] == "admin"){
-					  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
-				  }
-			  }
-			  ?>
-		  <?php } else { ?>
-			  <li role="separator" class="divider"></li>
-			  <?php
-			  for($i = 0; $i < count($menu); $i++){
-				  if($menu[$i][3] == "user"){
-					  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
-				  }
-			  }
-			  ?>
-		  <?php } ?>
 		  <li role="separator" class="divider"></li>
+
+<!--		  User Specific Menu under Drop Down-->
+		  <?php
+		  switch ($rowsmenu['SYS_USER_ROLE'])
+		  {
+			  case "admin_user" :
+				  for($i = 0; $i < count($menu); $i++){
+					  if($menu[$i][3] == "admin"){
+						  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+					  }
+				  }
+				  echo "<li role='separator' class='divider'></li>";
+				  break;
+			  case "contrib_academic" :
+				  for($i = 0; $i < count($menu); $i++){
+					  if($menu[$i][3] == "user"){
+						  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+					  }
+				  }
+				  echo "<li role='separator' class='divider'></li>";
+				  break;
+			  default :
+				  for($i = 0; $i < count($menu); $i++){
+					  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+				  }
+				  echo "<li role='separator' class='divider'></li>";
+				  break;
+		  }
+		  ?>
 		  <li><a href="../Pages/logout.php"><span class="icon">=</span>Log Out</a></li>
 	  </ul>
 	</div>
 
+<!--
+Generate PDF button currently disabled.
+
 	<button id="generate-pdf" type="button" class="btn-link" onclick="gotopdf()">
 	    <span class='icon'>:</span>Generate PDF
 	</button>	
+-->
 
 </div>
 
@@ -105,20 +129,20 @@ $menu = array(
 	<li clas="" id="header"><a class="main" href="#" onclick="return false">Main <span id="main" class="caret"></span></a></li>
 	<?php
 	for ($i = 0; $i < count($menu); $i++) {
-		if($rows1['rights'] =='4') {
-			if ($menu[$i][3] == "main" && $menu[$i][4] == "superadmin") {
+		if(strcmp($rowsmenu['SYS_USER_ROLE'],"provost") == 0) {
+			if ($menu[$i][3] == "main" && $menu[$i][4] == "Provost") {
 				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 			}
 		} else {
-			if ($menu[$i][3] == "main" && $menu[$i][4] <> "superadmin") {
+			if ($menu[$i][3] == "main" && $menu[$i][4] <> "Provost") {
 				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 			}
 		}
 	}
 	?>
-	<li clas="" id="header"><a class="goal" href="#" onclick="return false">Goal Management <span span id="goal" class="caret"></span></a></li>
+	<li class="" id="header"><a class="goal" href="#" onclick="return false">Goal Management <span span id="goal" class="caret"></span></a></li>
 	<?php
-	for($i = 0; $i < count($menu); $i++){
+	for($i = 0; $i < count($menu); $i++) {
 		if($menu[$i][3] == "goal"){
 			echo "<li><a id ='". $menu[$i][3] ."' class = '". ($menu[$i][4] ? "selected" : "") ." hidden'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
 		}

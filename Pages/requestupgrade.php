@@ -3,14 +3,23 @@ session_start();
 $error = array();
 
 require_once ("../Resources/Includes/connect.php");
+
+/*
+ * Selection of All Admin_User for User Management
+ */
 $sql ="select NETWORK_USERNAME from PermittedUsers where SYS_USER_ROLE ='admin_user'";
 $result = $mysqli->query($sql);
 
 
+/*
+ * Selection of all available User Rights
+ */
 $rightsql ="select ID_USER_RIGHT,USER_RIGHT from UserRights";
 $rightresult = $mysqli1->query($rightsql);
 
-
+/*
+ * Selection of all available User roles
+ */
 
 $rolesql ="select ID_USER_ROLE, USER_ROLE from UserRoles";
 $roleresult = $mysqli2->query($rolesql);

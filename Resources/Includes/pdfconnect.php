@@ -3,7 +3,7 @@
 /*
  * Creating one master file to generate any standard report via TCPDF.
  */
-require_once('../Resources/tcpdf/tcpdf.php');
+require_once("../../tcpdf/tcpdf.php");
 
 define("PDF_HEADER_TITLE","Print" );
 define("PDF_CREATOR","Academic BluePrint" );
