@@ -170,43 +170,36 @@ function mynl2br($text) {
 	      </div>
 	      <div class="modal-body">
 	        <div class="col-xs-12">
-    <form action ="" method="POST">
-        <div class="form-group">
-            <label for="AYgoal">Please select Academic Year:</label>
-            <select name="AY" class="form-control" id="AYgoal">
-                <option value =""></option selected>
-                <?php while($row = $result ->fetch_array(MYSQLI_NUM)): { ?>
-                    <option value="<?php echo $row[1]; ?>"> <?php echo $row[1]; ?> </option>
-                <?php }  endwhile; ?>
-                </select>
-        </div>
-        <div class="form-group">
-            <label for="goaltitle">Please Enter Goal Title:</label>
-            <input type = "text" class="form-control" name="goaltitle" id ="goaltitle" required>
-        </div>
-        <div class="form-group">
-            <label for="goalstatement">Please Enter Goal Statement:</label>
-            <textarea  class="form-control" name="goalstatement" id ="goalstatement" required></textarea>
-        </div>
+				<form action ="" method="POST">
+					<div class="form-group">
+						<label for="AYgoal">Please select Academic Year:</label>
+						<select name="AY" class="form-control" id="AYgoal">
+							<option value =""></option selected>
+							<?php while($row = $result ->fetch_array(MYSQLI_NUM)): { ?>
+								<option value="<?php echo $row[1]; ?>"> <?php echo $row[1]; ?> </option>
+							<?php }  endwhile; ?>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="goaltitle">Please Enter Goal Title:</label>
+						<input type = "text" class="form-control" name="goaltitle" id ="goaltitle" required>
+					</div>
+					<div class="form-group">
+						<label for="goalstatement">Please Enter Goal Statement:</label>
+						<textarea  class="form-control" name="goalstatement" id ="goalstatement" required></textarea>
+					</div>
+					<input type="submit" name="submit" value="Submit" class="btn-primary btn-sm">
+				</form>
+			</div>
+		  </div>
+			<div class="modal-footer">
 
-        
-        <input type="submit" name="submit" value="Submit" class="btn-primary btn-sm">
-    </form>
-</div>
-
-	      </div>
-	      <div class="modal-footer">
-	        
-	      </div>
+			</div>
 	    </div>
 	  </div>
 	</div>
-
-
-
 <?php
 	//Include Footer
 	require_once("../Resources/Includes/footer.php");
-
 ?>
 <script src="../Resources/Library/js/goalManagement.js"></script>

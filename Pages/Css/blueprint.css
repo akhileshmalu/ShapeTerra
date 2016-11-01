@@ -1,0 +1,68 @@
+#title{
+    margin-bottom: 36px;
+    margin-top: 25px;
+    font-weight: 400;
+    padding-left: 55px;
+}
+
+
+button span{
+    vertical-align: middle;
+}
+
+#table-container{
+    padding-left: 0;
+    margin-top: 37px;
+    padding-right: 0;
+    /*Arbitrary height until content is added to match*/
+    height: 1860px;
+}
+
+table th{
+    background-color: #C6CACD;
+    padding: 20px !important;
+    padding-left: 55px !important;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+}
+
+table td{
+    padding: 20px !important;
+    padding-left: 55px !important;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+}
+
+aside{
+    position: absolute !important;
+    height:1500px;
+    margin-top: 15px;
+    top:120px;
+    right: -850px;
+    z-index: 20;
+    overflow-y:scroll;
+    overflow-x: hidden;
+}
+
+h3.title{
+    color:#4A90E2;
+    font-size: 13px;
+    margin-bottom: 7px;
+    margin-top: 40px;
+    font-weight: 400;
+}
+
+aside h2{
+    margin-top: 0;
+    font-size: 24px;
+    font-weight: 400;
+}
+
+aside p{
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.modal-footer{
+    border-top:none;
+}

@@ -28,10 +28,15 @@ if(isset($_POST['submit'])) {
         $enddate = $_POST['enddate'];
         $censusdate = $_POST['censusdate'];
 
+        $ouname = $_POST['ou_name[]'];
+        foreach ($ouname as $value) {
+            echo $value;
+        }
+
         $id = stringtoid($startdate,$enddate);
         $desc = idtostring($id);
 
-        $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
+        //$sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
         if($mysqli->query($sql)){
             $error[0] = "Academic Year Added Successfully.";
         } else {
@@ -62,17 +67,20 @@ function idtostring ($id){
 
 
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
-
+<link href="Css/blueprint.css" rel="stylesheet" type="text/css" />
 <body>
 <?php
 // Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
 
-
-<div class="col-lg-6 col-md-6 col-xs-12" id="ContentRight">
+<div class="hr"></div>
+<div id="main-content" class="col-lg-10 col-xs-8">
+    <div class="col-xs-12">
+        <h1 id="title" class="col-lg-5 col-xs-8">Academic BluePrint</h1>
+    </div>
+    <div class="col-xs-4" id="table-container">
     <form action ="" method="POST">
-        <div class='col-lg-6'>
             <label for="datetimepicker1">Please Select Academic Year Start date :</label>
             <div class="form-group">
                 <div class='input-group date'  id='datetimepicker1'>
@@ -112,8 +120,9 @@ require_once("../Resources/Includes/menu.php");
                 </div>
             <?php } ?>
             <input type="submit" name="submit" value="Submit" class="btn-primary">
-        </div>
+
     </form>
+</div>
 </div>
 <?php
 //Include Footer

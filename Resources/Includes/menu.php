@@ -100,7 +100,9 @@ $menu = array(
 				  break;
 			  default :
 				  for($i = 0; $i < count($menu); $i++){
-					  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+					  if($menu[$i][3] == "user"){
+					  	echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+					  }
 				  }
 				  echo "<li role='separator' class='divider'></li>";
 				  break;
