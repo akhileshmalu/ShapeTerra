@@ -9,7 +9,7 @@ $_SESSION['login_fname'] = $rows['FNAME'];
 $_SESSION['login_lname'] = $rows['LNAME'];
 $ou = $rows['USER_OU_MEMBERSHIP'];
 
-$sql1 = "SELECT * from broadcast where BROADCAST_OU ='$ou'; ";
+$sql1= "select * from broadcast where find_in_set ('$ou',BROADCAST_OU)>0;";
 $result1 = $mysqli1->query($sql1);
 
 require_once("../Resources/Includes/header.php");
@@ -19,8 +19,8 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 <div class="row">
-<div id="actionlist" class="col-lg-offset-6 col-lg-6">
-		<h2>Pending Task List</h2>
+<div id="actionlist" class="col-lg-offset-8 col-lg-8">
+		<h2>Task List</h2>
 		<table class="table table-hover">
 			<thead>
 			<tr>
@@ -31,8 +31,8 @@ require_once("../Resources/Includes/menu.php");
 			<tbody>
 			<?php while($rows1 = $result1->fetch_assoc()): ?>
 			<tr class="info">
-				<td><?php $rows1['BROADCAST_DESC']; ?></td>
-				<td><?php $rows1['BROADCAST_STATUS']; ?></td>
+				<td><?php echo $rows1["BROADCAST_DESC"]; ?></td>
+				<td><?php echo $rows1["BROADCAST_STATUS"]; ?></td>
 			</tr>
 			<?php endwhile; ?>
 			</tbody>

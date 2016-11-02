@@ -6,8 +6,9 @@
 
 session_start();
 $error = array();
-$errorflag ='';
-$ouname[]="";
+$errorflag =0;
+$ouname="";
+$ou=array();
 
 require_once ("../Resources/Includes/connect.php");
 $sql = "Select * from Hierarchy";
@@ -25,16 +26,28 @@ if(isset($_POST['submit'])) {
         $enddate = $_POST['enddate'];
         $censusdate = $_POST['censusdate'];
 
-        $ouname = $_POST['ou_name[]'];
-        foreach ($ouname as $value) {
-            echo $value;
+        $ou = $_POST['ou_name'];
+        foreach ($ou as $value) {
+            $ouname .= $value . ",";
         }
+
+        /*
+         * Broadcast status
+         *  -  Initiated : Provost opened Academic Year
+         *  -  In Progress : Contributor Started confirmation
+         *  -  Complete : Contributor Finished confirmation
+         *
+         */
+        $broadcaststatus = "Initiated";
+
 
         $id = stringtoid($startdate,$enddate);
         $desc = idtostring($id);
+        $broadcastmsg= "Academic Year".$desc." Initiated.";
 
-        //$sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
-        if($mysqli->query($sql)){
+        $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
+        $sql.= "INSERT INTO broadcast (BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS) VALUES ('$ouname','$broadcastmsg','Y','$broadcaststatus');";
+        if($mysqli->multi_query($sql)){
             $error[0] = "Academic Year Added Successfully.";
         } else {
             $error [0] = "Academic Year Could not be added.";
@@ -71,22 +84,22 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="hr"></div>
-    <div id="main-content" class="col-xs-10">
-        <h1 id="title">Academic BluePrint</h1>
- 
-        <ul id="tabs" class="nav nav-pills" id="menu-secondary" role="tablist">
-            <li class="active"><a href="#add">Tab 1</a></li>
-            <li><a href="#view">Tab 2</a></li>
-        </ul>
+<div id="main-content" class="col-xs-10">
+    <h1 id="title">Academic BluePrint</h1>
 
+    <ul id="tabs" class="nav nav-pills" id="menu-secondary" role="tablist">
+        <li class="active"><a href="#add">Add Academic Year</a></li>
+        <li><a href="#view">Select Organization Unit</a></li>
+    </ul>
+    <form action="" method="POST">
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active fade in" id="add">
                 <div class="col-xs-4" id="table-container">
-                    <form action ="" method="POST">
+
                     <label for="datetimepicker1">Please Select Academic Year Start date :</label>
                     <div class="form-group">
-                        <div class='input-group date'  id='datetimepicker1'>
-                            <input type='text' name="startdate"  class="form-control" required/>
+                        <div class='input-group date' id='datetimepicker1'>
+                            <input type='text' name="startdate" class="form-control">
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -95,7 +108,7 @@ require_once("../Resources/Includes/menu.php");
                     <label for="datetimepicker2">Please Select Academic Year End date :</label>
                     <div class="form-group">
                         <div class='input-group date' id='datetimepicker2'>
-                            <input type='text' name="enddate" class="form-control" required />
+                            <input type='text' name="enddate" class="form-control">
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -111,33 +124,31 @@ require_once("../Resources/Includes/menu.php");
                         </div>
                     </div>
                 </div>
+
             </div>
 
-
-        <div role="tabpanel" class="tab-pane fade " id="view">
-            <label for="ouname">Please Select Organization Unit(s)</label>
-                <?php while($row = $result->fetch_array(MYSQLI_NUM)): { ?>
+            <div role="tabpanel" class="tab-pane fade " id="view">
+                <label for="ouname">Please Select Organization Unit(s)</label>
+                <?php while ($row = $result->fetch_array(MYSQLI_NUM)): { ?>
                     <div class="checkbox" id="ouname">
-                    <label><input type="checkbox" name="ou_name[]" value="<?php echo $row[0]; ?>"><?php echo $row[1]; ?></label>
-                </div>
-                <?php } endwhile;?>
-                <?php if(isset($_POST['submit'])) { ?>
-                    <div class="alert alert-warning">
-                        <?php foreach ($error as $value)echo $value; ?>
+                        <label><input type="checkbox" name="ou_name[]"
+                                      value="<?php echo $row[0]; ?>"><?php echo $row[1]; ?></label>
                     </div>
-                <?php } ?>
+                <?php } endwhile; ?>
                 <input type="submit" name="submit" value="Submit" class="btn-primary pull-left">
-                </form>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
-    </div>
- </form>
-
-
-
-
-
+<div class="row">
+<div class="col-xs-6">
+    <?php if (isset($_POST['submit'])) { ?>
+        <div id="errorplate" class="alert alert-warning col-xs-6">
+            <?php foreach ($error as $value) echo $value; ?>
+        </div>
+    <?php } ?>
+</div>
+</div>
 
 <?php
 //Include Footer
