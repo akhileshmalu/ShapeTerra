@@ -17,6 +17,10 @@ button span{
 	vertical-align: middle;
 }
 
+#main-content{
+	padding-left: 0px !important;
+}
+
 #table-container{
 	padding-left: 0;
 	margin-top: 37px;

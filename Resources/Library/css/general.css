@@ -32,7 +32,7 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 }
 
 #main-content{
-	padding-left: 0;
+	padding-left: 100px;
 }
 
 .hr{
@@ -44,6 +44,7 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 }
 
 .btn-primary{
+	margin-top: 20px;
 	background-color: #4A90E2;
 	padding: 12px 40px;
 	font-size: 14px;
@@ -55,4 +56,5 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	border:none;
 	text-shadow: none;
 	box-shadow: none;
+
 }
