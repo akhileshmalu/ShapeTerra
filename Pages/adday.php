@@ -41,12 +41,12 @@ if(isset($_POST['submit'])) {
         $broadcaststatus = "Initiated";
 
 
-        $id = stringtoid($startdate,$enddate);
+        $id = stringdatestoid($startdate,$enddate);
         $desc = idtostring($id);
         $broadcastmsg= "Academic Year".$desc." Initiated.";
 
         $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
-        $sql.= "INSERT INTO broadcast (BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS) VALUES ('$ouname','$broadcastmsg','Y','$broadcaststatus');";
+        $sql.= "INSERT INTO broadcast (BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS,BROADCAST_AY) VALUES ('$ouname','$broadcastmsg','Y','$broadcaststatus','$id');";
         if($mysqli->multi_query($sql)){
             $error[0] = "Academic Year Added Successfully.";
         } else {
@@ -55,24 +55,7 @@ if(isset($_POST['submit'])) {
     }
 }
 
-/*
- * Function to obtain String from ID and ID from String.
- */
 
-function stringtoid ($string1, $string2){
-
-    $id1 = intval(substr($string1,2,2));
-    $id2= intval(substr($string2,2,2));
-    $id = ($id1*100)+$id2;
-    return $id;
-}
-
-function idtostring ($id){
-    $id2= $id %100;
-    $id1= intval($id/100);
-    $string = "AY20".$id1."-20".$id2;
-    return $string;
-}
 
 require_once("../Resources/Includes/header.php");
 

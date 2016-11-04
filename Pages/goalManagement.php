@@ -6,8 +6,8 @@
 	$goaltitle="";
 
 	require_once ("../Resources/Includes/connect.php");
-	$sql = "Select * from AcademicYears where ID_ACAD_YEAR > '1600' AND GOAL_STATUS_ID is null;";
-	$result = $mysqli->query($sql);
+	$sqlay = "Select * from AcademicYears where GOAL_STATUS_ID is null;";
+	$resultay = $mysqli->query($sqlay);
 
 	if(isset($_POST['submit'])) {
 	//    if (empty($_POST['AY'])) {
@@ -43,9 +43,7 @@
 
 
 	        $id= stringtoid($_POST['AY']);
-	//        $academicstartdate="20".($id /100)."-08-16";
-	//        $academicenddate="20".($id%100)."-08-15";
-	//
+		//
 	//        $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END) VALUES ('$id','$ay','$academicstartdate','$academicenddate');";
 	          $sql = "Update AcademicYears SET GOAL_STATUS_ID = 06 where ID_ACAD_YEAR = '$id'";
 	            $mysqli->query($sql);
@@ -61,27 +59,6 @@
 	//Include Header
 	require_once("../Resources/Includes/header.php");
 
-	/*
- * Function to obtain String from ID and ID from String.
- */
-
-function idtostring ($id){
-    $id= $id %100;
-    $string = "AY20".$id."-20".($id+1);
-    return $string;
-}
-function stringtoid ($string){
-
-    $id = intval(substr($string,4,2));
-    $id = ($id*100)+$id+1;
-    return $id;
-}
-/*
- * Function for taking paragraph with lines input in goal statement
- */
-function mynl2br($text) {
-    return strtr($text, array("\r\n" => '<br />', "\r" => '<br />', "\n" => '<br />'));
-}
 ?>
 
 <link href="Css/goalManagement.css" rel="stylesheet" type="text/css" />
@@ -111,15 +88,15 @@ function mynl2br($text) {
 	  				<th>Academic Year</th>
 	  			</tr>
 				<?php
-					$sql = "Select * from AcademicYears where GOAL_STATUS_ID = 6";
-            		$result = $mysqli->query($sql);
-            		while($rows = $result ->fetch_assoc()):{ ?>
-            			<tr id="year" class="<?php echo $rows['ACAD_YEAR_DESC']; ?>">
-                			<td><?php echo $rows['ACAD_YEAR_DESC']; ?></td>
+					$sqlviewgoal = "Select * from AcademicYears where GOAL_STATUS_ID = 6";
+            		$resultviewgoal = $mysqli->query($sqlviewgoal);
+            		while($rowsviewgoal = $resultviewgoal ->fetch_assoc()):{ ?>
+            			<tr id="year" class="<?php echo $rowsviewgoal['ACAD_YEAR_DESC']; ?>">
+                			<td><?php echo $rowsviewgoal['ACAD_YEAR_DESC']; ?></td>
                 		</tr>	
             	<?php 
             		} endwhile; 
-            		mysqli_data_seek($result, 0);
+            		mysqli_data_seek($resultviewgoal, 0);
             	?>
 			</table>
 		</div>
@@ -129,33 +106,33 @@ function mynl2br($text) {
 	  				<th>Goal title</th>
 	  			</tr>
 				<?php
-					$sql = "select * from UniversityGoals ORDER BY GOAL_ACAD_YEARS ASC";
-            		$result = $mysqli->query($sql);
-            		while($rows = $result ->fetch_assoc()):{ ?>
-            			<tr id="goal" class="<?php echo $rows['ID_UNIV_GOAL'] . " " . $rows['GOAL_ACAD_YEARS']; ?> hidden">
-                			<td><?php echo $rows['GOAL_TITLE']; ?></td>
+					$sqlgt = "select * from UniversityGoals ORDER BY GOAL_ACAD_YEARS ASC";
+            		$resultgt = $mysqli->query($sqlgt);
+            		while($rowsgt = $resultgt ->fetch_assoc()):{ ?>
+            			<tr id="goal" class="<?php echo $rowsgt['ID_UNIV_GOAL'] . " " . $rowsgt['GOAL_ACAD_YEARS']; ?> hidden">
+                			<td><?php echo $rowsgt['GOAL_TITLE']; ?></td>
                 		</tr>	
             	<?php 
             		} endwhile; 
-            		mysqli_data_seek($result, 0);
+            		mysqli_data_seek($resultgt, 0);
             	?>
 			</table>
 		</div>
 			<?php
-					$sql = "select * from UniversityGoals";
-            		$result = $mysqli->query($sql);
-            		while($rows = $result ->fetch_assoc()):{ ?>
-            			<aside class="col-xs-6 hidden <?php echo $rows['ID_UNIV_GOAL']; ?>" id="goal-summary">
+					$sqlug = "select * from UniversityGoals";
+            		$resultug = $mysqli->query($sqlug);
+            		while($rowsug = $resultug ->fetch_assoc()):{ ?>
+            			<aside class="col-xs-6 hidden <?php echo $rowsug['ID_UNIV_GOAL']; ?>" id="goal-summary">
             				<h3 class="title">Goal Title</h3>
-            				<h2><?php echo $rows['GOAL_TITLE']; ?></h2>
+            				<h2><?php echo $rowsug['GOAL_TITLE']; ?></h2>
             				<h3 class="title">Academic Year</h3>
-            				<p><?php echo $rows['GOAL_ACAD_YEARS']; ?></p>	
+            				<p><?php echo $rowsug['GOAL_ACAD_YEARS']; ?></p>
             				<h3 class="title">Goal Statement</h3>
-            				<p><?php echo $rows['GOAL_STATEMENT']; ?></p>
+            				<p><?php echo $rowsug['GOAL_STATEMENT']; ?></p>
 						</aside>
             	<?php 
             		} endwhile; 
-            		mysqli_data_seek($result, 0);
+            		mysqli_data_seek($resultug, 0);
             	?>
 
   	</div>
@@ -175,8 +152,8 @@ function mynl2br($text) {
 						<label for="AYgoal">Please select Academic Year:</label>
 						<select name="AY" class="form-control" id="AYgoal">
 							<option value =""></option selected>
-							<?php while($row = $result ->fetch_array(MYSQLI_NUM)): { ?>
-								<option value="<?php echo $row[1]; ?>"> <?php echo $row[1]; ?> </option>
+							<?php while($rowsay = $resultay ->fetch_array(MYSQLI_NUM)): { ?>
+								<option value="<?php echo $rowsay[1]; ?>"> <?php echo $rowsay[1]; ?> </option>
 							<?php }  endwhile; ?>
 						</select>
 					</div>

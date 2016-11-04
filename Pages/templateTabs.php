@@ -1,9 +1,9 @@
 <?php
 
-	session_start();
+session_start();
 $error = array();
 $errorflag ='';
-$ouname[]="";
+
 
 require_once ("../Resources/Includes/connect.php");
 
@@ -13,8 +13,8 @@ require_once ("../Resources/Includes/connect.php");
 </head>
 <body>
 <?php
-	// Include Menu and Top Bar
-	require_once("../Resources/Includes/menu.php");
+// Include Menu and Top Bar
+require_once("../Resources/Includes/menu.php");
 ?>
 
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css" />

@@ -37,4 +37,36 @@ $headers = "MIME-Version: 1.0" . "\r\n";
 $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 $headers .= 'From: ShapeTerra <admin@ShapeTerra.com>' . "\r\n";
 
+/*Common String function to interchange AY-ID and Desc
+*/
+// When there is start date and end date on form.
+function stringdatestoid ($string1, $string2){
+
+    $id1 = intval(substr($string1,2,2));
+    $id2= intval(substr($string2,2,2));
+    $id = ($id1*100)+$id2;
+    return $id;
+}
+// e.g. 1617 - AY2016-2017
+function idtostring ($id){
+    $id2= $id %100;
+    $id1= intval($id/100);
+    $string = "AY20".$id1."-20".$id2;
+    return $string;
+}
+// e.g. AY2016-2017 to 1617.
+function stringtoid ($string){
+
+    $id = intval(substr($string,4,2));
+    $id = ($id*100)+$id+1;
+    return $id;
+}
+/*
+ * Function for taking paragraph with lines input in goal statement
+ */
+function mynl2br($text) {
+    return strtr($text, array("\r\n" => '<br />', "\r" => '<br />', "\n" => '<br />'));
+}
+
+
 ?>

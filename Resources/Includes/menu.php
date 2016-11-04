@@ -12,15 +12,17 @@
 */
 require_once ("../Resources/Includes/connect.php");
 $email = $_SESSION['login_email'];
-$sql1 = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE, OU_ABBREV from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
+$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE, OU_ABBREV from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
 inner join UserRoles on PermittedUsers.SYS_USER_ROLE = UserRoles.ID_USER_ROLE
 inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY WHERE  NETWORK_USERNAME ='$email';";
-$resultmenu = $menucon->query($sql1);
+$resultmenu = $menucon->query($sqlmenu);
 $rowsmenu = $resultmenu ->fetch_assoc();
+$_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
 
 $menu = array(
 	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
 	array("Goals", "../$navdir"."Pages/goalManagement.php", "&#xe002;","goal","basic", false),
+	array("BluePrint Confirm", "../$navdir"."Pages/confirmbp.php", "&#xe002;" ,"main","basic", true),
 	array("Initiate Academic BluePrint", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","Provost", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin","basic", false),
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin","basic", false),
@@ -137,11 +139,13 @@ Generate PDF button currently disabled.
 
 			} continue;
 		}
-		echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+		if($menu[$i][3] == "main" && $menu[$i][4] == "basic") {
+			echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+		}
 	}
 	?>
 	<li class="" id="header"><a class="goal" href="#" onclick="return false">Goal Management <span span id="goal" class="caret"></span></a></li>
-	<?php
+		<?php
 	for($i = 0; $i < count($menu); $i++) {
 		if($menu[$i][3] == "goal"){
 			echo "<li><a id ='". $menu[$i][3] ."' class = '". ($menu[$i][4] ? "selected" : "") ." hidden'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
@@ -150,3 +154,4 @@ Generate PDF button currently disabled.
 	?>
 	</ul>
 </nav>
+

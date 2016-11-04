@@ -9,7 +9,7 @@ $_SESSION['login_fname'] = $rows['FNAME'];
 $_SESSION['login_lname'] = $rows['LNAME'];
 $ou = $rows['USER_OU_MEMBERSHIP'];
 
-$sql1= "select * from broadcast where find_in_set ('$ou',BROADCAST_OU)>0;";
+$sql1= "select * from broadcast where find_in_set ($ou,BROADCAST_OU)>0;";
 $result1 = $mysqli1->query($sql1);
 
 require_once("../Resources/Includes/header.php");
