@@ -141,7 +141,7 @@ Generate PDF button currently disabled.
 
 			} continue;
 		}
-		if($menu[$i][3] == "main" && $menu[$i][4] <> "Provost") {
+		if($menu[$i][3] == "main" && $menu[$i][4] <> "provost") {
 			echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 		}
 	}
