@@ -43,7 +43,7 @@
 
 
 	        $id= stringtoid($_POST['AY']);
-		//
+				//
 	//        $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END) VALUES ('$id','$ay','$academicstartdate','$academicenddate');";
 	          $sql = "Update AcademicYears SET GOAL_STATUS_ID = 06 where ID_ACAD_YEAR = '$id'";
 	            $mysqli->query($sql);
@@ -170,7 +170,6 @@
 			</div>
 		  </div>
 			<div class="modal-footer">
-
 			</div>
 	    </div>
 	  </div>

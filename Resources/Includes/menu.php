@@ -22,8 +22,10 @@ $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
 $menu = array(
 	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
 	array("Goals", "../$navdir"."Pages/goalManagement.php", "&#xe002;","goal","basic", false),
-	array("BluePrint Confirm", "../$navdir"."Pages/confirmbp.php", "&#xe002;" ,"main","basic", true),
-	array("Initiate Academic BluePrint", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","Provost", false),
+	array("BluePrint Confirm", "../$navdir"."Pages/confirmbp.php", "&#xe002;" ,"main","user", true),
+	array("Add Academic Year", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","provost", true),
+//	array("Show BluePrint", "../$navdir"."Pages/blueprint/Blueprinthtml/content.php", "&#xe002;" ,"main","basic", false),
+	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "&#xe002;" ,"main","provost", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin","basic", false),
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin","basic", false),
 	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user","basic", false),
@@ -133,13 +135,13 @@ Generate PDF button currently disabled.
 	<li clas="" id="header"><a class="main" href="#" onclick="return false">Main <span id="main" class="caret"></span></a></li>
 	<?php
 	for ($i = 0; $i < count($menu); $i++) {
-		if ($menu[$i][3] == "main" && $menu[$i][4] == "Provost") {
-		if(strcmp($rowsmenu['SYS_USER_ROLE'],"provost") == 0) {
+		if(strcmp($rowsmenu['SYS_USER_ROLE'],"provost") == 0)  {
+			if ($menu[$i][3] == "main" && ($menu[$i][4] == "provost" OR $menu[$i][4] == "basic")) {
 				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 
 			} continue;
 		}
-		if($menu[$i][3] == "main" && $menu[$i][4] == "basic") {
+		if($menu[$i][3] == "main" && $menu[$i][4] <> "Provost") {
 			echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 		}
 	}

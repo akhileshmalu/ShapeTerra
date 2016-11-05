@@ -21,7 +21,7 @@ require_once("../Resources/Includes/menu.php");
 <div class="row">
 <div id="actionlist" class="col-lg-offset-8 col-lg-8">
 		<h2>Task List</h2>
-		<table class="table table-hover">
+		<table class="table table-striped table-hover">
 			<thead>
 			<tr>
 				<th>Task Description</th>
