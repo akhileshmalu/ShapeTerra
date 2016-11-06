@@ -47,11 +47,8 @@ table td{
 }
 
 aside{
-	position: absolute !important;
-	height:1500px;
 	margin-top: 15px;
-	top:120px;
-	right: -850px;
+	border-bottom: 1px #979797 solid;
 	z-index: 20;
 	overflow-y:scroll; 
 	overflow-x: hidden;
@@ -75,6 +72,8 @@ aside p{
 	font-weight: 400;
 	font-size: 18px;
 }
+
+
 
 .modal-footer{
 	border-top:none;

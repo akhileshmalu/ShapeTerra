@@ -100,37 +100,22 @@
             	?>
 			</table>
 		</div>
-		<div class="col-xs-3" id="table-container">
-			<table class="table table-striped table-hover">
-				<tr>
-	  				<th>Goal title</th>
-	  			</tr>
-				<?php
-					$sqlgt = "select * from UniversityGoals ORDER BY GOAL_ACAD_YEARS ASC";
-            		$resultgt = $mysqli->query($sqlgt);
-            		while($rowsgt = $resultgt ->fetch_assoc()):{ ?>
-            			<tr id="goal" class="<?php echo $rowsgt['ID_UNIV_GOAL'] . " " . $rowsgt['GOAL_ACAD_YEARS']; ?> hidden">
-                			<td><?php echo $rowsgt['GOAL_TITLE']; ?></td>
-                		</tr>	
-            	<?php 
-            		} endwhile; 
-            		mysqli_data_seek($resultgt, 0);
-            	?>
-			</table>
-		</div>
 			<?php
 					$sqlug = "select * from UniversityGoals";
             		$resultug = $mysqli->query($sqlug);
+
+            		
+
             		while($rowsug = $resultug ->fetch_assoc()):{ ?>
-            			<aside class="col-xs-6 hidden <?php echo $rowsug['ID_UNIV_GOAL']; ?>" id="goal-summary">
+            			<aside class="col-xs-9 hidden <?php echo $rowsug['GOAL_ACAD_YEARS']; ?>" id="goal-summary">
             				<h3 class="title">Goal Title</h3>
             				<h2><?php echo $rowsug['GOAL_TITLE']; ?></h2>
-            				<h3 class="title">Academic Year</h3>
-            				<p><?php echo $rowsug['GOAL_ACAD_YEARS']; ?></p>
             				<h3 class="title">Goal Statement</h3>
             				<p><?php echo $rowsug['GOAL_STATEMENT']; ?></p>
 						</aside>
+						<div id="aside-line"></div>
             	<?php 
+            		
             		} endwhile; 
             		mysqli_data_seek($resultug, 0);
             	?>

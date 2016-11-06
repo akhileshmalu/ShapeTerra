@@ -4,6 +4,10 @@
 	font-weight: 400;
 }
 
+ul#tabs{
+	padding-left: 20px;
+}
+
 li.active a{
 	background-color: transparent !important;
 	color: #333 !important;
