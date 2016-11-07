@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once("../Resources/Includes/connect.php");
-$ay = array();
+$aysubmit = array();
 $ayname = "";
 $error = array();
 
@@ -11,6 +11,7 @@ $valuestatement = "";
 
 $goalid = array();
 
+$ouid = $_SESSION['login_ouid'];
 
 $unigoallink = array();
 $unigoallinkname = "";
@@ -42,8 +43,8 @@ if (isset($_POST['value_submit'])) {
     $valuestatement = mynl2br($_POST['valuenew']);
 }
 if (isset($_POST['goal_submit'])) {
-    $ay = $_POST['AY'];
-    foreach ($ay as $value) {
+    $aysubmit = $_POST['AY'];
+    foreach ($aysubmit as $value) {
         $ayname .= $value . ",";
     }
     $goaltitle = $_POST['goaltitle'];
@@ -68,6 +69,7 @@ if (isset($_POST['approve'])) {
     if (!isset($_POST['mission_submit'])) {
 
         $missionstatement = mynl2br($_POST['missionstatement']);
+
     }
     if (!isset($_POST['value_submit'])) {
 
@@ -80,6 +82,7 @@ if (isset($_POST['approve'])) {
     foreach($goalid as $idk) {
         $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) SELECT OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, '$ay', UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT FROM BP_UnitGoals WHERE ID_UNIT_GOAL ='$idk';";
     }
+    $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS = 'Approved by Admin' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
     if ($mysqli->multi_query($sqlcreatebp)) {
         $error[0] = "BluePrint has been successfully approved.";
     } else {
@@ -123,24 +126,30 @@ require_once("../Resources/Includes/menu.php");
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active fade in" id="input1">
 <!--        <form action="" method="POST">-->
-            <div class="form-group col-xs-6" id="actionlist">
-                <label for="missiontitle">Please Verify If <strong>Mission Statement</strong> is changed from Previous Year:</label>
-                <?php
+        <div class="form-group col-xs-6" id="actionlist">
+            <label for="missiontitle">Please Verify If <strong>Mission Statement</strong> is changed from Previous Year:</label>
+            <?php
 
-                $sqlmission = "select * from BP_MissionVisionValues where UNIT_MVV_AY ='$aydesc' and OU_ABBREV ='$ouabbrev';";
-                $resultmission = $mysqli->query($sqlmission);
-                $rowsmission = $resultmission->fetch_assoc()
-                ?>
-                <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement" id="missiontitle"
-                          required><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
-                <button id="changetabbutton" type="button" name="nochangemissoin"
-                        class="btn-primary col-lg-4 col-xs-4 pull-left">Same as Before
-                </button>
-                <button id="add-mission" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
-                        data-target="#addmissionModal"><span class="icon">&#xe035;</span> Add Mission
-                </button>
+            $sqlmission = "select * from BP_MissionVisionValues where UNIT_MVV_AY ='$aydesc' and OU_ABBREV ='$ouabbrev';";
+            $resultmission = $mysqli->query($sqlmission);
+            $rowsmission = $resultmission->fetch_assoc()
+            ?>
+            <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstate" id="missiontitle"
+                      required><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
+            <input type="text" class="hidden" name="missionstatement" id="missionstatement">
+            <button id="changetabbutton" type="button" name="nochangemissoin" onclick="copyText1()"
+                    class="btn-primary col-lg-4 col-xs-4 pull-left">Same as Before
+            </button>
+            <button id="add-mission" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
+                    data-target="#addmissionModal"><span class="icon">&#xe035;</span> Add Mission
+            </button>
+        </div>
+        <?php if (isset($_POST['approve'])) { ?>
+            <div class="alert alert-warning col-xs-12">
+                <?php foreach ($error as $value) echo $value . "<br>"; ?>
             </div>
-<!--        </form>-->
+        <?php } ?>
+<!--       </form>-->
     </div>
     <div role="tabpanel" class="tab-pane fade" id="input2">
         <form action="" method="POST">
@@ -159,6 +168,7 @@ require_once("../Resources/Includes/menu.php");
         <form action="" method="POST">
             <div class="form-group col-xs-6" id="actionlist">
                 <label for="valuestatement">Please Verify If <strong>Value Statement</strong> is changed from Previous Year:</label>
+                <input type="text" class = "textbox col-lg-12 hidden" size="25%" height="50" value="<?php echo $rowsmission['VALUES_STATEMENT']; ?>">
                 <textarea id="valuestatement" rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"
                           required><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
                 <button id="changetabbutton" type="button" name="nochangemissoin"
@@ -336,6 +346,7 @@ require_once("../Resources/Includes/menu.php");
         </div>
     </div>
 </div>
+
 
 <?php
 //Include Footer

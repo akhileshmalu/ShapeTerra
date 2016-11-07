@@ -8,6 +8,7 @@ $rows = $result -> fetch_assoc();								//Fetching to Show on Account page
 $_SESSION['login_fname'] = $rows['FNAME'];
 $_SESSION['login_lname'] = $rows['LNAME'];
 $ou = $rows['USER_OU_MEMBERSHIP'];
+$_SESSION['login_ouid'] = $ou;
 
 if($ou <> 4) {
 	$sqltask = "select * from broadcast where BROADCAST_OU = '$ou';";
