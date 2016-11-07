@@ -138,7 +138,7 @@ require_once("../Resources/Includes/menu.php");
                       required><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
             <input type="text" class="hidden" name="missionstatement" id="missionstatement">
             <button id="changetabbutton" type="button" name="nochangemissoin" onclick="copyText1()"
-                    class="btn-primary col-lg-4 col-xs-4 pull-left">Same as Before
+                    class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Same as Before
             </button>
             <button id="add-mission" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
                     data-target="#addmissionModal"><span class="icon">&#xe035;</span> Add Mission
@@ -156,8 +156,8 @@ require_once("../Resources/Includes/menu.php");
             <div class="form-group col-xs-6" id="actionlist">
                 <label for="visiontitle">Please Verify If <strong>Vision Statement</strong> is changed from Previous Year:</label><br>
                 <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" required><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
-                <button id="changetabbutton" type="button" name="nochangemissoin"
-                        class="btn-primary col-lg-4 col-xs-4 pull-left">Same as Before
+                <button  id="changetabbutton" type="button" name="nochangemissoin"
+                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Same as Before
                 </button>
                 <button id="add-vision" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
                         data-target="#addvisionModal"><span class="icon">&#xe035;</span> Add Vision</button>
@@ -172,7 +172,7 @@ require_once("../Resources/Includes/menu.php");
                 <textarea id="valuestatement" rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"
                           required><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
                 <button id="changetabbutton" type="button" name="nochangemissoin"
-                        class="btn-primary col-lg-4 col-xs-4 pull-left">Same as Before
+                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Same as Before
                 </button>
                 <button id="add-value" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
                         data-target="#addvalueModal"><span class="icon">&#xe035;</span> Add Values</button>
@@ -352,4 +352,4 @@ require_once("../Resources/Includes/menu.php");
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
-<script src="../Resources/Library/js/goalManagement.js"></script>
+<script src="../Resources/Library/js/tabchange.js"></script>
