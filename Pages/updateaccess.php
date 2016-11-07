@@ -99,8 +99,8 @@ require_once("../Resources/Includes/menu.php");
 <div class="col-lg-offset-3 col-lg-3 col-md-6 col-xs-9" id="ContentRight">
     <form action ="" method="POST">
         <div class="form-group">
-            <label for="privilege">Please select User:</label>
-            <select name="email" class="form-control" onchange="selectlist()">
+            <label for="email-user">Please select User:</label>
+            <select name="email" class="form-control" onchange="selectlist()" id="email-user">
                 <option value =""></option>
                 <?php while($row = $result ->fetch_array(MYSQLI_NUM)): if(strcmp($row[0],$_SESSION['login_email'])) {; ?>
                     <option value="<?php echo $row[0]; ?>" roles="<?php echo $row[2]?>" rights="<?php echo $row[1]?>"> <?php echo $row[0]; ?> </option>
@@ -118,7 +118,7 @@ require_once("../Resources/Includes/menu.php");
         </div>
         <div class="form-group">
             <label for="approver">Please select Privilege <b>Right</b> for User:</label>
-            <select name="user-rights" class="form-control">
+            <select name="user-rights" class="form-control" id="approver">
                 <option value =""></option>
                 <?php while($row2 = $rightresult ->fetch_array(MYSQLI_NUM)):   ?>
                     <option value="<?php echo $row2[0]; ?>"> <?php echo $row2[1]; ?></option>

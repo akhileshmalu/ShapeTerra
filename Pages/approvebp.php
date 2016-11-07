@@ -5,47 +5,82 @@ $aysubmit = array();
 $ayname = "";
 $error = array();
 
+//SQL query variables
+$sqlcreatebp = "";
 $visionstatement = "";
 $missionstatement = "";
 $valuestatement = "";
 
+// Variable for selecting Org Unit in Broadcast table.
 $goalid = array();
-
 $ouid = $_SESSION['login_ouid'];
 
+/*
+ * Multiple Sel value variable for Link to University goals in Unit goal Modal.
+ */
 $unigoallink = array();
 $unigoallinkname = "";
 
 $ouabbrev = $_SESSION['login_ouabbrev'];
+
+/*
+ * Query handler for Input from Broadcast record <blueprint Intiation>
+ */
 
 $sqlbroad = "SELECT * FROM broadcast inner join Hierarchy on BROADCAST_OU = Hierarchy.ID_HIERARCHY where Hierarchy.OU_ABBREV = '$ouabbrev';";
 $resultbroad = $mysqli1->query($sqlbroad);
 $rowsbroad = $resultbroad->fetch_assoc();
 $ay = $rowsbroad['BROADCAST_AY'];
 $ayid = stringtoid($ay);
+
+/*
+ * Calculate Previous Year String
+ */
 $prevay = $ayid - 101;
 $aydesc = idtostring($prevay);
 
 $author = $_SESSION['login_email'];
 $time = date('Y-m-d H:i:s');
 
+/*
+ * Query to select Academic Years in New Unit Goal Modal
+ */
 $sqlay = "SELECT * FROM AcademicYears;";
 $resultay = $mysqli->query($sqlay);
 
+/*
+ * Query to Select Previous Year Mission , Visoin, Value Statement for Specific Org Unit.
+ */
 $sqlmission = "select * from BP_MissionVisionValues where UNIT_MVV_AY ='$aydesc' and OU_ABBREV ='$ouabbrev';";
 $resultmission = $mysqli->query($sqlmission);
 $rowsmission = $resultmission->fetch_assoc();
 
+
+/*
+ * Query to Select Unit Goals from Previous year for Specific Org Unit.
+ */
+$sqlunit = "select * from BP_UnitGoals where find_in_set ('$aydesc',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
+$resultunit = $mysqli->query($sqlunit);
+
+
 if (isset($_POST['mission_submit'])) {
     $missionstatement = mynl2br($_POST['missionnew']);
+} else {
+    $missionstatement = $rowsmission['MISSION_STATEMENT'];
 }
 
 if (isset($_POST['vision_submit'])) {
     $visionstatement = mynl2br($_POST['visionnew']);
+} else {
+    $visionstatement = $rowsmission['VISION_STATEMENT'];
 }
+
 if (isset($_POST['value_submit'])) {
     $valuestatement = mynl2br($_POST['valuenew']);
+}else {
+    $valuestatement = $rowsmission['VALUES_STATEMENT'];
 }
+
 if (isset($_POST['goal_submit'])) {
     $aysubmit = $_POST['AY'];
     foreach ($aysubmit as $value) {
@@ -59,34 +94,26 @@ if (isset($_POST['goal_submit'])) {
     $goalstatement = mynl2br($_POST['goalstatement']);
     $goalalignment = mynl2br($_POST['goalalignment']);
 
-    $sqlunitgoal ="INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+    $sqlcreatebp .="INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
 
-    $mysqli->query($sqlunitgoal);
 }
 
 if (isset($_POST['approve'])) {
+    
 
-    if (!isset($_POST['vision_submit'])) {
+    $goalid = $_POST['goaltitle'];
 
-        $visionstatement = $_POST['visionstatement'];
-    }
-    if (!isset($_POST['mission_submit'])) {
-
-        $missionstatement = $_POST['missionstate'];
-
-    }
-    if (!isset($_POST['value_submit'])) {
-
-        $valuestatement = $_POST['valuestatement'];
-    }
-
-    $goalid = remove_empty($_POST['goaltitle']);
-
+    //Mission , Vision , value Statement recorded for BP Academic Year
     $sqlcreatebp = "INSERT INTO BP_MissionVisionValues (OU_ABBREV, MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT, VISION_STATEMENT, VALUES_STATEMENT) VALUES ('$ouabbrev','$author','$time','$ay','$missionstatement','$visionstatement','$valuestatement');";
+
+    //Selected Previous Year Goals for New BP Academic Year
     foreach($goalid as $idk) {
         $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) SELECT OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, '$ay', UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT FROM BP_UnitGoals WHERE ID_UNIT_GOAL ='$idk';";
     }
+
+    //Broadcast update as per status.
     $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS = 'Approved by Admin' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
+
     if ($mysqli->multi_query($sqlcreatebp)) {
         $error[0] = "BluePrint has been successfully approved.";
     } else {
@@ -95,6 +122,8 @@ if (isset($_POST['approve'])) {
 
 }
 
+/*Function to remove empty values from array
+
 function remove_empty($array) {
     return array_filter($array, '_remove_empty_internal');
 }
@@ -102,6 +131,9 @@ function remove_empty($array) {
 function _remove_empty_internal($value) {
     return !empty($value) || $value === 0;
 }
+
+*/
+
 //Include Header
 require_once("../Resources/Includes/header.php");
 ?>
@@ -128,30 +160,6 @@ require_once("../Resources/Includes/menu.php");
 </div>
 
 <div class="tab-content">
-
-    <div role="tabpanel" class="tab-pane active fade in" id="input1">
-<!--        <form action="" method="POST">-->
-        <div class="form-group col-xs-6" id="actionlist">
-            <label for="missiontitle">Please Verify If <strong>Mission Statement</strong> is changed from Previous Year:</label>
-            <?php
-
-            $sqlmission = "select * from BP_MissionVisionValues where UNIT_MVV_AY ='$aydesc' and OU_ABBREV ='$ouabbrev';";
-            $resultmission = $mysqli->query($sqlmission);
-            $rowsmission = $resultmission->fetch_assoc()
-            ?>
-            <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstate" id="missiontitle"
-                      required><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
-            <input type="text" class="hidden" name="missionstatement" id="missionstatement">
-            <button id="changetabbutton" type="button" name="nochangemissoin" onclick="copyText1()"
-                    class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Same as Before
-            </button>
-            <button id="add-mission" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
-                    data-target="#addmissionModal"><span class="icon">&#xe035;</span> Add Mission
-            </button>
-        </div>
-        <?php if (isset($_POST['approve'])) { ?>
-            <div class="alert alert-warning col-xs-12">
-                <?php foreach ($error as $value) echo $value . "<br>"; ?>
     <div role="tabpanel" class="tab-pane active in fade" id="input1">
         <form action="" method="POST">
             <div class="form-group col-xs-6" id="actionlist">
@@ -161,9 +169,9 @@ require_once("../Resources/Includes/menu.php");
                     </div>
                 <?php } ?>
                 <label for="missiontitle">Please Select If <strong>Mission Statement</strong> is still as Previous Year:</label>
-                <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstate" id="missiontitle"
-                          required readonly><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
-                <button id="changetabbutton" type="button" name="nochangemissoin" onclick="copyText1()"
+                <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement" id="missiontitle"
+                           readonly><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
+                <button id="changetabbutton" type="button" name="nochangemission"
                         class="btn-primary col-lg-4 col-xs-4 pull-left">Same as Before
                 </button>
                 <button id="add-mission" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
@@ -176,16 +184,9 @@ require_once("../Resources/Includes/menu.php");
         <form action="" method="POST">
             <div class="form-group col-xs-6" id="actionlist">
                 <label for="visiontitle">Please Verify If <strong>Vision Statement</strong> is changed from Previous Year:</label><br>
-                <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" required><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
-                <button  id="changetabbutton" type="button" name="nochangemissoin"
-                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Same as Before
-                <label for="visiontitle">Please Select If <strong>Vision Statement</strong> is still as Previous
-                    Year:</label>
-                <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" id="visiontitle"
-                          required><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
-                <button id="changetabbutton" type="button" name="nochangemissoin"
-                        class="btn-primary col-lg-4 col-xs-4 pull-left">Same as Before
-                </button>
+                <textarea id="visiontitle" rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" readonly><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
+                <button  id="changetabbutton" type="button" name="nochangevision"
+                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Same as Before</button>
                 <button id="add-vision" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
                         data-target="#addvisionModal"><span class="icon">&#xe035;</span> Add Vision
                 </button>
@@ -198,8 +199,8 @@ require_once("../Resources/Includes/menu.php");
                 <label for="valuestatement">Please Select If <strong>Value Statement</strong> is still as Previous
                     Year:</label>
                 <textarea id="valuestatement" rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"
-                          required><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
-                <button id="changetabbutton" type="button" name="nochangemissoin"
+                          readonly><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
+                <button id="changetabbutton" type="button" name="nochangevalue"
                         class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Same as Before
                 </button>
                 <button id="add-value" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
@@ -212,20 +213,14 @@ require_once("../Resources/Includes/menu.php");
         <form action="" method="POST">
             <div class="form-group col-xs-6" id="actionlist">
                 <label for="goaltitle">Please Select Previous year Goals to verify:</label><br>
-                <?php
-                $aydesc = idtostring($prevay);
-                $sqlunit = "select * from BP_UnitGoals where find_in_set ('$aydesc',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
-                $resultunit = $mysqli->query($sqlunit);
-                $rowsunit = $resultunit->fetch_assoc();
-                $row_cnt = $resultunit->num_rows;
-                for ($a = 0; $a < $row_cnt; $a++) { ?>
-                    <select class="form-control" name="<? echo 'goaltitle[' . $a . ']'; ?>" id="goaltitle">
+                <!--                --><?php //for ($a = 0; $a < $row_cnt; $a++) { ?>
+                    <select multiple="multiple" class="form-control" name="goaltitle[]" id="goaltitle">
                         <option value="0"></option>
+                        <?php while($rowsunit = $resultunit->fetch_assoc()){ ?>
                         <option
                             value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></option>
+                        <?php } ?>
                     </select>
-                    <p></p>
-                <?php } ?>
                 <button id="add-goal" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
                         data-target="#addunitGoalModal"><span class="icon">&#xe035;</span>Add Goal
                 </button>
