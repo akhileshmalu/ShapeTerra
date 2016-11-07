@@ -32,6 +32,10 @@ $time = date('Y-m-d H:i:s');
 $sqlay = "SELECT * FROM AcademicYears;";
 $resultay = $mysqli->query($sqlay);
 
+$sqlmission = "select * from BP_MissionVisionValues where UNIT_MVV_AY ='$aydesc' and OU_ABBREV ='$ouabbrev';";
+$resultmission = $mysqli->query($sqlmission);
+$rowsmission = $resultmission->fetch_assoc();
+
 if (isset($_POST['mission_submit'])) {
     $missionstatement = mynl2br($_POST['missionnew']);
 }
@@ -64,16 +68,16 @@ if (isset($_POST['approve'])) {
 
     if (!isset($_POST['vision_submit'])) {
 
-        $visionstatement = mynl2br($_POST['visionstatement']);
+        $visionstatement = $_POST['visionstatement'];
     }
     if (!isset($_POST['mission_submit'])) {
 
-        $missionstatement = mynl2br($_POST['missionstatement']);
+        $missionstatement = $_POST['missionstate'];
 
     }
     if (!isset($_POST['value_submit'])) {
 
-        $valuestatement = mynl2br($_POST['valuestatement']);
+        $valuestatement = $_POST['valuestatement'];
     }
 
     $goalid = remove_empty($_POST['goaltitle']);
@@ -115,7 +119,7 @@ require_once("../Resources/Includes/menu.php");
 <div id="main-content" class="col-xs-10">
     <h1 id="title">BluePrint Approval</h1>
 
-    <ul id="tabs" class="nav nav-pills"  role="tablist">
+    <ul id="tabs" class="nav nav-pills" role="tablist">
         <li class="active"><a href="#input1" data-toggle="tab">Confirm Mission</a></li>
         <li><a href="#input2" data-toggle="tab">Confirm Vision</a></li>
         <li><a href="#input3" data-toggle="tab">Confirm Values</a></li>
@@ -124,6 +128,7 @@ require_once("../Resources/Includes/menu.php");
 </div>
 
 <div class="tab-content">
+
     <div role="tabpanel" class="tab-pane active fade in" id="input1">
 <!--        <form action="" method="POST">-->
         <div class="form-group col-xs-6" id="actionlist">
@@ -147,9 +152,25 @@ require_once("../Resources/Includes/menu.php");
         <?php if (isset($_POST['approve'])) { ?>
             <div class="alert alert-warning col-xs-12">
                 <?php foreach ($error as $value) echo $value . "<br>"; ?>
+    <div role="tabpanel" class="tab-pane active in fade" id="input1">
+        <form action="" method="POST">
+            <div class="form-group col-xs-6" id="actionlist">
+                <?php if (isset($_POST['approve'])) { ?>
+                    <div class="col-xs-8 alert alert-success">
+                        <?php foreach ($error as $value) echo $value; ?>
+                    </div>
+                <?php } ?>
+                <label for="missiontitle">Please Select If <strong>Mission Statement</strong> is still as Previous Year:</label>
+                <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstate" id="missiontitle"
+                          required readonly><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
+                <button id="changetabbutton" type="button" name="nochangemissoin" onclick="copyText1()"
+                        class="btn-primary col-lg-4 col-xs-4 pull-left">Same as Before
+                </button>
+                <button id="add-mission" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
+                        data-target="#addmissionModal"><span class="icon">&#xe035;</span> Add Mission
+                </button>
             </div>
-        <?php } ?>
-<!--       </form>-->
+        </form>
     </div>
     <div role="tabpanel" class="tab-pane fade" id="input2">
         <form action="" method="POST">
@@ -158,52 +179,62 @@ require_once("../Resources/Includes/menu.php");
                 <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" required><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
                 <button  id="changetabbutton" type="button" name="nochangemissoin"
                         class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Same as Before
+                <label for="visiontitle">Please Select If <strong>Vision Statement</strong> is still as Previous
+                    Year:</label>
+                <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" id="visiontitle"
+                          required><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
+                <button id="changetabbutton" type="button" name="nochangemissoin"
+                        class="btn-primary col-lg-4 col-xs-4 pull-left">Same as Before
                 </button>
                 <button id="add-vision" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
-                        data-target="#addvisionModal"><span class="icon">&#xe035;</span> Add Vision</button>
+                        data-target="#addvisionModal"><span class="icon">&#xe035;</span> Add Vision
+                </button>
             </div>
         </form>
     </div>
     <div role="tabpanel" class="tab-pane fade" id="input3">
         <form action="" method="POST">
             <div class="form-group col-xs-6" id="actionlist">
-                <label for="valuestatement">Please Verify If <strong>Value Statement</strong> is changed from Previous Year:</label>
-                <input type="text" class = "textbox col-lg-12 hidden" size="25%" height="50" value="<?php echo $rowsmission['VALUES_STATEMENT']; ?>">
+                <label for="valuestatement">Please Select If <strong>Value Statement</strong> is still as Previous
+                    Year:</label>
                 <textarea id="valuestatement" rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"
                           required><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
                 <button id="changetabbutton" type="button" name="nochangemissoin"
                         class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Same as Before
                 </button>
                 <button id="add-value" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
-                        data-target="#addvalueModal"><span class="icon">&#xe035;</span> Add Values</button>
+                        data-target="#addvalueModal"><span class="icon">&#xe035;</span> Add Values
+                </button>
             </div>
         </form>
     </div>
     <div role="tabpanel" class="tab-pane fade" id="input4">
         <form action="" method="POST">
-        <div class="form-group col-xs-6" id="actionlist">
-            <label for="goaltitle">Please Select Previous year Goals to verify:</label><br>
-            <?php
-            $aydesc = idtostring($prevay);
-            $sqlunit = "select * from BP_UnitGoals where find_in_set ('$aydesc',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
-            $resultunit = $mysqli->query($sqlunit);
-            $rowsunit = $resultunit->fetch_assoc();
-            $row_cnt = $resultunit->num_rows;
-            for ($a = 0; $a < $row_cnt; $a++) { ?>
-                <select class="form-control" name="<? echo 'goaltitle[' . $a . ']'; ?>" id="goaltitle">
-                    <option value="0"></option>
-                    <option
-                        value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></option>
-                </select>
-                <p></p>
-            <?php } ?>
-            <button id="add-goal" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
-                    data-target="#addunitGoalModal"><span class="icon">&#xe035;</span>Add Goal</button>
-            <button id="add-goal" type="submit" name="approve" class="btn-primary col-lg-4 col-xs-4 pull-left">Approve</button>
-        </div>
+            <div class="form-group col-xs-6" id="actionlist">
+                <label for="goaltitle">Please Select Previous year Goals to verify:</label><br>
+                <?php
+                $aydesc = idtostring($prevay);
+                $sqlunit = "select * from BP_UnitGoals where find_in_set ('$aydesc',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
+                $resultunit = $mysqli->query($sqlunit);
+                $rowsunit = $resultunit->fetch_assoc();
+                $row_cnt = $resultunit->num_rows;
+                for ($a = 0; $a < $row_cnt; $a++) { ?>
+                    <select class="form-control" name="<? echo 'goaltitle[' . $a . ']'; ?>" id="goaltitle">
+                        <option value="0"></option>
+                        <option
+                            value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></option>
+                    </select>
+                    <p></p>
+                <?php } ?>
+                <button id="add-goal" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
+                        data-target="#addunitGoalModal"><span class="icon">&#xe035;</span>Add Goal
+                </button>
+                <button id="add-goal" type="submit" name="approve" class="btn-primary col-lg-4 col-xs-4 pull-left">
+                    Approve
+                </button>
+            </div>
         </form>
     </div>
-
 </div>
 
 
@@ -307,7 +338,7 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-xs-12">
                     <form action="" method="POST">
                         <div class="form-group">
-                            <label for="missionstate">Please Enter New Vision Statement:</label>
+                            <label for="visionstate">Please Enter New Vision Statement:</label>
                             <input type="text" class="form-control" name="visionnew" id="visionstate" required>
                         </div>
                         <input type="submit" name="vision_submit" value="Add Vision" class="btn-primary btn-sm">
