@@ -4,14 +4,13 @@
  * This Page controls Intiation of Academic BluePrint module.
  */
 
+
 session_start();
 $error = array();
 $errorflag =0;
-$ouname="";
-$ou=array();
 
-$ayname="";
-$ay=array();
+$sqlbroad ="";
+$ou=array();
 
 
 require_once ("../Resources/Includes/connect.php");
@@ -35,29 +34,27 @@ if(isset($_POST['submit'])) {
     if($errorflag!=1){
 
         $ou = $_POST['ou_name'];
-        foreach ($ou as $value) {
-            $ouname .= $value . ",";
-        }
+
 
         $ay = $_POST['AY'];
-        foreach ($ay as $value) {
-            $iday .=stringtoid($value);
-            $ayname .= $value . ",";
-        }
 
         /*
          * Broadcast status
-         *  -  Initiated : Provost opened Academic Year
-         *  -  In Progress : Contributor Started confirmation
-         *  -  Complete : Contributor Finished confirmation
+         *  -  Initiated by Provost : Provost opened Academic Year
+         *  -  Approved by Administrator of Unit
+         * -   In Progress : Acad Contributor Started confirmation
+         *  -  Complete : Acad Contributor Finished confirmation
          */
 
-        $broadcaststatus = "Initiated";
-        $broadcastmsg= "BluePrint ".$broadcaststatus." for Academic Year(s) ".$ayname;
+        foreach ($ou as $value) {
+            list($ouid,$ouabbrev) = explode(",",$value) ;
 
-        $sql= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS,BROADCAST_AY) VALUES ('$ouname','$broadcastmsg','Y','$broadcaststatus','$iday');";
+            $broadcaststatus = "Initiated by Provost";
+            $broadcastmsg= $ouabbrev." BluePrint for Academic Year - ".$ay;
+            $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS,BROADCAST_AY) VALUES ('$ouid','$broadcastmsg','Y','$broadcaststatus','$ay');";
+        }
 
-        if($mysqli->query($sql)){
+        if($mysqli->multi_query($sqlbroad)){
             $error[0] = "Academic BluePrint Successfully Initiated.";
         } else {
             $error [0] = "Academic BluePrint Could not be initiated.";
@@ -90,7 +87,7 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-xs-4" id="table-container">
                     <div class="form-group">
                         <label for="AYgoal">Please select Academic Year:</label>
-                        <select multiple="multiple" name="AY[]" class="form-control" id="AYgoal">
+                        <select  name="AY" class="form-control" id="AYgoal">
                             <option value=""></option>
                             <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
                                 <option value="<?php echo $rowsay[1]; ?>"> <?php echo $rowsay[1]; ?> </option>
@@ -109,7 +106,7 @@ require_once("../Resources/Includes/menu.php");
                 <?php while ($rowsou = $resultou->fetch_array(MYSQLI_NUM)): { ?>
                     <div class="checkbox" id="ouname">
                         <label><input type="checkbox" name="ou_name[]"
-                                      value="<?php echo $rowsou[0]; ?>"><?php echo $rowsou[1]; ?></label>
+                                      value="<?php echo $rowsou[0].",".$rowsou[2]; ?>"><?php echo $rowsou[1]; ?></label>
                     </div>
                 <?php } endwhile; ?>
                 <input type="submit" name="submit" value="Submit" class="btn-primary pull-left">

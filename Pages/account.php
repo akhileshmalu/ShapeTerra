@@ -9,8 +9,12 @@ $_SESSION['login_fname'] = $rows['FNAME'];
 $_SESSION['login_lname'] = $rows['LNAME'];
 $ou = $rows['USER_OU_MEMBERSHIP'];
 
-$sql1= "select * from broadcast where find_in_set ($ou,BROADCAST_OU)>0;";
-$result1 = $mysqli1->query($sql1);
+if($ou <> 4) {
+	$sqltask = "select * from broadcast where BROADCAST_OU = '$ou';";
+} else {
+	$sqltask = "select * from broadcast;";
+}
+$result1 = $mysqli1->query($sqltask);
 
 require_once("../Resources/Includes/header.php");
 ?>

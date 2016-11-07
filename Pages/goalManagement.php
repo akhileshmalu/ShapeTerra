@@ -122,43 +122,44 @@
 
   	</div>
 
-  	<!-- Modal -->
-	<div class="modal fade" id="addGoalModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title" id="myModalLabel">Add Goal</h4>
-	      </div>
-	      <div class="modal-body">
-	        <div class="col-xs-12">
-				<form action ="" method="POST">
-					<div class="form-group">
-						<label for="AYgoal">Please select Academic Year:</label>
-						<select name="AY" class="form-control" id="AYgoal">
-							<option value =""></option selected>
-							<?php while($rowsay = $resultay ->fetch_array(MYSQLI_NUM)): { ?>
-								<option value="<?php echo $rowsay[1]; ?>"> <?php echo $rowsay[1]; ?> </option>
-							<?php }  endwhile; ?>
-						</select>
-					</div>
-					<div class="form-group">
-						<label for="goaltitle">Please Enter Goal Title:</label>
-						<input type = "text" class="form-control" name="goaltitle" id ="goaltitle" required>
-					</div>
-					<div class="form-group">
-						<label for="goalstatement">Please Enter Goal Statement:</label>
-						<textarea  class="form-control" name="goalstatement" id ="goalstatement" required></textarea>
-					</div>
-					<input type="submit" name="submit" value="Submit" class="btn-primary btn-sm">
-				</form>
+<!-- Modal -->
+<div class="modal fade" id="addGoalModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+						aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Add Goal</h4>
 			</div>
-		  </div>
+			<div class="modal-body">
+				<div class="col-xs-12">
+					<form action="" method="POST">
+						<div class="form-group">
+							<label for="AYgoal">Please select Academic Year:</label>
+							<select name="AY" class="form-control" id="AYgoal">
+								<option value=""></option selected>
+								<?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
+									<option value="<?php echo $rowsay[1]; ?>"> <?php echo $rowsay[1]; ?> </option>
+								<?php } endwhile; ?>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="goaltitle">Please Enter Goal Title:</label>
+							<input type="text" class="form-control" name="goaltitle" id="goaltitle" required>
+						</div>
+						<div class="form-group">
+							<label for="goalstatement">Please Enter Goal Statement:</label>
+							<textarea class="form-control" name="goalstatement" id="goalstatement" required></textarea>
+						</div>
+						<input type="submit" name="submit" value="Submit" class="btn-primary btn-sm">
+					</form>
+				</div>
+			</div>
 			<div class="modal-footer">
 			</div>
-	    </div>
-	  </div>
+		</div>
 	</div>
+</div>
 <?php
 	//Include Footer
 	require_once("../Resources/Includes/footer.php");

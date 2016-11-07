@@ -12,7 +12,7 @@
 */
 require_once ("../Resources/Includes/connect.php");
 $email = $_SESSION['login_email'];
-$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE, OU_ABBREV from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
+$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE,SYS_USER_RIGHT, OU_ABBREV from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
 inner join UserRoles on PermittedUsers.SYS_USER_ROLE = UserRoles.ID_USER_ROLE
 inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY WHERE  NETWORK_USERNAME ='$email';";
 $resultmenu = $menucon->query($sqlmenu);
@@ -22,7 +22,8 @@ $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
 $menu = array(
 	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
 	array("Goals", "../$navdir"."Pages/goalManagement.php", "&#xe002;","goal","basic", false),
-	array("BluePrint Confirm", "../$navdir"."Pages/confirmbp.php", "&#xe002;" ,"main","user", true),
+	array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe002;" ,"main","user", true),
+	array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe002;" ,"main","approver", true),
 	array("Add Academic Year", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","provost", true),
 //	array("Show BluePrint", "../$navdir"."Pages/blueprint/Blueprinthtml/content.php", "&#xe002;" ,"main","basic", false),
 	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "&#xe002;" ,"main","provost", false),
@@ -141,7 +142,12 @@ Generate PDF button currently disabled.
 
 			} continue;
 		}
-		if($menu[$i][3] == "main" && $menu[$i][4] <> "provost") {
+		if($rowsmenu['SYS_USER_RIGHT'] == 3) {
+			if ($menu[$i][3] == "main" && ($menu[$i][4] == "approver" OR $menu[$i][4] == "basic")) {
+				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+			} continue;
+		}
+		if($menu[$i][3] == "main" && ($menu[$i][4] <> "provost" and $menu[$i][4] <> "approver" )) {
 			echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 		}
 	}

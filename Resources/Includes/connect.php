@@ -52,7 +52,7 @@ function idtostring ($id){
     $id2= $id %100;
     $id1= intval($id/100);
 
-    if($id2>$id1) {
+    if($id2<$id1) {
         $id1 =str_pad($id1, 2, '0', STR_PAD_LEFT);
         $id2 =str_pad($id2, 2, '0', STR_PAD_LEFT);
         $string = "AY19".$id1."-20".$id2;
