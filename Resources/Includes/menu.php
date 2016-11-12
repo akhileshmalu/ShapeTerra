@@ -32,6 +32,7 @@ $menu = array(
 	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user","basic", false),
 	);
 
+
 ?>
 
 <link href="../Resources/Library/css/menu.css" rel="stylesheet" type="text/css" />
@@ -133,33 +134,39 @@ Generate PDF button currently disabled.
 
 <nav class="col-xs-2" id="menu">
 	<ul class="col-xs-12 col-lg-10 col-lg-offset- col-md-offset-">
-	<li clas="" id="header"><a class="main" href="#" onclick="return false">Main <span id="main" class="caret"></span></a></li>
-	<?php
-	for ($i = 0; $i < count($menu); $i++) {
-		if(strcmp($rowsmenu['SYS_USER_ROLE'],"provost") == 0)  {
-			if ($menu[$i][3] == "main" && ($menu[$i][4] == "provost" OR $menu[$i][4] == "basic")) {
-				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
-
-			} continue;
-		}
-		if($rowsmenu['SYS_USER_RIGHT'] == 3) {
-			if ($menu[$i][3] == "main" && ($menu[$i][4] == "approver" OR $menu[$i][4] == "basic")) {
-				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
-			} continue;
-		}
-		if($menu[$i][3] == "main" && ($menu[$i][4] <> "provost" and $menu[$i][4] <> "approver" )) {
-			echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
-		}
-	}
-	?>
-	<li class="" id="header"><a class="goal" href="#" onclick="return false">Goal Management <span span id="goal" class="caret"></span></a></li>
+		<li class="" id="header"><a class="main" href="#" onclick="return false">Main <span id="main"
+																						   class="caret"></span></a>
+		</li>
 		<?php
-	for($i = 0; $i < count($menu); $i++) {
-		if($menu[$i][3] == "goal"){
-			echo "<li><a id ='". $menu[$i][3] ."' class = '". ($menu[$i][4] ? "selected" : "") ." hidden'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+		for ($i = 0; $i < count($menu); $i++) {
+			if (strcmp($rowsmenu['SYS_USER_ROLE'], "provost") == 0) {
+				if ($menu[$i][3] == "main" && ($menu[$i][4] == "provost" OR $menu[$i][4] == "basic")) {
+					echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+
+				}
+				continue;
+			}
+			if ($rowsmenu['SYS_USER_RIGHT'] == 3) {
+				if ($menu[$i][3] == "main" && ($menu[$i][4] == "approver" OR $menu[$i][4] == "basic")) {
+					echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+				}
+				continue;
+			}
+
+			if ($menu[$i][3] == "main" && ($menu[$i][4] <> "provost" and $menu[$i][4] <> "approver")) {
+				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+			}
 		}
-	}
-	?>
+		?>
+		<li class="" id="header"><a class="goal" href="#" onclick="return false">Goal Management <span id="goal" class="caret"></span></a>
+		</li>
+		<?php
+		for ($i = 0; $i < count($menu); $i++) {
+			if ($menu[$i][3] == "goal") {
+				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden'href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+			}
+		}
+		?>
 	</ul>
 </nav>
 

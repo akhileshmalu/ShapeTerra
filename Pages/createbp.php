@@ -1,43 +1,56 @@
 <?php
 session_start();
 require_once ("../Resources/Includes/connect.php");
-$ay = array();
-$ayname ="";
+
+
+$count=0;
+$outcome = "";
+$aydesc ="";
+
 $error = array();
 
-$unigoallink = array();
-$unigoallinkname = "";
+$ouabbrev = $_SESSION['login_ouabbrev'];
+$author = $_SESSION['login_email'];
+$time = date('Y-m-d H:i:s');
+$ou = $_SESSION['login_ouid'];
 
-$sqlbroad = "select * from broadcast;";
+
+$sqlbroad = "SELECT * FROM broadcast inner join Hierarchy on BROADCAST_OU = Hierarchy.ID_HIERARCHY where Hierarchy.OU_ABBREV = '$ouabbrev';";
 $resultbroad=$mysqli1->query($sqlbroad);
 $rowsbroad = $resultbroad->fetch_assoc();
+$aydesc = $rowsbroad['BROADCAST_AY'];
 
-$sqlay = "Select * from AcademicYears;";
-$resultay = $mysqli->query($sqlay);
+$sqlmvv = "Select * from BP_MissionVisionValues;";
+$resultmvv = $mysqli->query($sqlmvv);
+$rowsmvv = $resultmvv->fetch_assoc();
 
-if(isset($_POST['submit'])) {
-    $ouabbrev = $_SESSION['login_ouabbrev'];
-    $author = $_SESSION['login_email'];
-    $time = date('Y-m-d H:i:s');
-    $ay = $_POST['AY'];
-    foreach ($ay as $value) {
-        $ayname .= $value . ",";
+$sqlunit = "select * from BP_UnitGoals where find_in_set ('$aydesc',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
+$resultunit = $mysqli->query($sqlunit);
+$count = $resultunit->num_rows;
+
+if(isset($_POST['preview'])) {
+
+    $execsummary = mynl2br($_POST['execsummary']);
+    $goaloutcome = $_POST['goaloutcome'];
+    $goalidlist = $_POST['goalno'];
+
+
+    $sqlgoalout = "UPDATE broadcast SET BROADCAST_EXECSUM ='$execsummary', BROADCAST_STATUS = 'Completed by User' where BROADCAST_AY='$aydesc' and BROADCAST_OU ='$ou';";
+
+//    foreach ($goaloutcome as $item) {
+
+    for( $i=0; $i<$count;$i++) {
+
+        $outcome = mynl2br($goaloutcome[$i]);
+        $idoutcome = $goalidlist[$i];
+
+        $sqlgoalout .= "INSERT INTO BP_UnitGoalOutcomes(ID_UNIT_GOAL,OUTCOMES_AUTHOR,MOD_TIMESTAMP,GOAL_ACHIEVEMENTS) VALUES ('$idoutcome','$author','$time','$outcome')";
     }
-    $goaltitle = $_POST['goaltitle'];
 
-    $unigoallink = $_POST['goallink'];
-    foreach ($unigoallink as $value) {
-        $unigoallinkname .= $value . ",";
-    }
-
-    $goalstatement = mynl2br($_POST['goalstatement']);
-    $goalalignment = mynl2br($_POST['goalalignment']);
-
-    $sqlunitgoal = "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
-    if($mysqli->query($sqlunitgoal)) {
-        $error[0] = "Unit Goal has been successfully added.";
+    if($mysqli->multi_query($sqlgoalout)) {
+        $error[0] = "Academic BluePrint craeted Successfully";
     } else {
-        $error[0] = "Unit Goal could not be added.";
+        $error[0] = "Academic BluePrint could not be craeted";
     }
 
 }
@@ -47,110 +60,77 @@ if(isset($_POST['submit'])) {
 require_once("../Resources/Includes/header.php");
 ?>
 
+<link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
+<link href="Css/goalManagement.css" rel="stylesheet" type="text/css"/>
+</head>
 <body>
+
 <?php
 // Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
-
-<link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
-<link href="Css/goalManagement.css" rel="stylesheet" type="text/css"/>
-
 <div class="hr"></div>
 <div id="main-content" class="col-xs-10">
     <h1 id="title">BluePrint Completion</h1>
-
-    <ul id="tabs" class="nav nav-pills" id="menu-secondary" role="tablist">
-        <li class="active"><a href="#input1">Confirm Goals</a></li>
-        <li><a href="#input2">Input Section 1</a></li>
+    <ul id="tabs" class="nav nav-pills" role="tablist">
+        <li class="active"><a href="#input1" data-toggle="tab">Executive Summary</a></li>
+        <li><a href="#input2" data-toggle="tab">Review MVV</a></li>
+        <li><a href="#input3" data-toggle="tab">Goal Outcomes</a></li>
+        <!--        <li><a href="#input4" data-toggle="tab">Preview & Confirm</a></li>-->
     </ul>
 </div>
-
 <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active fade in" id="input1">
-        <div class="form-group col-xs-6" id="actionlist">
-            <label for="goaltitle">Please confirm Previous year Goals :</label><br>
-            <select multiple="multiple" class="form-control" name="goaltitles[]" id="goaltitle">
-                <?php
-                $ay = $rowsbroad['BROADCAST_AY'];
-                $ay -= 101;
-                $ouabbrev = $_SESSION['login_ouabbrev'];
-                $aydesc = idtostring($ay);
-                $sqlunit = "select * from BP_UnitGoals where find_in_set ('$aydesc',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
-                $resultunit = $mysqli->query($sqlunit);
-                while ($rowsunit = $resultunit->fetch_assoc()) { ?>
-                    <option value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE'] . "\n"; ?></option>
+    <form action="" method="POST">
+        <div role="tabpanel" class="tab-pane active fade in" id="input1">
+            <div class="form-group col-xs-6" id="actionlist">
+                <label for="execsummary">Please fill Executive Summary for <?php echo $rowsbroad['BROADCAST_AY']; ?>
+                    :</label>
+                <textarea id="execsummary" name="execsummary" rows="5" cols="25" wrap="hard" class="form-control"></textarea>
+                <button type="button" name="next"
+                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Next
+                </button>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade " id="input2">
+            <div class="form-group col-xs-6" id="actionlist">
+                <label for="missionstatement">Please Verify Mission
+                    Statement for <?php echo $rowsbroad['BROADCAST_AY'];?> :</label>
+                <textarea id="missionstatement" name="missionstatement" rows="5" cols="25"
+                          wrap="hard" class="form-control"
+                          readonly><?php echo $rowsmvv['MISSION_STATEMENT']; ?></textarea>
+                <label for="visionstatement">Please Verify Vision Statement
+                    for <?php echo $rowsbroad['BROADCAST_AY']; ?> :</label>
+                <textarea id="visionstatement" name="visionstatement" rows="5" cols="25"
+                          wrap="hard" class="form-control"
+                          readonly><?php echo $rowsmvv['VISION_STATEMENT']; ?></textarea>
+                <label for="valuestatement">Please Verify Value Statement
+                    for <?php echo $rowsbroad['BROADCAST_AY']; ?> :</label>
+                <textarea id="valuestatement" name="valuestatement" rows="5" cols="25" wrap="hard" class="form-control"
+                          readonly><?php echo $rowsmvv['VALUES_STATEMENT']; ?>
+                </textarea>
+                <button type="button" name="next"
+                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Next
+                </button>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade " id="input3">
+            <div class="form-group col-xs-6" id="actionlist">
+                <?php while ($rowsunit = $resultunit->fetch_assoc()){ ?>
+                    <label for="goaloutcome">Enter Goal Achievements for
+                        : <?php echo $rowsunit['UNIT_GOAL_TITLE'] ?> </label>
+                    <textarea id="goaloutcome" name="goaloutcome[]" wrap="hard" rows="5" cols="25" class="form-control"
+                              required></textarea>
+                    <input  type="hidden" name="goalno[]" value="<?php echo $rowsunit['ID_UNIT_GOAL'];?>">
                 <?php } ?>
-            </select>
-            <button id="add-goal" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal"
-                    data-target="#addunitGoalModal"><span class="icon">&#xe035;</span> Add Goal
-            </button>
-        </div>
-    </div>
-    <div role="tabpanel" class="tab-pane fade " id="input2">
-        Tab 2
-    </div>
-</div>
-
-
-<!--Modal-->
-<div class="modal fade" id="addunitGoalModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Add Unit Goal</h4>
-            </div>
-            <div class="modal-body">
-                <div class="col-xs-12">
-                    <form action="" method="POST">
-                        <div class="form-group">
-                            <label for="AYgoal">Please select Academic Year:</label>
-                            <select multiple="multiple" name="AY[]" class="form-control" id="AYgoal" required>
-                                <option value=""></option>
-                                <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)) { ?>
-                                    <option value="<?php echo $rowsay[1]; ?>"> <?php echo $rowsay[1]; ?> </option>
-                                <?php }  ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="goaltitle">Please Enter Goal Title:</label>
-                            <input type="text" class="form-control" name="goaltitle" id="goaltitle" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="goaltitle">Link to University Goals:</label>
-                            <select multiple="multiple" class="form-control" name="goallink[]" id="goallink">
-                                <?php
-                                $sqlug = "SELECT * FROM UniversityGoals;";
-                                $resultug = $mysqli->query($sqlug);
-                                echo "<option value=''> </option>";
-                                while ($rowsug = $resultug->fetch_assoc()): { ?>
-                                    <option
-                                        value="<?php echo $rowsug['ID_UNIV_GOAL'] . "\n"; ?>"><?php echo $rowsug['GOAL_TITLE'] . "\n"; ?></option>
-                                <?php } endwhile; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="goalstatement">Please Enter Goal Statement:</label>
-                            <textarea rows="5" class="form-control" name="goalstatement" id="goalstatement"
-                                      required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="goalalignment">Please explain Goal Alignment:</label>
-                            <textarea rows="5" class="form-control" name="goalalignment" id="goalalignment"
-                                      required></textarea>
-                        </div>
-                        <input type="submit" name="submit" value="Submit" class="btn-primary btn-sm">
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
+                <button type="submit" name="preview"
+                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Preview
+                </button>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <?php
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
+<!--<script src="../Resources/Library/js/tabchange.js"></script>-->
