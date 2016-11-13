@@ -120,12 +120,11 @@ $menu = array(
 
 <!--
 Generate PDF button currently disabled.
--->
+
 	<button id="generate-pdf" type="button" class="btn-link" onclick="gotopdf()">
 	    <span class='icon'>:</span>Generate PDF
-	</button>	
-
-
+	</button>
+-->
 </div>
 
 	<!-- 
