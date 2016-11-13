@@ -3,7 +3,9 @@
 /*
  * Creating one master file to generate any standard report via TCPDF.
  */
-require_once("../../tcpdf/tcpdf.php");
+require_once('../../Resources/tcpdf/tcpdf_include.php');
+require_once("../../Resources/tcpdf/tcpdf.php");
+
 
 define("PDF_HEADER_TITLE","Print" );
 define("PDF_CREATOR","Academic BluePrint" );
@@ -25,5 +27,8 @@ $obj_pdf->setPrintFooter(false);
 $obj_pdf->SetAutoPageBreak(TRUE, 10);
 $obj_pdf->SetFont('helvetica', '', 12);
 $obj_pdf->AddPage();
+
+//$content .= '<div> <p>Akhilesh</p></div>';
+
 
 ?>

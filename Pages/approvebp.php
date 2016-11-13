@@ -121,8 +121,10 @@ if (isset($_POST['approve'])) {
         $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) SELECT OU_ABBREV, '$author', '$time', '$ay', UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT FROM BP_UnitGoals WHERE ID_UNIT_GOAL ='$idk';";
     }
 
-    $sqlcreatebp .="INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+    if(isset($_POST['addgoal'])) {
+        $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
 
+    }
     //Broadcast update as per status.
     $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS = 'Approved by Admin' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
 
@@ -233,7 +235,7 @@ require_once("../Resources/Includes/menu.php");
                             value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></option>
                         <?php } ?>
                     </select>
-                <button id="add-goal" type="button" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal" data-target="#addunitGoalModal"><span class="icon">&#xe035;</span>Add Goal
+                <button id="add-goal" type="button" name="addgoal" class="btn-primary col-lg-4 col-xs-4 pull-left" data-toggle="modal" data-target="#addunitGoalModal"><span class="icon">&#xe035;</span>Add Goal
                 </button>
                 <button id="add-goal" type="submit" name="approve" class="btn-primary col-lg-4 col-xs-4 pull-left">
                     Approve

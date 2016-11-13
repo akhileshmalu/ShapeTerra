@@ -20,9 +20,10 @@ $rowsuser = $resultuser->fetch_assoc();
     <script src="compatibility.min.js"></script>
     <script src="theViewer.min.js"></script>
     <script>
-        try{
+        try {
             theViewer.defaultViewer = new theViewer.Viewer({});
-        }catch(e){}
+        } catch (e) {
+        }
     </script>
     <title></title>
 </head>
@@ -37,7 +38,7 @@ $rowsuser = $resultuser->fetch_assoc();
             <div class="t m0 x0 h1 y0 ff1 fs0 fc0 sc0 ls0 ws0">Blueprint <span class="_ _0"></span>for</div>
             <div class="t m0 x1 h1 y1 ff1 fs0 fc0 sc0 ls0 ws0">Academic</div>
             <div class="t m0 x2 h1 y2 ff1 fs0 fc0 sc0 ls0 ws0">Excellence</div>
-            <div class="t m0 x3 h2 y3 ff1 fs0 fc1 sc0 ls0 ws0">College of <span class="_ _0"></span>Nursing<span
+            <div class="t m0 x3 h2 y3 ff1 fs0 fc1 sc0 ls0 ws0"><?php echo $rowsuser['OU_NAME']; ?><span
                     class="ff2 fc0"> </span></div>
             <div class="t m0 x4 h2 y4 ff2 fs0 fc0 sc0 ls0 ws0">March 2017</div>
         </div>
