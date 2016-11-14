@@ -31,35 +31,3 @@ $($tabs).hover(function(){
     }, function(){
         $(this).css("text-decoration", "none");
     });
-
-
-
-// $("#unitgoalbtn").click(function(){
-//     document.getElementById("unitgoalbtn").setAttribute("data-dismiss","modal");
-//     document.getElementById("unitgoalbtn").setAttribute("aria-label","Close");
-// });
-
-
-// $(document).ready(function() {
-//     $("#unitgoalbtn").click(function() {
-//
-//
-//         var AY = $('input[name=AY]').val();
-//         var goaltitle = $('input[name=goaltitle]').val();
-//         var goallink = $('input[name=goallink]').val();
-//         var goalstatement = $('input[name=goalstatement]').val();
-//         var goalalignment = $('input[name=goalalignment]').val();
-//
-//     $.post("approvebp.php", {
-//         AY: AY,
-//         goaltitle: goaltitle,
-//         goallink: goallink,
-//         goalstatement: goalstatement,
-//         goalalignment: goalalignment
-//     }, function(data) {
-//         document.getElementById("unitgoalbtn").setAttribute("data-dismiss","modal");
-//         document.getElementById("unitgoalbtn").setAttribute("aria-label","Close");
-//     });
-//     return false;
-//     });
-// });

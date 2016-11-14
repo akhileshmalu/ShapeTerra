@@ -1,8 +1,4 @@
 $("#preview").click(function () {
-    document.getElementById("actionlist1").style.display = "none";
-    document.getElementById("actionlist2").style.display = "none";
-    document.getElementById("actionlist3").style.display = "none";
-
     var x = document.getElementById('execsummary');
     document.getElementById('exesumtitle').innerHTML = x.value;
 

@@ -68,7 +68,7 @@ require_once("../Resources/Includes/header.php");
 ?>
 
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
-<link href="Css/goalManagement.css" rel="stylesheet" type="text/css"/>
+<link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 
 <link rel="stylesheet" href="../Pages/blueprint/Blueprinthtml/base.min.css"/>
 <link rel="stylesheet" href="../Pages/blueprint/Blueprinthtml/fancy.min.css"/>
@@ -93,75 +93,83 @@ require_once("../Resources/Includes/menu.php");
 <div class="hr"></div>
 <div id="main-content" class="col-xs-10">
     <h1 id="title">BluePrint Completion</h1>
-    <ul id="tabs" class="nav nav-pills" role="tablist">
-        <li class="active"><a href="#input1" data-toggle="tab">Executive Summary</a></li>
-        <li><a href="#input2" data-toggle="tab">Review MVV</a></li>
-        <li><a href="#input3" data-toggle="tab" >Goal Outcomes</a></li>
-        <li><a href="#input4" data-toggle="tab">Preview & Confirm</a></li>
-    </ul>
-</div>
-<div class="tab-content">
-    <form action="createbp.php" class="ajaxform" method="POST">
-        <div role="tabpanel" class="tab-pane active fade in" id="input1">
-            <div class="form-group col-xs-6" id="actionlist1">
-                <label for="execsummary">Please fill Executive Summary for <?php echo $rowsbroad['BROADCAST_AY']; ?>
-                    :</label>
-                <textarea id="execsummary" name="execsummary" rows="5" cols="25" wrap="hard" class="form-control"></textarea>
-                <button type="button" name="next"
-                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Next
-                </button>
-            </div>
-        </div>
-        <div role="tabpanel" class="tab-pane fade " id="input2">
-            <div class="form-group col-xs-6" id="actionlist2">
-                <label for="missionstatement">Please Verify Mission
-                    Statement for <?php echo $rowsbroad['BROADCAST_AY'];?> :</label>
-                <textarea id="missionstatement" name="missionstatement" rows="5" cols="25"
-                          wrap="hard" class="form-control"
-                          readonly><?php echo $rowsmvv['MISSION_STATEMENT']; ?></textarea>
-                <label for="visionstatement">Please Verify Vision Statement
-                    for <?php echo $rowsbroad['BROADCAST_AY']; ?> :</label>
-                <textarea id="visionstatement" name="visionstatement" rows="5" cols="25"
-                          wrap="hard" class="form-control"
-                          readonly><?php echo $rowsmvv['VISION_STATEMENT']; ?></textarea>
-                <label for="valuestatement">Please Verify Value Statement
-                    for <?php echo $rowsbroad['BROADCAST_AY']; ?> :</label>
-                <textarea id="valuestatement" name="valuestatement" rows="5" cols="25" wrap="hard" class="form-control"
-                          readonly><?php echo $rowsmvv['VALUES_STATEMENT']; ?>
-                </textarea>
-                <button type="button"
-                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Next
-                </button>
-            </div>
-        </div>
-        <div role="tabpanel" class="tab-pane fade " id="input3">
-            <div class="form-group col-xs-6" id="actionlist3">
-                <?php while ($rowsunit = $resultunit->fetch_array(MYSQLI_ASSOC)){ ?>
-                    <label for="goaloutcome">Enter Goal Achievements for
-                        : <?php  echo $rowsunit['UNIT_GOAL_TITLE']; ?> </label>
-                    <textarea id="goaloutcome" name="goaloutcome[]" wrap="hard" rows="5" cols="25" class="form-control"
-                              required></textarea>
-                    <input  type="hidden" name="goalno[]" value="<?php echo $rowsunit['ID_UNIT_GOAL'];?>">
-                <?php } ?>
-                <button type="button" id="preview"
-                        class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Preview
-                </button>
-            </div>
-        </div>
-        <div role="tabpanel" class="tab-pane fade " id="input4">
-            <div class="form-group col-lg-9" style="min-height: 600px;" id="actionlist4">
-                <p><br></p>
-                <?php require_once("../Pages/pdfscript.php");?>
+    <div id="list" class="col-xs-2">
+        <ul class="tabs-nav">
+            <li class="executive active">1. Executive Summary</li>
+            <li class="mvv disabled">2. MVV</li>
+            <li class="goals disabled">3. Goals</li>
+            <li class="preview disabled">4. Preview</li>
+        </ul>
+    </div>
+
+    <div id="form" class="col-xs-9">
+        <form action="createbp.php" class="ajaxform" method="POST">
+
+            <div  class="executive active" id="actionlist">
+                <div class="form-group" id="actionlist1">
+                    <label for="execsummary">Please fill Executive Summary for <?php echo $rowsbroad['BROADCAST_AY']; ?>
+                        :</label>
+                    <textarea id="execsummary" name="execsummary" rows="5" cols="25" wrap="hard" class="form-control"></textarea>
+                    <button type="button" name="next"
+                            class="btn-primary col-lg-4 col-xs-4 pull-right changeTab">Next
+                    </button>
+                </div>
             </div>
 
-            <button type="submit" name="save"
-                    class="btn-primary col-xs-3 pull-left changeTab">Save
-            </button>
-            <button type="button" name="print" onclick="gotopdf()"
-                    class="btn-primary col-xs-3 pull-left">Print
-            </button>
-        </div>
-    </form>
+            <div  class="mvv hidden" id="actionlist">
+                <div class="form-group" id="actionlist2">
+                    <label for="missionstatement">Please Verify Mission
+                        Statement for <?php echo $rowsbroad['BROADCAST_AY'];?> :</label>
+                    <textarea id="missionstatement" name="missionstatement" rows="5" cols="25"
+                              wrap="hard" class="form-control"
+                              readonly><?php echo $rowsmvv['MISSION_STATEMENT']; ?></textarea>
+                    <label for="visionstatement">Please Verify Vision Statement
+                        for <?php echo $rowsbroad['BROADCAST_AY']; ?> :</label>
+                    <textarea id="visionstatement" name="visionstatement" rows="5" cols="25"
+                              wrap="hard" class="form-control"
+                              readonly><?php echo $rowsmvv['VISION_STATEMENT']; ?></textarea>
+                    <label for="valuestatement">Please Verify Value Statement
+                        for <?php echo $rowsbroad['BROADCAST_AY']; ?> :</label>
+                    <textarea id="valuestatement" name="valuestatement" rows="5" cols="25" wrap="hard" class="form-control"
+                              readonly><?php echo $rowsmvv['VALUES_STATEMENT']; ?>
+                    </textarea>
+                    <button type="button"
+                            class="btn-primary col-lg-4 col-xs-4 pull-right changeTab">Next
+                    </button>
+                </div>
+            </div>
+
+            <div  class="goals hidden" id="actionlist">
+                <div class="form-group " id="actionlist3">
+                    <?php while ($rowsunit = $resultunit->fetch_array(MYSQLI_ASSOC)){ ?>
+                        <label for="goaloutcome">Enter Goal Achievements for
+                            : <?php  echo $rowsunit['UNIT_GOAL_TITLE']; ?> </label>
+                        <textarea id="goaloutcome" name="goaloutcome[]" wrap="hard" rows="5" cols="25" class="form-control"
+                                  required></textarea>
+                        <input  type="hidden" name="goalno[]" value="<?php echo $rowsunit['ID_UNIT_GOAL'];?>">
+                    <?php } ?>
+                    <button type="button" id="preview"
+                            class="btn-primary col-lg-4 col-xs-4 pull-right changeTab">Preview
+                    </button>
+                </div>
+            </div>
+
+            <div class="preview hidden" id="actionlist">
+                <div class="form-group col-xs-12" style="min-height: 600px;" id="actionlist4">
+                    <p><br></p>
+                    <?php require_once("../Pages/pdfscript.php");?>
+                </div>
+
+                <button type="submit" name="save"
+                        class="btn-secondary col-xs-3 pull-left changeTab">Save
+                </button>
+                <button type="button" name="print" onclick="gotopdf()"
+                        class="btn-primary col-xs-3 pull-right">Print
+                </button>
+            </div>
+
+        </form>
+    </div>
 </div>
 <?php
 //Include Footer
