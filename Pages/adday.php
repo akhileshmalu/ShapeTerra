@@ -43,42 +43,60 @@ require_once("../Resources/Includes/header.php");
 // Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
-<form action="" method="POST">
-<div class="col-xs-4" id="table-container">
-    <label for="datetimepicker1">Please Select Academic Year Start date :</label>
-    <div class="form-group">
-        <div class='input-group date' id='datetimepicker1'>
-            <input type='text' name="startdate" class="form-control">
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-        </div>
+
+<div class="overlay"></div>
+
+<div class="hr"></div>
+<div id="main-content" class="col-xs-10">
+    <h1 id="title">Add Academic Year</h1> 
+
+    <div class="alert">
+        <a href="#" class="close"><span class="icon">9</span></a>
+        <h1 class="text-center"><span class="icon">S</span></h1>
+        <h1 class="title">Success!</h1>
+        <p class="description">An Academic Year has been added</p>
+        <button type="button" class="btn-primary text-center">Back to Dashboard</button>
     </div>
-    <label for="datetimepicker2">Please Select Academic Year End date :</label>
-    <div class="form-group">
-        <div class='input-group date' id='datetimepicker2'>
-            <input type='text' name="enddate" class="form-control">
-            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-            </span>
+
+    <div class="content-general">
+        <form action="" method="POST">
+        <div class="col-xs-4" id="table-container">
+            <label for="datetimepicker1">Please Select Academic Year Start date :</label>
+            <div class="form-group">
+                <div class='input-group date' id='datetimepicker1'>
+                    <input type='text' name="startdate" class="form-control">
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <label for="datetimepicker2">Please Select Academic Year End date :</label>
+            <div class="form-group">
+                <div class='input-group date' id='datetimepicker2'>
+                    <input type='text' name="enddate" class="form-control">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <label for="datetimepicker3">Please Select Date Census :</label>
+            <div class="form-group">
+                <div class='input-group date' id='datetimepicker3'>
+                    <input type='text' name="censusdate" class="form-control" required/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <?php if (isset($_POST['submit'])) { ?>
+                <div class="alert alert-warning">
+                    <?php foreach ($error as $value) echo $value; ?>
+                </div>
+            <?php } ?>
+            <input type="submit" name="submit" value="Submit" class="btn-primary pull-left">
         </div>
+        </form>
     </div>
-    <label for="datetimepicker3">Please Select Date Census :</label>
-    <div class="form-group">
-        <div class='input-group date' id='datetimepicker3'>
-            <input type='text' name="censusdate" class="form-control" required/>
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-        </div>
-    </div>
-    <?php if (isset($_POST['submit'])) { ?>
-        <div  class="alert alert-warning">
-            <?php foreach ($error as $value) echo $value; ?>
-        </div>
-    <?php } ?>
-    <input type="submit" name="submit" value="Submit" class="btn-primary pull-left">
 </div>
-</form>
 
 <?php
 //Include Footer

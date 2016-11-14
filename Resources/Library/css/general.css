@@ -9,8 +9,14 @@
 * grey color: #979797;
 *
 *
-*/
+********************************************************/
 
+
+/********************************************************
+* 
+* Basic Styles
+*
+********************************************************/
 @font-face{
 	font-family:'dripicons';
 	src:url('../../Fonts/dripicons-v2.ttf');
@@ -48,6 +54,29 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	width: 100%;
 	z-index: -1;
 }
+
+#errorplate{
+	padding: 10px 20px;
+	margin-left: 90px;
+}
+
+#ouname{
+	margin-left:12px;
+}
+
+.content-general{
+	margin-top: 100px;
+}
+
+.textbox {
+	height: 200px;
+}
+
+/********************************************************
+* 
+* Button Styles
+*
+********************************************************/
 
 .btn-primary{
 	margin-top: 20px;
@@ -96,15 +125,14 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	box-shadow: none;
 }
 
+/********************************************************
+* 
+* Overide Styles
+*
+********************************************************/
 
-#errorplate{
-	padding: 10px 20px;
-	margin-left: 90px;
-}
-#ouname{
-	margin-left:12px;
+.modal-footer{
+	border-top:none;
 }
 
-.textbox {
-	height: 200px;
-}
+

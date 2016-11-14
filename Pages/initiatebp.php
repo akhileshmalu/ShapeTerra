@@ -70,21 +70,25 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 
-<link href="Css/templateTabs.css" rel="stylesheet" type="text/css" />
+<link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="hr"></div>
-<form action="" method="POST">
-    <div id="main-content" class="col-xs-10">
-        <h1 id="title">Initiate Academic BluePrint</h1>
 
-        <ul id="tabs" class="nav nav-pills" role="tablist">
-            <li class="active"><a href="#add">Select Academic Year</a></li>
-            <li><a href="#view">Select Organization Unit</a></li>
+<div id="main-content" class="col-xs-10">
+    <h1 id="title">Initiate Academic BluePrint</h1>
+
+    <div id="list" class="col-xs-2">
+        <ul class="tabs-nav">
+            <li class="year active">1. Select Academic Year</li>
+            <li class="unit disabled">2. Select Organization Unit</li>
         </ul>
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active fade in" id="add">
-                <div class="col-xs-4" id="table-container">
+    </div>
+
+    <div id="form" class="col-xs-9">
+        <form action="" method="POST">
+            <div class="year active" id="actionlist">
+                <div class="col-xs-12" id="table-container">
                     <div class="form-group">
                         <label for="AYgoal">Please select Academic Year:</label>
                         <select  name="AY" class="form-control" id="AYgoal">
@@ -100,8 +104,11 @@ require_once("../Resources/Includes/menu.php");
                         </div>
                     <?php } ?>
                 </div>
+                <button id="next-tab" type="button" class="btn-primary col-xs-3 pull-right changeTab"> Next Tab
+                   </button>
             </div>
-            <div role="tabpanel" class="tab-pane fade " id="view">
+
+            <div class="unit hidden" id="actionlist">
                 <label for="ouname">Please Select Organization Unit(s)</label><br/>
                 <div class="checkbox" id="ouname">
                 <label><input type="checkbox" id="ckbCheckAll" >Select All Organization Units</label>
@@ -114,9 +121,10 @@ require_once("../Resources/Includes/menu.php");
                 <?php } endwhile; ?>
                 <input type="submit" name="submit" value="Submit" class="btn-primary pull-left">
             </div>
-        </div>
+        </form>
     </div>
-</form>
+</div>
+
 
 <?php
 //Include Footer
@@ -129,3 +137,4 @@ require_once("../Resources/Includes/footer.php");
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
+<script src="../Resources/Library/js/tabchange.js"></script>
