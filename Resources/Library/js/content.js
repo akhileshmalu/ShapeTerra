@@ -14,4 +14,32 @@ $("#preview").click(function () {
 
 });
 
+$("#missionbtn").click(function(){
+    var y =  document.getElementById('missiontitle');
+    var x = document.getElementById('missionstate');
+    y.innerHTML =x.value;
+    y.value =x.value;
+    y.setAttribute("readonly","readonly");
+    document.getElementById("missionbtn").setAttribute("data-dismiss","modal");
+    document.getElementById("missionbtn").setAttribute("aria-label","Close");
+});
 
+$("#visionbtn").click(function(){
+    var y =  document.getElementById('visiontitle');
+    var x = document.getElementById('visionstate');
+    y.innerHTML =x.value;
+    y.value =x.value;
+    y.setAttribute("readonly","readonly");
+    document.getElementById("visionbtn").setAttribute("data-dismiss","modal");
+    document.getElementById("visionbtn").setAttribute("aria-label","Close");
+});
+
+$("#valuebtn").click(function(){
+    var y =  document.getElementById('valuetitle');
+    var x = document.getElementById('valuestate');
+    y.innerHTML =x.value;
+    y.value =x.value;
+    y.setAttribute("readonly","readonly");
+    document.getElementById("valuebtn").setAttribute("data-dismiss","modal");
+    document.getElementById("valuebtn").setAttribute("aria-label","Close");
+});

@@ -53,12 +53,12 @@ if(isset($_POST['save'])) {
 
         $sqlgoalout .= "INSERT INTO BP_UnitGoalOutcomes(ID_UNIT_GOAL,OUTCOMES_AUTHOR,MOD_TIMESTAMP,GOAL_ACHIEVEMENTS) VALUES ('$idoutcome','$author','$time','$outcome')";
     }
-
-    if($mysqli->multi_query($sqlgoalout)) {
-        $error[0] = "Academic BluePrint created Successfully";
-    } else {
-        $error[0] = "Academic BluePrint could not be craeted";
-    }
+    $mysqli->multi_query($sqlgoalout);
+//    if($mysqli->multi_query($sqlgoalout)) {
+//        $error[0] = "Academic BluePrint created Successfully";
+//    } else {
+//        $error[0] = "Academic BluePrint could not be craeted";
+//    }
 
 }
 
@@ -101,7 +101,7 @@ require_once("../Resources/Includes/menu.php");
     </ul>
 </div>
 <div class="tab-content">
-    <form action="" method="POST">
+    <form action="createbp.php" class="ajaxform" method="POST">
         <div role="tabpanel" class="tab-pane active fade in" id="input1">
             <div class="form-group col-xs-6" id="actionlist1">
                 <label for="execsummary">Please fill Executive Summary for <?php echo $rowsbroad['BROADCAST_AY']; ?>
@@ -129,7 +129,7 @@ require_once("../Resources/Includes/menu.php");
                 <textarea id="valuestatement" name="valuestatement" rows="5" cols="25" wrap="hard" class="form-control"
                           readonly><?php echo $rowsmvv['VALUES_STATEMENT']; ?>
                 </textarea>
-                <button type="button" name="next"
+                <button type="button"
                         class="btn-primary col-lg-4 col-xs-4 pull-left changeTab">Next
                 </button>
             </div>
@@ -167,5 +167,8 @@ require_once("../Resources/Includes/menu.php");
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
+
 <script src="../Resources/Library/js/tabchange.js"></script>
 <script src="../Resources/Library/js/content.js"></script>
+<script src="../Resources/Library/js/formajax.js"></script>
+<script src="../Resources/Library/js/pdfdirect.js"></script>

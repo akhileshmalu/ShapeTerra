@@ -7,15 +7,15 @@ $result = $mysqli->query($sql);                             	// Query Execution
 $rows = $result -> fetch_assoc();								//Fetching to Show on Account page
 $_SESSION['login_fname'] = $rows['FNAME'];
 $_SESSION['login_lname'] = $rows['LNAME'];
-$ou = $rows['USER_OU_MEMBERSHIP'];
-$_SESSION['login_ouid'] = $ou;
+$ouid = $rows['USER_OU_MEMBERSHIP'];
+$_SESSION['login_ouid'] = $ouid;
 
-if($ou <> 4) {
-	$sqltask = "select * from broadcast where BROADCAST_OU = '$ou';";
+if($ouid <> 4) {
+	$sqltask = "select * from broadcast where BROADCAST_OU = '$ouid';";
 } else {
 	$sqltask = "select * from broadcast;";
 }
-$result1 = $mysqli1->query($sqltask);
+$resulttask = $mysqli1->query($sqltask);
 
 require_once("../Resources/Includes/header.php");
 ?>
@@ -24,7 +24,7 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 <div class="row">
-<div id="actionlist" class="col-lg-offset-8 col-lg-8">
+<div  class="  col-xs-offset-3 col-xs-8" style="position: absolute">
 		<h2>Task List</h2>
 		<table class="table table-striped table-hover">
 			<thead>
@@ -34,10 +34,10 @@ require_once("../Resources/Includes/menu.php");
 			</tr>
 			</thead>
 			<tbody>
-			<?php while($rows1 = $result1->fetch_assoc()): ?>
+			<?php while($rowstask = $resulttask->fetch_assoc()): ?>
 			<tr class="info">
-				<td><?php echo $rows1["BROADCAST_DESC"]; ?></td>
-				<td><?php echo $rows1["BROADCAST_STATUS"]; ?></td>
+				<td><?php echo $rowstask["BROADCAST_DESC"]; ?></td>
+				<td><?php echo $rowstask["BROADCAST_STATUS"]; ?></td>
 			</tr>
 			<?php endwhile; ?>
 			</tbody>

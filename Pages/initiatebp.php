@@ -21,7 +21,7 @@ $sqlay = "Select * from AcademicYears";
 $resultay = $mysqli->query($sqlay);
 
 if(isset($_POST['submit'])) {
-    if(!isset($_POST['AY'])){
+    if(empty($_POST['AY'])){
         $error[0]= "Please select Academic Year.";
         $errorflag = 1;
     }
@@ -78,7 +78,7 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-content" class="col-xs-10">
         <h1 id="title">Initiate Academic BluePrint</h1>
 
-        <ul id="tabs" class="nav nav-pills" id="menu-secondary" role="tablist">
+        <ul id="tabs" class="nav nav-pills" role="tablist">
             <li class="active"><a href="#add">Select Academic Year</a></li>
             <li><a href="#view">Select Organization Unit</a></li>
         </ul>
