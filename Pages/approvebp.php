@@ -206,7 +206,7 @@ require_once("../Resources/Includes/menu.php");
                
                <div class="col-xs-12">
                     <button id="add-vission" type="button" class="btn-secondary  col-xs-3 pull-left" data-toggle="modal"
-                        data-target="#addvissionModal"><span class="icon">&#xe035;</span> Add vission
+                        data-target="#addvisionModal"><span class="icon">&#xe035;</span> Add vission
                     </button>
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="vissionstatement" id="vissiontitle"
                         readonly><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
