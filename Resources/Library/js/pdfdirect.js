@@ -1,5 +1,7 @@
-function gotopdf()
-{
-    window.open("../Pages/generatepdf.php", "_blank");
+$(document).ready(function() {
+    function gotopdf() {
+        window.open("../Pages/generatepdf.php", "_blank");
 
-}
+    }
+
+});

@@ -102,11 +102,14 @@ require_once("../Resources/Includes/menu.php");
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane fade " id="view">
-                <label for="ouname">Please Select Organization Unit(s)</label>
-                <?php while ($rowsou = $resultou->fetch_array(MYSQLI_NUM)): { ?>
+                <label for="ouname">Please Select Organization Unit(s)</label><br/>
+                <div class="checkbox" id="ouname">
+                <label><input type="checkbox" id="ckbCheckAll" >Select All Organization Units</label>
+                </div>
+                    <?php while ($rowsou = $resultou->fetch_array(MYSQLI_NUM)): { ?>
                     <div class="checkbox" id="ouname">
                         <label><input type="checkbox" name="ou_name[]"
-                                      value="<?php echo $rowsou[0].",".$rowsou[2]; ?>"><?php echo $rowsou[1]; ?></label>
+                                  class="checkBoxClass" value="<?php echo $rowsou[0].",".$rowsou[2]; ?>"><?php echo $rowsou[1]; ?></label>
                     </div>
                 <?php } endwhile; ?>
                 <input type="submit" name="submit" value="Submit" class="btn-primary pull-left">
@@ -125,3 +128,4 @@ require_once("../Resources/Includes/footer.php");
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
+<script src="../Resources/Library/js/chkbox.js"></script>
