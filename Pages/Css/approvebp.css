@@ -1,0 +1,42 @@
+#list{
+	margin-top: 50px;
+	
+}
+
+#list ul{
+	list-style: none;
+	padding-left: 0;
+	border-right: 1px #979797 solid;
+	height:2500px;
+	margin-top: -13px;
+	padding-top: 20px;
+}
+
+#list ul li{
+	padding-bottom: 20px;
+	font-weight: 400;
+	cursor: pointer;
+}
+
+#list ul li.active{
+	font-weight: 600;
+	color:#4A90E2;
+}
+
+#list ul li.disabled{
+	color:#999;
+	cursor: default;
+}
+
+#form{
+	margin-top: 50px;
+}
+
+label{
+	font-size: 18px;
+	font-weight: 400;
+}
+
+.btn-secondary{
+	margin-bottom: 30px;
+}

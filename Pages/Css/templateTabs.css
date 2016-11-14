@@ -1,11 +1,11 @@
-#title{
-	margin-bottom: 36px;
-	margin-top: 25px;
-	font-weight: 400;
-}
+
 
 ul#tabs{
-	padding-left: 20px;
+	padding-left: 55px;
+}
+
+ul#tabs li{
+	padding-right: 30px;
 }
 
 li.active a{
@@ -16,11 +16,16 @@ li.active a{
 	padding-bottom: 5px !important;
 }
 
+li.disabled a{
+	color: #979797 !important;
+	pointer-events: none;
+}
+
 ul#tabs li a:hover{
 	background-color: transparent !important;
 	color: #4A90E2 !important;
 }
 
 .tab-pane{
-	margin-top: 50px;
+	margin-top: 50px; 
 }
