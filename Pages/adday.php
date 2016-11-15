@@ -44,19 +44,22 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 
-<div class="overlay"></div>
+<div class="overlay hidden"></div>
+
+<?php if (isset($_POST['submit'])) { ?>
+    <div class="alert">
+        <a href="#" class="close end"><span class="icon">9</span></a>
+        <h1 class="title"></h1>
+        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <button type="button" class="end btn-primary">Close</button>
+    </div>
+<?php } ?>
 
 <div class="hr"></div>
 <div id="main-content" class="col-xs-10">
     <h1 id="title">Add Academic Year</h1> 
 
-    <div class="alert">
-        <a href="#" class="close"><span class="icon">9</span></a>
-        <h1 class="text-center"><span class="icon">S</span></h1>
-        <h1 class="title">Success!</h1>
-        <p class="description">An Academic Year has been added</p>
-        <button type="button" class="btn-primary text-center">Back to Dashboard</button>
-    </div>
+    
 
     <div class="content-general">
         <form action="" method="POST">
@@ -87,11 +90,7 @@ require_once("../Resources/Includes/menu.php");
                     </span>
                 </div>
             </div>
-            <?php if (isset($_POST['submit'])) { ?>
-                <div class="alert alert-warning">
-                    <?php foreach ($error as $value) echo $value; ?>
-                </div>
-            <?php } ?>
+
             <input type="submit" name="submit" value="Submit" class="btn-primary pull-left">
         </div>
         </form>

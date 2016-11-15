@@ -64,10 +64,22 @@
 <link href="Css/goalManagement.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+
 <?php
 	// Include Menu and Top Bar
 	require_once("../Resources/Includes/menu.php");
 ?>
+
+<div class="overlay hidden"></div>
+<?php if (isset($_POST['submit'])) { ?>
+    <div class="alert">
+        <a href="#" class="close end"><span class="icon">9</span></a>
+        <h1 class="title"></h1>
+        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <button type="button" class="end btn-primary">Close</button>
+    </div>
+<?php } ?>
+
 <div class="hr"></div>
 	<div id="main-content" class="col-lg-10 col-xs-8">
 		<div class="col-xs-12">
@@ -75,11 +87,7 @@
 		
 		<button id="add-goal" class="btn-primary col-lg-2 col-xs-4 pull-left" data-toggle="modal" data-target="#addGoalModal"><span class="icon">&#xe035;</span> Add Goal</button>
 
-		<?php if(isset($_POST['submit'])) { ?>
-            <div class="col-xs-offset-3 col-xs-2 alert alert-success">
-                <?php foreach ($error as $value)echo $value; ?>
-            </div>
-        <?php } ?>
+
 		
 		</div>
 		<div class="col-xs-3" id="table-container">

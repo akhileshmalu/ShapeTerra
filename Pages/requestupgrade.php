@@ -85,6 +85,17 @@ require_once("../Resources/Includes/header.php");
 // Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
+
+<div class="overlay hidden"></div>
+<?php if (isset($_POST['request'])) { ?>
+    <div class="alert">
+        <a href="#" class="close end"><span class="icon">9</span></a>
+        <h1 class="title"></h1>
+        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <button type="button" class="end btn-primary">Close</button>
+    </div>
+<?php } ?>
+
     <div class="col-lg-offset-3 col-lg-3 col-md-6 col-xs-9" id="ContentRight">
         <form action ="" method="POST">
             <div class="form-group">
@@ -114,11 +125,7 @@ require_once("../Resources/Includes/menu.php");
                     <?php } else { continue;} endwhile; ?>
                 </select>
             </div>
-            <?php if(isset($_POST['request'])) { ?>
-            <div class="alert alert-warning">
-                <?php foreach ($error as $value)echo $value; ?>
-            </div>
-            <?php } ?>
+
             <input type="submit" name="request" value="submit" id="reset" class="btn-primary btn-sm">
     </form>
     </div>

@@ -73,6 +73,16 @@ require_once("../Resources/Includes/menu.php");
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
+<div class="overlay hidden"></div>
+<?php if (isset($_POST['submit'])) { ?>
+    <div class="alert">
+        <a href="#" class="close end"><span class="icon">9</span></a>
+        <h1 class="title"></h1>
+        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <button type="button" class="end btn-primary">Close</button>
+    </div>
+<?php } ?>
+
 <div class="hr"></div>
 
 <div id="main-content" class="col-xs-10">
@@ -98,11 +108,7 @@ require_once("../Resources/Includes/menu.php");
                             <?php } endwhile; ?>
                         </select>
                     </div>
-                    <?php if (isset($_POST['submit'])) { ?>
-                        <div class="alert alert-warning col-xs-12">
-                            <?php foreach ($error as $value) echo $value . "<br>"; ?>
-                        </div>
-                    <?php } ?>
+
                 </div>
                 <button id="next-tab" type="button" class="btn-primary col-xs-3 pull-right changeTab"> Next Tab
                    </button>

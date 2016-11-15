@@ -1,18 +1,23 @@
-.alert{
+div.alert{
+	width:500px;
+	height:300px;
 	position: absolute;
-	width:40%;
-	height:70%;
 	left: 0; 
   	right: 0; 
   	margin-left: auto; 
   	margin-right: auto; 
 	background-color: #fff;
 	z-index: 20;
+	text-align: center;
 }
 
 .alert .title{
 	text-align: center;
-	margin-top:;
+}
+
+.alert .icon span.icon {
+	font-size: 80px;
+
 }
 
 .alert .description{
@@ -20,7 +25,8 @@
 }
 
 .alert button{
-	margin-top: 80px;
+	margin-top: 45px;
+	float: none;
 }
 
 .overlay{
