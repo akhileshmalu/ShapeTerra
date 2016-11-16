@@ -3,5 +3,4 @@ $(document).ready(function() {
         window.open("../Pages/generatepdf.php", "_blank");
 
     }
-
 });

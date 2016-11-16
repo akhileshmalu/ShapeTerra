@@ -6,6 +6,7 @@ $ayname = "";
 $error = array();
 
 //SQL query variables
+global $sqlcreatebp;
 $sqlcreatebp = "";
 $visionstatement = "";
 $missionstatement = "";
@@ -20,7 +21,7 @@ $ouid = $_SESSION['login_ouid'];
  */
 $unigoallink = array();
 $unigoallinkname = "";
-
+$goalmodalcount=0;
 $ouabbrev = $_SESSION['login_ouabbrev'];
 
 /*
@@ -63,39 +64,8 @@ $sqlunit = "select * from BP_UnitGoals where find_in_set ('$aydesc',UNIT_GOAL_AY
 $resultunit = $mysqli->query($sqlunit);
 
 
-
-if (isset($_POST['goal_submit'])) {
-//    $aysubmit = $_POST['AY'];
-//
-//    foreach ($aysubmit as $value) {
-//        $ayname .= $value . ",";
-//    }
+if(isset($_POST['goal_submit'])) {
     $goaltitle = $_POST['goaltitle'];
-    echo $goaltitle;
-//
-//    $unigoallink = $_POST['goallink'];
-//    foreach ($unigoallink as $value) {
-//        $unigoallinkname .= $value . ",";
-//    }
-//    $goalstatement = mynl2br($_POST['goalstatement']);
-//    $goalalignment = mynl2br($_POST['goalalignment']);
-//
-//    $sqlcreatebp .="INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
-//
-}
-
-if (isset($_POST['approve'])) {
-
-/*
- * Form submission without Refresh Page
- */
-    $aysubmit = $_POST['AY'];
-
-    foreach ($aysubmit as $value) {
-        $ayname .= $value . ",";
-    }
-    $goaltitle = $_POST['goaltitle'];
-//    echo $goaltitle;
 
     $unigoallink = $_POST['goallink'];
     foreach ($unigoallink as $value) {
@@ -105,35 +75,51 @@ if (isset($_POST['approve'])) {
     $goalalignment = mynl2br($_POST['goalalignment']);
 
 
+    $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ay','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+
+    $mysqli->query($sqlcreatebp);
+
+    $goalmodalcount++;
+
+}
 
 
-    $missionstatement = mynl2br($_POST['missionstatement']);
-    $visionstatement = mynl2br($_POST['visionstatement']);
-    $valuestatement = mynl2br($_POST['valuestatement']);
+if (isset($_POST['approve'])) {
 
-    $goalid = $_POST['goaltitle'];
+    if(empty($_POST['goaltitlelist']) && $goalmodalcount!= 0) {
 
-    //Mission , Vision , value Statement recorded for BP Academic Year
-    $sqlcreatebp = "INSERT INTO BP_MissionVisionValues (OU_ABBREV, MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT, VISION_STATEMENT, VALUES_STATEMENT) VALUES ('$ouabbrev','$author','$time','$ay','$missionstatement','$visionstatement','$valuestatement');";
-
-    //Selected Previous Year Goals for New BP Academic Year
-    foreach($goalid as $idk) {
-        $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) SELECT OU_ABBREV, '$author', '$time', '$ay', UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT FROM BP_UnitGoals WHERE ID_UNIT_GOAL ='$idk';";
+        $error[1]="Please select a Goal to submit";
+        $errorflag = 1;
     }
 
-    if(isset($_POST['addgoal'])) {
-        $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+
+    if ($errorflag != 1) {
+        $goalid = $_POST['goaltitlelist'];
+        $missionstatement = mynl2br($_POST['missionstatement']);
+        $visionstatement = mynl2br($_POST['visionstatement']);
+        $valuestatement = mynl2br($_POST['valuestatement']);
+
+
+        //Mission , Vision , value Statement recorded for BP Academic Year
+        $sqlcreatebp .= "INSERT INTO BP_MissionVisionValues (OU_ABBREV, MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT, VISION_STATEMENT, VALUES_STATEMENT) VALUES ('$ouabbrev','$author','$time','$ay','$missionstatement','$visionstatement','$valuestatement');";
+
+        //Selected Previous Year Goals for New BP Academic Year
+        foreach ($goalid as $idk) {
+            $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) SELECT OU_ABBREV, '$author', '$time', '$ay', UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT FROM BP_UnitGoals WHERE ID_UNIT_GOAL ='$idk';";
+        }
+
+        //Broadcast update as per status.
+        $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS = 'Approved by Admin' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
+
+        if ($mysqli->multi_query($sqlcreatebp)) {
+
+            $error[0] = "BluePrint has been successfully approved.";
+        } else {
+            $error[0] = "BluePrint could not be  approved.";
+
+        }
 
     }
-    //Broadcast update as per status.
-    $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS = 'Approved by Admin' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
-
-    if ($mysqli->multi_query($sqlcreatebp)) {
-        $error[0] = "BluePrint has been successfully approved.";
-    } else {
-        $error[0] = "BluePrint could not be  approved.";
-    }
-
 }
 
 /*Function to remove empty values from array
@@ -186,7 +172,7 @@ require_once("../Resources/Includes/menu.php");
 
 
     <div id="form" class="col-xs-9">
-        <form action="" method="POST">   
+        <form action="approvebp.php" method="POST" >
             <div class="form-group mission active" id="actionlist">
 
                <label class="col-xs-12" for="missiontitle">Mission Statement</label>
@@ -197,9 +183,9 @@ require_once("../Resources/Includes/menu.php");
                     </button>
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement" id="missiontitle"
                         readonly><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
-                    <button id="changetabbutton" type="button" name="nochangemission"
-                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before
-                   </button>
+<!--                    <button id="changetabbutton" type="button"-->
+<!--                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before-->
+<!--                   </button>-->
                    
                    <button id="next-tab" type="button" class="btn-primary col-xs-3 pull-right changeTab"> Next Tab
                    </button>
@@ -215,9 +201,9 @@ require_once("../Resources/Includes/menu.php");
                     </button>
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="vissionstatement" id="vissiontitle"
                         readonly><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
-                    <button id="changetabbutton" type="button" name="nochangevission"
-                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before
-                   </button>
+<!--                    <button id="changetabbutton" type="button" name="nochangevission"-->
+<!--                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before-->
+<!--                   </button>-->
                    
                    <button id="next-tab" type="button" class="btn-primary col-xs-3 pull-right changeTab"> Next Tab
                    </button>
@@ -233,33 +219,37 @@ require_once("../Resources/Includes/menu.php");
                     </button>
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement" id="valuetitle"
                         readonly><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
-                    <button id="changetabbutton" type="button" name="nochangevalue"
-                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before
-                   </button>
+<!--                    <button id="changetabbutton" type="button" name="nochangevalue"-->
+<!--                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before-->
+<!--                   </button>-->
                    
                    <button id="next-tab" type="button" class="btn-primary col-xs-3 pull-right changeTab"> Next Tab
                    </button>
                 </div>
            </div>
 
-           <div class="form-group hidden goal" id="actionlist">
-               <label for="goaltitle">Goals</label><br>
-               <button id="add-goal" type="button" class="btn-secondary col-xs-3 pull-left" data-toggle="modal"
-                       data-target="#addunitGoalModal"><span class="icon">&#xe035;</span>Add Goal
-               </button>
-               <!--                --><?php //for ($a = 0; $a < $row_cnt; $a++) { ?>
-                   <select multiple="multiple" class="form-control" name="goaltitle[]" id="goaltitle">
-                       <option value="0"></option>
-                       <?php while($rowsunit = $resultunit->fetch_assoc()){ ?>
-                       <option
-                           value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></option>
-                       <?php } ?>
-                   </select>
-               
-               <button id="add-goal" type="submit" name="approve" class="btn-primary col-xs-3 pull-right">
-                   Approve
-               </button>
-           </div>
+            <div class="form-group hidden goal" id="actionlist">
+                <label for="goaltitle">Previous Year Goals</label><br>
+                <div class="col-xs-12">
+                    <select multiple="multiple" class="form-control" name="goaltitlelist[]" id="goaltitlelist" required>
+                        <option value="0"></option>
+                        <?php while ($rowsunit = $resultunit->fetch_assoc()) { ?>
+                            <option
+                                value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></option>
+                        <?php } ?>
+                    </select>
+                    <div id="curgoal" class="hidden form-group">
+                        <label for="curgoaltext">Added Goals</label>
+                        <textarea id="curgoaltext" class="form-control" rows="5" cols="25" readonly></textarea>
+                    </div>
+                    <button id="add-goal" type="button" name="addgoal" class="btn-secondary col-xs-3 pull-left" data-toggle="modal"
+                            data-target="#addunitGoalModal"><span class="icon">&#xe035;</span>Add Goal
+                    </button>
+                    <button  type="submit" name="approve" class="btn-primary col-xs-3 pull-right">
+                        Approve
+                    </button>
+                </div>
+            </div>
         </form>
     </div>
 
@@ -301,13 +291,11 @@ require_once("../Resources/Includes/menu.php");
             </div>
             <div class="modal-body">
                 <div class="col-xs-12">
-                    <form action="#input1" method="POST">
                         <div class="form-group">
                             <label for="visionstate">Please Enter New Vision Statement:</label>
                             <input type="text" class="form-control" name="visionnew" id="visionstate" required>
                         </div>
                         <input type="button" id="visionbtn" value="Add Vision" class="btn-primary btn-sm">
-                    </form>
                 </div>
             </div>
             <div class="modal-footer">
@@ -328,13 +316,11 @@ require_once("../Resources/Includes/menu.php");
             </div>
             <div class="modal-body">
                 <div class="col-xs-12">
-                    <form action="#input2" method="POST">
                         <div class="form-group">
                             <label for="valuestate">Please Enter New Value Statement:</label>
                             <input type="text" class="form-control" name="valuenew" id="valuestate" required>
                         </div>
                         <input type="button" id="valuebtn" value="Add Value" class="btn-primary btn-sm">
-                    </form>
                 </div>
             </div>
             <div class="modal-footer">
@@ -356,17 +342,17 @@ require_once("../Resources/Includes/menu.php");
             <div class="modal-body">
 
                 <div id="modalcontent1" class="col-xs-12">
-                    <form id="goalform" action="" method="POST">
+                    <form id="goalform"  class="ajaxform" action="approvebp.php" method="POST">
 
-                        <div class="form-group">
-                            <label for="AYgoal">Please select Academic Year:</label>
-                            <select multiple="multiple" name="AY[]" class="form-control" id="AYgoal" required>
-                                <option value=""></option>
-                                <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)) { ?>
-                                    <option value="<?php echo $rowsay[1]; ?>"> <?php echo $rowsay[1]; ?> </option>
-                                <?php } ?>
-                            </select>
-                        </div>
+<!--                        <div class="form-group">-->
+<!--                            <label for="AYgoal">Please select Academic Year:</label>-->
+<!--                            <select multiple="multiple" name="AY[]" class="form-control" id="AYgoal" required>-->
+<!--                                <option value=""></option>-->
+<!--                                --><?php //while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)) { ?>
+<!--                                    <option value="--><?php //echo $rowsay[1]; ?><!--"> --><?php //echo $rowsay[1]; ?><!-- </option>-->
+<!--                                --><?php //} ?>
+<!--                            </select>-->
+<!--                        </div>-->
                         <div class="form-group">
                             <label for="goaltitle">Please Enter Goal Title:</label>
                             <input type="text" class="form-control" name="goaltitle" id="goaltitle" required>
@@ -380,7 +366,7 @@ require_once("../Resources/Includes/menu.php");
                                 echo "<option value=''> </option>";
                                 while ($rowsug = $resultug->fetch_assoc()): { ?>
                                     <option
-                                        value="<?php echo $rowsug['ID_UNIV_GOAL'] . "\n"; ?>"><?php echo $rowsug['GOAL_TITLE'] . "\n"; ?></option>
+                                        value="<?php echo $rowsug['ID_UNIV_GOAL']; ?>"><?php echo $rowsug['GOAL_TITLE']; ?></option>
                                 <?php } endwhile; ?>
                             </select>
                         </div>
@@ -394,7 +380,8 @@ require_once("../Resources/Includes/menu.php");
                             <textarea rows="5" class="form-control" name="goalalignment" id="goalalignment"
                                       required></textarea>
                         </div>
-                        <input type="submit" id="unitgoalbtn" name="goal_submit" value="Add Unit Goal" class="btn-primary btn-sm">
+                        <input type="submit" id="unitgoalbtn" name="goal_submit" value="Add Goal" class="btn-primary btn-sm pull-left" >
+                        <input type="button" id="goalmodalclose" class="btn-primary btn-sm pull-right"  value="Close" data-dismiss="modal" aria-label="Close">
                     </form>
                 </div>
             </div>
@@ -411,4 +398,6 @@ require_once("../Resources/Includes/menu.php");
 require_once("../Resources/Includes/footer.php");
 ?>
 
-<script src="../Resources/Library/js/tabchange.js"></script>
+    <script src="../Resources/Library/js/tabchange.js"></script>
+    <script src="../Resources/Library/js/formajax.js"></script>
+    <script src="../Resources/Library/js/content.js"></script>

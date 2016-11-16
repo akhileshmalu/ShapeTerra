@@ -39,3 +39,12 @@ $("#valuebtn").click(function(){
     document.getElementById("valuebtn").setAttribute("data-dismiss","modal");
     document.getElementById("valuebtn").setAttribute("aria-label","Close");
 });
+
+$("#unitgoalbtn").click(function(){
+    var y =  document.getElementById('curgoaltext');
+    var x = document.getElementById("goaltitle");
+    var z= x.value;
+    y.value = z;
+    $("#curgoal").removeClass("hidden");
+
+});

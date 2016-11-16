@@ -34,8 +34,6 @@ if(isset($_POST['submit'])) {
     if($errorflag!=1){
 
         $ou = $_POST['ou_name'];
-
-
         $ay = $_POST['AY'];
 
         /*
@@ -47,17 +45,27 @@ if(isset($_POST['submit'])) {
          */
 
         foreach ($ou as $value) {
-            list($ouid,$ouabbrev) = explode(",",$value) ;
+            list($ouid, $ouabbrev) = explode(",", $value);
 
-            $broadcaststatus = "Initiated by Provost";
-            $broadcastmsg= $ouabbrev." BluePrint for Academic Year - ".$ay;
-            $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS,BROADCAST_AY) VALUES ('$ouid','$broadcastmsg','Y','$broadcaststatus','$ay');";
+            $sqlbroadcheck = "select * from broadcast where BROADCAST_AY='$ay' and find_in_set('$ouid',BROADCAST_OU)>0 ";
+            $resultbroadcheck = $mysqli->query($sqlbroadcheck);
+            $rowbroadcheck = $resultbroadcheck->num_rows;
+            if ($rowbroadcheck >= 1) {
+                $error[1] = "You have already Initiated BluePrint for Org Unit: " . $ouabbrev . " for year : " . $ay;
+                $errorflag = 1;
+            } else {
+
+                $broadcaststatus = "Initiated by Provost";
+                $broadcastmsg = $ouabbrev . " BluePrint for Academic Year - " . $ay;
+                $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS,BROADCAST_AY) VALUES ('$ouid','$broadcastmsg','Y','$broadcaststatus','$ay');";
+            }
         }
-
-        if($mysqli->multi_query($sqlbroad)){
-            $error[0] = "Academic BluePrint Successfully Initiated.";
-        } else {
-            $error [0] = "Academic BluePrint Could not be initiated.";
+        if ($errorflag != 1) {
+            if ($mysqli->multi_query($sqlbroad)) {
+                $error[0] = "Academic BluePrint Successfully Initiated.";
+            } else {
+                $error [0] = "Academic BluePrint Could not be initiated.";
+            }
         }
     }
 }

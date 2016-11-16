@@ -23,11 +23,21 @@ if(isset($_POST['submit'])) {
         $id = stringdatestoid($startdate,$enddate);
         $desc = idtostring($id);
 
-        $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
-        if($mysqli->query($sql)){
-            $error[0] = "Academic Year Added Successfully.";
-        } else {
-            $error [0] = "Academic Year Could not be added.";
+        $sqlaycheck = "select * from AcademicYears where ACAD_YEAR_DESC = '$desc'";
+        $resultaycheck = $mysqli->query($sqlaycheck);
+        $rowsaycheck = $resultaycheck->num_rows;
+        if($rowsaycheck >=1) {
+            $error[1] = "Academic Year already Exist";
+            $errorflag = 1;
+        }
+        if ($errorflag != 1) {
+
+            $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
+            if ($mysqli->query($sql)) {
+                $error[0] = "Academic Year Added Successfully.";
+            } else {
+                $error [0] = "Academic Year Could not be added.";
+            }
         }
     }
 }
