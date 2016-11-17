@@ -69,8 +69,6 @@ require_once("../Resources/Includes/menu.php");
 <div id="main-content" class="col-xs-10">
     <h1 id="title">Add Academic Year</h1> 
 
-    
-
     <div class="content-general">
         <form action="" method="POST">
         <div class="col-xs-4" id="table-container">

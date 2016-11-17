@@ -25,6 +25,7 @@ $menu = array(
 	array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe002;" ,"main","user", true),
 	array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe002;" ,"main","approver", true),
 	array("Add Academic Year", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","provost", true),
+	array("Edit Academic Year", "../$navdir"."Pages/editay.php", "&#xe002;" ,"main","provost", true),
 //	array("Show BluePrint", "../$navdir"."Pages/blueprint/Blueprinthtml/content.php", "&#xe002;" ,"main","basic", false),
 	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "&#xe002;" ,"main","provost", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin","basic", false),
@@ -46,7 +47,7 @@ $menu = array(
 	</svg>
 	
 
-	<h1 class="hidde">Academic<span>Blueprint</span></h1>
+	<a href="account.php" class="btn-link"><h1 class="hidde">Academic<span>Blueprint</span></h1></a>
 
 
 

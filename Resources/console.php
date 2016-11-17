@@ -1,72 +1,96 @@
 <?php
-$error ="";
+$error = "";
+$i=0;
+
+require_once("../Resources/Includes/connect.php");
+$error = "";
+
+$dynamictable = "<table border='1' cellpadding='10' class='table'><tr>";
+
+if (isset($_POST['submit'])) {
+
+    $sql = $_POST['query'];
+    IF ($result = $mysqli->query($sql)) {
+
+        /*
+         * Header of SQL file
+         */
+        $fieldcnt = $result ->field_count;
+        while($i<$fieldcnt)
+        {
+            $meta = $result ->fetch_field();
+            $dynamictable .="<th>".$meta->name."</th>";
+            $i++;
+        }
+
+        $dynamictable.= '</tr>';
+
+        /* fetch associative array */
+        while ($row = $result->fetch_assoc()) {
+
+            $dynamictable.='<tr>';
+            foreach ($row as $value) {
+
+                $dynamictable .= '<td>'. $value . '</td>';
+            }
+            $dynamictable .= '</tr>';
+        }
+
+        $dynamictable .= '</table>';
+        $error = "Query Executed";
+
+        $result->free();
+        $mysqli->close();
+    } else {
+        $eror = "Query Failed";
+    }
+}
+if (isset($_POST['multi'])) {
+    $sql = $_POST['query'];
+    if ($mysqli->multi_query($sql)) {
+        echo "Record Created";
+    } else {
+        echo "Query Failed";
+    }
+}
+
 ?>
-<!DOCTYPE HTML>
-<html>
-<head>
-    <link href="../Pages/Css/layout.css" rel="stylesheet" type="text/css" />
-    <meta charset="UTF-8">
-    <title>Console for Database</title>
+
+<?php
+//Include Header
+require_once("../Resources/Includes/header.php");
+?>
 </head>
 <body>
-<div id="NavBar">
-    <nav>
-        <ul>
-            <li> <a href="../Pages/login.php">Login</a></li>
-            <!--
-            <li> <a href="Register.php">Register</a></li>
-            <li> <a href="ForgotPassword.php">Fogot Password</a></li> -->
-        </ul>
-    </nav>
-</div>
-<div id="Container">
-    <br> <h1>Console for Shapeterra DB</h1><br>
-    <form id="consoleform" method ="POST">
-        <br><br><br>
-        <input type ="text" name ="query" class= "StyleSheettext1" placeholder="Enter your query">
-        <br><br>
-        <input type =submit name ="submit" class="StyleSheettext2" value ="Single Query" >
-        <input type =submit name ="multi" class="StyleSheettext2" value ="Multi Query" >
+<?php
+// Include Menu and Top Bar
+require_once("../Resources/Includes/menu.php");
+?>
 
-        <br><br><label id="error"><?php echo $error ?> </label><br><hr>
+
+<h1>Console for Shapeterra DB <a href="../Pages/login.php" class="btn-primary">Login</a></h1>
+
+
+<form id="consoleform" method="POST">
+    <div class="col-lg-3">
+        <label for="querytag">Enter your Query</label>
+        <div class="form-group">
+            <input type="text" id="querytag" name="query" class="form-control" placeholder="Enter your query">
+        </div>
+        <div class="form-group">
+            <input type=submit name="submit" class="btn-sm " value="Single Query">
+            <input type=submit name="multi" class="btn-sm" value="Multi Query">
+        </div>
+        <label id="error"><?php echo $error ?> </label>
+        <hr>
         Display Result <br>
-        <label id="error">
-            <?php
-            require_once("../Resources/Includes/connect.php");
-            $error ="";
+        <?php echo $dynamictable; ?>
+    </div>
+</form>
 
-            if(isset($_POST['submit'])){
+<!--</div>-->
 
-                $sql = $_POST['query'];
-                IF($result = $mysqli ->query($sql)) {
-                    /* fetch associative array */
-                    while ($row = $result->fetch_assoc()) {
-                        foreach ($row as $value) {echo $value. " || ";} echo "<br>";
-                    }
-                    echo "<br> <br> Query Executed.";
-
-                    $result->free();
-                    $mysqli->close();
-                } else {
-                    echo "Query Failed";
-                }
-            }
-            if(isset($_POST['multi'])){
-
-                $sql = $_POST['query'];
-
-                if($mysqli->multi_query($sql))
-                {
-                    echo "Record Created";
-                }else {
-                    echo "Query Failed";
-                }
-            }
-            ?>
-        </label> <br><br><hr/>
-
-    </form>
-</div>
-
-</body>
-</html>
+<?php
+//Include Footer
+require_once("../Resources/Includes/footer.php");
+?>

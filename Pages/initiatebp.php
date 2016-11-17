@@ -4,7 +4,7 @@
  * This Page controls Intiation of Academic BluePrint module.
  */
 
-
+$cur  = date('Y-m-d H:i:s');
 session_start();
 $error = array();
 $errorflag =0;
@@ -14,7 +14,7 @@ $ou=array();
 
 
 require_once ("../Resources/Includes/connect.php");
-$sqlou = "Select * from Hierarchy";
+$sqlou = "Select * from Hierarchy where OU_DATE_END >= '$cur'";
 $resultou = $mysqli->query($sqlou);
 
 $sqlay = "Select * from AcademicYears";
