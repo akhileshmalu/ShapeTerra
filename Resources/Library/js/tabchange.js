@@ -1,6 +1,7 @@
 var $tabs = $('.tabs-nav li');
 
 $('.changeTab').click(function () {
+    alert("Click");
     $tabs.filter('.active').removeClass('active').next('li').removeClass('disabled').addClass('active');
     
     var className = $tabs.filter('.active').attr("class").split(' ')[0];

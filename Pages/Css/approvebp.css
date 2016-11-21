@@ -1,6 +1,8 @@
+
+
 #list{
-	margin-top: 50px;
-	
+	margin-top: 14px;
+	padding-left: 25px;
 }
 
 #list ul{
@@ -29,7 +31,7 @@
 }
 
 #form{
-	margin-top: 50px;
+	margin-top: 14px;
 }
 
 label{

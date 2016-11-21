@@ -21,13 +21,13 @@ $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
 
 $menu = array(
 	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
-	array("Goals", "../$navdir"."Pages/goalManagement.php", "&#xe002;","goal","basic", false),
-	array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe002;" ,"main","user", true),
-	array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe002;" ,"main","approver", true),
-	array("Add Academic Year", "../$navdir"."Pages/adday.php", "&#xe002;" ,"main","provost", true),
-	array("Edit Academic Year", "../$navdir"."Pages/editay.php", "&#xe002;" ,"main","provost", true),
+	array("Goals", "../$navdir"."Pages/goalManagement.php", "&#xe054;","goal","basic", false),
+	array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe02f;" ,"main","user", true),
+	array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true),
+	array("Add Academic Year", "../$navdir"."Pages/adday.php", "M" ,"main","provost", true),
+	array("Edit Academic Year", "../$navdir"."Pages/editay.php", "*" ,"main","provost", true),
 //	array("Show BluePrint", "../$navdir"."Pages/blueprint/Blueprinthtml/content.php", "&#xe002;" ,"main","basic", false),
-	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "&#xe002;" ,"main","provost", false),
+	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "*" ,"main","provost", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin","basic", false),
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin","basic", false),
 	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user","basic", false),
@@ -133,7 +133,7 @@ Generate PDF button currently disabled.
 	-->
 
 <nav class="col-xs-2" id="menu">
-	<ul class="col-xs-12 col-lg-10 col-lg-offset- col-md-offset-">
+	<ul class="col-xs-12 col-lg-offset- col-md-offset-">
 		<li class="" id="header"><a class="main" href="#" onclick="return false">Main <span id="main"
 																						   class="caret"></span></a>
 		</li>

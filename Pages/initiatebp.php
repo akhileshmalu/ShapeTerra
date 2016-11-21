@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 /*
  * This Page controls Intiation of Academic BluePrint module.
  */
@@ -93,20 +96,21 @@ require_once("../Resources/Includes/menu.php");
 
 <div class="hr"></div>
 
-<div id="main-content" class="col-xs-10">
-    <h1 id="title">Initiate Academic BluePrint</h1>
-
-    <div id="list" class="col-xs-2">
+<div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
+    <div id="title-header">
+        <h1 id="title">Initiate Academic BluePrint</h1>
+    </div>
+    <div id="list" class="col-lg-2 col-md-4 col-xs-4">
         <ul class="tabs-nav">
             <li class="year active">1. Select Academic Year</li>
             <li class="unit disabled">2. Select Organization Unit</li>
         </ul>
     </div>
 
-    <div id="form" class="col-xs-9">
+    <div id="form" class="col-lg-9 col-md-8 col-xs-8">
         <form action="" method="POST">
             <div class="year active" id="actionlist">
-                <div class="col-xs-12" id="table-container">
+                <div class="col-lg-5 col-md-9 col-xs-12" id="table-container">
                     <div class="form-group">
                         <label for="AYgoal">Please select Academic Year:</label>
                         <select  name="AY" class="form-control" id="AYgoal">
@@ -118,7 +122,7 @@ require_once("../Resources/Includes/menu.php");
                     </div>
 
                 </div>
-                <button id="next-tab" type="button" class="btn-primary col-xs-3 pull-right changeTab"> Next Tab
+                <button id="next-tab" type="button" class="btn-primary col-xs-offset-12 col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
             </div>
 
@@ -146,9 +150,8 @@ require_once("../Resources/Includes/footer.php");
 ?>
 
 <!--Calender Bootstrap inclusion for date picker INPUT-->
-
+<script src="../Resources/Library/js/tabchange.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
-<script src="../Resources/Library/js/tabchange.js"></script>

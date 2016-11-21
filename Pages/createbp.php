@@ -91,8 +91,10 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 <div class="hr"></div>
-<div id="main-content" class="col-xs-10">
-    <h1 id="title">BluePrint Completion</h1>
+<div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
+    <div id="title-header">
+        <h1 id="title">BluePrint Completion</h1>
+    </div>
     <div id="list" class="col-xs-2">
         <ul class="tabs-nav">
             <li class="executive active">1. Executive Summary</li>

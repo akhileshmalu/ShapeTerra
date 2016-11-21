@@ -41,10 +41,18 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	margin-bottom: 36px;
 	margin-top: 25px;
 	font-weight: 400;
+	color: #fff;
+	padding-left: 25px;
 }
 
 #main-content{
-	padding-left: 25px;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+#title-header{
+	background-color: #4A90E2;
+	padding: 25px 0px 12px 0px;
 }
 
 .hr{
@@ -65,7 +73,7 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 }
 
 .content-general{
-	margin-top: 100px;
+	margin-top: 25px;
 }
 
 .textbox {

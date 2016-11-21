@@ -158,10 +158,12 @@ require_once("../Resources/Includes/menu.php");
 <?php } ?>
 
 <div class="hr"></div>
-<div id="main-content" class="col-lg-10 col-md-9">
-    <h1 id="title">BluePrint Approval</h1> 
+<div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
+    <div id="title-header">
+        <h1 id="title">BluePrint Approval</h1> 
+    </div>
 
-    <div id="list" class="col-md-2 col-xs-1">
+    <div id="list" class="col-lg-2 col-md-4 col-xs-4">
         <ul class="tabs-nav">
             <li class="mission active">1. Mission Statement</li>
             <li class="vision disabled">2. Vision Statement</li>
@@ -172,14 +174,14 @@ require_once("../Resources/Includes/menu.php");
 
 
 
-    <div id="form" class="col-lg-10 col-sm-9 col-xs-4">
+    <div id="form" class="col-lg-10 col-md-8 col-xs-8">
         <form action="" method="POST">   
             <div class="form-group mission active" id="actionlist">
 
                <label class="col-xs-12" for="missiontitle">Mission Statement</label>
                
                <div class="col-xs-12">
-                    <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-xs-5 pull-left" data-toggle="modal"
+                    <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addmissionModal"><span class="icon">&#xe035;</span> Add Mission
                     </button>
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement" id="missiontitle"
@@ -190,7 +192,7 @@ require_once("../Resources/Includes/menu.php");
 <!--                   </button>-->
 
                    
-                   <button id="next-tab" type="button" class="btn-primary col-xs-3 pull-right changeTab"> Next Tab
+                   <button id="next-tab" type="button" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
                 </div>
            </div>
@@ -199,7 +201,7 @@ require_once("../Resources/Includes/menu.php");
                <label class="col-xs-12" for="visiontitle">Vission Statement</label>
                
                <div class="col-xs-12">
-                    <button id="add-vission" type="button" class="btn-secondary  col-lg-3 col-xs-5 pull-left" data-toggle="modal"
+                    <button id="add-vission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addvisionModal"><span class="icon">&#xe035;</span> Add vission
                     </button>
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="vissionstatement" id="vissiontitle"
@@ -210,7 +212,7 @@ require_once("../Resources/Includes/menu.php");
 <!--                   </button>-->
 
                    
-                   <button id="next-tab" type="button" class="btn-primary col-lg-3 col-xs-5 pull-right changeTab"> Next Tab
+                   <button id="next-tab" type="button" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
                 </div>
            </div>
@@ -219,7 +221,7 @@ require_once("../Resources/Includes/menu.php");
                 <label class="col-xs-12" for="visiontitle">Value Statement</label>
                
                <div class="col-xs-12">
-                    <button id="add-value" type="button" class="btn-secondary  col-lg-3 col-xs-5 pull-left" data-toggle="modal"
+                    <button id="add-value" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addvalueModal"><span class="icon">&#xe035;</span> Add value
                     </button>
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement" id="valuetitle"
@@ -230,7 +232,7 @@ require_once("../Resources/Includes/menu.php");
 <!--                   </button>-->
 
                    
-                   <button id="next-tab" type="button" class="btn-primary col-lg-3 col-xs-5 pull-right changeTab"> Next Tab
+                   <button id="next-tab" type="button" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
                 </div>
            </div>
