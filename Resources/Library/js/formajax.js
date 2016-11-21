@@ -1,4 +1,6 @@
-$('.ajaxform').on('submit',function (e) {
+$(".ajaxform").on('submit',function (e) {
+
+
 
     var that = $(this),
         url = that.attr('action'),
@@ -11,7 +13,6 @@ $('.ajaxform').on('submit',function (e) {
             name =that.attr('name'),
             value = that.val();
         data[name] = value;
-
     });
 
     $.ajax({
@@ -20,8 +21,13 @@ $('.ajaxform').on('submit',function (e) {
         data:data,
         success: function (response) {
             console.log(response);
+        },
+        error:function (response) {
+            console.log(response);
+
         }
     });
+
     return false;
 
 });

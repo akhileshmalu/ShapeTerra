@@ -163,7 +163,7 @@ require_once("../Resources/Includes/menu.php");
                 <button type="submit" name="save"
                         class="btn-secondary col-xs-3 pull-left changeTab">Save
                 </button>
-                <button type="button" name="print" onclick="gotopdf()"
+                <button type="button" name="print" onclick="window.open('../Pages/generatepdf.php','_blank');"
                         class="btn-primary col-xs-3 pull-right">Print
                 </button>
             </div>

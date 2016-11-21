@@ -7,4 +7,5 @@ $('.alert .end').click(function(){
 	$('.overlay').fadeOut("fast", function() {
     	$('.overlay').addClass("hidden");
 	});
+	$(window).attr('location','account.php')
 });
