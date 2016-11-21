@@ -136,6 +136,7 @@ Generate PDF button currently disabled.
 		<li class="" id="header"><a class="main" href="#" onclick="return false">Main <span id="main"
 																						   class="caret"></span></a>
 		</li>
+
 		<?php
 		for ($i = 0; $i < count($menu); $i++) {
 			if (strcmp($rowsmenu['SYS_USER_ROLE'], "provost") == 0) {
