@@ -8,6 +8,13 @@ $mysqli1 = new mysqli("localhost","root","root",$db);
 $mysqli2 = new mysqli("localhost","root","root",$db);
 
 
+/*
+ * TaskBoard Usage
+ */
+mysql_connect("localhost", "root", "root");
+mysql_select_db("TESTDB");
+
+
 $site = "localhost:8888/shapeterra";
 
 $menucon= new mysqli("localhost","root","root",$db);

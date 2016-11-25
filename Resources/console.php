@@ -48,9 +48,9 @@ if (isset($_POST['submit'])) {
 if (isset($_POST['multi'])) {
     $sql = $_POST['query'];
     if ($mysqli->multi_query($sql)) {
-        echo "Record Created";
+        $error ="Record Created";
     } else {
-        echo "Query Failed";
+        $error = "Query Failed";
     }
 }
 
@@ -81,10 +81,14 @@ require_once("../Resources/Includes/menu.php");
             <input type=submit name="submit" class="btn-sm " value="Single Query">
             <input type=submit name="multi" class="btn-sm" value="Multi Query">
         </div>
+        <div>
         <label id="error"><?php echo $error ?> </label>
+        </div>
         <hr>
+        <div>
         Display Result <br>
-        <?php echo $dynamictable; ?>
+        <?php if( $fieldcnt >1 ) {echo $dynamictable;} else { echo "Database Modified.";} ?>
+        </div>
     </div>
 </form>
 

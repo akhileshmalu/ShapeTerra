@@ -3,10 +3,7 @@ session_start();
 
 $ouid = $_SESSION['login_ouid'];
 
-// connect to db
-mysql_connect("localhost", "root", "root");
-mysql_select_db("TESTDB");
-
+require_once("../../Resources/Includes/connect.php");
 // require our class
 require_once("grid.php");
 
