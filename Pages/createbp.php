@@ -20,7 +20,7 @@ $resultbroad=$mysqli1->query($sqlbroad);
 $rowsbroad = $resultbroad->fetch_assoc();
 $aydesc = $rowsbroad['BROADCAST_AY'];
 
-$sqlmvv = "Select * from BP_MissionVisionValues;";
+$sqlmvv = "Select * from BP_MissionVisionValues where UNIT_MVV_AY ='$aydesc' and OU_ABBREV ='$ouabbrev';";
 $resultmvv = $mysqli->query($sqlmvv);
 $rowsmvv = $resultmvv->fetch_assoc();
 
@@ -42,7 +42,7 @@ if(isset($_POST['save'])) {
     $goalidlist = $_POST['goalno'];
 
 
-    $sqlgoalout = "UPDATE broadcast SET BROADCAST_EXECSUM ='$execsummary', BROADCAST_STATUS = 'Completed by User' where BROADCAST_AY='$aydesc' and BROADCAST_OU ='$ou';";
+    $sqlgoalout = "UPDATE broadcast SET BROADCAST_EXECSUM ='$execsummary', BROADCAST_STATUS = 'Completed by User', BROADCAST_STATUS_OTHERS = 'Completed by User' where BROADCAST_AY='$aydesc' and BROADCAST_OU ='$ou';";
 
 //    foreach ($goaloutcome as $item) {
 

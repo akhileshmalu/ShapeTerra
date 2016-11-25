@@ -109,7 +109,7 @@ if (isset($_POST['approve'])) {
         }
 
         //Broadcast update as per status.
-        $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS = 'Approved by Admin' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
+        $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS_OTHERS = 'Approved by Admin',BROADCAST_STATUS ='In Progress' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
 
         if ($mysqli->multi_query($sqlcreatebp)) {
 
@@ -190,21 +190,19 @@ require_once("../Resources/Includes/menu.php");
 <!--                    <button id="changetabbutton" type="button"-->
 <!--                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before-->
 <!--                   </button>-->
-
-                   
                    <button id="next-tab" type="button" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
                 </div>
            </div>
 
            <div class="form-group hidden vision" id="actionlist">
-               <label class="col-xs-12" for="visiontitle">Vission Statement</label>
+               <label class="col-xs-12" for="visiontitle">Vision Statement</label>
                
                <div class="col-xs-12">
                     <button id="add-vission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addvisionModal"><span class="icon">&#xe035;</span> Add vission
                     </button>
-                    <textarea rows="5" cols="25" wrap="hard" class="form-control" name="vissionstatement" id="vissiontitle"
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" id="visiontitle"
                         readonly><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
 
 <!--                    <button id="changetabbutton" type="button" name="nochangevission"-->

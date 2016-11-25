@@ -1,6 +1,8 @@
 <?php
 
-$cur  = date('Y-m-d H:i:s');
-echo $cur;
+
+$ouid = 4;
+$con = ' "Where" '.'=>'.'"BROADCAST_OU ='."'".$ouid."'";
+echo $con;
 
 ?>

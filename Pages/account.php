@@ -10,47 +10,54 @@ $_SESSION['login_lname'] = $rows['LNAME'];
 $ouid = $rows['USER_OU_MEMBERSHIP'];
 $_SESSION['login_ouid'] = $ouid;
 
-if($ouid <> 4) {
-	$sqltask = "select * from broadcast where BROADCAST_OU = '$ouid';";
-} else {
-	$sqltask = "select * from broadcast;";
-}
-$resulttask = $mysqli1->query($sqltask);
 
 require_once("../Resources/Includes/header.php");
 ?>
 
 <link href="Css/account.css" rel="stylesheet" type="text/css" />
 
+<!--
+below headers for task board design purpose
+-->
+
+<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrap.css"/>
+<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrap-responsive.css"/>
+<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrap-responsive.min.css"/>
+
+<link rel="stylesheet" href="Css/grid.css" title="openJsGrid"/>
+<script src="../Resources/Library/js/root.js"></script>
+<script src="../Resources/Library/js/grid.js"></script>
+
+<!--
+  Above Headers are for Task Board design
+-->
+
 <?php
 require_once("../Resources/Includes/menu.php");
 ?>
 
 
-
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
 	<div id="title-header">
-    	<h1 id="title">Dashboard</h1> 
-    </div>
-	<table class="table table-striped table-hover col-xs-12">
-		<thead>
-		<tr>
-			<th>Task Description</th>
-			<th>Task Status</th>
-		</tr>
-		</thead>
-		<tbody>
-		<?php while($rowstask = $resulttask->fetch_assoc()): ?>
-		<tr class="">
-			<td><?php echo $rowstask["BROADCAST_DESC"]; ?></td>
-			<td><?php echo $rowstask["BROADCAST_STATUS"]; ?></td>
-		</tr>
-		<?php endwhile; ?>
-		</tbody>
-	</table>
-   
+		<h1 id="title">Dashboard</h1>
+	</div>
+	<div id="dashboard" class="col-lg-12">
+		<table class="grid dashboard" action="dashboard/ajax.php" title="TaskBoard">
+			<tr>
+				<th col="BROADCAST_AY" type="text" width="200">Academic Year</th>
+				<th col="BROADCAST_DESC" type="text" width="200">Description</th>
+				<?php if ($ouid == 4) { ?>
+					<th col="BROADCAST_STATUS" type="text" width="360">Status</th>
+				<?php } else { ?>
+					<th col="BROADCAST_STATUS_OTHERS" type="text" width="360">Status</th>
+				<?php } ?>
+			</tr>
+		</table>
+	</div>
 </div>
 
 <?php
 require_once("../Resources/Includes/footer.php");
 ?>
+<script src="../Resources/Library/js/dashboard.js"></script>

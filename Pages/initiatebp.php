@@ -17,8 +17,16 @@ $ou=array();
 
 
 require_once ("../Resources/Includes/connect.php");
+
+/*
+ * Query to show Non terminated Organization Unit as on date.
+ */
 $sqlou = "Select * from Hierarchy where OU_DATE_END >= '$cur'";
 $resultou = $mysqli->query($sqlou);
+
+/*
+ * Query to show Academic years for Initiating Blue Print.
+ */
 
 $sqlay = "Select * from AcademicYears";
 $resultay = $mysqli->query($sqlay);
@@ -42,9 +50,14 @@ if(isset($_POST['submit'])) {
         /*
          * Broadcast status
          *  -  Initiated by Provost : Provost opened Academic Year
-         *  -  Approved by Administrator of Unit
-         * -   In Progress : Acad Contributor Started confirmation
-         *  -  Complete : Acad Contributor Finished confirmation
+         *  -  In Progress : Academic Units Started Contribution
+         *  -  Completed by User : Academic Contributor Finished confirmation
+         */
+        /*
+         * Broadcast status_Others
+         *  -  Initiated by Provost : Provost opened Academic Year
+         *  -  Approved by Admin : Administrator of Unit
+         *  -  Completed by User : Academic Contributor Finished confirmation
          */
 
         foreach ($ou as $value) {
@@ -59,8 +72,8 @@ if(isset($_POST['submit'])) {
             } else {
 
                 $broadcaststatus = "Initiated by Provost";
-                $broadcastmsg = $ouabbrev . " BluePrint for Academic Year - " . $ay;
-                $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS,BROADCAST_AY) VALUES ('$ouid','$broadcastmsg','Y','$broadcaststatus','$ay');";
+                $broadcastmsg = $ouabbrev . " Academic BluePrint";
+                $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS) VALUES ('$ouid','$broadcastmsg','Y','$broadcaststatus','$ay','$broadcaststatus');";
             }
         }
         if ($errorflag != 1) {
