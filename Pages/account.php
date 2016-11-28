@@ -20,10 +20,8 @@ require_once("../Resources/Includes/header.php");
 below headers for task board design purpose
 -->
 
-<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrap.css"/>
-<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrapTable.css"/>
 <link rel="stylesheet" href="dashboard/bootstrap/css/bootstrap-responsive.css"/>
-<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrap-responsive.min.css"/>
 
 <link rel="stylesheet" href="Css/grid.css" title="openJsGrid"/>
 <script src="../Resources/Library/js/root.js"></script>
@@ -45,12 +43,12 @@ require_once("../Resources/Includes/menu.php");
 	<div id="dashboard" class="col-lg-12">
 		<table class="grid dashboard" action="dashboard/ajax.php" title="TaskBoard">
 			<tr>
-				<th col="BROADCAST_AY" type="text" width="200">Academic Year</th>
-				<th col="BROADCAST_DESC" type="text" width="200">Description</th>
+				<th col="BROADCAST_AY" type="text" >Academic Year</th>
+				<th col="BROADCAST_DESC" type="text" >Description</th>
 				<?php if ($ouid == 4) { ?>
-					<th col="BROADCAST_STATUS" type="text" width="360">Status</th>
+					<th col="BROADCAST_STATUS" type="text" >Status</th>
 				<?php } else { ?>
-					<th col="BROADCAST_STATUS_OTHERS" type="text" width="360">Status</th>
+					<th col="BROADCAST_STATUS_OTHERS" type="text" >Status</th>
 				<?php } ?>
 			</tr>
 		</table>

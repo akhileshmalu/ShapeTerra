@@ -8,7 +8,7 @@ $(function() {
         editing : false,
         deleting :false,
         nRowsShowing : 10,
-        width: 800,
+        width: 900,
         rowNumbers: true,
         checkboxes: false,
         cellTypes : {
