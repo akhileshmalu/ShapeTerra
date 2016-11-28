@@ -9,7 +9,7 @@ require_once("grid.php");
 
 if ($ouid <> 4) {
     // load our grid with a table for other than Provost
-    $grid = new Grid("broadcast", array(
+    $grid = new Grid("broadcast", $mysqli ,array(
         "save" => false,
         "delete" => false,
         "where" => "BROADCAST_OU = '$ouid'",
@@ -23,17 +23,9 @@ if ($ouid <> 4) {
     ));
 } else {
     // load our grid with a table for Provost
-    $grid = new Grid("broadcast", array(
+    $grid = new Grid("broadcast",$mysqli, array(
         "save" => false,
         "delete" => false,
-//        "where"=>"BROADCAST_OU = '$ouid'",
-        // "joins"=>array(
-        // 	"LEFT JOIN categories ON categories.CategoryID = tutorials.CategoryID"
-        // ),
-        // "fields"=>array(
-        // 	"thumb" => "CONCAT('http://cmivfx.com/images/thumbs/',ThumbnailLocation)"
-        // ),
-        // "select" => 'selectFunction'
     ));
 }
 

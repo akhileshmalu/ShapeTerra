@@ -33,8 +33,6 @@ $goalname =array();
 $goaloutcome = array();
 $goalidlist = array();
 
-
-
 if(isset($_POST['save'])) {
 
     $execsummary = mynl2br($_POST['execsummary']);

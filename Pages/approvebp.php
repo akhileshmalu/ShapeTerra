@@ -187,9 +187,6 @@ require_once("../Resources/Includes/menu.php");
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement" id="missiontitle"
                         readonly><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
 
-<!--                    <button id="changetabbutton" type="button"-->
-<!--                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before-->
-<!--                   </button>-->
                    <button id="next-tab" type="button" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
                 </div>
@@ -205,11 +202,6 @@ require_once("../Resources/Includes/menu.php");
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" id="visiontitle"
                         readonly><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
 
-<!--                    <button id="changetabbutton" type="button" name="nochangevission"-->
-<!--                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before-->
-<!--                   </button>-->
-
-                   
                    <button id="next-tab" type="button" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
                 </div>
@@ -225,10 +217,6 @@ require_once("../Resources/Includes/menu.php");
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement" id="valuetitle"
                         readonly><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
 
-<!--                    <button id="changetabbutton" type="button" name="nochangevalue"-->
-<!--                       class="btn-secondary col-xs-3 pull-left changeTab">Same as Before-->
-<!--                   </button>-->
-
                    
                    <button id="next-tab" type="button" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
@@ -238,13 +226,19 @@ require_once("../Resources/Includes/menu.php");
             <div class="form-group hidden goal" id="actionlist">
                 <label for="goaltitle">Previous Year Goals</label><br>
                 <div class="col-xs-12">
-                    <select multiple="multiple" class="form-control" name="goaltitlelist[]" id="goaltitlelist" required>
-                        <option value="0"></option>
+<!--                    <select multiple="multiple" class="form-control" name="goaltitlelist[]" id="goaltitlelist" required>-->
+<!--                        <option value="0"></option>-->
                         <?php while ($rowsunit = $resultunit->fetch_assoc()) { ?>
-                            <option
-                                value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></option>
+
+                            <div class="checkbox" id="unitgoal">
+                                <label><input type="checkbox" name="goaltitlelist[]"
+                                              class="checkBoxClass" value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></label>
+                            </div>
+
+<!--                            <option-->
+<!--                                value="--><?php //echo $rowsunit['ID_UNIT_GOAL']; ?><!--">--><?php //echo $rowsunit['UNIT_GOAL_TITLE']; ?><!--</option>-->
                         <?php } ?>
-                    </select>
+<!--                    </select>-->
                     <div id="curgoal" class="hidden form-group">
                         <label for="curgoaltext">Added Goals</label>
                         <textarea id="curgoaltext" class="form-control" rows="5" cols="25" readonly></textarea>
@@ -351,16 +345,6 @@ require_once("../Resources/Includes/menu.php");
 
                 <div id="modalcontent1" class="col-xs-12">
                     <form id="goalform"  class="ajaxform" action="approvebp.php" method="POST">
-
-<!--                        <div class="form-group">-->
-<!--                            <label for="AYgoal">Please select Academic Year:</label>-->
-<!--                            <select multiple="multiple" name="AY[]" class="form-control" id="AYgoal" required>-->
-<!--                                <option value=""></option>-->
-<!--                                --><?php //while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)) { ?>
-<!--                                    <option value="--><?php //echo $rowsay[1]; ?><!--"> --><?php //echo $rowsay[1]; ?><!-- </option>-->
-<!--                                --><?php //} ?>
-<!--                            </select>-->
-<!--                        </div>-->
                         <div class="form-group">
                             <label for="goaltitle">Please Enter Goal Title:</label>
                             <input type="text" class="form-control" name="goaltitle" id="goaltitle" required>

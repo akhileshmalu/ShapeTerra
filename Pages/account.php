@@ -20,8 +20,12 @@ require_once("../Resources/Includes/header.php");
 below headers for task board design purpose
 -->
 
-<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrapTable.css"/>
-<link rel="stylesheet" href="dashboard/bootstrap/css/bootstrap-responsive.css"/>
+<link rel="stylesheet" href="taskboard/bootstrap/css/bootstrapTable.css"/>
+<!--<link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap.css"/>-->
+<!--<link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap.min.css"/>-->
+<link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
+<link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
+
 
 <link rel="stylesheet" href="Css/grid.css" title="openJsGrid"/>
 <script src="../Resources/Library/js/root.js"></script>
@@ -38,10 +42,10 @@ require_once("../Resources/Includes/menu.php");
 
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
 	<div id="title-header">
-		<h1 id="title">Dashboard</h1>
+		<h1 id="title">Home</h1>
 	</div>
-	<div id="dashboard" class="col-lg-12">
-		<table class="grid dashboard" action="dashboard/ajax.php" title="TaskBoard">
+	<div id="taskboard" class="col-lg-12">
+		<table class="grid taskboard" action="taskboard/ajax.php" title="TaskBoard">
 			<tr>
 				<th col="BROADCAST_AY" type="text" >Academic Year</th>
 				<th col="BROADCAST_DESC" type="text" >Description</th>
@@ -58,4 +62,4 @@ require_once("../Resources/Includes/menu.php");
 <?php
 require_once("../Resources/Includes/footer.php");
 ?>
-<script src="../Resources/Library/js/dashboard.js"></script>
+<script src="../Resources/Library/js/taskboard.js"></script>

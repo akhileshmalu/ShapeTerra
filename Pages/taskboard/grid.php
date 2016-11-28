@@ -23,9 +23,11 @@ Class Grid {
 	var $security;
 	var $set;
 	var $sql;
+    private $link;
 	
-	function __construct($table, $options) {
+	function __construct($table,$con, $options) {
 		$this->table = $table;
+        $this->link =$con;
 		
 		// save
 		if( isset($options['save']) && isset($_POST['save']) && $options['save'] == "true") {
@@ -70,7 +72,7 @@ Class Grid {
 	
 	function save() {
 		$saveArray = $this->getSaveArray();
-		
+
 		// we need a primary key for editing
 		$primaryKey = $this->getPrimaryKey();
 
@@ -86,16 +88,16 @@ Class Grid {
 				if(!is_array($this->security) || in_array($key,$this->security)) {
 					// dont save fields that weren't saveable. i.e. joined fields
 					if(in_array($key,$_POST['saveable'])) {
-						$key =  mysql_real_escape_string($key);
-						$value =  mysql_real_escape_string($value);
+						$key =  mysqli_real_escape_string($this->link,$key);
+						$value =  mysqli_real_escape_string($this->link,$value);
 						$setArray[] = "`$key`='$value'";
 					}
-				}	
+				}
 			}
 			
 			$sql = "UPDATE {$this->table} SET ".implode(",",$setArray)." WHERE `$primaryKey` = '$rowId'";
 			
-			$res = mysql_query($sql);
+			$res = mysqli_query($this->link,$sql);
 
 			// die with messages if fail
 			$this->dieOnError($sql);
@@ -110,14 +112,15 @@ Class Grid {
 	
 	// adds a new row based on the editable fields
 	function add() {
-		
+
+
 		// if didn't pass a set param, just add a new row
 		if(empty($this->set)) {
-			mysql_query("INSERT INTO {$this->table} VALUES ()");
+			mysqli_query($this->link,"INSERT INTO {$this->table} VALUES ()");
 		
 		// if you passed a set param then use that in the insert
 		} else {
-			mysql_query("INSERT INTO {$this->table} SET {$this->set}");
+			mysqli_query($this->link,"INSERT INTO {$this->table} SET {$this->set}");
 		}
 		
 		// we return the primary key so that we can order by it in the jS
@@ -125,9 +128,10 @@ Class Grid {
 	}
 	
 	function delete() {
+
 		$post = $this->_safeMysql();
 		$primaryKey = $this->getPrimaryKey();
-		return mysql_query("DELETE FROM {$this->table} WHERE `$primaryKey` = '$post[id]'");
+		return mysqli_query($this->link,"DELETE FROM {$this->table} WHERE `$primaryKey` = '$post[id]'");
 	}
 	
 	function select($selects) {
@@ -226,7 +230,7 @@ Class Grid {
 	// loads data into the grid
 	function load() {
 		$post = $this->_safeMysql();
-		
+
 		// setup variables from properties
 		$joins = $this->joins;
 		$fields = $this->fields;
@@ -360,8 +364,8 @@ Class Grid {
 					$col = str_replace("`","",$col);
 					list($aTable,$field) = explode(".",$col);
 					if(!$aTable) $aTable = $this->table;
-					$colDataSql = mysql_query("SHOW columns FROM $aTable WHERE Field = '$field'");
-					while($row = mysql_fetch_assoc($colDataSql)) {
+					$colDataSql = mysqli_query($this->link,"SHOW columns FROM $aTable WHERE Field = '$field'");
+					while($row = mysqli_fetch_assoc($colDataSql)) {
 						$type = $row['Type'];
 					}
 					preg_match('/\(([^\)]+)/',$type,$matches);
@@ -475,8 +479,8 @@ Class Grid {
 				$sql2 = preg_replace('/LIMIT[\s\d,]+$/','',$sql);
 			
 				// find the total results to send back
-				$res = mysql_query($sql2);
-				$data['nRows'] = mysql_num_rows($res);
+				$res = mysqli_query($this->link,$sql2);
+				$data['nRows'] = mysqli_num_rows($res);
 			} else {
 				$data['nRows'] = $this->limit;
 			}
@@ -516,15 +520,16 @@ Class Grid {
 	// using the current table will get the primary key column name
 	// does not work for combined primary keys
 	function getPrimaryKey($table=NULL) {
-		if(!$table) $table = $this->table;
-		$primaryKey = mysql_query("SHOW KEYS FROM `$table` WHERE Key_name = 'PRIMARY'");
-		$primaryKey = mysql_fetch_assoc($primaryKey);
+
+	    if(!$table) $table = $this->table;
+		$primaryKey = mysqli_query($this->link,"SHOW KEYS FROM `$table` WHERE Key_name = 'PRIMARY'");
+		$primaryKey = mysqli_fetch_assoc($primaryKey);
 		return $primaryKey['Column_name'];
 	}
 	
 	// if there is a mysql error it will die with that error
 	function dieOnError($sql) {
-		if($e=mysql_error()) {
+		if($e=mysqli_error($this->link)) {
 			//var_dump($sql);
 			die($e);
 		}
@@ -532,18 +537,19 @@ Class Grid {
 	
 	// runs a query, always returns a multi dimensional array of results
 	function _queryMulti($sql) {
-		$array = array();
-		$res = mysql_query($sql);
+
+	    $array = array();
+		$res = mysqli_query($this->link,$sql);
 		if((bool)$res) {
 			// if there is only 1 field, just return and array with that field as each value
-			if(mysql_num_fields($res) > 1) {
-				while($row = mysql_fetch_assoc($res)) $array[] = $row;
-			} else if(mysql_num_fields($res) == 1) {
-				while($row = mysql_fetch_assoc($res)) {
+			if(mysqli_num_fields($res) > 1) {
+				while($row = mysqli_fetch_assoc($res)) $array[] = $row;
+			} else if(mysqli_num_fields($res) == 1) {
+				while($row = mysqli_fetch_assoc($res)) {
 					foreach($row as $item) $array[] = $item;
 				}	
 			}	
-			$error = mysql_error();
+			$error = mysqli_error($this->link);
 			if($error) echo $error;
 		}
 		return $array;
@@ -551,11 +557,12 @@ Class Grid {
 	
 	// safeify post
 	function _safeMysql($post=NULL) {
+
 		if(!isset($post)) $post = $_POST;
 		$postReturn = array();
 		foreach($post as $key=>$value) {
 			if(!is_array($value)) {
-				$postReturn[$key] = mysql_real_escape_string(urldecode($value)); 
+				$postReturn[$key] = mysqli_real_escape_string($this->link,urldecode($value));
 			} else if(is_array($value)) {
 				$postReturn[$key] = $value;
 			}	

@@ -58,7 +58,7 @@ if(isset($_POST['request'])){
                 //Confirmation Mail Variable to Approver
                 $sub = "You have a request pending for approval";
                 $msg = "Hello" . "<br/>"."<br/>";
-                $msg .= "User: '$email' has requeted for privilege upgrade"."<br>"."<br/><br/>"."Please action the request through your dashboard.";
+                $msg .= "User: '$email' has requeted for privilege upgrade"."<br>"."<br/><br/>"."Please action the request through your taskboard.";
                 mail($approver, $sub, $msg, $headers);
 
                 $error[0] = "Request submitted Successfully";

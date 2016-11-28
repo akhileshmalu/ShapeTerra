@@ -1,7 +1,7 @@
 $(function() {
 
 
-    var $grid = $(".dashboard").grid({
+    var $grid = $(".taskboard").grid({
         title : "Task Board",
         page : 1,
         showPager : true,

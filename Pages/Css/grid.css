@@ -1,4 +1,4 @@
-#dashboard {
+#taskboard {
   padding: 80px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
@@ -357,7 +357,7 @@ div.gridWrapper .gridPager .search input:focus:after {
   position: absolute;
   top: 10px;
   left: -27px;
-  background-image: url("../dashboard/bootstrap/img/glyphicons-halflings.png");
+  background-image: url("../taskboard/bootstrap/img/glyphicons-halflings.png");
   background-position: -48px 0px;
 }
 div.gridWrapper select {

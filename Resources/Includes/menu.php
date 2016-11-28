@@ -20,7 +20,7 @@ $rowsmenu = $resultmenu ->fetch_assoc();
 $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
 
 $menu = array(
-	array("Dashboard", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
+	array("Home", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
 	array("Goals", "../$navdir"."Pages/goalManagement.php", "&#xe054;","goal","basic", false),
 	array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe02f;" ,"main","user", true),
 	array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true),
