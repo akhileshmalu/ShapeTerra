@@ -12,27 +12,43 @@
 */
 require_once ("../Resources/Includes/connect.php");
 $email = $_SESSION['login_email'];
-$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE,SYS_USER_RIGHT, OU_ABBREV,FNAME,LNAME from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
+$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE,SYS_USER_RIGHT, OU_ABBREV,FNAME,LNAME ,USER_OU_MEMBERSHIP from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
 inner join UserRoles on PermittedUsers.SYS_USER_ROLE = UserRoles.ID_USER_ROLE
 inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY WHERE  NETWORK_USERNAME ='$email';";
 $resultmenu = $menucon->query($sqlmenu);
 $rowsmenu = $resultmenu ->fetch_assoc();
 $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
+$ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
+
+
+$sqlmenuctrl = "select * from broadcast where BROADCAST_OU = $ouid; ";
+$resultmenuctrl = $menucon->query($sqlmenuctrl);
+$rowsmenuctrl = $resultmenuctrl ->fetch_assoc();
+
+
 
 $menu = array(
 	array("Home", "../$navdir"."Pages/account.php", "&#xe002;" ,"main","basic", true),
 	array("Goals", "../$navdir"."Pages/goalManagement.php", "&#xe054;","goal","basic", false),
-	array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe02f;" ,"main","user", true),
-	array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true),
+	//array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe02f;" ,"main","user", true),
+	//array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true),
 	array("Add Academic Year", "../$navdir"."Pages/adday.php", "M" ,"main","provost", true),
 	array("Edit Academic Year", "../$navdir"."Pages/editay.php", "*" ,"main","provost", true),
-//	array("Show BluePrint", "../$navdir"."Pages/blueprint/Blueprinthtml/content.php", "&#xe002;" ,"main","basic", false),
 	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "*" ,"main","provost", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe057;" ,"admin","basic", false),
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "&#xe053;" ,"admin","basic", false),
 	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe055;" ,"user","basic", false),
 	);
 
+if($rowsmenuctrl['Menucontrol'] == 'Approver') {
+	$string = array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true);
+	array_push($menu,$string);
+}
+
+if ($rowsmenuctrl['Menucontrol'] == 'User') {
+	$string = array("Create BluePrint", "../$navdir" . "Pages/createbp.php", "&#xe02f;", "main", "user", true);
+	array_push($menu, $string);
+}
 
 ?>
 

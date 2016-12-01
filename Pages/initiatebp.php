@@ -73,7 +73,7 @@ if(isset($_POST['submit'])) {
 
                 $broadcaststatus = "Initiated by Provost";
                 $broadcastmsg = $ouabbrev . " Academic BluePrint";
-                $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,OPEN_CONFIRMGOALS,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS) VALUES ('$ouid','$broadcastmsg','Y','$broadcaststatus','$ay','$broadcaststatus');";
+                $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,Menucontrol,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS) VALUES ('$ouid','$broadcastmsg','Approver','$broadcaststatus','$ay','$broadcaststatus');";
             }
         }
         if ($errorflag != 1) {

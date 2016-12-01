@@ -133,10 +133,10 @@ if (isset($_POST['approve'])) {
         }
 
         //Broadcast update as per status.
-        $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS_OTHERS = 'Approved by Admin',BROADCAST_STATUS ='In Progress' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
+        $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS_OTHERS = 'Approved by Admin',BROADCAST_STATUS ='In Progress',Menucontrol = 'User' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
 
         if($goalmodalcount >= 1000){
-            $sqlcreatebp .= "Delete from tempunitgoals where ID_UNIT_GOAL >= 1000;ALTER TABLE tempunitgoals AUTO_INCREMENT = 999";
+            $sqlcreatebp .= "Delete from tempunitgoals where ID_UNIT_GOAL >= 1000;ALTER TABLE tempunitgoals AUTO_INCREMENT = 999;";
         }
 
         if ($mysqli->multi_query($sqlcreatebp)) {
