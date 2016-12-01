@@ -21,7 +21,7 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Query to show Non terminated Organization Unit as on date.
  */
-$sqlou = "Select * from Hierarchy where OU_DATE_END >= '$cur'";
+$sqlou = "Select * from Hierarchy where OU_DATE_END >= '$cur' and OU_TYPE='Academic Unit'";
 $resultou = $mysqli->query($sqlou);
 
 /*
@@ -142,7 +142,7 @@ require_once("../Resources/Includes/menu.php");
             <div class="unit hidden" id="actionlist">
                 <label for="ouname">Please Select Organization Unit(s)</label><br/>
                 <div class="checkbox" id="ouname">
-                <label><input type="checkbox" id="ckbCheckAll" >Select All Organization Units</label>
+                <label><input type="checkbox" id="ckbCheckAll" >All Active Academic Units</label>
                 </div>
                     <?php while ($rowsou = $resultou->fetch_array(MYSQLI_NUM)): { ?>
                     <div class="checkbox" id="ouname">

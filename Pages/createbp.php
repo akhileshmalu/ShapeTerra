@@ -36,27 +36,27 @@ $goalidlist = array();
 if(isset($_POST['save'])) {
 
     $execsummary = mynl2br($_POST['execsummary']);
-    $goaloutcome = $_POST['goaloutcome'];
-    $goalidlist = $_POST['goalno'];
-
 
     $sqlgoalout = "UPDATE broadcast SET BROADCAST_EXECSUM ='$execsummary', BROADCAST_STATUS = 'Completed by User', BROADCAST_STATUS_OTHERS = 'Completed by User' where BROADCAST_AY='$aydesc' and BROADCAST_OU ='$ou';";
 
-//    foreach ($goaloutcome as $item) {
-
     for( $i=0; $i<$count;$i++) {
 
-        $outcome = mynl2br($goaloutcome[$i]);
-        $idoutcome = $goalidlist[$i];
+    $indexgoaloc = "goaloutcome".$i;
+    $indexgoalunit = "goalno".$i;
 
-        $sqlgoalout .= "INSERT INTO BP_UnitGoalOutcomes(ID_UNIT_GOAL,OUTCOMES_AUTHOR,MOD_TIMESTAMP,GOAL_ACHIEVEMENTS) VALUES ('$idoutcome','$author','$time','$outcome')";
+        $outcome = mynl2br($_POST[ $indexgoaloc]);
+        $idoutcome = $_POST[$indexgoalunit];
+
+        $sqlgoalout .= "INSERT INTO BP_UnitGoalOutcomes(ID_UNIT_GOAL,OUTCOMES_AUTHOR,MOD_TIMESTAMP,GOAL_ACHIEVEMENTS) VALUES ('$idoutcome','$author','$time','$outcome');";
+
     }
+
     $mysqli->multi_query($sqlgoalout);
-//    if($mysqli->multi_query($sqlgoalout)) {
-//        $error[0] = "Academic BluePrint created Successfully";
-//    } else {
-//        $error[0] = "Academic BluePrint could not be craeted";
-//    }
+    if($mysqli->multi_query($sqlgoalout)) {
+        $error[0] = "Academic BluePrint created Successfully";
+    } else {
+        $error[0] = "Academic BluePrint could not be craeted";
+    }
 
 }
 
@@ -141,13 +141,13 @@ require_once("../Resources/Includes/menu.php");
 
             <div  class="goals hidden" id="actionlist">
                 <div class="form-group " id="actionlist3">
-                    <?php while ($rowsunit = $resultunit->fetch_array(MYSQLI_ASSOC)){ ?>
+                    <?php $index = 0; while ($rowsunit = $resultunit->fetch_array(MYSQLI_ASSOC)){  ?>
                         <label for="goaloutcome">Enter Goal Achievements for
                             : <?php  echo $rowsunit['UNIT_GOAL_TITLE']; ?> </label>
-                        <textarea id="goaloutcome" name="goaloutcome[]" wrap="hard" rows="5" cols="25" class="form-control"
+                        <textarea id="goaloutcome" name="<?php echo 'goaloutcome'.$index; ?>" wrap="hard" rows="5" cols="25" class="form-control"
                                   required></textarea>
-                        <input  type="hidden" name="goalno[]" value="<?php echo $rowsunit['ID_UNIT_GOAL'];?>">
-                    <?php } ?>
+                        <input  type="hidden" name="<?php echo 'goalno'.$index; ?>" value="<?php echo $rowsunit['ID_UNIT_GOAL'];?>">
+                    <?php $index++; } ?>
                     <button type="button" id="preview"
                             class="btn-primary col-lg-4 col-xs-4 pull-right changeTab">Preview
                     </button>
@@ -161,7 +161,7 @@ require_once("../Resources/Includes/menu.php");
                 </div>
 
                 <button type="submit" name="save"
-                        class="btn-secondary col-xs-3 pull-left changeTab">Save
+                        class="btn-secondary col-xs-3 pull-left">Save
                 </button>
                 <button type="button" name="print" onclick="window.open('../Pages/generatepdf.php','_blank');"
                         class="btn-primary col-xs-3 pull-right">Print
@@ -179,4 +179,4 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/tabchange.js"></script>
 <script src="../Resources/Library/js/content.js"></script>
 <script src="../Resources/Library/js/formajax.js"></script>
-<script src="../Resources/Library/js/pdfdirect.js"></script>
+<!--<script src="../Resources/Library/js/pdfdirect.js"></script>-->

@@ -21,7 +21,7 @@ $ouid = $_SESSION['login_ouid'];
  */
 $unigoallink = array();
 $unigoallinkname = "";
-$goalmodalcount=0;
+$goalmodalcount=1000;
 $ouabbrev = $_SESSION['login_ouabbrev'];
 
 /*
@@ -73,20 +73,35 @@ if(isset($_POST['goal_submit'])) {
     }
     $goalstatement = mynl2br($_POST['goalstatement']);
     $goalalignment = mynl2br($_POST['goalalignment']);
+//
+//    $sqlcreatebp.= "CREATE TABLE IF NOT EXISTS tempunitgoals (
+//  `ID_UNIT_GOAL` int(4) NOT NULL,
+//  `OU_ABBREV` varchar(40) NOT NULL,
+//  `GOAL_AUTHOR` varchar(45) NOT NULL,
+//  `MOD_TIMESTAMP` datetime NOT NULL,
+//  `UNIT_GOAL_AY` varchar(40) NOT NULL,
+//  `PRIORITY_GOAL_AY` int(1) ,
+//  `UNIT_GOAL_TITLE` varchar(150) NOT NULL,
+//  `LINK_UNIV_GOAL` varchar(45) DEFAULT NULL,
+//  `GOAL_STATEMENT` longtext NOT NULL,
+//  `GOAL_ALIGNMENT` longtext NOT NULL
+//);";
 
-
-    $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ay','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+    $sqlcreatebp .= "INSERT INTO tempunitgoals (ID_UNIT_GOAL, OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$goalmodalcount','$ouabbrev','$author','$time','$ay','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
 
     $mysqli->query($sqlcreatebp);
 
+
     $goalmodalcount++;
+
+    unset($_POST['goal_submit']);
 
 }
 
 
 if (isset($_POST['approve'])) {
 
-    if(empty($_POST['goaltitlelist']) && $goalmodalcount!= 0) {
+    if(!isset($_POST['goaltitlelist']) ) {
 
         $error[1]="Please select a Goal to submit";
         $errorflag = 1;
@@ -105,11 +120,22 @@ if (isset($_POST['approve'])) {
 
         //Selected Previous Year Goals for New BP Academic Year
         foreach ($goalid as $idk) {
-            $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) SELECT OU_ABBREV, '$author', '$time', '$ay', UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT FROM BP_UnitGoals WHERE ID_UNIT_GOAL ='$idk';";
+
+            echo $idk."\n";
+
+            if ($idk >= 1000) {
+                $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) SELECT OU_ABBREV, '$author', '$time', '$ay', UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT FROM tempunitgoals b WHERE b.ID_UNIT_GOAL ='$idk';";
+            } else {
+                $sqlcreatebp .= "INSERT INTO BP_UnitGoals (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) SELECT OU_ABBREV, '$author', '$time', '$ay', UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT FROM BP_UnitGoals  WHERE ID_UNIT_GOAL ='$idk';";
+            }
         }
 
         //Broadcast update as per status.
         $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS_OTHERS = 'Approved by Admin',BROADCAST_STATUS ='In Progress' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
+
+        if($goalmodalcount > 1000){
+            $sqlcreatebp .= "Delete from tempunitgoals where ID_UNIT_GOAL >= 1000;ALTER TABLE tempunitgoals AUTO_INCREMENT = 999";
+        }
 
         if ($mysqli->multi_query($sqlcreatebp)) {
 
@@ -172,8 +198,6 @@ require_once("../Resources/Includes/menu.php");
         </ul>
     </div>
 
-
-
     <div id="form" class="col-lg-10 col-md-8 col-xs-8">
         <form action="" method="POST">   
             <div class="form-group mission active" id="actionlist">
@@ -224,32 +248,33 @@ require_once("../Resources/Includes/menu.php");
            </div>
 
             <div class="form-group hidden goal" id="actionlist">
-                <label for="goaltitle">Previous Year Goals</label><br>
+                <label for="unitgoal">Please Select Goals: </label>
                 <div class="col-xs-12">
-<!--                    <select multiple="multiple" class="form-control" name="goaltitlelist[]" id="goaltitlelist" required>-->
-<!--                        <option value="0"></option>-->
-                        <?php while ($rowsunit = $resultunit->fetch_assoc()) { ?>
+                    <?php while ($rowsunit = $resultunit->fetch_assoc()) { ?>
 
-                            <div class="checkbox" id="unitgoal">
-                                <label><input type="checkbox" name="goaltitlelist[]"
-                                              class="checkBoxClass" value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></label>
-                            </div>
-
-<!--                            <option-->
-<!--                                value="--><?php //echo $rowsunit['ID_UNIT_GOAL']; ?><!--">--><?php //echo $rowsunit['UNIT_GOAL_TITLE']; ?><!--</option>-->
-                        <?php } ?>
-<!--                    </select>-->
-                    <div id="curgoal" class="hidden form-group">
-                        <label for="curgoaltext">Added Goals</label>
-                        <textarea id="curgoaltext" class="form-control" rows="5" cols="25" readonly></textarea>
+                    <div class="checkbox" id="unitgoal">
+                        <label for="cb1"><input type="checkbox" name="goaltitlelist[]" id="cb1"
+                                                class="checkBoxClass"
+                                                value="<?php echo $rowsunit['ID_UNIT_GOAL']; ?>"><?php echo $rowsunit['UNIT_GOAL_TITLE']; ?>
+                        </label>
                     </div>
-                    <button id="add-goal" type="button" name="addgoal" class="btn-secondary col-xs-3 pull-left" data-toggle="modal"
-                            data-target="#addunitGoalModal"><span class="icon">&#xe035;</span>Add Goal
-                    </button>
-                    <button  type="submit" name="approve" class="btn-primary col-xs-3 pull-right">
-                        Approve
-                    </button>
+                    <?php } ?>
+                </div><br/>
+
+                <div class="col-xs-12">
+                    <div class="checkbox" id="unitgoal1">
+
+                    </div>
                 </div>
+
+                <button id="add-goal" type="button" name="addgoal" class="btn-secondary col-xs-3 pull-left"
+                        data-toggle="modal"
+                        data-target="#addunitGoalModal"><span class="icon">&#xe035;</span>Add Goal
+                </button>
+                <button type="submit" name="approve" class="btn-primary col-xs-3 pull-right">
+                    Approve
+                </button>
+            </div>
             </div>
 
         </form>
@@ -373,7 +398,8 @@ require_once("../Resources/Includes/menu.php");
                                       required></textarea>
                         </div>
                         <input type="submit" id="unitgoalbtn" name="goal_submit" value="Add Goal" class="btn-primary btn-sm pull-left" >
-                        <input type="button" id="goalmodalclose" class="btn-primary btn-sm pull-right"  value="Close" data-dismiss="modal" aria-label="Close">
+                        <input type="reset" id="reset" class="hidden">
+                        <input type="button" id="goalmodalclose" class="btn-primary btn-sm pull-right"  onclick="$('#reset').click();" value="Close" data-dismiss="modal" aria-label="Close">
                     </form>
                 </div>
             </div>

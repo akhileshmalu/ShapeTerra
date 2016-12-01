@@ -41,10 +41,22 @@ $("#valuebtn").click(function(){
 });
 
 $("#unitgoalbtn").click(function(){
-    var y =  document.getElementById('curgoaltext');
     var x = document.getElementById("goaltitle");
-    var z= x.value;
-    y.value = z;
-    $("#curgoal").removeClass("hidden");
+   // var z= x.value;
+    var title = x.value;
+
+    window.globalvar = 1000;
+    var container = $('#unitgoal1');
+    var chkboxcontainer = $('#unitgoal');
+    var inputs = chkboxcontainer.find('input');
+    var id = inputs.length+1;
+    container.append("<p></p>");
+
+    $('<input />', { type: 'checkbox', id: 'cb'+id,class:'checkBoxClass',name:'goaltitlelist[]',value: globalvar }).appendTo(container);
+    $('<label />', { 'for': 'cb'+id, text: title }).appendTo(container);
+
+    container.removeClass("hidden");
+    globalvar++;
+
 
 });
