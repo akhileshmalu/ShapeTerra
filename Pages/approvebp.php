@@ -64,44 +64,46 @@ $sqlunit = "select * from BP_UnitGoals where find_in_set ('$aydesc',UNIT_GOAL_AY
 $resultunit = $mysqli->query($sqlunit);
 
 
-if(isset($_POST['goal_submit'])) {
-    $goaltitle = $_POST['goaltitle'];
-
-    $unigoallink = $_POST['goallink'];
-    foreach ($unigoallink as $value) {
-        $unigoallinkname .= $value . ",";
-    }
-    $goalstatement = mynl2br($_POST['goalstatement']);
-    $goalalignment = mynl2br($_POST['goalalignment']);
+//if(isset($_POST['goal_submit'])) {
+//    $goaltitle = $_POST['goaltitle'];
 //
-//    $sqlcreatebp.= "CREATE TABLE IF NOT EXISTS tempunitgoals (
-//  `ID_UNIT_GOAL` int(4) NOT NULL,
-//  `OU_ABBREV` varchar(40) NOT NULL,
-//  `GOAL_AUTHOR` varchar(45) NOT NULL,
-//  `MOD_TIMESTAMP` datetime NOT NULL,
-//  `UNIT_GOAL_AY` varchar(40) NOT NULL,
-//  `PRIORITY_GOAL_AY` int(1) ,
-//  `UNIT_GOAL_TITLE` varchar(150) NOT NULL,
-//  `LINK_UNIV_GOAL` varchar(45) DEFAULT NULL,
-//  `GOAL_STATEMENT` longtext NOT NULL,
-//  `GOAL_ALIGNMENT` longtext NOT NULL
-//);";
-
-    $sqlcreatebp .= "INSERT INTO tempunitgoals (ID_UNIT_GOAL, OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$goalmodalcount','$ouabbrev','$author','$time','$ay','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
-
-    $mysqli->query($sqlcreatebp);
-
-
-    $goalmodalcount++;
-
-    unset($_POST['goal_submit']);
-
-}
+//    $unigoallink = $_POST['goallink'];
+//    foreach ($unigoallink as $value) {
+//        $unigoallinkname .= $value . ",";
+//    }
+//    $goalstatement = mynl2br($_POST['goalstatement']);
+//    $goalalignment = mynl2br($_POST['goalalignment']);
+////
+////    $sqlcreatebp.= "CREATE TABLE IF NOT EXISTS tempunitgoals (
+////  `ID_UNIT_GOAL` int(4) NOT NULL,
+////  `OU_ABBREV` varchar(40) NOT NULL,
+////  `GOAL_AUTHOR` varchar(45) NOT NULL,
+////  `MOD_TIMESTAMP` datetime NOT NULL,
+////  `UNIT_GOAL_AY` varchar(40) NOT NULL,
+////  `PRIORITY_GOAL_AY` int(1) ,
+////  `UNIT_GOAL_TITLE` varchar(150) NOT NULL,
+////  `LINK_UNIV_GOAL` varchar(45) DEFAULT NULL,
+////  `GOAL_STATEMENT` longtext NOT NULL,
+////  `GOAL_ALIGNMENT` longtext NOT NULL
+////);";
+//
+//    $sqlcreatebp .= "INSERT INTO tempunitgoals ( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ay','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+//
+//    echo $goalmodalcount;
+//    $goalmodalcount++;
+//
+//    echo "increased".$goalmodalcount;
+//    $mysqli->query($sqlcreatebp);
+//
+////    unset($_POST);
+////    $_POST = array();
+//
+//}
 
 
 if (isset($_POST['approve'])) {
 
-    if(!isset($_POST['goaltitlelist']) ) {
+    if(!isset($_POST['goaltitlelist'])) {
 
         $error[1]="Please select a Goal to submit";
         $errorflag = 1;
@@ -133,7 +135,7 @@ if (isset($_POST['approve'])) {
         //Broadcast update as per status.
         $sqlcreatebp .= "UPDATE broadcast SET BROADCAST_STATUS_OTHERS = 'Approved by Admin',BROADCAST_STATUS ='In Progress' where BROADCAST_OU = $ouid and BROADCAST_AY ='$ay';";
 
-        if($goalmodalcount > 1000){
+        if($goalmodalcount >= 1000){
             $sqlcreatebp .= "Delete from tempunitgoals where ID_UNIT_GOAL >= 1000;ALTER TABLE tempunitgoals AUTO_INCREMENT = 999";
         }
 
@@ -369,7 +371,7 @@ require_once("../Resources/Includes/menu.php");
             <div class="modal-body">
 
                 <div id="modalcontent1" class="col-xs-12">
-                    <form id="goalform"  class="ajaxform" action="approvebp.php" method="POST">
+                    <form id="goalform"  class="ajaxform" action="newchkbox.php" method="POST">
                         <div class="form-group">
                             <label for="goaltitle">Please Enter Goal Title:</label>
                             <input type="text" class="form-control" name="goaltitle" id="goaltitle" required>

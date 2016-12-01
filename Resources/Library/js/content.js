@@ -1,3 +1,4 @@
+
 $("#preview").click(function () {
     var x = document.getElementById('execsummary');
     document.getElementById('exesumtitle').innerHTML = x.value;
@@ -40,19 +41,21 @@ $("#valuebtn").click(function(){
     document.getElementById("valuebtn").setAttribute("aria-label","Close");
 });
 
+window.globalvar = 1000;
+
 $("#unitgoalbtn").click(function(){
     var x = document.getElementById("goaltitle");
    // var z= x.value;
     var title = x.value;
 
-    window.globalvar = 1000;
+
     var container = $('#unitgoal1');
     var chkboxcontainer = $('#unitgoal');
     var inputs = chkboxcontainer.find('input');
     var id = inputs.length+1;
     container.append("<p></p>");
 
-    $('<input />', { type: 'checkbox', id: 'cb'+id,class:'checkBoxClass',name:'goaltitlelist[]',value: globalvar }).appendTo(container);
+    $('<input />', { type: 'checkbox', id: 'cb'+id,class:'checkBoxClass',style:'margin-left:0px;',name:'goaltitlelist[]',value: globalvar }).appendTo(container);
     $('<label />', { 'for': 'cb'+id, text: title }).appendTo(container);
 
     container.removeClass("hidden");

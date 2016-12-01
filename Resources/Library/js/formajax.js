@@ -21,11 +21,10 @@ $(".ajaxform").on('submit',function (e) {
         data:data,
         success: function (response) {
             console.log(response);
-            alert("Record Saved");
+
         },
         error:function (response) {
             console.log(response);
-            alert("Record could not be saved");
 
         }
     });
