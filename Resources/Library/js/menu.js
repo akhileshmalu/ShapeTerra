@@ -4,10 +4,13 @@ $(function() {
 		if($("a#" + className).hasClass("hidden")){
 			$("a#" + className).addClass("animated fadeIn");
 			$("a#" + className).removeClass("hidden");
-			$("span#" + className).addClass("caret-reversed")
+			$("span#" + className + ".plus").addClass("hidden")
+			$("span#" + className + ".minus").removeClass("hidden")
 		}else{
 			$("a#" + className).addClass("hidden");
-			$("span#" + className).removeClass("caret-reversed")
+			$("span#" + className).removeClass("add")
+			$("span#" + className + ".plus").removeClass("hidden")
+			$("span#" + className + ".minus").addClass("hidden")
 		}
    		
 	});

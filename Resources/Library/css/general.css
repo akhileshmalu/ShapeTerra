@@ -39,28 +39,44 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 
 #title{
 	margin-bottom: 36px;
-	margin-top: 25px;
-	font-weight: 400;
-	color: #fff;
+	margin-top: -45px;
+	font-weight: 600;
+	color: #333;
+	font-size: 24px;
 	padding-left: 25px;
 }
 
 #main-content{
 	padding-left: 0px;
 	padding-right: 0px;
+	background-color: #F6F6F6;
 }
 
-#title-header{
-	background-color: #4A90E2;
-	padding: 25px 0px 12px 0px;
+#main-box{
+	background-color: #fff;
+	-webkit-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+    -moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	padding: 0 25px 75px 25px;
+	margin-bottom: 150px;
+	margin-top: 25px;
 }
 
-.hr{
-	border-bottom: 1px #979797 solid;
-	position: absolute;
-	top:201px;
-	width: 100%;
-	z-index: -1;
+#main-box h2{
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+h2{
+	font-size: 20px;
+	font-weight: 400;
+}
+
+#main-box select{
+	background-color: #F6F6F6 !important;
+	box-shadow: none;
+	padding: 15px 30px;
+	font-size: 14px;
 }
 
 #errorplate{
@@ -88,7 +104,7 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 
 .btn-primary{
 	margin-top: 20px;
-	background-color: #4A90E2;
+	background-color: #8D0511;
 	padding: 12px 40px;
 	font-size: 14px;
 	border-radius: 15px;
@@ -96,7 +112,22 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	font-family: 'Open Sans', sans-serif;
 	float: right;
 	background-image: none;
-	border:3px #4A90E2 solid;
+	border:3px #8D0511 solid;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+.btn-primary:hover{
+	margin-top: 20px;
+	background-color: #9F0816;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	float: right;
+	background-image: none;
+	border:3px #9F0816 solid;
 	text-shadow: none;
 	box-shadow: none;
 }
@@ -109,17 +140,17 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	border-radius: 15px;
 	font-weight: 600;
 	font-family: 'Open Sans', sans-serif;
-	color:#4A90E2;
+	color:#8D0511;
 	float: right;
 	background-image: none;
-	border:3px #4A90E2 solid;
+	border:3px #8D0511 solid;
 	text-shadow: none;
 	box-shadow: none;
 	outline-offset: -8px;
 }
 
 .btn-secondary:hover{
-	background-color: #4A90E2;
+	background-color: #8D0511;
 	padding: 12px 40px;
 	font-size: 14px;
 	border-radius: 15px;
@@ -128,7 +159,7 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	color:#fff;
 	float: right;
 	background-image: none;
-	border:3px #4A90E2 solid;
+	border:3px #8D0511 solid;
 	text-shadow: none;
 	box-shadow: none;
 }

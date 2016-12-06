@@ -113,46 +113,32 @@ require_once("../Resources/Includes/menu.php");
     <div id="title-header">
         <h1 id="title">Initiate Academic BluePrint</h1>
     </div>
-    <div id="list" class="col-lg-2 col-md-4 col-xs-4">
-        <ul class="tabs-nav">
-            <li class="year active">1. Select Academic Year</li>
-            <li class="unit disabled">2. Select Organization Unit</li>
-        </ul>
-    </div>
 
-    <div id="form" class="col-lg-9 col-md-8 col-xs-8">
-        <form action="" method="POST">
-            <div class="year active" id="actionlist">
-                <div class="col-lg-5 col-md-9 col-xs-12" id="table-container">
-                    <div class="form-group">
-                        <label for="AYgoal">Please select Academic Year:</label>
-                        <select  name="AY" class="form-control" id="AYgoal">
-                            <option value=""></option>
-                            <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
-                                <option value="<?php echo $rowsay[1]; ?>"> <?php echo $rowsay[1]; ?> </option>
-                            <?php } endwhile; ?>
-                        </select>
-                    </div>
-
+    <div id="main-box" class="col-xs-10 col-xs-offset-1">
+        <form action="" method="POST" >
+            <h2>1. Select Academic Year <span class="icon" data-toggle="tooltip" data-placement="top" 
+            title="Tooltip on top">&#xe009;</span></h2>
+                <div class="col-xs-3">
+                    <select  name="AY" class="col-xs-4 form-control" id="AYgoal">
+                        <option value=""></option>
+                        <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
+                            <option value="<?php echo $rowsay[1]; ?>"> <?php echo $rowsay[1]; ?> </option>
+                        <?php } endwhile; ?>
+                    </select>
                 </div>
-                <button id="next-tab" type="button" class="btn-primary col-xs-offset-12 col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
-                   </button>
+                <br />
+            <h2>2. Select Organization Unit <span class="icon" data-toggle="tooltip" data-placement="top" 
+            title="Tooltip on top">&#xe009;</span></h2>
+            <div class="checkbox" id="ouname">
+                <label><input type="checkbox" id="ckbCheckAll" >All Active Academic Units </label>
             </div>
-
-            <div class="unit hidden" id="actionlist">
-                <label for="ouname">Please Select Organization Unit(s)</label><br/>
+            <?php while ($rowsou = $resultou->fetch_array(MYSQLI_NUM)): { ?>
                 <div class="checkbox" id="ouname">
-                <label><input type="checkbox" id="ckbCheckAll" >All Active Academic Units</label>
+                    <label><input type="checkbox" name="ou_name[]"
+                              class="checkBoxClass" value="<?php echo $rowsou[0].",".$rowsou[2]; ?>"><?php echo $rowsou[1]; ?></label>
                 </div>
-                    <?php while ($rowsou = $resultou->fetch_array(MYSQLI_NUM)): { ?>
-                    <div class="checkbox" id="ouname">
-                        <label><input type="checkbox" name="ou_name[]"
-                                  class="checkBoxClass" value="<?php echo $rowsou[0].",".$rowsou[2]; ?>"><?php echo $rowsou[1]; ?></label>
-                    </div>
-                <?php } endwhile; ?>
-                <input type="submit" name="submit" value="Submit" class="btn-primary pull-left">
-            </div>
-        </form>
+            <?php } endwhile; ?>
+            <input type="submit" name="submit" value="Submit" class="btn-primary pull-right col-xs-3">
     </div>
 </div>
 
@@ -163,6 +149,11 @@ require_once("../Resources/Includes/footer.php");
 ?>
 
 <!--Calender Bootstrap inclusion for date picker INPUT-->
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
 <script src="../Resources/Library/js/tabchange.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>

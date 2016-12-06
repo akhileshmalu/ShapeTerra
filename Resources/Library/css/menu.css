@@ -4,23 +4,29 @@
 	margin-right: 0;
 	padding: 15px 30px;
 	height: 64px;
-	border-bottom: 1px solid #979797;
+	background-color: #F6F6F6;
 }
 
 
-#top-bar h1{
+#logo-box h1{
 	display: inline-block;
 	vertical-align: middle;
-	font-size: 20px;
+	font-size: 18px;
 	font-weight: 400;
-	margin-top: -30px;
-	margin-left: 10px;
-	margin-bottom:10px;
-	color:#333;
+	color:#fff;
 }
 
-#top-bar h1 span{
+#logo-box h1 span{
 	font-weight: 800;
+}
+
+#logo-box{
+	background-color: #8D0511;
+	padding:5px 0 20px 35px;
+	height: 64px;
+	margin-left: 0;
+	margin-right: 0;
+	min-width: 200px;
 }
 
 #generate-pdf{
@@ -44,7 +50,7 @@
 
 nav{
 	padding-top: 20px;
-	background-color: #323E4A;
+	background-color: #591B21;
 	/*Arbitrary height until content is added to match*/
 	height: 2000px;
 	min-width: 200px;
@@ -67,14 +73,18 @@ nav ul li#header a:hover, nav ul li#header a:visited, nav ul li#header a:active,
 	text-decoration: none;
 }
 
-.caret.caret-reversed {
+.icon.add {
     border-top-width: 0;
     border-bottom: 4px solid #fff;
 }
 
 nav ul li{
 	margin-bottom: 21px;
+	padding-left: 25px;
+}
 
+nav ul li#header{
+	padding-left: 0;
 }
 
 nav ul li a{
@@ -87,8 +97,8 @@ nav ul li a{
 }
 
 nav ul li a.selected{
-	color: #fff;
-	font-weight: 600;
+	color: #9b7679;
+	font-weight: 400;
 }
 
 nav ul li a:hover{

@@ -44,15 +44,15 @@ require_once("../Resources/Includes/menu.php");
 	<div id="title-header">
 		<h1 id="title">Home</h1>
 	</div>
-	<div id="taskboard" class="col-lg-12">
+	<div id="taskboard" class="">
 		<table class="grid taskboard" action="taskboard/ajax.php" title="TaskBoard">
 			<tr>
-				<th col="BROADCAST_AY" type="text" >Academic Year</th>
-				<th col="BROADCAST_DESC" type="text" >Description</th>
+				<th col="BROADCAST_AY" type="text">Academic Year</th>
+				<th col="BROADCAST_DESC" type="text">Description</th>
 				<?php if ($ouid == 4) { ?>
-					<th col="BROADCAST_STATUS" type="text" >Status</th>
+					<th col="BROADCAST_STATUS" type="text">Status</th>
 				<?php } else { ?>
-					<th col="BROADCAST_STATUS_OTHERS" type="text" >Status</th>
+					<th col="BROADCAST_STATUS_OTHERS" type="text">Status</th>
 				<?php } ?>
 			</tr>
 		</table>

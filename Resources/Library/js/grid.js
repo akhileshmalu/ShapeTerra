@@ -43,7 +43,7 @@ var grids = [];
 			checkboxes : false,
 			rowNumbers : false,
 			editing : false,
-			width : "100%",
+			width : 1,
 			rowHeight : null,			// this is null to start because if you dont use it, it doesn't loop through stylesheets
 			page : 1
 		},
