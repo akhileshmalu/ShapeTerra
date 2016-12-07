@@ -64,41 +64,41 @@ $sqlunit = "select * from BP_UnitGoals where find_in_set ('$aydesc',UNIT_GOAL_AY
 $resultunit = $mysqli->query($sqlunit);
 
 
-//if(isset($_POST['goal_submit'])) {
-//    $goaltitle = $_POST['goaltitle'];
+if(isset($_POST['goal_submit'])) {
+    $goaltitle = $_POST['goaltitle'];
+
+    $unigoallink = $_POST['goallink'];
+    foreach ($unigoallink as $value) {
+        $unigoallinkname .= $value . ",";
+    }
+    $goalstatement = mynl2br($_POST['goalstatement']);
+    $goalalignment = mynl2br($_POST['goalalignment']);
 //
-//    $unigoallink = $_POST['goallink'];
-//    foreach ($unigoallink as $value) {
-//        $unigoallinkname .= $value . ",";
-//    }
-//    $goalstatement = mynl2br($_POST['goalstatement']);
-//    $goalalignment = mynl2br($_POST['goalalignment']);
-////
-////    $sqlcreatebp.= "CREATE TABLE IF NOT EXISTS tempunitgoals (
-////  `ID_UNIT_GOAL` int(4) NOT NULL,
-////  `OU_ABBREV` varchar(40) NOT NULL,
-////  `GOAL_AUTHOR` varchar(45) NOT NULL,
-////  `MOD_TIMESTAMP` datetime NOT NULL,
-////  `UNIT_GOAL_AY` varchar(40) NOT NULL,
-////  `PRIORITY_GOAL_AY` int(1) ,
-////  `UNIT_GOAL_TITLE` varchar(150) NOT NULL,
-////  `LINK_UNIV_GOAL` varchar(45) DEFAULT NULL,
-////  `GOAL_STATEMENT` longtext NOT NULL,
-////  `GOAL_ALIGNMENT` longtext NOT NULL
-////);";
-//
-//    $sqlcreatebp .= "INSERT INTO tempunitgoals ( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ay','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
-//
-//    echo $goalmodalcount;
-//    $goalmodalcount++;
-//
-//    echo "increased".$goalmodalcount;
-//    $mysqli->query($sqlcreatebp);
-//
-////    unset($_POST);
-////    $_POST = array();
-//
-//}
+//    $sqlcreatebp.= "CREATE TABLE IF NOT EXISTS tempunitgoals (
+//  `ID_UNIT_GOAL` int(4) NOT NULL,
+//  `OU_ABBREV` varchar(40) NOT NULL,
+//  `GOAL_AUTHOR` varchar(45) NOT NULL,
+//  `MOD_TIMESTAMP` datetime NOT NULL,
+//  `UNIT_GOAL_AY` varchar(40) NOT NULL,
+//  `PRIORITY_GOAL_AY` int(1) ,
+//  `UNIT_GOAL_TITLE` varchar(150) NOT NULL,
+//  `LINK_UNIV_GOAL` varchar(45) DEFAULT NULL,
+//  `GOAL_STATEMENT` longtext NOT NULL,
+//  `GOAL_ALIGNMENT` longtext NOT NULL
+//);";
+
+    $sqlcreatebp .= "INSERT INTO tempunitgoals ( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ay','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+
+    echo $goalmodalcount;
+    $goalmodalcount++;
+
+    echo "increased".$goalmodalcount;
+    $mysqli->query($sqlcreatebp);
+
+//    unset($_POST);
+//    $_POST = array();
+
+}
 
 
 if (isset($_POST['approve'])) {
@@ -297,8 +297,10 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-xs-12">
                         <div class="form-group">
                             <label for="missionstate">Please Enter New Mission Statement:</label>
-                            <input type="text" class="form-control" name="missionnew" id="missionstate" required>
+<!--                            <input type="text" class="form-control" name="missionnew" id="missionstate" required>-->
+                            <textarea id="missionstate" name="missionnew" rows="5" cols="25" wrap="hard" class="form-control" required></textarea>
                         </div>
+
                         <input type="button" id="missionbtn" name="mission_submit" value="Add Mission" class="btn-primary btn-sm">
                 </div>
             </div>
@@ -322,7 +324,8 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-xs-12">
                         <div class="form-group">
                             <label for="visionstate">Please Enter New Vision Statement:</label>
-                            <input type="text" class="form-control" name="visionnew" id="visionstate" required>
+<!--                            <input type="text" class="form-control" name="visionnew" id="visionstate" required>-->
+                            <textarea id="visionstate" name="visionnew" rows="5" cols="25" wrap="hard" class="form-control" required></textarea>
                         </div>
                         <input type="button" id="visionbtn" value="Add Vision" class="btn-primary btn-sm">
                 </div>
@@ -347,7 +350,8 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-xs-12">
                         <div class="form-group">
                             <label for="valuestate">Please Enter New Value Statement:</label>
-                            <input type="text" class="form-control" name="valuenew" id="valuestate" required>
+<!--                            <input type="text" class="form-control" name="valuenew" id="valuestate" required>-->
+                            <textarea id="valuestate" name="valuenew" rows="5" cols="25" wrap="hard" class="form-control" required></textarea>
                         </div>
                         <input type="button" id="valuebtn" value="Add Value" class="btn-primary btn-sm">
                 </div>
@@ -378,16 +382,23 @@ require_once("../Resources/Includes/menu.php");
                         </div>
                         <div class="form-group">
                             <label for="goallink">Link to University Goals:</label>
-                            <select multiple="multiple" class="form-control" name="goallink[]" id="goallink">
+<!--                            <select multiple="multiple" class="form-control" name="goallink[]" id="goallink">-->
                                 <?php
                                 $sqlug = "SELECT * FROM UniversityGoals;";
                                 $resultug = $mysqli->query($sqlug);
-                                echo "<option value=''> </option>";
                                 while ($rowsug = $resultug->fetch_assoc()): { ?>
-                                    <option
-                                        value="<?php echo $rowsug['ID_UNIV_GOAL']; ?>"><?php echo $rowsug['GOAL_TITLE']; ?></option>
+<!--                                    <option-->
+<!--                                        value="--><?php //echo $rowsug['ID_UNIV_GOAL']; ?><!--">--><?php //echo $rowsug['GOAL_TITLE']; ?><!--</option>-->
+                                    <div class="checkbox" id="goallink">
+                                        <label><input type="checkbox" name="goallink[]"
+                                                      class="checkBoxClass" value="<?php echo $rowsug['ID_UNIV_GOAL']; ?>"><?php echo $rowsug['GOAL_TITLE']; ?></label>
+                                    </div>
                                 <?php } endwhile; ?>
-                            </select>
+
+
+<!--                            </select>-->
+
+
                         </div>
                         <div class="form-group">
                             <label for="goalstatement">Please Enter Goal Statement:</label>

@@ -118,17 +118,17 @@ require_once("../Resources/Includes/menu.php");
 
             <div  class="mvv hidden" id="actionlist">
                 <div class="form-group" id="actionlist2">
-                    <label for="missionstatement">Please Verify Mission
+                    <label for="missionstatement">Please Review Mission
                         Statement for <?php echo $rowsbroad['BROADCAST_AY'];?> :</label>
                     <textarea id="missionstatement" name="missionstatement" rows="5" cols="25"
                               wrap="hard" class="form-control"
                               readonly><?php echo $rowsmvv['MISSION_STATEMENT']; ?></textarea>
-                    <label for="visionstatement">Please Verify Vision Statement
+                    <label for="visionstatement">Please Review Vision Statement
                         for <?php echo $rowsbroad['BROADCAST_AY']; ?> :</label>
                     <textarea id="visionstatement" name="visionstatement" rows="5" cols="25"
                               wrap="hard" class="form-control"
                               readonly><?php echo $rowsmvv['VISION_STATEMENT']; ?></textarea>
-                    <label for="valuestatement">Please Verify Value Statement
+                    <label for="valuestatement">Please Review Value Statement
                         for <?php echo $rowsbroad['BROADCAST_AY']; ?> :</label>
                     <textarea id="valuestatement" name="valuestatement" rows="5" cols="25" wrap="hard" class="form-control"
                               readonly><?php echo $rowsmvv['VALUES_STATEMENT']; ?>
@@ -167,7 +167,6 @@ require_once("../Resources/Includes/menu.php");
                         class="btn-primary col-xs-3 pull-right">Print
                 </button>
             </div>
-
         </form>
     </div>
 </div>

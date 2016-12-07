@@ -47,13 +47,14 @@ require_once("../Resources/Includes/menu.php");
 	<div id="taskboard" class="">
 		<table class="grid taskboard" action="taskboard/ajax.php" title="TaskBoard">
 			<tr>
-				<th col="BROADCAST_AY" type="text">Academic Year</th>
+				<th col="BROADCAST_AY" type="text" href="../Pages/createbp.php?ayname={{value}}">Academic Year</th>
 				<th col="BROADCAST_DESC" type="text">Description</th>
 				<?php if ($ouid == 4) { ?>
 					<th col="BROADCAST_STATUS" type="text">Status</th>
 				<?php } else { ?>
 					<th col="BROADCAST_STATUS_OTHERS" type="text">Status</th>
 				<?php } ?>
+<!--				<th col="Menucontrol" type="text" href="http://google.com?q={{value}}">Actions</th>-->
 			</tr>
 		</table>
 	</div>
