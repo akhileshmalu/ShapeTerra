@@ -7,7 +7,7 @@ $(function() {
         showPager : true,
         editing : false,
         deleting :false,
-        nRowsShowing : 10,
+        nRowsShowing : 20,
         width: 900,
         rowNumbers: true,
         checkboxes: false,
