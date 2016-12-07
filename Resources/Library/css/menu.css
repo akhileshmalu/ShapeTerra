@@ -70,6 +70,20 @@ nav ul li#header a{
 	margin-bottom: 10px;
 }
 
+nav ul li#tasks a{
+	color: #fff;
+	font-size: 14px;
+	font-weight: 400;
+	margin-bottom: 10px;
+}
+
+nav ul li#tasks a:hover{
+
+	font-weight: 600;
+}
+
+
+
 nav ul li#header a:hover, nav ul li#header a:visited, nav ul li#header a:active, nav ul li#header a:link{
 	text-decoration: none;
 }

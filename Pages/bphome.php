@@ -1,5 +1,7 @@
 <?php
 
+$pagename = "bphome";
+
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
@@ -56,16 +58,16 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-5 col-xs-offset-1">
         <h1 class="box-title">Tasks</h1>
         <ul class="task-list">
-            <li><a>Task 1</a></li>
-            <li><a>Task 2</a></li>
+            <li><a><span class="icon">&#xe01c;</span> Task 1</a></li>
+            <li><a><span class="icon">&#xe01c;</span> Task 2</a></li>
         </ul>
     </div>
 
     <div id="main-box" class="col-xs-4 col-xs-offset-1 ">
         <h1 class="box-title">Completed Tasks</h1>
         <ul class="task-completed-list">
-            <li><a>Task 4</a></li>
-            <li><a>Task 5</a></li>
+            <li><a><span class="icon">S</span> Task 4</a></li>
+            <li><a><span class="icon">S</span> Task 5</a></li>
         </ul>
     </div>
 

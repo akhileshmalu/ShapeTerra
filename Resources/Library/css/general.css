@@ -32,6 +32,8 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
     color:#333;
 }
 
+
+
 .row{
 	margin-left: 0;
 	margin-right: 0;
@@ -57,13 +59,21 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	-webkit-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
     -moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
 	box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
-	padding: 0 25px 75px 25px;
+	padding: 0 25px 25px 25px;
 	margin-top: 25px;
 }
 
 #main-box h2{
 	margin-top: 50px;
 	margin-bottom: 50px;
+}
+
+#main-box ul {
+	list-style: none;
+}
+
+#main-box ul li{
+	font-size: 18px;
 }
 
 h2{
@@ -76,6 +86,21 @@ h2{
 	box-shadow: none;
 	padding: 15px 30px;
 	font-size: 14px;
+}
+
+h1.box-title{
+	font-size: 24px;
+}
+
+p.status{
+	color:#767676;
+	font-weight: 400;
+	margin-bottom: 5px;
+	font-size: 14px;
+}
+
+p.status span{
+	font-weight: 600;
 }
 
 #errorplate{
