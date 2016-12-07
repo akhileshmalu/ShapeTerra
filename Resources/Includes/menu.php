@@ -69,7 +69,7 @@ if ($rowsmenuctrl['Menucontrol'] == 'User') {
 
 	<a href="account.php" class="btn-link"><h1>Academic<span>Blueprint</span></h1></a>
 	</div>
-<div class="row col-xs-" id="top-bar">
+<div class="row" id="top-bar">
 	
 	<!-- 
 	Username

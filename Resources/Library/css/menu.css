@@ -40,6 +40,7 @@
 	float: right;
 	margin-top: 5px;
 	margin-right:20px;
+	z-index: 999;
 }
 
 #user-name button{
@@ -116,6 +117,7 @@ nav ul li a:hover{
 	font-weight: 400;
 	color: #000;
 	padding-left: 20px;
+
 }
 
 #log-out:hover{

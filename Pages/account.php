@@ -1,5 +1,5 @@
 <?php
-session_start();											  	//session Started
+session_start();										  	//session Started
 require_once ("../Resources/Includes/connect.php");          	//Instance of Object class-connection Created
 $email = $_SESSION['login_email'];					  			//Session Variable store
 $sql = " SELECT FNAME,LNAME,USER_OU_MEMBERSHIP FROM PermittedUsers where NETWORK_USERNAME ='$email' ";														//Query to Database
@@ -42,7 +42,7 @@ require_once("../Resources/Includes/menu.php");
 
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
 	<div id="title-header">
-		<h1 id="title">Home</h1>
+		<h1 id="title" class="">Home</h1>
 	</div>
 	<div id="taskboard" class="">
 		<table class="grid taskboard" action="taskboard/ajax.php" title="TaskBoard">
