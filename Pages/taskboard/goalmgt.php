@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-$bpayname= $_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
+$bpayname= $_SESSION['bpayname'];
 
 require_once("../../Resources/Includes/connect.php");
 
@@ -11,24 +11,25 @@ require_once("grid.php");
 
 if ($ouid <> 4) {
 // load our grid with a table for other than Provost
-    $grid = new Grid("AC_FacultyAwards", $mysqli, array(
+    $grid = new Grid("BP_UnitGoals", $mysqli, array(
         "save" => false,
         "delete" => false,
-        "where" => "OU_ABBREV = '$ouabbrev' and OUTCOMES_AY='$bpayname' ",
+        "where" => "OU_ABBREV = '$ouabbrev' and UNIT_GOAL_AY='$bpayname'  ",
+//        "fields"=>array(
+//            "LAST_EDIT"=>"",
 // "joins"=>array(
 // 	"LEFT JOIN categories ON categories.CategoryID = tutorials.CategoryID"
 // ),
- "fields"=>array(
-     "RECIPIENT_NAME"=>"CONCAT(RECIPIENT_NAME_LAST,', ',SUBSTRING(RECIPIENT_NAME_FIRST,1,1))",
- ),
+
+//        date("F j, Y, g:i a", strtotime($rowbroad[2] ) );
 // "select" => 'selectFunction'
     ));
 } else {
 // Do not load grid for Provost rights
-    $grid = new Grid("AC_FacultyAwards", $mysqli, array(
+    $grid = new Grid("BP_UnitGoals", $mysqli, array(
         "save" => false,
         "delete" => false,
-        "where" => "OUTCOMES_AY='$bpayname' ",
+        "where" => "UNIT_GOAL_AY='$bpayname'  ",
     ));
 
 }

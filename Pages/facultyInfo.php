@@ -6,7 +6,7 @@ $pagename = "bphome";
 //ini_set('display_errors', '1');
 
 /*
- * This Page controls Academic BluePrint Home.
+ * This Page controls Academic Faculty Info.
  */
 
 session_start();
@@ -39,38 +39,37 @@ $resultexvalue = $mysqli->query($sqlexvalue);
 $rowsexvalue = $resultexvalue -> fetch_assoc();
 
 
-if(isset($_POST['savedraft'])) {
+if (isset($_POST['savedraft'])) {
 
     $facdev = nl2br($_POST['factextarea']);
 
     $createact = nl2br($_POST['cractivity']);
 
 
-    if ($_FILES["supinfo"]["error"] > 0) {
-        $error[0] = "Return Code: " . $_FILES["supinfo"]["error"] . "<br />";
+//    if ($_FILES["supinfo"]["error"] > 0) {
+//        $error[0] = "Return Code: No Input " . $_FILES["supinfo"]["error"] . "<br />";
+//        $errorflag = 1;
+//
+//    } else {
+//        $target_dir = "../../user"."/".$name."/";
+    $target_dir = "../uploads/";
+    $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+    $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+
+
+    if ($imageFileType != "pdf") {
+        $error[1] = "Sorry, only PDf files are allowed.";
         $errorflag = 1;
 
     } else {
-//        $target_dir = "../../user"."/".$name."/";
-        $target_dir = "../uploads/";
-        $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
-        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
-
-
-        if ($imageFileType != "pdf") {
-            $error[1] = "Sorry, only PDf files are allowed.";
-            $errorflag = 1;
-
+        if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+            // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
+            $supinfopath = $target_file;
         } else {
-            if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
-               // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
-                $supinfopath = $target_file;
-            } else {
-                $error[2] = "Sorry, there was an error uploading your file.";
-            }
+            $error[2] = "Sorry, there was an error uploading your file.";
         }
-
     }
+
 
     if ($errorflag != 1) {
         $sqlfacinfo = "INSERT INTO AC_FacultyInfo (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
@@ -84,7 +83,6 @@ if(isset($_POST['savedraft'])) {
         }
     }
 }
-
 
 
 require_once("../Resources/Includes/header.php");
@@ -115,8 +113,8 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
+        <p class="status"><span>Org Unit Name:</span> <?php echo $_SESSION['login_ouname']; ?></p>
         <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
-        <p class="status"><span>Last Modified:</span> <?php echo date("F j, Y, g:i a", strtotime($rowbroad[2])); ?></p>
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
@@ -145,7 +143,7 @@ require_once("../Resources/Includes/menu.php");
                 <input id="supinfo" type="file" name="supinfo" class="form-control">
             </div>
 
-            <input type="button" value="Cancel & Discard" class="btn-primary">
+            <input type="button" value="Cancel & Discard" class="btn-primary cancelbox">
             <input type="button" name="submit" value="Submit For Approval" class="btn-primary" disabled>
             <input type="submit" name="savedraft" value="Save Draft" class="btn-primary">
             </form>

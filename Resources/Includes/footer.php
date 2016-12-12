@@ -3,6 +3,15 @@
     <script src="../Resources/Library/js/menu.js"></script>
     <script src="../Resources/Library/js/pdfdirect.js"></script>
     <script src="../Resources/Library/js/alert.js"></script>
+    <script src="../Resources/Library/js/cancelbox.js"></script>
+
+    <!--Calender Bootstrap inclusion for date picker INPUT-->
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+
 
     </body>
 </html>

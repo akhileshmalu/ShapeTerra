@@ -60,11 +60,13 @@ $(function() {
     }).on("rowCheck",function(e, $checkbox, rowData) {
         //console.log("rowCheck",$checkbox, rowData);
     }).on("rowClick",function(e, $rows,rowData) {
-        console.log("rowClick",$rows,rowData);
+        //console.log("rowClick",$rows,rowData);
         var id =$rows.attr('data-row');
 
+
         // $($rows).css("background","black").filter('.grid-row-'+id).css("background","rgba(0,0,0,0.05)");
-    $('.col .row-hover').removeClass('row-hover');
+
+        $('.col .row-hover').removeClass('row-hover');
 
     $(".grid-row-"+id).toggleClass('row-hover','row-hoverOut');
 

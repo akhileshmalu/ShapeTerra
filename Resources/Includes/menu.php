@@ -20,18 +20,15 @@ $resultmenu = $menucon->query($sqlmenu);
 $rowsmenu = $resultmenu ->fetch_assoc();
 $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
 $ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
+$_SESSION['login_ouname'] = $rowsmenu['OU_NAME'];
 
 
-$pagename=null;
+
 
 $sqlmenuctrl = "select * from broadcast where BROADCAST_OU = $ouid; ";
 $resultmenuctrl = $menucon->query($sqlmenuctrl);
 $rowsmenuctrl = $resultmenuctrl->fetch_assoc();
 
-$testMenu = false;
-if($pagename == "bphome"){
-	$testMenu = true;
-}
 
 
 $menu = array(
@@ -148,6 +145,7 @@ Generate PDF button currently disabled.
 
 <nav class="col-xs-2" id="menu">
 	<!-- Main menu -->
+
 	<ul class="col-xs-12">
 		<li class="" id="header"><a class="main" href="#" onclick="return false">
 		<span id="main" class="icon minus hidden">&#xe024;</span>
@@ -176,6 +174,7 @@ Generate PDF button currently disabled.
 		}
 		?>
 	</ul>
+
 	<!-- Blueprint Home Menu -->
 
 </nav>

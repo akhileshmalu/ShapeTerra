@@ -44,22 +44,25 @@ $("#valuebtn").click(function(){
 window.globalvar = 1000;
 
 $("#unitgoalbtn").click(function(){
-    var x = document.getElementById("goaltitle");
-   // var z= x.value;
-    var title = x.value;
+   //  var x = document.getElementById("goaltitle");
+   // // var z= x.value;
+   //  var title = x.value;
+   //
+   //
+   //  var container = $('#unitgoal1');
+   //  var chkboxcontainer = $('#unitgoal');
+   //  var inputs = chkboxcontainer.find('input');
+   //  var id = inputs.length+1;
+   //  container.append("<p></p>");
+   //
+   //  $('<input />', { type: 'checkbox', id: 'cb'+id,class:'checkBoxClass',style:'margin-left:0px;',name:'goaltitlelist[]',value: globalvar }).appendTo(container);
+   //  $('<label />', { 'for': 'cb'+id, text: title }).appendTo(container);
+   //
+   //  container.removeClass("hidden");
+   //  globalvar++;
 
-
-    var container = $('#unitgoal1');
-    var chkboxcontainer = $('#unitgoal');
-    var inputs = chkboxcontainer.find('input');
-    var id = inputs.length+1;
-    container.append("<p></p>");
-
-    $('<input />', { type: 'checkbox', id: 'cb'+id,class:'checkBoxClass',style:'margin-left:0px;',name:'goaltitlelist[]',value: globalvar }).appendTo(container);
-    $('<label />', { 'for': 'cb'+id, text: title }).appendTo(container);
-
-    container.removeClass("hidden");
-    globalvar++;
+    $('#goalmodalclose').attr('disabled','false');
+    $('#unitgoalbtn').addClass('disabled')
 
 
 });

@@ -1,7 +1,5 @@
 <?php
 
-$pagename = "bphome";
-
 //error_reporting(E_ALL);
 //ini_set('display_errors', '1');
 
@@ -58,15 +56,16 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
+        <p class="status"><span>Org Unit Name:</span> <?php echo $_SESSION['login_ouname']; ?></p>
         <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
-        <p class="status"><span>Last Modified:</span> <?php echo date("F j, Y, g:i a", strtotime($rowbroad[2])); ?></p>
+
     </div>
 
     <div id="main-box" class="col-xs-5 col-xs-offset-1">
         <h1 class="box-title">Tasks</h1>
         <ul class="task-list">
-            <li><a><span class="icon">&#xe01c;</span> Create BluePrint</a></li>
-            <li><a><span class="icon">&#xe01c;</span> Goal Overview & Management</a></li>
+            <li><a href=""><span class="icon">&#xe01c;</span> Create BluePrint</a></li>
+            <li><a href="unitgoaloverview.php"><span class="icon">&#xe01c;</span> Goal Overview & Management</a></li>
             <li><a><span class="icon">&#xe01c;</span> Goal Outcomes Summary</a></li>
             <li><a href="facultyawards.php"><span class="icon">&#xe01c;</span> Faculty Awards</a></li>
             <li><a href="facultyInfo.php"><span class="icon">&#xe01c;</span> Faculty Info</a></li>
@@ -90,12 +89,7 @@ require_once("../Resources/Includes/menu.php");
 require_once("../Resources/Includes/footer.php");
 ?>
 
-<!--Calender Bootstrap inclusion for date picker INPUT-->
-<script type="text/javascript">
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-</script>
+
 <script src="../Resources/Library/js/tabchange.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>

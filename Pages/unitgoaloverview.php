@@ -1,6 +1,5 @@
 <?php
 
-$pagename = "bphome";
 
 /*
  * This Page controls Faculty Awards Screen.
@@ -40,37 +39,33 @@ if ($ouid == 4) {
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
-/*
- * New award modal Input values
- */
-$sqlaward = "select * from AwardType;";
-$resultaward = $mysqli->query($sqlaward);
-
 
 
 /*
- * Add Modal Record Addition
+ * Add UNIT GOAL Modal
  */
 
-if(isset($_POST['award_submit'])){
+if(isset($_POST['goal_submit'])) {
+    $goaltitle = $_POST['goaltitle'];
 
-    $awardType = $_POST['awardType'];
-    $recipLname = $_POST['recipLname'];
-    $recipFname = $_POST['recipFname'];
-    $awardTitle = $_POST['awardTitle'];
-    $awardOrg = $_POST['awardOrg'];
-    $dateAward = $_POST['dateAward'];
+    $unigoallink = $_POST['goallink'];
+    foreach ($unigoallink as $value) {
+        $unigoallinkname .= $value . ",";
+    }
+    $goalstatement = mynl2br($_POST['goalstatement']);
+    $goalalignment = mynl2br($_POST['goalalignment']);
 
-    $sqlAcFacAward = "INSERT INTO AC_FacultyAwards
-(OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,RECIPIENT_NAME_LAST,RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED)
-VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$recipLname','$recipFname','$awardTitle','$awardOrg','$dateAward');";
-    if($mysqli->query($sqlAcFacAward)){
 
-        $error[0] = "Award Added Succesfully.";
+    $sqlcreatebp .= "INSERT INTO BP_UnitGoals( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+
+    if($mysqli->query($sqlcreatebp)) {
+
+        $error[0] = "Unit goals added Succesfully.";
 
     } else {
-        $error[0] = "Award Could not be Added.";
+        $error[0] = "Unit goals could not be added.";
     }
+
 
 }
 
@@ -99,7 +94,7 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php" class="end btn-primary">Close</button>
+        <button type="button" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 
@@ -117,21 +112,22 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Faculty Awards</h1>
+        <h1 class="box-title">Goals Overview & Management</h1>
+        <p>Below is a summary of your Unit Goals.</p>
         <div id="" style="margin-top: 10px;">
-            <table class="grid" action="taskboard/facultyajax.php" title="Faculty Awards">
+            <table class="grid" action="taskboard/goalmgt.php" title="Unit Goals">
                 <tr>
-                    <th col="AWARD_TYPE" width="100" type="text">Type</th>
-                    <th col="AWARD_TITLE" width="300" type="text">Award</th>
-                    <th col="RECIPIENT_NAME" width="200" type="text">Recipient(s)</th>
-<!--                                        <th col="" type="text">Actions</th>-->
+                    <th col="UNIT_GOAL_TITLE" width="300" type="text">Goal Title</th>
+                    <th col="MOD_TIMESTAMP" width="200" type="text">Last Edited On</th>
+                    <th col="GOAL_AUTHOR" width="200" type="text">Last Modified By</th>
+                    <!--                                        <th col="" type="text">Actions</th>-->
                 </tr>
             </table>
         </div>
         <div id="addnew" class="">
             <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left"
                     data-toggle="modal"
-                    data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Awards
+                    data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Goal
             </button>
         </div>
     </div>
@@ -141,45 +137,53 @@ require_once("../Resources/Includes/menu.php");
 <!--Modal for Addition of New Awards-->
 
 <div class="modal fade" id="addawardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="dialog">
+    <!--    <div class="modal-dialog" role="dialog">-->
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Add Faculty Awards</h4>
+            <h4 class="modal-title" id="myModalLabel">Add Unit Goal</h4>
         </div>
         <div class="modal-body">
-            <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>" class="ajaxform">
+            <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
+                <label for ="title" style="color:blue "><strong><h4>College/School Goals</h4></strong></label>
+                <div class="form-group" id="title">
+                    <p>Instruction: enter a goal for the academic Year for your college/School.Each Goal may be linked to one or more University Goals as presented in the University's strategoc plan.The number of goals is not fixed, although 5 +/- one may be a reasonable quantity.   <span style="color: red">*</span> indicates required.</p>
+                </div>
+
+                <strong><p style="color:green ">Add a Goal</p></strong>
                 <div class="form-group">
+                    <label for="goaltitle">Please Enter Goal Title:</label>
+                    <input type="text" class="form-control" name="goaltitle" id="goaltitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="goallink">Link to University Goals:</label>
+                    <?php
+                    $sqlug = "SELECT * FROM UniversityGoals;";
+                    $resultug = $mysqli->query($sqlug);
+                    while ($rowsug = $resultug->fetch_assoc()): { ?>
+                        <div class="checkbox" id="goallink">
+                            <label><input type="checkbox" name="goallink[]"
+                                          class="checkBoxClass" value="<?php echo $rowsug['ID_UNIV_GOAL']; ?>"><?php echo $rowsug['GOAL_TITLE']; ?></label>
+                        </div>
+                    <?php } endwhile; ?>
 
-                    <label for="awardtype">Select Award Type:</label>
-                    <select  name="awardType" class="form-control" id="awardtype">
-                        <option value=""></option>
-                        <?php while ($rowsaward = $resultaward->fetch_assoc()): { ?>
-                            <option value="<?php echo $rowsaward['AWARD_TYPE']; ?>"> <?php echo $rowsaward['AWARD_TYPE']; ?> </option>
-                        <?php } endwhile; ?>
-                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="goalstatement">Please Enter Goal Statement:</label>
+                    <textarea rows="5" class="form-control" name="goalstatement" id="goalstatement"
+                              required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="goalalignment">Please explain Goal Alignment:</label>
+                    <textarea rows="5" class="form-control" name="goalalignment" id="goalalignment"
+                              required></textarea>
+                </div>
+                <input type="submit" id="unitgoalbtn" name="goal_submit" value="Save" class="btn-primary btn-sm pull-left">
 
-                    <label for="recipLname">Recipient Last Name:</label>
-                    <input type="text" class="form-control" name="recipLname" id="recipLname" required>
 
-                    <label for="recipFname">Recipient First Name:</label>
-                    <input type="text" class="form-control" name="recipFname" id="recipFname" required>
-
-                    <label for="awardtitle">Award Title / Name:</label>
-                    <input type="text" class="form-control" name="awardTitle" id="awardtitle" required>
-
-                    <label for="awardOrg">Awarding Organization:</label>
-                    <input type="text" class="form-control" name="awardOrg" id="awardOrg" required>
-
-                     <label for="datetimepicker3">Date Awarded:</label>
-                    <div class='input-group date' id='datetimepicker3'>
-                        <input type='text' name="dateAward" class="form-control" required>
-                        <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                    </div>
-                </form>
+            </form>
+            <div class="modal-footer">
             </div>
         </div>
     </div>
