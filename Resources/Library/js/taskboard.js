@@ -64,8 +64,9 @@ $(function() {
         var id =$rows.attr('data-row');
 
         // $($rows).css("background","black").filter('.grid-row-'+id).css("background","rgba(0,0,0,0.05)");
+    $('.col .row-hover').removeClass('row-hover');
 
-       $(".grid-row-"+id).toggleClass('row-hover','row-hoverOut');
+    $(".grid-row-"+id).toggleClass('row-hover','row-hoverOut');
 
 
     }).on("save",function(e, row, res) {

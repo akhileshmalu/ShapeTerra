@@ -42,20 +42,28 @@ require_once("../Resources/Includes/menu.php");
 	<div id="title-header">
 		<h1 id="title" class="">Home</h1>
 	</div>
-	<div id="taskboard" class="">
-		<table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">
-			<tr>
-				<th col="BROADCAST_AY" type="text" href="../Pages/bphome.php?ayname={{value}}">Academic Year</th>
-				<th col="BROADCAST_DESC" type="text">Description</th>
-				<?php if ($ouid == 4) { ?>
-					<th col="BROADCAST_STATUS" type="text">Status</th>
-				<?php } else { ?>
-					<th col="BROADCAST_STATUS_OTHERS" type="text">Status</th>
-				<?php } ?>
-<!--				<th col="Menucontrol" type="text" href="http://google.com?q={{value}}">Actions</th>-->
-			</tr>
-		</table>
-	</div>
+
+	<!-- Possible Greeting box -->
+	<!-- <div id="main-box" class="col-xs-10 col-xs-offset-1">
+        <h1 class="box-title">Hello <?php echo $rows['FNAME']; ?>! </h1>
+    </div> -->
+
+
+    <div id="main-box" class="col-xs-10 col-xs-offset-1">
+		<div id="taskboard" class="">
+			<table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">
+				<tr>
+					<th col="BROADCAST_AY" type="text" href="../Pages/bphome.php?ayname={{value}}">Academic Year</th>
+					<th col="BROADCAST_DESC" type="text">Description</th>
+					<?php if ($ouid == 4) { ?>
+						<th col="BROADCAST_STATUS" type="text">Status</th>
+					<?php } else { ?>
+						<th col="BROADCAST_STATUS_OTHERS" type="text">Status</th>
+					<?php } ?>
+	<!--				<th col="Menucontrol" type="text" href="http://google.com?q={{value}}">Actions</th>-->
+				</tr>
+			</table>
+		</div>
 </div>
 
 <?php

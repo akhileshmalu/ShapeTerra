@@ -99,7 +99,7 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" class="end btn-primary">Close</button>
+        <button type="button" redirect="bphome.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 
@@ -141,50 +141,49 @@ require_once("../Resources/Includes/menu.php");
 <!--Modal for Addition of New Awards-->
 
 <div class="modal fade" id="addawardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <!--    <div class="modal-dialog" role="dialog">-->
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Add Faculty Awards</h4>
-        </div>
-        <div class="modal-body">
-            <form method="POST" action="facultyawards.php" class="ajaxform">
-                <div class="form-group">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add Faculty Awards</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="facultyawards.php" class="ajaxform">
+                    <div class="form-group">
 
-                    <label for="awardtype">Select Award Type:</label>
-                    <select  name="awardType" class="form-control" id="awardtype">
-                        <option value=""></option>
-                        <?php while ($rowsaward = $resultaward->fetch_assoc()): { ?>
-                            <option value="<?php echo $rowsaward['AWARD_TYPE']; ?>"> <?php echo $rowsaward['AWARD_TYPE']; ?> </option>
-                        <?php } endwhile; ?>
-                    </select>
+                        <label for="awardtype">Select Award Type:</label>
+                        <select  name="awardType" class="form-control" id="awardtype">
+                            <option value=""></option>
+                            <?php while ($rowsaward = $resultaward->fetch_assoc()): { ?>
+                                <option value="<?php echo $rowsaward['AWARD_TYPE']; ?>"> <?php echo $rowsaward['AWARD_TYPE']; ?> </option>
+                            <?php } endwhile; ?>
+                        </select>
 
-                    <label for="recipLname">Recipient Last Name:</label>
-                    <input type="text" class="form-control" name="recipLname" id="recipLname" required>
+                        <label for="recipLname">Recipient Last Name:</label>
+                        <input type="text" class="form-control" name="recipLname" id="recipLname" required>
 
-                    <label for="recipFname">Recipient First Name:</label>
-                    <input type="text" class="form-control" name="recipFname" id="recipFname" required>
+                        <label for="recipFname">Recipient First Name:</label>
+                        <input type="text" class="form-control" name="recipFname" id="recipFname" required>
 
-                    <label for="awardtitle">Award Title / Name:</label>
-                    <input type="text" class="form-control" name="awardTitle" id="awardtitle" required>
+                        <label for="awardtitle">Award Title / Name:</label>
+                        <input type="text" class="form-control" name="awardTitle" id="awardtitle" required>
 
-                    <label for="awardOrg">Awarding Organization:</label>
-                    <input type="text" class="form-control" name="awardOrg" id="awardOrg" required>
+                        <label for="awardOrg">Awarding Organization:</label>
+                        <input type="text" class="form-control" name="awardOrg" id="awardOrg" required>
 
-                     <label for="datetimepicker3">Date Awarded:</label>
-                    <div class='input-group date' id='datetimepicker3'>
-                        <input type='text' name="dateAward" class="form-control" required>
-                        <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
+                         <label for="datetimepicker3">Date Awarded:</label>
+                        <div class='input-group date' id='datetimepicker3'>
+                            <input type='text' name="dateAward" class="form-control" required>
+                            <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                        </div>
+
+                        <input type="submit" id="awardbtn" name="award_submit" value="Save"
+                               class="btn-primary">
                     </div>
-
-                    <input type="submit" id="awardbtn" name="award_submit" value="Save"
-                           class="btn-primary btn-sm">
-                </div>
-            </form>
-            <div class="modal-footer">
+                </form>
             </div>
         </div>
     </div>

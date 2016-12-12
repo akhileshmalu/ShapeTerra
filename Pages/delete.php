@@ -40,7 +40,7 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" class="end btn-primary">Close</button>
+        <button type="button" redirect="account.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 

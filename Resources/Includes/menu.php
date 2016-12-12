@@ -148,7 +148,6 @@ Generate PDF button currently disabled.
 
 <nav class="col-xs-2" id="menu">
 	<!-- Main menu -->
-	<?php if(!$testMenu){ ?>
 	<ul class="col-xs-12">
 		<li class="" id="header"><a class="main" href="#" onclick="return false">
 		<span id="main" class="icon minus hidden">&#xe024;</span>
@@ -177,17 +176,7 @@ Generate PDF button currently disabled.
 		}
 		?>
 	</ul>
-	<?php } //end if ?> 
 	<!-- Blueprint Home Menu -->
-	<?php if($testMenu){ ?>
-	<ul class="col-xs-12">
-		<li class="back-button" id="header"><a href="account.php"><span class="icon">l</span> Back to Dashboard</a></li>
-		<li class="" id="tasks"><a href="#">Academic Blueprint</a></li>
-		<li class="" id="tasks"><a href="#">Goals</a></li>
-		<li class="" id="tasks"><a href="#">Alumni & Development</a></li>
-		<li class="" id="tasks"><a href="#">Faculty Awards</a></li>
-		<li class="" id="tasks"><a href="#">Initiatives & Observations</a></li>
-	</ul>
-	<?php } //end if ?> 
+
 </nav>
 

@@ -1,31 +1,22 @@
-
-
-ul#tabs{
-	padding-left: 55px;
+ul.nav-pills{
+	margin-top: 25px;
 }
 
-ul#tabs li{
-	padding-right: 30px;
+ul.nav-pills li a{
+	color: #8D0511;
 }
 
-li.active a{
-	background-color: transparent !important;
-	color: #333 !important;
-	border-bottom: #4A90E2 3px solid;
-	border-radius: 0;
-	padding-bottom: 5px !important;
+.nav-pills li.active a{
+	background-color: #8D0511;
 }
 
-li.disabled a{
-	color: #979797 !important;
-	pointer-events: none;
+.nav-pills li.active a:hover{
+	background-color: #591B21;
 }
 
-ul#tabs li a:hover{
-	background-color: transparent !important;
-	color: #4A90E2 !important;
+
+
+.nav-pills li.active a:focus{
+	background-color: #591B21;
 }
 
-.tab-pane{
-	margin-top: 50px; 
-}
