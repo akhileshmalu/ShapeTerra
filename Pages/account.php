@@ -21,8 +21,6 @@ below headers for task board design purpose
 -->
 
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrapTable.css"/>
-<!--<link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap.css"/>-->
-<!--<link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap.min.css"/>-->
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
 
@@ -45,9 +43,9 @@ require_once("../Resources/Includes/menu.php");
 		<h1 id="title" class="">Home</h1>
 	</div>
 	<div id="taskboard" class="">
-		<table class="grid taskboard" action="taskboard/ajax.php" title="TaskBoard">
+		<table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">
 			<tr>
-				<th col="BROADCAST_AY" type="text" href="../Pages/createbp.php?ayname={{value}}">Academic Year</th>
+				<th col="BROADCAST_AY" type="text" href="../Pages/bphome.php?ayname={{value}}">Academic Year</th>
 				<th col="BROADCAST_DESC" type="text">Description</th>
 				<?php if ($ouid == 4) { ?>
 					<th col="BROADCAST_STATUS" type="text">Status</th>

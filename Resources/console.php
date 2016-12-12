@@ -2,7 +2,8 @@
 $error = "";
 $i=0;
 
-require_once("../Resources/Includes/connect.php");
+//require_once("../Resources/Includes/connect.php");
+require_once("Includes/connect.php");
 $error = "";
 
 $dynamictable = "<table border='1' cellpadding='10' class='table'><tr>";
@@ -10,40 +11,43 @@ $dynamictable = "<table border='1' cellpadding='10' class='table'><tr>";
 if (isset($_POST['submit'])) {
 
     $sql = $_POST['query'];
+
     IF ($result = $mysqli->query($sql)) {
 
-        /*
-         * Header of SQL file
-         */
-        $fieldcnt = $result ->field_count;
-        while($i<$fieldcnt)
-        {
-            $meta = $result ->fetch_field();
-            $dynamictable .="<th>".$meta->name."</th>";
-            $i++;
-        }
-
-        $dynamictable.= '</tr>';
-
-        /* fetch associative array */
-        while ($row = $result->fetch_assoc()) {
-
-            $dynamictable.='<tr>';
-            foreach ($row as $value) {
-
-                $dynamictable .= '<td>'. $value . '</td>';
+          /*
+             * Header of SQL file
+             */
+            $fieldcnt = $result->field_count;
+            while ($i < $fieldcnt) {
+                $meta = $result->fetch_field();
+                $dynamictable .= "<th>" . $meta->name . "</th>";
+                $i++;
             }
+
             $dynamictable .= '</tr>';
-        }
 
-        $dynamictable .= '</table>';
-        $error = "Query Executed";
+            /* fetch associative array */
+            while ($row = $result->fetch_assoc()) {
 
-        $result->free();
-        $mysqli->close();
+                $dynamictable .= '<tr>';
+                foreach ($row as $value) {
+
+                    $dynamictable .= '<td>' . $value . '</td>';
+                }
+                $dynamictable .= '</tr>';
+            }
+
+            $dynamictable .= '</table>';
+            $error = "Query Executed";
+
+            $result->free();
+            $mysqli->close();
+
+
     } else {
         $eror = "Query Failed";
     }
+
 }
 if (isset($_POST['multi'])) {
     $sql = $_POST['query'];
@@ -60,10 +64,10 @@ if (isset($_POST['multi'])) {
 //Include Header
 require_once("../Resources/Includes/header.php");
 ?>
-</head>
-<body>
+
+
 <?php
-// Include Menu and Top Bar
+ //Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
 
@@ -87,10 +91,11 @@ require_once("../Resources/Includes/menu.php");
         <hr>
         <div>
         Display Result <br>
-        <?php if( $fieldcnt >1 ) {echo $dynamictable;} else { echo "Database Modified.";} ?>
+        <?php if( $fieldcnt >=1 ) {echo $dynamictable;} else { echo "Database Modified.";} ?>
         </div>
     </div>
 </form>
+
 
 <!--</div>-->
 

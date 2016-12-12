@@ -150,6 +150,9 @@ div.gridWrapper .columns .cell img {
 div.gridWrapper .columns .cell.row-hover {
   background: rgba(0,0,0,0.05);
 }
+div.gridWrapper .columns .cell.row-hoverOut {
+  background: #fff;
+}
 div.gridWrapper .columns .cell.input {
   padding-right: 15px;
 }
@@ -378,4 +381,8 @@ div.gridWrapper.touch .gridPager .slider .sliderThumb {
   .search input:focus:after {
     top: 25px;
   }
+}
+#addnew{
+  float: right;
+
 }

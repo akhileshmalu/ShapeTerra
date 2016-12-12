@@ -1,13 +1,13 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+//error_reporting(E_ALL);
+//ini_set('display_errors', '1');
 
 /*
  * This Page controls Intiation of Academic BluePrint module.
  */
 
-$cur  = date('Y-m-d H:i:s');
+$time  = date('Y-m-d H:i:s');
 session_start();
 $error = array();
 $errorflag =0;
@@ -21,7 +21,7 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Query to show Non terminated Organization Unit as on date.
  */
-$sqlou = "Select * from Hierarchy where OU_DATE_END >= '$cur' and OU_TYPE='Academic Unit'";
+$sqlou = "Select * from Hierarchy where OU_DATE_END >= '$time' and OU_TYPE='Academic Unit'";
 $resultou = $mysqli->query($sqlou);
 
 /*
@@ -71,9 +71,10 @@ if(isset($_POST['submit'])) {
                 $errorflag = 1;
             } else {
 
+
                 $broadcaststatus = "Initiated by Provost";
                 $broadcastmsg = $ouabbrev . " Academic BluePrint";
-                $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,Menucontrol,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS) VALUES ('$ouid','$broadcastmsg','Approver','$broadcaststatus','$ay','$broadcaststatus');";
+                $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,Menucontrol,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified) VALUES ('$ouid','$broadcastmsg','Approver','$broadcaststatus','$ay','$broadcaststatus','$time');";
             }
         }
         if ($errorflag != 1) {

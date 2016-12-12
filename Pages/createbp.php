@@ -37,7 +37,7 @@ if(isset($_POST['save'])) {
 
     $execsummary = mynl2br($_POST['execsummary']);
 
-    $sqlgoalout = "UPDATE broadcast SET BROADCAST_EXECSUM ='$execsummary', BROADCAST_STATUS = 'Completed by User', BROADCAST_STATUS_OTHERS = 'Completed by User',Menucontrol ='Approver' where BROADCAST_AY='$aydesc' and BROADCAST_OU ='$ou';";
+    $sqlgoalout = "UPDATE broadcast SET BROADCAST_EXECSUM ='$execsummary', BROADCAST_STATUS = 'Completed by User', BROADCAST_STATUS_OTHERS = 'Completed by User',Menucontrol ='Approver',LastModified='$time' where BROADCAST_AY='$aydesc' and BROADCAST_OU ='$ou';";
 
     for( $i=0; $i<$count;$i++) {
 

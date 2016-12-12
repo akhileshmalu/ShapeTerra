@@ -692,7 +692,7 @@ var grids = [];
 			},this.opts);
 			
 			// cache the el because self.el changes some where?
-			var el = self.el
+			var el = self.el;
 			var cellTypes = self.cellTypes;
 			
 			// show loading box
@@ -815,7 +815,7 @@ var grids = [];
 							colHtml += "</div>";
 						}
 					} else {
-						colHtml = "No Rows";
+						colHtml = "No Records Available";
 					}
 					
 					// hide our loading
@@ -999,7 +999,7 @@ var grids = [];
 
 		},
 		
-		/*
+/*
 		addRow : function() {
 			var $grid = $(this.el),
 				$cols = $grid.find(".col"),
@@ -1007,33 +1007,33 @@ var grids = [];
 				col = null,
 				$col = null,
 				$cell = null;
-			
+
 			for(i=0; i<$cols.length; i++) {
 				col = $cols[i],
 				colName = col.getAttribute("col"),
 				$col = $(col),
 				$cell = $col.find(".cell:eq(2)");
-				
-				//var $new = $(this._render("cell")({
-				//	cl : "level2",
-				//	id : 0,
-				//	col : colName, 
-				//	val : "&nbsp;"
-				//}));
-				
-				
-				//$new.insertAfter($cell);
-				
+
+				var $new = $(this._render("cell")({
+					cl : "level2",
+					id : 0,
+					col : colName,
+					val : "&nbsp;"
+				}));
+
+
+				$new.insertAfter($cell);
+
 			}
-			
-			
-			
-			// insert new div in first col
-			//var $cell = $grid.find(".col:first").find(".cell.level2");
-			//$cell
-			//.css("overflow","none")
-			//.html("<div class='level2Grid'></div");
-			
+
+
+
+			//insert new div in first col
+			var $cell = $grid.find(".col:first").find(".cell.level2");
+			$cell
+			.css("overflow","none")
+			.html("<div class='level2Grid'></div");
+
 		},*/
 		
 		// insets a column at an index
@@ -1051,7 +1051,7 @@ var grids = [];
 				if(typeof this.columns[i] != "undefined") {
 					var k = 0, j;
 					// find the index of this column
-					for(j in this.columns) { k++; if(j === i) break };
+					for(j in this.columns) { k++; if(j === i) break }
 					// insert at that column
 					this._insertCol($col,k);
 				} else {
@@ -1066,7 +1066,7 @@ var grids = [];
 			return !(typeof this.columns[col] == "undefined");
 		},
 		
-		/*
+
 		cellClick : function($cell) {
 			var $tr = $cell.closest("tr"),
 				tr = $tr[0],
@@ -1078,7 +1078,7 @@ var grids = [];
 		rowClick : function($cells) {
 			$(this.el).trigger("rowClick", $cells);
 		},
-		*/
+
 		
 		// returns a jQuery object of cells from the passed column
 		getCells : function(col) {
@@ -1103,7 +1103,8 @@ var grids = [];
 			var id = el.getAttribute("data-row");
 			$(this.getRow(id)).addClass("row-hover");
 		},
-		
+
+
 		// row mouse out
 		rowHoverOut : function(e,el) {
 			var id = el.getAttribute("data-row");
@@ -1127,7 +1128,7 @@ var grids = [];
 							if(self.opts.deleteConfirm) {
 								self.alert("info", "Deleted!", "Row "+id+" has been deleted");
 							}
-						}
+						};
 						// fade this row out
 						$(self.el).find(".grid-row-"+id).fadeOut(500);
 						// after the fade, remove the row, dont do this in the callback, it will call many times
@@ -1151,7 +1152,7 @@ var grids = [];
 			// get the rows we need from the rows object
 			var pkeys = [];
 			for(i=0; i< this.toSave.length; i++) {
-				var pkey = this.toSave[i]
+				var pkey = this.toSave[i];
 				rows[pkey] = this.rows["_"+pkey];
 				pkeys.push(pkey);
 			}
@@ -1190,7 +1191,7 @@ var grids = [];
 			
 				// load the grid with new sorting
 				this.load({ sort : sort, orderBy : col });
-			};
+			}
 		},
 		
 		// updates the row (should be called as you type)
@@ -1202,7 +1203,7 @@ var grids = [];
 			// get our row col and val
 			var div = $(el).closest(".cell")[0],
 				col = div.getAttribute("data-col"),
-				row = div.getAttribute("data-row")
+				row = div.getAttribute("data-row"),
 				val = el.value;
 			
 			// checkboxes dont need value, they need checked
@@ -1340,7 +1341,7 @@ var grids = [];
 				// protect upper edge
 				if(pos >= end) {
 					pos = end;
-					self.val = this.max
+					self.val = this.max;
 				
 				// protect the lower edge
 				} else if(pos <= 0) {
@@ -1365,7 +1366,7 @@ var grids = [];
     			$(this.pager.el).find(".currentPage input").val( self.val );
 			}
 		}
-	})
+	});
 	
 	// the pager object
 	var Pager = Root.inherit({
@@ -1444,7 +1445,7 @@ var grids = [];
 				// handle search icon thing
 				$pager.on('blur','.search :input', function() {
 					if($(this).val()) $(this).parent().removeClass("icon");
-				})
+				});
 				$pager.on('focus','.search :input', function() {
 					$(this).parent().addClass("icon");
 				});
@@ -1565,4 +1566,4 @@ var grids = [];
 
 String.prototype.has = function(search) {
 	return (this.indexOf(search) !== -1);
-}
+};

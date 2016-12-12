@@ -2,24 +2,31 @@
 
 $pagename = "bphome";
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+//error_reporting(E_ALL);
+//ini_set('display_errors', '1');
 
 /*
- * This Page controls Intiation of Academic BluePrint module.
+ * This Page controls Academic BluePrint Home.
  */
 
-$cur  = date('Y-m-d H:i:s');
 session_start();
 $error = array();
 $errorflag =0;
 
-$sqlbroad ="";
-$ou=array();
-
-
 require_once ("../Resources/Includes/connect.php");
 
+$bpayname = $_GET['ayname'];
+$ouid = $_SESSION['login_ouid'];
+$_SESSION['bpayname'] = $bpayname;
+
+
+if ($ouid == 4) {
+    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast where BROADCAST_AY='$bpayname';";
+} else{
+    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+}
+$resultbroad = $mysqli->query($sqlbroad);
+$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
 
 
@@ -50,16 +57,20 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">AY2016-2017</h1>
-        <p class="status"><span>Status:</span> In Progress</p>
-        <p class="status"><span>Last Modified:</span> 8/9/16</p>
+        <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
+        <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
+        <p class="status"><span>Last Modified:</span> <?php echo date("F j, Y, g:i a", strtotime($rowbroad[2])); ?></p>
     </div>
 
     <div id="main-box" class="col-xs-5 col-xs-offset-1">
         <h1 class="box-title">Tasks</h1>
         <ul class="task-list">
-            <li><a><span class="icon">&#xe01c;</span> Task 1</a></li>
-            <li><a><span class="icon">&#xe01c;</span> Task 2</a></li>
+            <li><a><span class="icon">&#xe01c;</span> Create BluePrint</a></li>
+            <li><a><span class="icon">&#xe01c;</span> Goal Overview & Management</a></li>
+            <li><a><span class="icon">&#xe01c;</span> Goal Outcomes Summary</a></li>
+            <li><a href="facultyawards.php"><span class="icon">&#xe01c;</span> Faculty Awards</a></li>
+            <li><a href="facultyInfo.php"><span class="icon">&#xe01c;</span> Faculty Info</a></li>
+            <li><a><span class="icon">&#xe01c;</span> Executive Summary</a></li>
         </ul>
     </div>
 
