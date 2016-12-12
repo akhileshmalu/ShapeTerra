@@ -140,7 +140,8 @@ require_once("../Resources/Includes/header.php");
 <body>
 
 <div id ="Main" class="row">
-    <svg id="logo" class="col-xs-6 col-xs-offset-3 col-xs-offset-5 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5" version="1.1" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
+    <div class="login-box col-xs-6 col-xs-offset-3 col-xs-offset-5 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+    <svg id="logo" class="col-xs-6 col-xs-offset-3" version="1.1" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 276 157.5"
     enable-background="new 0 0 276 157.5" xml:space="preserve">
     <switch>
@@ -337,7 +338,7 @@ require_once("../Resources/Includes/header.php");
         </g>
     </g>
         </switch>     
-    <div id="login-form" class="col-xs-6 col-xs-offset-3 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
+    <div id="login-form" class="col-lg-10 col-xs-offset-1">
     <form name = "loginform" action ="" method="POST">
         <label id="error" class="text-center"> <?php foreach ($error as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
         <input id ="email" type="email"  placeholder="Email" name="email" class = "col-xs-12" required />  

@@ -111,9 +111,15 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
-        <p class="status"><span>Org Unit Name:</span> <?php echo $_SESSION['login_ouname']; ?></p>
-        <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
+        <div class="col-xs-8">
+            <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
+            <p class="status"><span>Org Unit Name:</span> <?php echo $_SESSION['login_ouname']; ?></p>
+            <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
+        </div>
+        
+        <div class="col-xs-4">
+            <a href="#" class="btn-primary">Preview</a>
+        </div>
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
