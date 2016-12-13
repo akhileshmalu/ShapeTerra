@@ -1,7 +1,6 @@
 $(".ajaxform").on('submit',function (e) {
 
 
-
     var that = $(this),
         url = that.attr('action'),
         type = that.attr('method'),

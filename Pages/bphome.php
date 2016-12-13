@@ -72,7 +72,7 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-5 col-xs-offset-1">
         <h1 class="box-title">Tasks</h1>
         <ul class="task-list">
-            <li><a href=""><span class="icon">&#xe01c;</span> Create BluePrint</a></li>
+            <li><a href="mvv.php"><span class="icon">&#xe01c;</span> Create BluePrint</a></li>
             <li><a href="unitgoaloverview.php"><span class="icon">&#xe01c;</span> Goal Overview & Management</a></li>
             <li><a><span class="icon">&#xe01c;</span> Goal Outcomes Summary</a></li>
             <li><a href="facultyawards.php"><span class="icon">&#xe01c;</span> Faculty Awards</a></li>

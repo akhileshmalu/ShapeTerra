@@ -76,7 +76,7 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 
-<link rel="stylesheet" href="taskboard/bootstrap/css/bootstrapTable.css"/>
+<!--<link rel="stylesheet" href="taskboard/bootstrap/css/bootstrapTable.css"/>-->
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
 <link rel="stylesheet" href="Css/grid.css" title="openJsGrid"/>
@@ -137,18 +137,24 @@ require_once("../Resources/Includes/menu.php");
 <!--Modal for Addition of New Awards-->
 
 <div class="modal fade" id="addawardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="dialog">
+
+    <div class="modal-dialog modal-lg" role="dialog">
+
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">Add Unit Goal</h4>
             </div>
+
             <div class="modal-body">
                 <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
-                    <label for ="title" ><strong><h4 style="color:blue; ">College/School Goals</h4></strong></label>
+                    <label for="title"><strong><h4 style="color:blue; ">College/School Goals</h4></strong></label>
                     <div class="form-group" id="">
-                        <p>Instruction: enter a goal for the academic Year for your college/School.Each Goal may be linked to one or more University Goals as presented in the University's strategoc plan.The number of goals is not fixed, although 5 +/- one may be a reasonable quantity.   <br /><span style="color: red">*</span> indicates required.</p>
+                        <p>Instruction: enter a goal for the academic Year for your college/School.Each Goal may be
+                            linked to one or more University Goals as presented in the University's strategoc plan.The
+                            number of goals is not fixed, although 5 +/- one may be a reasonable quantity. <br/><span
+                                style="color: red">*</span> indicates required.</p>
                     </div>
 
                     <strong><h4 style="color:green; ">Add a Goal</h4></strong>
@@ -158,29 +164,37 @@ require_once("../Resources/Includes/menu.php");
                     </div>
                     <div class="form-group">
                         <label for="goallink">Link to University Goals:</label>
+
                         <?php
                         $sqlug = "SELECT * FROM UniversityGoals;";
                         $resultug = $mysqli->query($sqlug);
                         while ($rowsug = $resultug->fetch_assoc()): { ?>
                             <div class="checkbox" id="goallink">
                                 <label><input type="checkbox" name="goallink[]"
-                                              class="checkBoxClass" value="<?php echo $rowsug['ID_UNIV_GOAL']; ?>"><?php echo $rowsug['GOAL_TITLE']; ?></label>
+                                              class="checkBoxClass"
+                                              value="<?php echo $rowsug['ID_UNIV_GOAL']; ?>"><?php echo $rowsug['GOAL_TITLE']; ?>
+                                </label>
+
                             </div>
                         <?php } endwhile; ?>
 
                     </div>
                     <div class="form-group">
-                        <label for="goalstatement">Please Enter Goal Statement:</label>
+                        <label for="goalstatement">College/School Goal Statement<span
+                                style="color: red"><sup>*</sup></span></label>
+
                         <textarea rows="5" class="form-control" name="goalstatement" id="goalstatement"
                                   required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="goalalignment">Please explain Goal Alignment:</label>
+
+                        <label for="goalalignment">Describe how this Goal Align with your Mission, Vision & Values<span
+                                style="color: red"><sup>*</sup></span></label>
                         <textarea rows="5" class="form-control" name="goalalignment" id="goalalignment"
                                   required></textarea>
                     </div>
-                    <input type="submit" id="unitgoalbtn" name="goal_submit" value="Save" class="btn-primary btn-sm">
-
+                    <input type="submit" id="unitgoalbtn" name="goal_submit" value="Save"
+                           class="btn-primary btn-sm pull-right">
 
                 </form>
                 <div class="modal-footer">
@@ -189,7 +203,6 @@ require_once("../Resources/Includes/menu.php");
         </div>
     </div>
 </div>
-
 
 <?php
 //Include Footer

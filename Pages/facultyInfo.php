@@ -126,7 +126,7 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Faculty Awards</h1>
+        <h1 class="box-title">Faculty information</h1>
         <div id="" style="margin-top: 10px;">
             <form action="facultyInfo.php" method="POST" enctype="multipart/form-data">
             <label for ="facdev" ><h1>Faculty Development: </h1></label>
@@ -151,9 +151,9 @@ require_once("../Resources/Includes/menu.php");
                 <input id="supinfo" type="file" name="supinfo" class="form-control">
             </div>
 
-            <input type="button" value="Cancel & Discard" class="btn-primary cancelbox">
-            <input type="button" name="submit" value="Submit For Approval" class="btn-primary" disabled>
-            <input type="submit" name="savedraft" value="Save Draft" class="btn-primary">
+            <input type="button" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
+            <input type="button" name="submit" value="Submit For Approval" class="btn-primary pull-right">
+            <input type="submit" name="savedraft" value="Save Draft" class="btn-secondary pull-right">
             </form>
         </div>
     </div>

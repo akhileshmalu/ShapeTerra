@@ -79,7 +79,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="col-lg-3">
         <label for="querytag">Enter your Query</label>
         <div class="form-group">
-            <input type="text" id="querytag" name="query" class="form-control" placeholder="Enter your query">
+            <textarea  id="querytag"  rows="5" cols="25" wrap="hard" name="query" class="form-control" placeholder="Enter your query"></textarea>
         </div>
         <div class="form-group">
             <input type=submit name="submit" class="btn-sm " value="Single Query">
