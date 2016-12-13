@@ -69,10 +69,10 @@ ON DUPLICATE KEY UPDATE `ID_UNIT_MVV` = VALUES(`ID_UNIT_MVV`),
 
     if ($mysqli->query($sqlmission)) {
 
-        $error[0] = "Mission Updated Successfully";
+        $error[0] =  "Mission Updated Successfully";
 
     } else {
-        $error[0] = "Mission Could not be Updated. Please Retry.";
+        $error[0] =   "Mission Could not be Updated. Please Retry.";
     }
 
 
@@ -183,7 +183,12 @@ require_once("../Resources/Includes/menu.php");
 
 
             <div role="tabpanel" class="tab-pane active" id="mission">
-                <form action="mvv.php" method="POST" class="ajaxform">
+                <div class="mission-status-alert hidden text-center">
+                    <h1>Mission Updated Successfully</h1>
+                    <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To Dashboard</a>
+                    <a href="#" class="mission-next-tab btn-primary" onclick="return false;">Next Tab</a>
+                </div>
+                <form action="mvv.php" method="POST" class="ajaxform mission">
                     <p>
                         <small><em>Instruction: Enter your BluePrint content for the Academic Year indicated above.The
                                 components below are highest level statements of
@@ -200,7 +205,7 @@ require_once("../Resources/Includes/menu.php");
                                   required><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
 
                         <button type="submit" name="mission_submit"
-                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right mission_submit">
                             Submit Mission
                         </button>
                     </div>
@@ -209,8 +214,12 @@ require_once("../Resources/Includes/menu.php");
 
 
             <div role="tabpanel" class="tab-pane" id="vision">
-
-                <form action="mvv.php" method="POST" class="ajaxform">
+                <div class="vision-status-alert hidden text-center">
+                    <h1>Vision Updated Successfully</h1>
+                    <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To Dashboard</a>
+                    <a href="#" class="vision-next-tab btn-primary" onclick="return false;">Next Tab</a>
+                </div>
+                <form action="mvv.php" method="POST" class="ajaxform vision">
 
                         <label class="col-xs-12" for="visiontitle">Vision Statement</label>
 
@@ -220,7 +229,7 @@ require_once("../Resources/Includes/menu.php");
                                       required><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
 
                             <button type="submit" name="vision_submit"
-                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right vision_submit">
                                 Submit Vision
                             </button>
                         </div>
@@ -230,7 +239,11 @@ require_once("../Resources/Includes/menu.php");
 
 
             <div role="tabpanel" class="tab-pane" id="values">
-                <form action="mvv.php" method="POST" class="ajaxform">
+                <div class="value-status-alert hidden text-center">
+                    <h1>Values Updated Successfully</h1>
+                    <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary">Back To Dashboard</a>
+                </div>
+                <form action="mvv.php" method="POST" class="ajaxform value">
 
                         <label class="col-xs-12" for="visiontitle">Value Statement</label>
 
@@ -241,7 +254,7 @@ require_once("../Resources/Includes/menu.php");
                                   required><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
 
                             <button type="submit" name="value_submit"
-                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right value_submit">
                                 Submit Value
                             </button>
                         </div>
@@ -267,7 +280,7 @@ require_once("../Resources/Includes/footer.php");
         $(this).tab('show')
     })
 </script>
-<script src="../Resources/Library/js/tabchange.js"></script>
+<script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
