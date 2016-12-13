@@ -75,6 +75,11 @@ if(isset($_POST['request'])){
 
 }
 
+//Menu control for back to dashboard button
+//true: Dont show button
+//false: show button
+$notBackToDashboard = true;
+
 require_once("../Resources/Includes/header.php");
 ?>
 
@@ -96,7 +101,13 @@ require_once("../Resources/Includes/menu.php");
     </div>
 <?php } ?>
 
-    <div class="col-lg-offset-3 col-lg-3 col-md-6 col-xs-9" id="ContentRight">
+<div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
+    <div id="title-header">
+        <h1 id="title">Profile</h1>
+    </div>
+
+    <div id="main-box" class="col-xs-10 col-xs-offset-1">
+        <h1 class="box-title">Request Privilege</h1>
         <form action ="" method="POST">
             <div class="form-group">
                 <label for="privilege">Please select desired Privilege <b>Role</b>:</label>
@@ -129,6 +140,8 @@ require_once("../Resources/Includes/menu.php");
             <input type="submit" name="request" value="submit" id="reset" class="btn-primary btn-sm">
     </form>
     </div>
+</div>
+
 <?php
 //Include Footer
 require_once("../Resources/Includes/footer.php");

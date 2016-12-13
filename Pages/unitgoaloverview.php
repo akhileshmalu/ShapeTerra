@@ -137,53 +137,54 @@ require_once("../Resources/Includes/menu.php");
 <!--Modal for Addition of New Awards-->
 
 <div class="modal fade" id="addawardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <!--    <div class="modal-dialog" role="dialog">-->
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Add Unit Goal</h4>
-        </div>
-        <div class="modal-body">
-            <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
-                <label for ="title" style="color:blue "><strong><h4>College/School Goals</h4></strong></label>
-                <div class="form-group" id="title">
-                    <p>Instruction: enter a goal for the academic Year for your college/School.Each Goal may be linked to one or more University Goals as presented in the University's strategoc plan.The number of goals is not fixed, although 5 +/- one may be a reasonable quantity.   <span style="color: red">*</span> indicates required.</p>
-                </div>
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add Unit Goal</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
+                    <label for ="title" ><strong><h4 style="color:blue; ">College/School Goals</h4></strong></label>
+                    <div class="form-group" id="">
+                        <p>Instruction: enter a goal for the academic Year for your college/School.Each Goal may be linked to one or more University Goals as presented in the University's strategoc plan.The number of goals is not fixed, although 5 +/- one may be a reasonable quantity.   <br /><span style="color: red">*</span> indicates required.</p>
+                    </div>
 
-                <strong><p style="color:green ">Add a Goal</p></strong>
-                <div class="form-group">
-                    <label for="goaltitle">Please Enter Goal Title:</label>
-                    <input type="text" class="form-control" name="goaltitle" id="goaltitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="goallink">Link to University Goals:</label>
-                    <?php
-                    $sqlug = "SELECT * FROM UniversityGoals;";
-                    $resultug = $mysqli->query($sqlug);
-                    while ($rowsug = $resultug->fetch_assoc()): { ?>
-                        <div class="checkbox" id="goallink">
-                            <label><input type="checkbox" name="goallink[]"
-                                          class="checkBoxClass" value="<?php echo $rowsug['ID_UNIV_GOAL']; ?>"><?php echo $rowsug['GOAL_TITLE']; ?></label>
-                        </div>
-                    <?php } endwhile; ?>
+                    <strong><h4 style="color:green; ">Add a Goal</h4></strong>
+                    <div class="form-group">
+                        <label for="goaltitle">Please Enter Goal Title:</label>
+                        <input type="text" class="form-control" name="goaltitle" id="goaltitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goallink">Link to University Goals:</label>
+                        <?php
+                        $sqlug = "SELECT * FROM UniversityGoals;";
+                        $resultug = $mysqli->query($sqlug);
+                        while ($rowsug = $resultug->fetch_assoc()): { ?>
+                            <div class="checkbox" id="goallink">
+                                <label><input type="checkbox" name="goallink[]"
+                                              class="checkBoxClass" value="<?php echo $rowsug['ID_UNIV_GOAL']; ?>"><?php echo $rowsug['GOAL_TITLE']; ?></label>
+                            </div>
+                        <?php } endwhile; ?>
 
-                </div>
-                <div class="form-group">
-                    <label for="goalstatement">Please Enter Goal Statement:</label>
-                    <textarea rows="5" class="form-control" name="goalstatement" id="goalstatement"
-                              required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="goalalignment">Please explain Goal Alignment:</label>
-                    <textarea rows="5" class="form-control" name="goalalignment" id="goalalignment"
-                              required></textarea>
-                </div>
-                <input type="submit" id="unitgoalbtn" name="goal_submit" value="Save" class="btn-primary btn-sm pull-left">
+                    </div>
+                    <div class="form-group">
+                        <label for="goalstatement">Please Enter Goal Statement:</label>
+                        <textarea rows="5" class="form-control" name="goalstatement" id="goalstatement"
+                                  required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="goalalignment">Please explain Goal Alignment:</label>
+                        <textarea rows="5" class="form-control" name="goalalignment" id="goalalignment"
+                                  required></textarea>
+                    </div>
+                    <input type="submit" id="unitgoalbtn" name="goal_submit" value="Save" class="btn-primary btn-sm">
 
 
-            </form>
-            <div class="modal-footer">
+                </form>
+                <div class="modal-footer">
+                </div>
             </div>
         </div>
     </div>

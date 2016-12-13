@@ -157,7 +157,7 @@ Generate PDF button currently disabled.
 		<span id="main" class="icon plus">&#xe035;</span>
 		Main</a></li>
 
-		<li><a id="main" class="man hidden" href="account.php">Home</a></li>
+		<li><a id="main" class="main hidden selected" href="account.php">Home</a></li>
 
 		<?php
 		for ($i = 0; $i < count($menu); $i++) {

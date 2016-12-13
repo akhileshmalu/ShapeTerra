@@ -98,7 +98,7 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php" class="end btn-primary">Close</button>
+        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 
@@ -182,10 +182,14 @@ require_once("../Resources/Includes/menu.php");
                         <input type='text' name="dateAward" class="form-control" required>
                         <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
+                        </span>
                     </div>
-                </form>
-            </div>
+                    <input type="submit" id="awardbtn" name="award_submit" value="Save" class="btn-primary">
+                </div> 
+
+            </form>
+        </div>
+        <div class="modal-footer">
         </div>
     </div>
 </div>

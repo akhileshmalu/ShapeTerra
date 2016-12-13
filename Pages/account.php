@@ -48,7 +48,7 @@ require_once("../Resources/Includes/menu.php");
 	<!-- Possible Greeting box -->
 	<div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Hello <?php echo $rows['FNAME']; ?>! </h1>
-        <p class="status"><span>Orginzation Unit: </span> <?php echo $rowsmenu['OU_ABBREV']; ?></p>
+        <p class="status"><span>Org Unit Name: </span> <?php echo $_SESSION['login_ouname']; ?></p>
         <p class="status"><span>User role: </span> <?php echo $rowsmenu['USER_RIGHT']; ?></p>
     </div>
 
