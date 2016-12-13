@@ -5,8 +5,6 @@
 *
 *
 * Font color: #333;
-* blue color: #4A90E2;
-* grey color: #979797;
 *
 *
 ********************************************************/
@@ -32,12 +30,16 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
     color:#333;
 }
 
-
-
 .row{
 	margin-left: 0;
 	margin-right: 0;
 }
+
+/********************************************************
+* 
+* Main Box Styles
+*
+********************************************************/
 
 #title{
 	margin-bottom: 36px;
@@ -103,6 +105,12 @@ p.status{
 
 p.status span{
 	font-weight: 600;
+}
+
+#main-box label{
+	color:#444;
+	font-size: 14px;
+	font-weight: 400;
 }
 
 #errorplate{

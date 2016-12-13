@@ -10,11 +10,13 @@ $_SESSION['login_lname'] = $rows['LNAME'];
 $ouid = $rows['USER_OU_MEMBERSHIP'];
 $_SESSION['login_ouid'] = $ouid;
 
+//Menu control for back to dashboard button
+//true: Dont show button
+//false: show button
+$notBackToDashboard = true;
 
 require_once("../Resources/Includes/header.php");
 ?>
-
-<link href="Css/account.css" rel="stylesheet" type="text/css" />
 
 <!--
 below headers for task board design purpose
@@ -44,12 +46,14 @@ require_once("../Resources/Includes/menu.php");
 	</div>
 
 	<!-- Possible Greeting box -->
-	<!-- <div id="main-box" class="col-xs-10 col-xs-offset-1">
+	<div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Hello <?php echo $rows['FNAME']; ?>! </h1>
-    </div> -->
-
+        <p class="status"><span>Orginzation Unit: </span> <?php echo $rowsmenu['OU_ABBREV']; ?></p>
+        <p class="status"><span>User role: </span> <?php echo $rowsmenu['USER_RIGHT']; ?></p>
+    </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
+    	<h1 class="box-title">Select an Academic Year</h1>
 		<div id="taskboard" class="">
 			<table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">
 				<tr>

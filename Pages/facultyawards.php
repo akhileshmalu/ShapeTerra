@@ -90,7 +90,6 @@ require_once("../Resources/Includes/menu.php");
 
 
 
-<link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>

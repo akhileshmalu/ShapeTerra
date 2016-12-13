@@ -147,10 +147,17 @@ Generate PDF button currently disabled.
 	<!-- Main menu -->
 
 	<ul class="col-xs-12">
+		<?php if(!$notBackToDashboard){ ?>
+			<li class="" id="header"><a class="" href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" >
+			<span id="" class="icon">l</span>Back To Dashboard</a></li>
+		<?php } ?>
+		
 		<li class="" id="header"><a class="main" href="#" onclick="return false">
 		<span id="main" class="icon minus hidden">&#xe024;</span>
 		<span id="main" class="icon plus">&#xe035;</span>
 		Main</a></li>
+
+		<li><a id="main" class="man hidden" href="account.php">Home</a></li>
 
 		<?php
 		for ($i = 0; $i < count($menu); $i++) {

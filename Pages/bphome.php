@@ -26,6 +26,10 @@ if ($ouid == 4) {
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
+//Menu control for back to dashboard button
+//true: Dont show button
+//false: show button
+$notBackToDashboard = true;
 
 
 require_once("../Resources/Includes/header.php");
@@ -34,7 +38,6 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 
-<link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
