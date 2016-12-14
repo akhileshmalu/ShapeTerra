@@ -58,7 +58,7 @@ require_once("../Resources/Includes/menu.php");
 		<div id="taskboard" class="">
 			<table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">
 				<tr>
-					<th col="BROADCAST_AY" type="text" href="../Pages/bphome.php?ayname={{value}}">Academic Year</th>
+					<th col="BROADCAST_AY" type="text" href="<?php echo '../Pages/bphome.php?ayname={{value}}&ou_abbrev={{columns.OU_ABBREV}}';?>">Academic Year</th>
 					<th col="BROADCAST_DESC" type="text">Description</th>
 					<?php if ($ouid == 4) { ?>
 						<th col="BROADCAST_STATUS" type="text">Status</th>

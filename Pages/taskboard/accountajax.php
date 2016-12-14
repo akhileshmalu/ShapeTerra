@@ -16,9 +16,9 @@ if ($ouid <> 4) {
         // "joins"=>array(
         // 	"LEFT JOIN categories ON categories.CategoryID = tutorials.CategoryID"
         // ),
-        // "fields"=>array(
-        // 	"thumb" => "CONCAT('http://cmivfx.com/images/thumbs/',ThumbnailLocation)"
-        // ),
+//         "fields"=>array(
+//         "OU_ABBREV" => "broadcast.OU_ABBREV"
+//             ),
         // "select" => 'selectFunction'
     ));
 } else {
@@ -26,6 +26,13 @@ if ($ouid <> 4) {
     $grid = new Grid("broadcast",$mysqli, array(
         "save" => false,
         "delete" => false,
+      //  "where" => "'",
+        "fields"=>array(
+            "BROADCAST_AY" => "broadcast.BROADCAST_AY",
+            "BROADCAST_STATUS" => "broadcast.BROADCAST_STATUS",
+            "BROADCAST_DESC" => "broadcast.BROADCAST_DESC",
+            "OU_ABBREV" => "broadcast.OU_ABBREV"
+        ),
     ));
 }
 

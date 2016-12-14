@@ -4,6 +4,7 @@ session_start();
 $ouid = $_SESSION['login_ouid'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
 $bpayname= $_SESSION['bpayname'];
+$bpouabbrev = $_SESSION['bpouabbrev'];
 
 require_once("../../Resources/Includes/connect.php");
 
@@ -40,7 +41,20 @@ if ($ouid <> 4) {
     $grid = new Grid("BpContents", $mysqli, array(
         "save" => false,
         "delete" => false,
-        "where" => "BROADCAST_AY='$bpayname'  ",
+        "where" => "OU_ABBREV = '$bpouabbrev' and BROADCAST_AY='$bpayname'  ",
+        "fields"=>array(
+            "CONTENT_BRIEF_DESC"=>"BpContents.CONTENT_BRIEF_DESC",
+            "CONTENT_LINK"=>"BpContents.CONTENT_LINK",
+            "MOD_TIMESTAMP"=>"BpContents.MOD_TIMESTAMP",
+            "BP_AUTHOR"=>"BpContents.BP_AUTHOR",
+            "CONTENT_STATUS"=>"BpContents.CONTENT_STATUS",
+            "ID_CONTENT"=>"BpContents.ID_CONTENT",
+            "ID_BROADCAST"=>"broadcast.ID_BROADCAST",
+            "BROADCAST_AY"=>"broadcast.BROADCAST_AY",
+            "OU_ABBREV"=>"broadcast.OU_ABBREV",
+
+        ),
+
         "joins"=>array(
             "left JOIN broadcast ON BpContents.Linked_BP_ID =broadcast.ID_BROADCAST "
         ),

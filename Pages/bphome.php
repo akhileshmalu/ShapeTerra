@@ -15,6 +15,7 @@ require_once ("../Resources/Includes/connect.php");
 
 $bpayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
+$_SESSION['bpouabbrev'] = $_GET['ou_abbrev'];
 $_SESSION['bpayname'] = $bpayname;
 
 
