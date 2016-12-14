@@ -24,13 +24,6 @@ $_SESSION['login_ouname'] = $rowsmenu['OU_NAME'];
 
 
 
-//
-//$sqlmenuctrl = "select * from broadcast where BROADCAST_OU = $ouid; ";
-//$resultmenuctrl = $menucon->query($sqlmenuctrl);
-//$rowsmenuctrl = $resultmenuctrl->fetch_assoc();
-
-
-
 $menu = array(
 	//array("Home", "../$navdir"."Pages/account.php", "" ,"main","basic", true),
 	//array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe02f;" ,"main","user", true),
@@ -43,15 +36,7 @@ $menu = array(
 	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
 	);
 
-//if($rowsmenuctrl['Menucontrol'] == 'Approver') {
-//	$string = array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true);
-//	array_push($menu,$string);
-//}
-//
-//if ($rowsmenuctrl['Menucontrol'] == 'User') {
-//	$string = array("Create BluePrint", "../$navdir" . "Pages/createbp.php", "&#xe02f;", "main", "user", true);
-//	array_push($menu, $string);
-//}
+
 
 ?>
 

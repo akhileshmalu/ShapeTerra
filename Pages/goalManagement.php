@@ -81,54 +81,50 @@
 <?php } ?>
 
 <div class="hr"></div>
-	<div id="main-content" class="col-lg-10 col-xs-8">
-		<div class="col-xs-12">
+<div id="main-content" class="col-lg-10 col-xs-8">
+	<div class="col-xs-12">
 		<h1 id="title" class="col-lg-5 col-xs-8">Goal Management</h1>
-		
-		<button id="add-goal" class="btn-primary col-lg-2 col-xs-4 pull-left" data-toggle="modal" data-target="#addGoalModal"><span class="icon">&#xe035;</span> Add Goal</button>
 
-
-		
-		</div>
-		<div class="col-xs-3" id="table-container">
-			<table class="table table-striped table-hover">
-				<tr>
-	  				<th>Academic Year</th>
-	  			</tr>
-				<?php
-					$sqlviewgoal = "Select * from AcademicYears where GOAL_STATUS_ID = 6";
-            		$resultviewgoal = $mysqli->query($sqlviewgoal);
-            		while($rowsviewgoal = $resultviewgoal ->fetch_assoc()):{ ?>
-            			<tr id="year" class="<?php echo $rowsviewgoal['ACAD_YEAR_DESC']; ?>">
-                			<td><?php echo $rowsviewgoal['ACAD_YEAR_DESC']; ?></td>
-                		</tr>	
-            	<?php 
-            		} endwhile; 
-            		mysqli_data_seek($resultviewgoal, 0);
-            	?>
-			</table>
-		</div>
+		<button id="add-goal" class="btn-primary col-lg-2 col-xs-4 pull-left" data-toggle="modal"
+				data-target="#addGoalModal"><span class="icon">&#xe035;</span> Add Goal
+		</button>
+	</div>
+	<div class="col-xs-3" id="table-container">
+		<table class="table table-striped table-hover">
+			<tr>
+				<th>Academic Year</th>
+			</tr>
 			<?php
-					$sqlug = "select * from UniversityGoals";
-            		$resultug = $mysqli->query($sqlug);
+			$sqlviewgoal = "SELECT * FROM AcademicYears WHERE GOAL_STATUS_ID = 6";
+			$resultviewgoal = $mysqli->query($sqlviewgoal);
+			while ($rowsviewgoal = $resultviewgoal->fetch_assoc()): { ?>
+				<tr id="year" class="<?php echo $rowsviewgoal['ACAD_YEAR_DESC']; ?>">
+					<td><?php echo $rowsviewgoal['ACAD_YEAR_DESC']; ?></td>
+				</tr>
+				<?php
+			} endwhile;
+			mysqli_data_seek($resultviewgoal, 0);
+			?>
+		</table>
+	</div>
+	<?php
+	$sqlug = "SELECT * FROM UniversityGoals";
+	$resultug = $mysqli->query($sqlug);
+	while ($rowsug = $resultug->fetch_assoc()): { ?>
+		<aside class="col-xs-9 hidden <?php echo $rowsug['GOAL_ACAD_YEARS']; ?>" id="goal-summary">
+			<h3 class="title">Goal Title</h3>
+			<h2><?php echo $rowsug['GOAL_TITLE']; ?></h2>
+			<h3 class="title">Goal Statement</h3>
+			<p><?php echo $rowsug['GOAL_STATEMENT']; ?></p>
+		</aside>
+		<div id="aside-line"></div>
+		<?php
 
-            		
+	} endwhile;
+	mysqli_data_seek($resultug, 0);
+	?>
 
-            		while($rowsug = $resultug ->fetch_assoc()):{ ?>
-            			<aside class="col-xs-9 hidden <?php echo $rowsug['GOAL_ACAD_YEARS']; ?>" id="goal-summary">
-            				<h3 class="title">Goal Title</h3>
-            				<h2><?php echo $rowsug['GOAL_TITLE']; ?></h2>
-            				<h3 class="title">Goal Statement</h3>
-            				<p><?php echo $rowsug['GOAL_STATEMENT']; ?></p>
-						</aside>
-						<div id="aside-line"></div>
-            	<?php 
-            		
-            		} endwhile; 
-            		mysqli_data_seek($resultug, 0);
-            	?>
-
-  	</div>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="addGoalModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

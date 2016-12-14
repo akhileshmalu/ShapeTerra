@@ -21,13 +21,13 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Local & Session variable Initialization
  */
-
+$contentlink_id = $_GET['linkid'];
 $bpayname =$_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
-$author = $_SESSION['login_email'];
+$author = $_SESSION['login_name'];
 
 /*
  * faculty Award Grid ; conditional for provost & other users
@@ -60,11 +60,15 @@ if(isset($_POST['award_submit'])){
     $awardTitle = $_POST['awardTitle'];
     $awardOrg = $_POST['awardOrg'];
     $dateAward = $_POST['dateAward'];
+    $contentlink_id = $_GET['linkid'];
 
     $sqlAcFacAward = "INSERT INTO AC_FacultyAwards
 (OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,RECIPIENT_NAME_LAST,RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED)
 VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$recipLname','$recipFname','$awardTitle','$awardOrg','$dateAward');";
-    if($mysqli->query($sqlAcFacAward)){
+
+    $sqlAcFacAward .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR = '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    if($mysqli->multi_query($sqlAcFacAward)){
 
         $error[0] = "Award Added Succesfully.";
 
@@ -154,7 +158,7 @@ require_once("../Resources/Includes/menu.php");
             <h4 class="modal-title" id="myModalLabel">Add Faculty Awards</h4>
         </div>
         <div class="modal-body">
-            <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>" class="ajaxform">
+            <form method="POST" action="<?php echo "facultyawards.php?linkid=".$contentlink_id; ?>" class="ajaxform">
                 <div class="form-group">
 
                     <label for="awardtype">Select Award Type:</label>

@@ -11,6 +11,7 @@ session_start();
 $error = array();
 $errorflag = 0;
 
+
 /*
  * Connection to DataBase.
  */
@@ -20,30 +21,40 @@ require_once("../Resources/Includes/connect.php");
  * Local & Session variable Initialization
  */
 
+$contentlink_id = $_GET['linkid'];
 $bpayname = $_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
-$author = $_SESSION['login_email'];
+$author = $_SESSION['login_name'];
 
 
-$prevbpid = stringtoid($bpayname);
-$prevbpayname = idtostring($prevbpid - 101);
+
 
 if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast where BROADCAST_AY='$bpayname';";
+    $sqlbroad = "select ID_BROADCAST,BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast where BROADCAST_AY='$bpayname';";
 } else {
     $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 }
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+$broad_id = $rowbroad['ID_BROADCAST'];
+
+
+/*
+ * SQL check if MVV was Started before so that existing value should be of indicated AY
+ */
+
+
+$prevbpid = stringtoid($bpayname);
+$prevbpayname = idtostring($prevbpid - 101);
 
 
 /*
  * Query to Select Previous Year Mission , Visoin, Value Statement for Specific Org Unit.
  */
-$sqlmission = "select * from BP_MissionVisionValues where UNIT_MVV_AY ='$prevbpayname' and OU_ABBREV ='$ouabbrev';";
+$sqlmission = "select * from BP_MissionVisionValues where (UNIT_MVV_AY ='$prevbpayname' or UNIT_MVV_AY ='$bpayname') and OU_ABBREV ='$ouabbrev' ORDER BY UNIT_MVV_AY DESC;";
 $resultmission = $mysqli->query($sqlmission);
 $rowsmission = $resultmission->fetch_assoc();
 
@@ -57,7 +68,7 @@ $id = intval($rowslastmission[0]) + 1;
 if (isset($_POST['mission_submit'])) {
 
     $missionstatement = mynl2br($_POST['missionstatement']);
-
+    $contentlink_id = $_GET['linkid'];
 
 
     $sqlmission = "INSERT INTO BP_MissionVisionValues (ID_UNIT_MVV,OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT) 
@@ -67,9 +78,12 @@ ON DUPLICATE KEY UPDATE `ID_UNIT_MVV` = VALUES(`ID_UNIT_MVV`),
 `MISSION_STATEMENT` =VALUES(`MISSION_STATEMENT`);";
 
 
-    if ($mysqli->query($sqlmission)) {
+    $sqlmission .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+
+    if ($mysqli->multi_query($sqlmission)) {
 
         $error[0] =  "Mission Updated Successfully";
+
 
     } else {
         $error[0] =   "Mission Could not be Updated. Please Retry.";
@@ -82,7 +96,7 @@ if (isset($_POST['vision_submit'])) {
 
 
     $visionstatement = mynl2br($_POST['visionstatement']);
-
+$contentlink_id = $_GET['linkid'];
 
     $sqlmission = "INSERT INTO BP_MissionVisionValues (ID_UNIT_MVV,OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY,VISION_STATEMENT ) 
 VALUES ('$id','$ouabbrev','$author','$time','$bpayname','$visionstatement')
@@ -90,10 +104,12 @@ ON DUPLICATE KEY UPDATE `ID_UNIT_MVV` = VALUES(`ID_UNIT_MVV`),
 `OU_ABBREV` = VALUES(`OU_ABBREV`),`MVV_AUTHOR` = VALUES(`MVV_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`UNIT_MVV_AY` = VALUES(`UNIT_MVV_AY`),
 `VISION_STATEMENT` =VALUES(`VISION_STATEMENT`);";
 
+    $sqlmission .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
 
-    if ($mysqli->query($sqlmission)) {
+    if ($mysqli->multi_query($sqlmission)) {
 
         $error[0] = "Vision Updated Successfully";
+
 
     } else {
         $error[0] = "Vision Could not be Updated. Please Retry.";
@@ -104,7 +120,7 @@ ON DUPLICATE KEY UPDATE `ID_UNIT_MVV` = VALUES(`ID_UNIT_MVV`),
 if (isset($_POST['value_submit'])) {
 
     $valuestatement = mynl2br($_POST['valuestatement']);
-
+    $contentlink_id = $_GET['linkid'];
 
     $sqlmission = "INSERT INTO BP_MissionVisionValues (ID_UNIT_MVV,OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, VALUES_STATEMENT) 
 VALUES ('$id','$ouabbrev','$author','$time','$bpayname','$valuestatement')
@@ -112,15 +128,31 @@ ON DUPLICATE KEY UPDATE `ID_UNIT_MVV` = VALUES(`ID_UNIT_MVV`),
 `OU_ABBREV` = VALUES(`OU_ABBREV`),`MVV_AUTHOR` = VALUES(`MVV_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`UNIT_MVV_AY` = VALUES(`UNIT_MVV_AY`),
 `VALUES_STATEMENT` =VALUES(`VALUES_STATEMENT`);";
 
+    $sqlmission .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
 
-    if ($mysqli->query($sqlmission)) {
+    if ($mysqli->multi_query($sqlmission)) {
 
         $error[0] = "Values Updated Successfully";
+
 
     } else {
         $error[0] = "Values Could not be Updated. Please Retry.";
     }
 
+
+}
+if(isset($_POST['approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+       $sqlmission = "Update  BpContents set CONTENT_STATUS = 'Pending approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+       if ($mysqli->query($sqlmission)) {
+
+           $error[0] = "Mission, Vision & Values submitted Successfully";
+
+
+       } else {
+           $error[0] = "Mission, Vision & Values Could not be submitted. Please Retry.";
+       }
 
 }
 
@@ -183,12 +215,15 @@ require_once("../Resources/Includes/menu.php");
 
 
             <div role="tabpanel" class="tab-pane active" id="mission">
+
                 <div class="mission-status-alert hidden text-center">
                     <h1>Mission Updated Successfully</h1>
                     <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To Dashboard</a>
                     <a href="#" class="mission-next-tab btn-primary" onclick="return false;">Next Tab</a>
                 </div>
-                <form action="mvv.php" method="POST" class="ajaxform mission">
+
+                <form action="<?php echo "mvv.php?linkid=".$contentlink_id ?>" method="POST" class="ajaxform mission">
+
                     <p>
                         <small><em>Instruction: Enter your BluePrint content for the Academic Year indicated above.The
                                 components below are highest level statements of
@@ -204,9 +239,9 @@ require_once("../Resources/Includes/menu.php");
                                   id="missiontitle"
                                   required><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
 
-                        <button type="submit" name="mission_submit"
-                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right mission_submit">
-                            Submit Mission
+                        <button type="submit" name="mission_submit" onclick="$('#approve').removeAttr('disabled');"
+                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                            Save Draft
                         </button>
                     </div>
                 </form>
@@ -214,12 +249,16 @@ require_once("../Resources/Includes/menu.php");
 
 
             <div role="tabpanel" class="tab-pane" id="vision">
+
                 <div class="vision-status-alert hidden text-center">
                     <h1>Vision Updated Successfully</h1>
                     <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To Dashboard</a>
                     <a href="#" class="vision-next-tab btn-primary" onclick="return false;">Next Tab</a>
                 </div>
-                <form action="mvv.php" method="POST" class="ajaxform vision">
+
+
+                <form action="<?php echo "mvv.php?linkid=".$contentlink_id ?>" method="POST" class="ajaxform vision">
+
 
                         <label class="col-xs-12" for="visiontitle">Vision Statement</label>
 
@@ -228,22 +267,23 @@ require_once("../Resources/Includes/menu.php");
                                       id="visiontitle"
                                       required><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
 
-                            <button type="submit" name="vision_submit"
-                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right vision_submit">
-                                Submit Vision
+                            <button type="submit" name="vision_submit" onclick="$('#approve').removeAttr('disabled');"
+                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                                Save Draft
                             </button>
                         </div>
-
                 </form>
             </div>
 
 
             <div role="tabpanel" class="tab-pane" id="values">
+
                 <div class="value-status-alert hidden text-center">
                     <h1>Values Updated Successfully</h1>
                     <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary">Back To Dashboard</a>
                 </div>
-                <form action="mvv.php" method="POST" class="ajaxform value">
+
+                <form action="<?php echo "mvv.php?linkid=".$contentlink_id ?>" method="POST" class="ajaxform value">
 
                         <label class="col-xs-12" for="visiontitle">Value Statement</label>
 
@@ -253,10 +293,11 @@ require_once("../Resources/Includes/menu.php");
                                   id="valuetitle"
                                   required><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
 
-                            <button type="submit" name="value_submit"
-                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right value_submit">
-                                Submit Value
+                            <button id="save" type="submit" name="value_submit" onclick="$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                                Save Draft
                             </button>
+                            <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right" disabled>
                         </div>
                 </form>
             </div>

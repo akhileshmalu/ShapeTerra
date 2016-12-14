@@ -31,6 +31,19 @@ $resultou = $mysqli->query($sqlou);
 $sqlay = "Select * from AcademicYears";
 $resultay = $mysqli->query($sqlay);
 
+/*
+ * Blue Print Content Items & Details.
+ */
+
+$bpcontent = array(
+    array("Create BluePrint","mvv.php"),
+    array("Goal Overview & Management","unitgoaloverview.php"),
+    array("Goal Outcomes Summary","goaloutcomeshome.php"),
+    array("Faculty Awards","facultyawards.php"),
+    array("Faculty Info","facultyInfo.php"),
+    array("Initiatives & Observations","initiatives.php"),
+);
+
 if(isset($_POST['submit'])) {
     if(empty($_POST['AY'])){
         $error[0]= "Please select Academic Year.";
@@ -74,12 +87,40 @@ if(isset($_POST['submit'])) {
 
                 $broadcaststatus = "Initiated by Provost";
                 $broadcastmsg = $ouabbrev . " Academic BluePrint";
-                $sqlbroad .= "INSERT INTO broadcast(BROADCAST_OU,BROADCAST_DESC,Menucontrol,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified) VALUES ('$ouid','$broadcastmsg','Approver','$broadcaststatus','$ay','$broadcaststatus','$time');";
+
+                /*
+                 * select last inserted value
+                 */
+                $sqllastval = "select max(ID_BROADCAST) as Last from broadcast";
+                $resultlastval = $mysqli->query($sqllastval);
+                $rowslastval = $resultlastval ->fetch_assoc();
+
+                $broad_id = intval($rowslastval['Last'])+1;
+
+                $sqlbroad .= "INSERT INTO broadcast(ID_BROADCAST,OU_ABBREV,BROADCAST_OU,BROADCAST_DESC,Menucontrol,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified) VALUES ('$broad_id','$ouabbrev','$ouid','$broadcastmsg','Approver','$broadcaststatus','$ay','$broadcaststatus','$time');";
+
+                /*
+                 * Content Creation per BluePrint
+                 */
+
+
+                for ($j = 0; $j < count($bpcontent); $j++) {
+                    $topicdesc = $bpcontent[$j][0];
+                    $topiclink = $bpcontent[$j][1];
+
+
+                    $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP) VALUES ('$broad_id','$topicdesc','$topiclink','$time');";
+                }
+
             }
         }
         if ($errorflag != 1) {
             if ($mysqli->multi_query($sqlbroad)) {
+
                 $error[0] = "Academic BluePrint Successfully Initiated.";
+
+
+
             } else {
                 $error [0] = "Academic BluePrint Could not be initiated.";
             }

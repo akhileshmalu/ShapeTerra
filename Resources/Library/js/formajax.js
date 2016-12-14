@@ -20,6 +20,8 @@ $(".ajaxform").on('submit',function (e) {
         data:data,
         success: function (response) {
             console.log(response);
+            alert('Record has been saved.');
+
 
         },
         error:function (response) {

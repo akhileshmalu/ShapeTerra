@@ -21,12 +21,13 @@ require_once ("../Resources/Includes/connect.php");
  * Local & Session variable Initialization
  */
 
+$contentlink_id = $_GET['linkid'];
 $bpayname =$_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
-$author = $_SESSION['login_email'];
+$author = $_SESSION['login_name'];
 
 /*
  * faculty Award Grid ; conditional for provost & other users
@@ -46,6 +47,7 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
  */
 
 if(isset($_POST['goal_submit'])) {
+    $contentlink_id = $_GET['linkid'];
     $goaltitle = $_POST['goaltitle'];
 
     $unigoallink = $_POST['goallink'];
@@ -58,7 +60,9 @@ if(isset($_POST['goal_submit'])) {
 
     $sqlcreatebp .= "INSERT INTO BP_UnitGoals( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
 
-    if($mysqli->query($sqlcreatebp)) {
+    $sqlcreatebp .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    if($mysqli->multi_query($sqlcreatebp)) {
 
         $error[0] = "Unit goals added Succesfully.";
 
@@ -68,6 +72,24 @@ if(isset($_POST['goal_submit'])) {
 
 
 }
+
+if(isset($_POST['approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+
+    $sqlcreatebp .= "Update  BpContents set CONTENT_STATUS = 'Pending approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    if ($mysqli->query($sqlcreatebp)) {
+
+        $error[0] = "Unit goals submitted Successfully";
+
+    } else {
+        $error[0] = "Unit goals Could not be submitted. Please Retry.";
+    }
+
+
+}
+
 
 
 require_once("../Resources/Includes/header.php");
@@ -84,9 +106,8 @@ require_once("../Resources/Includes/menu.php");
 <script src="../Resources/Library/js/grid.js"></script>
 
 
-
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
-<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
+<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
 
 <div class="overlay hidden"></div>
 <?php if (isset($_POST['submit'])) { ?>
@@ -126,10 +147,15 @@ require_once("../Resources/Includes/menu.php");
         </div>
         <div id="addnew" class="">
             <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left"
+                    onclick ="$('#approve').removeAttr('disabled');"
                     data-toggle="modal"
                     data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Goal
             </button>
+        <form action="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id ?>" method="POST" class="ajaxform">
+            <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right" >
+        </form>
         </div>
+
     </div>
 </div>
 
@@ -148,7 +174,7 @@ require_once("../Resources/Includes/menu.php");
             </div>
 
             <div class="modal-body">
-                <form method="POST" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
+                <form method="POST" action="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id ?>">
                     <label for="title"><strong><h4 style="color:blue; ">College/School Goals</h4></strong></label>
                     <div class="form-group" id="">
                         <p>Instruction: enter a goal for the academic Year for your college/School.Each Goal may be
@@ -159,11 +185,12 @@ require_once("../Resources/Includes/menu.php");
 
                     <strong><h4 style="color:green; ">Add a Goal</h4></strong>
                     <div class="form-group">
-                        <label for="goaltitle">Please Enter Goal Title:</label>
+                        <label for="goaltitle">Goal Title <span
+                                style="color: red"><sup>*</sup></span></label>
                         <input type="text" class="form-control" name="goaltitle" id="goaltitle" required>
                     </div>
                     <div class="form-group">
-                        <label for="goallink">Link to University Goals:</label>
+                        <label for="goallink">Linked to University Goals (select all that apply)</label>
 
                         <?php
                         $sqlug = "SELECT * FROM UniversityGoals;";
