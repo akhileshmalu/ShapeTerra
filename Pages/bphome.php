@@ -68,8 +68,6 @@ require_once("../Resources/Includes/menu.php");
 <script src="../Resources/Library/js/grid.js"></script>
 
 
-
-
 <div class="overlay hidden"></div>
 <?php if (isset($_POST['submit_bp'])) { ?>
     <div class="alert">
@@ -95,19 +93,21 @@ require_once("../Resources/Includes/menu.php");
         </div>
 
         <div class="col-xs-4">
-            <a href="#" class="btn-primary">Preview</a>
+            <a href="pdfscript.php?ayname=<?php echo $bpayname; ?>" class="btn-primary">Preview</a>
         </div>
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">BluePrint Contents</h1>
         <div id="" style="margin-top: 10px; padding-left: 40px;">
-            <table class="grid" action="taskboard/bphomeajax.php" title="BluePrint Contents">
+            <table class="bphome" action="taskboard/bphomeajax.php" title="BluePrint Contents">
                 <tr>
-                    <th col="CONTENT_BRIEF_DESC" href="{{columns.CONTENT_LINK}}?linkid={{columns.ID_CONTENT}}" width="300" type="text">Type</th>
-                    <th col="CONTENT_STATUS" width="150" type="text">Award</th>
-                    <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
-                    <th col="BP_AUTHOR" width="150" type="text">Last Modified By</th>
+                    <th col="Sr_No" width="10" type="text"></th>
+                    <th col="CONTENT_BRIEF_DESC" href="{{columns.CONTENT_LINK}}?linkid={{columns.ID_CONTENT}}" width="225" type="text">Section</th>
+                    <th col="CONTENT_STATUS" width="125" type="text">Status</th>
+                    <th col="MOD_TIMESTAMP" width="130" type="text">Last Edited On</th>
+                    <th col="BP_AUTHOR"  width="110" type="text">Last Modified</th>
+
                     <!--                                        <th col="" type="text">Actions</th>-->
                 </tr>
             </table>
@@ -120,26 +120,6 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
 
-<!--    <div id="main-box" class="col-xs-5 col-xs-offset-1">-->
-<!--        <h1 class="box-title">Tasks</h1>-->
-<!--        <ul class="task-list">-->
-<!--            <li><a href="mvv.php"><span class="icon">&#xe01c;</span> Create BluePrint</a></li>-->
-<!--            <li><a href="unitgoaloverview.php"><span class="icon">&#xe01c;</span> Goal Overview & Management</a></li>-->
-<!--            <li><a href="goaloutcomeshome.php"><span class="icon">&#xe01c;</span> Goal Outcomes Summary</a></li>-->
-<!--            <li><a href="facultyawards.php"><span class="icon">&#xe01c;</span> Faculty Awards</a></li>-->
-<!--            <li><a href="facultyInfo.php"><span class="icon">&#xe01c;</span> Faculty Info</a></li>-->
-<!--            <li><a href="initiatives.php"><span class="icon">&#xe01c;</span> Initiatives & Observations</a></li>-->
-<!--        </ul>-->
-<!--    </div>-->
-
-<!--    <div id="main-box" class="col-xs-4 col-xs-offset-1 ">-->
-<!--        <h1 class="box-title">Completed Tasks</h1>-->
-<!--        <ul class="task-completed-list">-->
-<!--            <li><a><span class="icon">S</span> Task 4</a></li>-->
-<!--            <li><a><span class="icon">S</span> Task 5</a></li>-->
-<!--        </ul>-->
-<!--    </div>-->
-
 </div>
 
 
@@ -149,7 +129,7 @@ require_once("../Resources/Includes/footer.php");
 ?>
 
 
-<script src="../Resources/Library/js/tabchange.js"></script>
+<script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>

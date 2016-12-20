@@ -14,7 +14,7 @@ $errorflag =0;
 require_once ("../Resources/Includes/connect.php");
 
 $contentlink_id = $_GET['linkid'];
-$name = $_SESSION['login_name'];
+$author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
 $bpayname= $_SESSION['bpayname'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
@@ -79,12 +79,12 @@ if ($_FILES['supinfo']['tmp_name'] !="") {
 
     if ($errorflag != 1) {
         $sqlinitiatives = "INSERT INTO AC_InitObsrv (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, EXPERIENTIAL_LEARNING_UGRAD, EXPERIENTIAL_LEARNING_GRAD, AFFORDABILITY, REPUTATION_ENHANCE,COOL_STUFF, CHALLENGES,AC_SUPPL_INITIATIVES_OBSRV)
- VALUES ('$ouabbrev','$bpayname','$name','$time','$ugexplearn','$gradexplearn','$afford','$reputation','$coolstuff','$challenges','$supinfopath')
+ VALUES ('$ouabbrev','$bpayname','$author','$time','$ugexplearn','$gradexplearn','$afford','$reputation','$coolstuff','$challenges','$supinfopath')
  ON DUPLICATE KEY UPDATE 
 `OU_ABBREV` = VALUES(`OU_ABBREV`),`OUTCOMES_AY` = VALUES(`OUTCOMES_AY`),`OUTCOMES_AUTHOR` = VALUES(`OUTCOMES_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`EXPERIENTIAL_LEARNING_UGRAD` = VALUES(`EXPERIENTIAL_LEARNING_UGRAD`),
 `EXPERIENTIAL_LEARNING_GRAD` =VALUES(`EXPERIENTIAL_LEARNING_GRAD`), `AFFORDABILITY`=VALUES(`AFFORDABILITY`),`REPUTATION_ENHANCE`=VALUES(`REPUTATION_ENHANCE`),`COOL_STUFF`=VALUES(`COOL_STUFF`),`CHALLENGES`=VALUES(`CHALLENGES`),`AC_SUPPL_INITIATIVES_OBSRV`=VALUES(`AC_SUPPL_INITIATIVES_OBSRV`);";
 
-        $sqlinitiatives .="Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$name',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlinitiatives .="Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
         if ($mysqli->multi_query($sqlinitiatives)) {
 
@@ -100,7 +100,7 @@ if(isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlinitiatives .= "Update  BpContents set CONTENT_STATUS = 'Pending approval',, BP_AUTHOR= '$name',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlinitiatives .= "Update  BpContents set CONTENT_STATUS = 'Pending approval',, BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
     if ($mysqli->query($sqlinitiatives)) {
 

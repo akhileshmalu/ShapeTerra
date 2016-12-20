@@ -1,6 +1,9 @@
 
 <?php
 
+
+date_default_timezone_set('America/New_York');
+
 /*
 *
 * To add menu items
@@ -52,7 +55,7 @@ $menu = array(
 	-->
 	<div id="user-name" class="dropdown">
 	  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	    <span class='icon'>&#xe056;</span><?php echo substr($_SESSION['login_lname'],0,1).", ".$_SESSION['login_fname']; ?>
+	    <span class='icon'>&#xe056;</span><?php echo substr($_SESSION['login_fname'],0,1).", ".$_SESSION['login_lname']; ?>
 	    <span class="caret"></span>
 	  </button>
 	

@@ -15,11 +15,15 @@ if ($ouid <> 4) {
         "save" => false,
         "delete" => false,
         "where" => "OU_ABBREV = '$ouabbrev' and UNIT_GOAL_AY='$bpayname'  ",
-//        "fields"=>array(
-//            "LAST_EDIT"=>"",
-// "joins"=>array(
-// 	"LEFT JOIN categories ON categories.CategoryID = tutorials.CategoryID"
-// ),
+        "fields"=>array(
+            "UNIT_GOAL_TITLE"=>"BP_UnitGoals.UNIT_GOAL_TITLE",
+            "MOD_TIMESTAMP"=>"DATE_FORMAT(BP_UnitGoals.MOD_TIMESTAMP,'%Y-%m-%d %H:%i')",
+            "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
+        ),
+
+        "joins"=>array(
+            "INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = BP_UnitGoals.GOAL_AUTHOR "
+        ),
 
 //        date("F j, Y, g:i a", strtotime($rowbroad[2] ) );
 // "select" => 'selectFunction'

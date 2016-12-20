@@ -8,7 +8,7 @@ $(function() {
         editing : false,
         deleting :false,
         nRowsShowing : 20,
-        width: 900,
+        width: 800,
         rowNumbers: true,
         checkboxes: false,
         cellTypes : {
@@ -31,6 +31,8 @@ $(function() {
     }).on("save",function(e, row, res) {
         //console.log("save",row,res);
     });
+
+
 
     var $grid = $(".grid").grid({
 
@@ -70,6 +72,40 @@ $(function() {
 
     $(".grid-row-"+id).toggleClass('row-hover','row-hoverOut');
 
+
+    }).on("save",function(e, row, res) {
+        //console.log("save",row,res);
+    });
+
+    var $grid = $(".bphome").grid({
+
+        title : "",
+        page : 1,
+        showPager : false,
+        editing : false,
+        deleting :false,
+        nRowsShowing : 20,
+        width: 900,
+        rowNumbers: false,
+        checkboxes: false,
+        cellTypes : {
+            "hashBang": function(value, columnOpts, grid) {
+                console.log(value, columnOpts, grid);
+                return {
+                    cellClass: "",
+                    cellValue: "/#!/"+value
+                }
+            }
+        }
+    }).on("loadComplete",function(e, grid) {
+        //console.log("loadComplete", grid);
+    }).on("cellClick",function(e, $cell,rowData) {
+        //console.log("cell",$cell,rowData);
+
+    }).on("rowCheck",function(e, $checkbox, rowData) {
+        //console.log("rowCheck",$checkbox, rowData);
+    }).on("rowClick",function(e, $rows,rowData) {
+        //console.log("rowClick",$rows,rowData);
 
     }).on("save",function(e, row, res) {
         //console.log("save",row,res);

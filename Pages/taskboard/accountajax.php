@@ -10,15 +10,26 @@ require_once("grid.php");
 if ($ouid <> 4) {
     // load our grid with a table for other than Provost
     $grid = new Grid("broadcast", $mysqli ,array(
+
         "save" => false,
+
         "delete" => false,
+
         "where" => "BROADCAST_OU = '$ouid'",
-        // "joins"=>array(
-        // 	"LEFT JOIN categories ON categories.CategoryID = tutorials.CategoryID"
-        // ),
-//         "fields"=>array(
-//         "OU_ABBREV" => "broadcast.OU_ABBREV"
-//             ),
+
+        "fields"=>array(
+
+            "BROADCAST_AY" => "broadcast.BROADCAST_AY",
+            "BROADCAST_STATUS_OTHERS" => "broadcast.BROADCAST_STATUS_OTHERS",
+            "BROADCAST_DESC" => "broadcast.BROADCAST_DESC",
+            "OU_ABBREV" => "broadcast.OU_ABBREV",
+             "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
+            "LastModified"=> "DATE_FORMAT(broadcast.LastModified,'%Y-%m-%d %H:%i')",
+
+        ),
+        "joins"=>array(
+            "inner JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR"
+        ),
         // "select" => 'selectFunction'
     ));
 } else {
@@ -28,10 +39,17 @@ if ($ouid <> 4) {
         "delete" => false,
       //  "where" => "'",
         "fields"=>array(
+
             "BROADCAST_AY" => "broadcast.BROADCAST_AY",
             "BROADCAST_STATUS" => "broadcast.BROADCAST_STATUS",
             "BROADCAST_DESC" => "broadcast.BROADCAST_DESC",
-            "OU_ABBREV" => "broadcast.OU_ABBREV"
+            "OU_ABBREV" => "broadcast.OU_ABBREV",
+            "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
+            "LastModified"=> "broadcast.LastModified"
+
+        ),
+        "joins"=>array(
+            "left JOIN PermittedUsers ON PermittedUsers.ID_STATUS = BpContents.BP_AUTHOR"
         ),
     ));
 }

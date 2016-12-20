@@ -39,9 +39,17 @@ Class Grid {
 			
 		// delete
 		} else if( isset($options['select']) && isset($_POST['select']) && $options['select'] == "true") {
-			$this->select = true;
-		
-		// select boxes
+            $this->select = true;
+
+            //orderby
+        } else if( isset($options['order_by']) && isset($_POST['order_by']) && $options['order_by'] == "true") {
+                $this->order_by = true;
+
+            //sort
+        } else if( isset($options['sort']) && isset($_POST['sort']) && $options['sort'] == "true") {
+            $this->sort = true;
+
+            // select boxes
 		} else if(isset($options['select']) && isset($_POST['select'])) {
 			
 			$this->joins = array();
@@ -64,6 +72,8 @@ Class Grid {
 			if(isset($options['joins'])) $this->joins = $options['joins'];
 			if(isset($options['groupBy'])) $this->groupBy = $options['groupBy'];
 			if(isset($options['having'])) $this->having = $options['having'];
+            if(isset($options['order_by'])) $this->order_by = $options['order_by'];
+            if(isset($options['sort'])) $this->sort = $options['sort'];
 
 			$this->load()->render();
 		}

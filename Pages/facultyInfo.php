@@ -15,7 +15,7 @@ $errorflag =0;
 
 require_once ("../Resources/Includes/connect.php");
 
-$name = $_SESSION['login_name'];
+$author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
 $bpayname= $_SESSION['bpayname'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
@@ -78,9 +78,12 @@ if (isset($_POST['savedraft'])) {
 
     if ($errorflag != 1) {
         $sqlfacinfo = "INSERT INTO AC_FacultyInfo (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
- VALUES ('$ouabbrev','$bpayname','$name','$time','$facdev','$createact','$supinfopath');";
+ VALUES ('$ouabbrev','$bpayname','$author','$time','$facdev','$createact','$supinfopath') ON DUPLICATE KEY UPDATE
+ `OU_ABBREV` = VALUES(`OU_ABBREV`),`OUTCOMES_AY` = VALUES(`OUTCOMES_AY`),`OUTCOMES_AUTHOR` = VALUES(`OUTCOMES_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),
+ `FACULTY_DEVELOPMENT` = VALUES(`FACULTY_DEVELOPMENT`),`CREATIVE_ACTIVITY` = VALUES(`CREATIVE_ACTIVITY`),`AC_SUPPL_FACULTY` = VALUES(`AC_SUPPL_FACULTY`)
+ ;";
 
-        $sqlfacinfo .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$name',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlfacinfo .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
 
 
@@ -98,7 +101,7 @@ if(isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlfacinfo .= "Update  BpContents set CONTENT_STATUS = 'Pending approval',, BP_AUTHOR= '$name',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlfacinfo .= "Update  BpContents set CONTENT_STATUS = 'Pending approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
     if ($mysqli->query($sqlfacinfo)) {
 
@@ -169,7 +172,7 @@ require_once("../Resources/Includes/menu.php");
                 <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['FACULTY_DEVELOPMENT']; ?></textarea>
             </div>
 
-            <label for ="createact" ><h1>Create Activity</h1></label>
+            <label for ="createact" ><h1>Creative Activity</h1></label>
             <div id="createact" class="form-group">
                 <label for="cractivity"><small><em>Optional.  List and describe significant artistic, creative, and performance activities of faculty in your unit during the Academic Year.  List by each individual's last name, first name, name of activity, and date (month and year are sufficient).
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac).</em></small>
@@ -200,19 +203,31 @@ require_once("../Resources/Includes/footer.php");
 ?>
 
 <!--Calender Bootstrap inclusion for date picker INPUT-->
-<script type="text/javascript">
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-</script>
-<script src="../Resources/Library/js/tabchange.js"></script>
+
+<script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
-<script>
+
+<script type="text/javascript">
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
     function selectorfile(selected) {
         var b = $(selected).val().substr(12);
         alert(b + " is selected.");
-    }
+    };
+
+
+    $('.cancelbox').on("click", function () {
+        var choice = confirm("Are you sure you want to cancel");
+        if (choice == true) {
+            var ayname = <?php echo json_encode($bpayname); ?> , ouabbrev = <?php echo json_encode($ouabbrev); ?>;
+            $(window).attr('location', 'bphome.php?ayname=' + ayname + '&ou_abbrev=' + ouabbrev)
+        }
+    });
+
 </script>

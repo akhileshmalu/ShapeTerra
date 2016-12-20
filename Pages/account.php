@@ -2,7 +2,7 @@
 session_start();										  	//session Started
 require_once ("../Resources/Includes/connect.php");          	//Instance of Object class-connection Created
 $email = $_SESSION['login_email'];					  			//Session Variable store
-$sql = " SELECT FNAME,LNAME,USER_OU_MEMBERSHIP FROM PermittedUsers where NETWORK_USERNAME ='$email' ";														//Query to Database
+$sql = " SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP FROM PermittedUsers where NETWORK_USERNAME ='$email' ";														//Query to Database
 $result = $mysqli->query($sql);                             	// Query Execution
 $rows = $result -> fetch_assoc();								//Fetching to Show on Account page
 $_SESSION['login_fname'] = $rows['FNAME'];
@@ -10,6 +10,7 @@ $_SESSION['login_lname'] = $rows['LNAME'];
 $_SESSION['login_name'] = $rows['LNAME'].", ".$rows['FNAME'];
 $ouid = $rows['USER_OU_MEMBERSHIP'];
 $_SESSION['login_ouid'] = $ouid;
+$_SESSION['login_userid']=$rows['ID_STATUS'];
 
 //Menu control for back to dashboard button
 //true: Dont show button
@@ -22,7 +23,6 @@ require_once("../Resources/Includes/header.php");
 <!--
 below headers for task board design purpose
 -->
-
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrapTable.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
@@ -58,14 +58,16 @@ require_once("../Resources/Includes/menu.php");
 		<div id="taskboard" class="">
 			<table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">
 				<tr>
-					<th col="BROADCAST_AY" type="text" href="<?php echo '../Pages/bphome.php?ayname={{value}}&ou_abbrev={{columns.OU_ABBREV}}';?>">Academic Year</th>
+					<th col="BROADCAST_AY" width="125" type="text" href="<?php echo '../Pages/bphome.php?ayname={{value}}&ou_abbrev={{columns.OU_ABBREV}}';?>">Academic Year</th>
 					<th col="BROADCAST_DESC" type="text">Description</th>
 					<?php if ($ouid == 4) { ?>
 						<th col="BROADCAST_STATUS" type="text">Status</th>
 					<?php } else { ?>
 						<th col="BROADCAST_STATUS_OTHERS" type="text">Status</th>
 					<?php } ?>
-	<!--				<th col="Menucontrol" type="text" href="http://google.com?q={{value}}">Actions</th>-->
+					<th col="AUTHOR" type="text">Last Edited On</th>
+					<th col="LastModified" type="text">Last Modified By</th>
+
 				</tr>
 			</table>
 		</div>

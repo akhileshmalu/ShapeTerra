@@ -14,6 +14,9 @@ $errorflag =0;
 
 $sqlbroad ="";
 $ou=array();
+$broad_id = 0;
+$author = $_SESSION['login_userid'];
+$first = TRUE;
 
 
 require_once ("../Resources/Includes/connect.php");
@@ -21,14 +24,14 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Query to show Non terminated Organization Unit as on date.
  */
-$sqlou = "Select * from Hierarchy where OU_DATE_END >= '$time' and OU_TYPE='Academic Unit'";
+$sqlou = "Select * from Hierarchy where OU_DATE_END >= '$time' and OU_TYPE='Academic Unit';";
 $resultou = $mysqli->query($sqlou);
 
 /*
  * Query to show Academic years for Initiating Blue Print.
  */
 
-$sqlay = "Select * from AcademicYears";
+$sqlay = "Select * from AcademicYears;";
 $resultay = $mysqli->query($sqlay);
 
 /*
@@ -36,7 +39,7 @@ $resultay = $mysqli->query($sqlay);
  */
 
 $bpcontent = array(
-    array("Create BluePrint","mvv.php"),
+    array("Mission, Vision & Values","mvv.php"),
     array("Goal Overview & Management","unitgoaloverview.php"),
     array("Goal Outcomes Summary","goaloutcomeshome.php"),
     array("Faculty Awards","facultyawards.php"),
@@ -44,18 +47,18 @@ $bpcontent = array(
     array("Initiatives & Observations","initiatives.php"),
 );
 
-if(isset($_POST['submit'])) {
-    if(empty($_POST['AY'])){
-        $error[0]= "Please select Academic Year.";
+if (isset($_POST['submit'])) {
+    if (empty($_POST['AY'])) {
+        $error[0] = "Please select Academic Year.";
         $errorflag = 1;
     }
 
-    if(!isset($_POST['ou_name'])){
-        $error[1]= "Please select Organizational Unit.";
+    if (!isset($_POST['ou_name'])) {
+        $error[1] = "Please select Organizational Unit.";
         $errorflag = 1;
     }
 
-    if($errorflag!=1){
+    if ($errorflag != 1) {
 
         $ou = $_POST['ou_name'];
         $ay = $_POST['AY'];
@@ -76,7 +79,7 @@ if(isset($_POST['submit'])) {
         foreach ($ou as $value) {
             list($ouid, $ouabbrev) = explode(",", $value);
 
-            $sqlbroadcheck = "select * from broadcast where BROADCAST_AY='$ay' and find_in_set('$ouid',BROADCAST_OU)>0 ";
+            $sqlbroadcheck = "select * from broadcast where BROADCAST_AY='$ay' and find_in_set('$ouid',BROADCAST_OU)>0; ";
             $resultbroadcheck = $mysqli->query($sqlbroadcheck);
             $rowbroadcheck = $resultbroadcheck->num_rows;
             if ($rowbroadcheck >= 1) {
@@ -91,34 +94,38 @@ if(isset($_POST['submit'])) {
                 /*
                  * select last inserted value
                  */
-                $sqllastval = "select max(ID_BROADCAST) as Last from broadcast";
+                $sqllastval = "SELECT max(ID_BROADCAST) AS Lastid FROM broadcast;";
                 $resultlastval = $mysqli->query($sqllastval);
-                $rowslastval = $resultlastval ->fetch_assoc();
+                $rowslastval = $resultlastval->fetch_assoc();
 
-                $broad_id = intval($rowslastval['Last'])+1;
+                if ($first) {
+                    $broad_id = intval($rowslastval['Lastid']) + 1;
+                    $first = false;
 
-                $sqlbroad .= "INSERT INTO broadcast(ID_BROADCAST,OU_ABBREV,BROADCAST_OU,BROADCAST_DESC,Menucontrol,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified) VALUES ('$broad_id','$ouabbrev','$ouid','$broadcastmsg','Approver','$broadcaststatus','$ay','$broadcaststatus','$time');";
+                } else {
+                    $broad_id++;
+                }
+
+                $sqlbroad .= "INSERT INTO broadcast(ID_BROADCAST,OU_ABBREV,BROADCAST_OU,BROADCAST_DESC,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified,AUTHOR) VALUES ('$broad_id','$ouabbrev','$ouid','$broadcastmsg','$broadcaststatus','$ay','$broadcaststatus','$time','$author');";
 
                 /*
                  * Content Creation per BluePrint
                  */
 
-
                 for ($j = 0; $j < count($bpcontent); $j++) {
                     $topicdesc = $bpcontent[$j][0];
                     $topiclink = $bpcontent[$j][1];
 
+                    $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','($i+1)');";
 
-                    $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP) VALUES ('$broad_id','$topicdesc','$topiclink','$time');";
                 }
-
             }
         }
         if ($errorflag != 1) {
+
             if ($mysqli->multi_query($sqlbroad)) {
 
                 $error[0] = "Academic BluePrint Successfully Initiated.";
-
 
 
             } else {
@@ -127,7 +134,6 @@ if(isset($_POST['submit'])) {
         }
     }
 }
-
 
 
 require_once("../Resources/Includes/header.php");
@@ -196,7 +202,7 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     })
 </script>
-<script src="../Resources/Library/js/tabchange.js"></script>
+<script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>

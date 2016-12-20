@@ -26,7 +26,7 @@ $ouid = $_SESSION['login_ouid'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
-$author = $_SESSION['login_name'];
+$author = $_SESSION['login_userid'];
 
 /*
  * faculty Award Grid ; conditional for provost & other users
@@ -90,7 +90,7 @@ require_once("../Resources/Includes/menu.php");
                     <th col="UNIT_GOAL_TITLE" href="<?php echo "../Pages/goaloutcome.php?goal_id={{columns.ID_UNIT_GOAL}}&linkid=".$contentlink_id ?>" width="300" type="text">Goal Title</th>
                     <th col="GOAL_REPORT_STATUS" width="150" type="text">Report Status</th>
                     <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
-                    <th col="OUTCOMES_AUTHOR" width="150" type="text">Last Modified By</th>
+                    <th col="AUTHOR" width="150" type="text">Last Modified By</th>
                     <!--                                        <th col="" type="text">Actions</th>-->
                 </tr>
             </table>

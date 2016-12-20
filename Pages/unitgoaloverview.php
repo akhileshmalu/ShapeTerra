@@ -27,7 +27,7 @@ $ouid = $_SESSION['login_ouid'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
-$author = $_SESSION['login_name'];
+$author = $_SESSION['login_userid'];
 
 /*
  * faculty Award Grid ; conditional for provost & other users
@@ -136,11 +136,11 @@ require_once("../Resources/Includes/menu.php");
         <h1 class="box-title">Goals Overview & Management</h1>
         <p>Below is a summary of your Unit Goals.</p>
         <div id="" style="margin-top: 10px;">
-            <table class="grid" action="taskboard/goalmgt.php" title="Unit Goals">
+            <table class="grid" action="taskboard/unitgoalajax.php" title="Unit Goals">
                 <tr>
                     <th col="UNIT_GOAL_TITLE" width="300" type="text">Goal Title</th>
                     <th col="MOD_TIMESTAMP" width="200" type="text">Last Edited On</th>
-                    <th col="GOAL_AUTHOR" width="200" type="text">Last Modified By</th>
+                    <th col="AUTHOR" width="200" type="text">Last Modified By</th>
                     <!--                                        <th col="" type="text">Actions</th>-->
                 </tr>
             </table>

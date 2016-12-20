@@ -27,7 +27,7 @@ $ouid = $_SESSION['login_ouid'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
-$author = $_SESSION['login_name'];
+$author = $_SESSION['login_userid'];
 
 
 

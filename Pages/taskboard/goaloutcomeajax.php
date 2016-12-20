@@ -19,11 +19,12 @@ if ($ouid <> 4) {
             "UNIT_GOAL_TITLE"=>"BP_UnitGoals.UNIT_GOAL_TITLE",
             "GOAL_REPORT_STATUS"=>"BP_UnitGoalOutcomes.GOAL_REPORT_STATUS",
             "MOD_TIMESTAMP"=>"BP_UnitGoalOutcomes.MOD_TIMESTAMP",
-            "OUTCOMES_AUTHOR"=>"BP_UnitGoalOutcomes.OUTCOMES_AUTHOR",
+            "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
             "ID_UNIT_GOAL"=>"BP_UnitGoals.ID_UNIT_GOAL",
             ),
  "joins"=>array(
- 	"left JOIN BP_UnitGoalOutcomes ON BP_UnitGoals.ID_UNIT_GOAL =BP_UnitGoalOutcomes.ID_UNIT_GOAL "
+ 	"left JOIN BP_UnitGoalOutcomes ON BP_UnitGoals.ID_UNIT_GOAL =BP_UnitGoalOutcomes.ID_UNIT_GOAL ",
+     "inner JOIN PermittedUsers ON PermittedUsers.ID_STATUS = BP_UnitGoalOutcomes.OUTCOMES_AUTHOR"
  ),
 
 //        date("F j, Y, g:i a", strtotime($rowbroad[2] ) );
@@ -39,11 +40,12 @@ if ($ouid <> 4) {
             "UNIT_GOAL_TITLE"=>"BP_UnitGoals.UNIT_GOAL_TITLE",
             "GOAL_REPORT_STATUS"=>"BP_UnitGoalOutcomes.GOAL_REPORT_STATUS",
             "MOD_TIMESTAMP"=>"BP_UnitGoalOutcomes.MOD_TIMESTAMP",
-            "OUTCOMES_AUTHOR"=>"BP_UnitGoalOutcomes.OUTCOMES_AUTHOR",
+            "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
             "ID_UNIT_GOAL"=>"BP_UnitGoals.ID_UNIT_GOAL",
         ),
         "joins"=>array(
-            "left JOIN BP_UnitGoalOutcomes ON BP_UnitGoals.ID_UNIT_GOAL =BP_UnitGoalOutcomes.ID_UNIT_GOAL "
+            "left JOIN BP_UnitGoalOutcomes ON BP_UnitGoals.ID_UNIT_GOAL =BP_UnitGoalOutcomes.ID_UNIT_GOAL ",
+            "inner JOIN PermittedUsers ON PermittedUsers.ID_STATUS = BP_UnitGoalOutcomes.OUTCOMES_AUTHOR"
         ),
     ));
 

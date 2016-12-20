@@ -25,7 +25,7 @@ $ouid = $_SESSION['login_ouid'];
 $ouabbrev = $_SESSION['login_ouabbrev'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
-$author = $_SESSION['login_name'];
+$author = $_SESSION['login_userid'];
 
 /*
  * faculty Award Grid ; conditional for provost & other users
@@ -67,6 +67,7 @@ if(isset($_POST['save_draft'])){
     $goalnote = nl2br($_POST['goal_notes']);
     $goalreportstatus = "In progress";
     $contentlink_id = $_GET['linkid'];
+    $goal_id=intval($_GET['goal_id']);
 
 
 
