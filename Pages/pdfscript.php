@@ -181,7 +181,6 @@ require_once("../Resources/Includes/menu.php");
             </div>
             <div id="pf4" class="pf w0 h0" data-page-no="4">
 
-
                 <hr />
                 <h1><p class="mvv texthead"">Mission</p></h1>
                 <hr />

@@ -93,7 +93,7 @@ require_once("../Resources/Includes/menu.php");
         </div>
 
         <div class="col-xs-4">
-            <a href="pdfscript.php?ayname=<?php echo $bpayname; ?>" class="btn-primary">Preview</a>
+            <a href="pdfscript1.php?ayname=<?php echo $bpayname; ?>" class="btn-primary">Preview</a>
         </div>
     </div>
 
