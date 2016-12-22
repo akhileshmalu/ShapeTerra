@@ -138,9 +138,9 @@ require_once("../Resources/Includes/menu.php");
             <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
         </div>
 
-        <div class="col-xs-4">
-            <a href="#" class="btn-primary">Preview</a>
-        </div>
+<!--        <div class="col-xs-4">-->
+<!--            <a href="#" class="btn-primary">Preview</a>-->
+<!--        </div>-->
 
 
 
@@ -222,12 +222,15 @@ require_once("../Resources/Includes/menu.php");
                     <textarea name="goal_notes" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexgoalout['GOAL_NOTES']; ?></textarea>
                 </div>
 
+                <!--                        Reviewer Edit Control-->
+                <?php if ($_SESSION['login_right'] != 1): ?>
 
                 <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
 
                 <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right">
                 <input type="submit" id="savebtn" name="save_draft" value="Save Draft" class="btn-secondary pull-right">
 
+                <?php endif; ?>
 
             </form>
         </div>

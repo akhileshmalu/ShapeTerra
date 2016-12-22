@@ -105,7 +105,7 @@ require_once("../Resources/Includes/menu.php");
                     <th col="Sr_No" width="10" type="text"></th>
                     <th col="CONTENT_BRIEF_DESC" href="{{columns.CONTENT_LINK}}?linkid={{columns.ID_CONTENT}}" width="225" type="text">Section</th>
                     <th col="CONTENT_STATUS" width="125" type="text">Status</th>
-                    <th col="MOD_TIMESTAMP" width="130" type="text">Last Edited On</th>
+                    <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
                     <th col="BP_AUTHOR"  width="110" type="text">Last Modified</th>
 
                     <!--                                        <th col="" type="text">Actions</th>-->

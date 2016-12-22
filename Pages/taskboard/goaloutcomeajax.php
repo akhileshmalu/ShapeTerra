@@ -24,18 +24,17 @@ if ($ouid <> 4) {
             ),
  "joins"=>array(
  	"left JOIN BP_UnitGoalOutcomes ON BP_UnitGoals.ID_UNIT_GOAL =BP_UnitGoalOutcomes.ID_UNIT_GOAL ",
-     "inner JOIN PermittedUsers ON PermittedUsers.ID_STATUS = BP_UnitGoalOutcomes.OUTCOMES_AUTHOR"
+     "left JOIN PermittedUsers ON PermittedUsers.ID_STATUS = BP_UnitGoalOutcomes.OUTCOMES_AUTHOR"
  ),
 
-//        date("F j, Y, g:i a", strtotime($rowbroad[2] ) );
-// "select" => 'selectFunction'
+
     ));
 } else {
 // Do not load grid for Provost rights
     $grid = new Grid("BP_UnitGoals", $mysqli, array(
         "save" => false,
         "delete" => false,
-        "where" => "UNIT_GOAL_AY='$bpayname'  ",
+        "where" => "UNIT_GOAL_AY='$bpayname' ",
         "fields"=>array(
             "UNIT_GOAL_TITLE"=>"BP_UnitGoals.UNIT_GOAL_TITLE",
             "GOAL_REPORT_STATUS"=>"BP_UnitGoalOutcomes.GOAL_REPORT_STATUS",

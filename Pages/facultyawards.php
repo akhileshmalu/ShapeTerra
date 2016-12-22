@@ -11,7 +11,7 @@ $pagename = "bphome";
  */
 session_start();
 $error = array();
-$errorflag =0;
+$errorflag = 0;
 
 /*
  * Connection to DataBase.
@@ -22,9 +22,15 @@ require_once ("../Resources/Includes/connect.php");
  * Local & Session variable Initialization
  */
 $contentlink_id = $_GET['linkid'];
-$bpayname =$_SESSION['bpayname'];
+$bpayname = $_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
-$ouabbrev = $_SESSION['login_ouabbrev'];
+
+if ($ouid <> 4) {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
+} else {
+    $ouabbrev = $_SESSION['bpouabbrev'];
+}
+
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
@@ -33,7 +39,7 @@ $author = $_SESSION['login_userid'];
  * faculty Award Grid ; conditional for provost & other users
  */
 if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast where BROADCAST_AY='$bpayname';";
+    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
 } else{
     $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 }
@@ -120,9 +126,9 @@ require_once("../Resources/Includes/menu.php");
             <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
         </div>
         
-        <div class="col-xs-4">
-            <a href="#" class="btn-primary">Preview</a>
-        </div>
+<!--        <div class="col-xs-4">-->
+<!--            <a href="#" class="btn-primary">Preview</a>-->
+<!--        </div>-->
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
@@ -137,12 +143,19 @@ require_once("../Resources/Includes/menu.php");
                 </tr>
             </table>
         </div>
+
+        <!--                        Reviewer Edit Control-->
+        <?php if ($_SESSION['login_right'] != 1): ?>
+
         <div id="addnew" class="">
             <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left"
                     data-toggle="modal"
                     data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Awards
             </button>
         </div>
+
+        <?php endif; ?>
+
     </div>
 </div>
 

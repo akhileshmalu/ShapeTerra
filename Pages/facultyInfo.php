@@ -18,8 +18,13 @@ require_once ("../Resources/Includes/connect.php");
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
 $bpayname= $_SESSION['bpayname'];
-$ouabbrev = $_SESSION['login_ouabbrev'];
 $contentlink_id = $_GET['linkid'];
+
+if ($ouid == 4) {
+    $ouabbrev = $_SESSION['bpouabbrev'];
+} else {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
+}
 
 $fcdev=null;
 $createact=null;
@@ -27,7 +32,7 @@ $time = date('Y-m-d H:i:s');
 
 
 if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast where BROADCAST_AY='$bpayname';";
+    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
 } else{
     $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 }
@@ -187,9 +192,15 @@ require_once("../Resources/Includes/menu.php");
                 <input id="supinfo" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
             </div>
 
+                <!--                        Reviewer Edit Control-->
+                <?php if ($_SESSION['login_right'] != 1): ?>
+
             <input type="button" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
             <input id="approve" type="submit" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">
             <input id="save" type="submit" name="savedraft" value="Save Draft" class="btn-secondary pull-right" onclick="$('#approve').removeAttr('disabled');$('#save').addClass('hidden');">
+
+                <?php endif; ?>
+
             </form>
         </div>
     </div>

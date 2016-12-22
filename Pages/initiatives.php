@@ -17,15 +17,20 @@ $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
 $bpayname= $_SESSION['bpayname'];
-$ouabbrev = $_SESSION['login_ouabbrev'];
 
-$fcdev=null;
-$createact=null;
+
+if ($ouid == 4) {
+    $ouabbrev = $_SESSION['bpouabbrev'];
+} else {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
+}
+
+
 $time = date('Y-m-d H:i:s');
 
 
 if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast where BROADCAST_AY='$bpayname';";
+    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
 } else{
     $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 }
@@ -100,7 +105,7 @@ if(isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlinitiatives .= "Update  BpContents set CONTENT_STATUS = 'Pending approval',, BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlinitiatives .= " Update  BpContents set CONTENT_STATUS = 'Pending approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
     if ($mysqli->query($sqlinitiatives)) {
 
@@ -226,9 +231,15 @@ require_once("../Resources/Includes/menu.php");
                     <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
                 </div>
 
+                <!--                        Reviewer Edit Control-->
+                <?php if ($_SESSION['login_right'] != 1): ?>
+
                 <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
                 <input type="submit" id="approve" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">
                 <input type="submit" id="savebtn" name="savedraft" value="Save Draft" class="btn-secondary pull-right">
+
+                <?php endif; ?>
+
             </form>
         </div>
     </div>
@@ -247,7 +258,7 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     })
 </script>
-<script src="../Resources/Library/js/tabchange.js"></script>
+<script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>

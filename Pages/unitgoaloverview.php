@@ -24,19 +24,27 @@ require_once ("../Resources/Includes/connect.php");
 $contentlink_id = $_GET['linkid'];
 $bpayname =$_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
-$ouabbrev = $_SESSION['login_ouabbrev'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
+
+if ($ouid == 4) {
+    $ouabbrev = $_SESSION['bpouabbrev'];
+} else {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
+}
+
+
 
 /*
  * faculty Award Grid ; conditional for provost & other users
  */
 if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast where BROADCAST_AY='$bpayname';";
-} else{
+    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
+} else {
     $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 }
+
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
@@ -109,15 +117,15 @@ require_once("../Resources/Includes/menu.php");
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
 
-<div class="overlay hidden"></div>
-<?php if (isset($_POST['submit'])) { ?>
-    <div class="alert">
-        <a href="#" class="close end"><span class="icon">9</span></a>
-        <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" class="end btn-primary">Close</button>
-    </div>
-<?php } ?>
+<!--<div class="overlay hidden"></div>-->
+<?php //if (isset($_POST['goal_submit'])) { ?>
+<!--    <div class="alert">-->
+<!--        <a href="#" class="close end"><span class="icon">9</span></a>-->
+<!--        <h1 class="title"></h1>-->
+<!--        <p class="description">--><?php //foreach ($error as $value) echo $value; ?><!--</p>-->
+<!--        <button type="button" redirect="--><?php //echo "unitgoaloverview.php?linkid=".$contentlink_id ?><!--" class="end btn-primary">Close</button>-->
+<!--    </div>-->
+<?php //} ?>
 
 <div class="hr"></div>
 
@@ -145,6 +153,10 @@ require_once("../Resources/Includes/menu.php");
                 </tr>
             </table>
         </div>
+
+        <!--                        Reviewer Edit Control-->
+        <?php if ($_SESSION['login_right'] != 1): ?>
+
         <div id="addnew" class="">
             <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left"
                     onclick ="$('#approve').removeAttr('disabled');"
@@ -156,6 +168,7 @@ require_once("../Resources/Includes/menu.php");
         </form>
         </div>
 
+        <?php endif; ?>
     </div>
 </div>
 
@@ -242,7 +255,7 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     })
 </script>
-<script src="../Resources/Library/js/tabchange.js"></script>
+<script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>

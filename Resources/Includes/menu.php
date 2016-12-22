@@ -24,6 +24,7 @@ $rowsmenu = $resultmenu ->fetch_assoc();
 $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
 $ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
 $_SESSION['login_ouname'] = $rowsmenu['OU_NAME'];
+$_SESSION['login_right'] = $rowsmenu['SYS_USER_RIGHT'];
 
 
 
@@ -88,7 +89,7 @@ $menu = array(
 		  <?php
 		  switch ($rowsmenu['SYS_USER_ROLE'])
 		  {
-			  case "admin_user" :
+			  case "sysadmin" :
 				  for($i = 0; $i < count($menu); $i++){
 					  if($menu[$i][3] == "admin"){
 						  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
@@ -96,7 +97,7 @@ $menu = array(
 				  }
 				  echo "<li role='separator' class='divider'></li>";
 				  break;
-			  case "contrib_academic" :
+			  case "contributor" :
 				  for($i = 0; $i < count($menu); $i++){
 					  if($menu[$i][3] == "user"){
 						  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
@@ -136,7 +137,7 @@ Generate PDF button currently disabled.
 
 	<ul class="col-xs-12">
 		<?php if(!$notBackToDashboard){ ?>
-			<li class="" id="header"><a class="" href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" >
+			<li class="" id="header"><a class="" href="<?php echo 'bphome.php?ayname='.$rowbroad[0].'&ou_abbrev='.$_SESSION['bpouabbrev']; ?>" >
 			<span id="" class="icon">l</span>Back To Dashboard</a></li>
 		<?php } ?>
 		

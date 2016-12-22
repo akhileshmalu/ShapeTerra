@@ -15,7 +15,7 @@ if ($ouid <> 4) {
 
         "delete" => false,
 
-        "where" => "BROADCAST_OU = '$ouid'",
+        "where" => "BROADCAST_OU = '$ouid' ",
 
         "fields"=>array(
 
@@ -45,11 +45,11 @@ if ($ouid <> 4) {
             "BROADCAST_DESC" => "broadcast.BROADCAST_DESC",
             "OU_ABBREV" => "broadcast.OU_ABBREV",
             "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
-            "LastModified"=> "broadcast.LastModified"
+            "LastModified"=> "DATE_FORMAT(broadcast.LastModified,'%Y-%m-%d %H:%i')"
 
         ),
         "joins"=>array(
-            "left JOIN PermittedUsers ON PermittedUsers.ID_STATUS = BpContents.BP_AUTHOR"
+            "INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR"
         ),
     ));
 }

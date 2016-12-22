@@ -116,7 +116,8 @@ if (isset($_POST['submit'])) {
                     $topicdesc = $bpcontent[$j][0];
                     $topiclink = $bpcontent[$j][1];
 
-                    $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','($i+1)');";
+                    $srno = $j+1;
+                    $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','$srno');";
 
                 }
             }

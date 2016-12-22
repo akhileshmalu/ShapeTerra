@@ -23,8 +23,15 @@ require_once("../Resources/Includes/connect.php");
 
 $contentlink_id = $_GET['linkid'];
 $bpayname = $_SESSION['bpayname'];
+//$bpouabbrev = $_SESSION['bpouabbrev'];
 $ouid = $_SESSION['login_ouid'];
-$ouabbrev = $_SESSION['login_ouabbrev'];
+
+if ($ouid == 4) {
+    $ouabbrev = $_SESSION['bpouabbrev'];
+} else {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
+}
+
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
@@ -33,13 +40,13 @@ $author = $_SESSION['login_userid'];
 
 
 if ($ouid == 4) {
-    $sqlbroad = "select ID_BROADCAST,BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast where BROADCAST_AY='$bpayname';";
+    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev'; ";
 } else {
     $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 }
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
-$broad_id = $rowbroad['ID_BROADCAST'];
+//$broad_id = $rowbroad['ID_BROADCAST'];
 
 
 /*
@@ -54,6 +61,7 @@ $prevbpayname = idtostring($prevbpid - 101);
 /*
  * Query to Select Previous Year Mission , Visoin, Value Statement for Specific Org Unit.
  */
+
 $sqlmission = "select * from BP_MissionVisionValues where (UNIT_MVV_AY ='$prevbpayname' or UNIT_MVV_AY ='$bpayname') and OU_ABBREV ='$ouabbrev' ORDER BY UNIT_MVV_AY DESC;";
 $resultmission = $mysqli->query($sqlmission);
 $rowsmission = $resultmission->fetch_assoc();
@@ -175,15 +183,16 @@ require_once("../Resources/Includes/menu.php");
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
 
-<!--<div class="overlay hidden"></div>-->
-<?php //if (isset($_POST['submit']) ) { ?>
-<!--    <div class="alert">-->
-<!--        <a href="#" class="close end"><span class="icon">9</span></a>-->
-<!--        <h1 class="title"></h1>-->
-<!--        <p class="description">--><?php //foreach ($error as $value) echo $value; ?><!--</p>-->
-<!--        <button type="button" redirect="" class="end btn-primary">Close</button>-->
-<!--    </div>-->
-<?php //} ?>
+
+<?php if (isset($_POST['mission_submit']) || isset($_POST['vision_submit']) || isset($_POST['value_submit']) || isset($_POST['approve'])  ) { ?>
+    <div class="overlay hidden"></div>
+    <div class="alert">
+        <a href="#" class="close end"><span class="icon">9</span></a>
+        <h1 class="title"></h1>
+        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
+    </div>
+<?php } ?>
 
 <div class="hr"></div>
 
@@ -218,11 +227,12 @@ require_once("../Resources/Includes/menu.php");
 
                 <div class="mission-status-alert hidden text-center">
                     <h1>Mission Updated Successfully</h1>
-                    <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To Dashboard</a>
+                    <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To
+                        Dashboard</a>
                     <a href="#" class="mission-next-tab btn-primary" onclick="return false;">Next Tab</a>
                 </div>
 
-                <form action="<?php echo "mvv.php?linkid=".$contentlink_id ?>" method="POST" class="ajaxform mission">
+                <form action="<?php echo "mvv.php?linkid=" . $contentlink_id ?>" method="POST" class="ajaxform mission">
 
                     <p>
                         <small><em>Instruction: Enter your BluePrint content for the Academic Year indicated above.The
@@ -239,10 +249,16 @@ require_once("../Resources/Includes/menu.php");
                                   id="missiontitle"
                                   required><?php echo $rowsmission['MISSION_STATEMENT']; ?></textarea>
 
+<!--                        Reviewer Edit Control-->
+                        <?php if ($_SESSION['login_right'] != 1): ?>
+
                         <button type="submit" name="mission_submit" onclick="$('#approve').removeAttr('disabled');"
                                 class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                             Save Draft
                         </button>
+
+                        <?php endif; ?>
+
                     </div>
                 </form>
             </div>
@@ -252,26 +268,32 @@ require_once("../Resources/Includes/menu.php");
 
                 <div class="vision-status-alert hidden text-center">
                     <h1>Vision Updated Successfully</h1>
-                    <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To Dashboard</a>
+                    <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To
+                        Dashboard</a>
                     <a href="#" class="vision-next-tab btn-primary" onclick="return false;">Next Tab</a>
                 </div>
 
 
-                <form action="<?php echo "mvv.php?linkid=".$contentlink_id ?>" method="POST" class="ajaxform vision">
+                <form action="<?php echo "mvv.php?linkid=" . $contentlink_id ?>" method="POST" class="ajaxform vision">
 
 
-                        <label class="col-xs-12" for="visiontitle">Vision Statement</label>
+                    <label class="col-xs-12" for="visiontitle">Vision Statement</label>
 
-                        <div class="col-xs-12">
+                    <div class="col-xs-12">
                             <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement"
                                       id="visiontitle"
                                       required><?php echo $rowsmission['VISION_STATEMENT']; ?></textarea>
 
-                            <button type="submit" name="vision_submit" onclick="$('#approve').removeAttr('disabled');"
-                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                                Save Draft
-                            </button>
-                        </div>
+                        <!--                        Reviewer Edit Control-->
+                        <?php if ($_SESSION['login_right'] != 1): ?>
+
+                        <button type="submit" name="vision_submit" onclick="$('#approve').removeAttr('disabled');"
+                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                            Save Draft
+                        </button>
+
+                        <?php endif; ?>
+                    </div>
                 </form>
             </div>
 
@@ -283,22 +305,30 @@ require_once("../Resources/Includes/menu.php");
                     <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary">Back To Dashboard</a>
                 </div>
 
-                <form action="<?php echo "mvv.php?linkid=".$contentlink_id ?>" method="POST" class="ajaxform value">
+                <form id="mvvform" action="<?php echo "mvv.php?linkid=" . $contentlink_id ?>" method="POST" class="ajaxform value">
 
-                        <label class="col-xs-12" for="visiontitle">Value Statement</label>
+                    <label class="col-xs-12" for="visiontitle">Value Statement</label>
 
-                        <div class="col-xs-12">
+                    <div class="col-xs-12">
 
                         <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"
                                   id="valuetitle"
                                   required><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
 
-                            <button id="save" type="submit" name="value_submit" onclick="$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                                Save Draft
-                            </button>
-                            <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right" disabled>
-                        </div>
+                        <!--                        Reviewer Edit Control-->
+                        <?php if ($_SESSION['login_right'] != 1): ?>
+
+
+                        <button id="save" type="submit" name="value_submit"
+                                onclick="$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                            Save Draft
+                        </button>
+                        <input type="submit" id="approve" name="approve" value="Submit For Approval" onclick="$('#mvvform').removeClass('ajaxform');"
+                               class="btn-primary pull-right" disabled>
+
+                        <?php endif; ?>
+                    </div>
                 </form>
             </div>
 
