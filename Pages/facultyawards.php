@@ -25,10 +25,10 @@ $contentlink_id = $_GET['linkid'];
 $bpayname = $_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 
-if ($ouid <> 4) {
-    $ouabbrev = $_SESSION['login_ouabbrev'];
-} else {
+if ($ouid == 4) {
     $ouabbrev = $_SESSION['bpouabbrev'];
+} else {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
 $date = date("Y-m-d");
@@ -39,9 +39,9 @@ $author = $_SESSION['login_userid'];
  * faculty Award Grid ; conditional for provost & other users
  */
 if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
+    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
 } else{
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 }
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
@@ -122,8 +122,8 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
             <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
-            <p class="status"><span>Org Unit Name:</span> <?php echo $_SESSION['login_ouname']; ?></p>
-            <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
+            <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
+            <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
         
 <!--        <div class="col-xs-4">-->

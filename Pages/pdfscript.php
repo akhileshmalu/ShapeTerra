@@ -10,20 +10,29 @@
 session_start();
 $error = array();
 $errorflag =0;
+$pageno =1;
+$goalcount=1;
+$unigoal = array();
 
 require_once ("../Resources/Includes/connect.php");
 
 $bpayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
-$_SESSION['bpouabbrev'] = $_GET['ou_abbrev'];
-$_SESSION['bpayname'] = $bpayname;
-$ouabbrev = $_SESSION['login_ouabbrev'];
 
 
 if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast where BROADCAST_AY='$bpayname';";
+    $ouabbrev = $_SESSION['bpouabbrev'];
+} else {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
+}
+
+$prevbpayname = idtostring(stringtoid($bpayname)-101);
+
+
+if ($ouid == 4) {
+    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
 } else{
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 }
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
@@ -37,8 +46,22 @@ $sqlmvv = "Select * from BP_MissionVisionValues where UNIT_MVV_AY ='$bpayname' a
 $resultmvv = $mysqli->query($sqlmvv);
 $rowsmvv = $resultmvv->fetch_assoc();
 
-$sqlunit = "select * from BP_UnitGoals inner join BP_UnitGoalOutcomes on BP_UnitGoals.ID_UNIT_GOAL = BP_UnitGoalOutcomes.ID_UNIT_GOAL where find_in_set ('$bpayname',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
+$sqlunit = "select * from BP_UnitGoals inner join BP_UnitGoalOutcomes on BP_UnitGoals.ID_UNIT_GOAL = BP_UnitGoalOutcomes.ID_UNIT_GOAL 
+INNER JOIN GoalStatus on BP_UnitGoalOutcomes.GOAL_STATUS=GoalStatus.ID_STATUS where find_in_set ('$bpayname',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
 $resultunit = $mysqli->query($sqlunit);
+$countunit = $resultunit->num_rows;
+
+$sqlfacultyinfo = "select * from AC_FacultyInfo where  OUTCOMES_AY='$bpayname' and OU_ABBREV ='$ouabbrev';";
+$resultfacInfo = $mysqli->query($sqlfacultyinfo);
+$rowsfacinfo = $resultfacInfo->fetch_assoc();
+
+$sqlfacultyaward = "select * from AC_FacultyAwards where  OUTCOMES_AY='$bpayname' and OU_ABBREV ='$ouabbrev';";
+$resultfacaward = $mysqli->query($sqlfacultyaward);
+
+
+$sqldean = "select * from PermittedUsers inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY where  OU_ABBREV= '$ouabbrev' and SYS_USER_ROLE ='dean'; ";
+$resultdean = $mysqli->query($sqldean);
+$rowsdean = $resultdean -> fetch_assoc();
 
 
 //Menu control for back to dashboard button
@@ -58,11 +81,13 @@ require_once("../Resources/Includes/menu.php");
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 
+<link rel="stylesheet" href="../Pages/blueprint/Blueprinthtml/blueprint.css"/>
 <link rel="stylesheet" href="../Pages/blueprint/Blueprinthtml/base.min.css"/>
 <link rel="stylesheet" href="../Pages/blueprint/Blueprinthtml/fancy.min.css"/>
 <link rel="stylesheet" href="../Pages/blueprint/Blueprinthtml/main.css"/>
 <script src="../Pages/blueprint/Blueprinthtml/compatibility.min.js"></script>
 <script src="../Pages/blueprint/Blueprinthtml/theViewer.min.js"></script>
+<link rel="stylesheet" href="Css/blueprintPreview.css"/>
 
 <script>
     try {
@@ -82,8 +107,8 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
             <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
-            <p class="status"><span>Org Unit Name:</span> <?php echo $_SESSION['login_ouname']; ?></p>
-            <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
+            <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
+            <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
 
     </div>
@@ -98,231 +123,785 @@ require_once("../Resources/Includes/menu.php");
         </div>
 
         <div id="page-container" class="col-lg-12" style="min-height: 810px">
-            <div id="pf1" class="pf w0 h0 form-control" data-page-no="1">
-                <div class="pc pc1 w0 h0">
-                    <div class="t m0 x0 h1 y0 ff1 fs0 fc0 sc0 ls0 ws0">Blueprint <span class="_ _0"></span>for
-                    </div>
-                    <div class="t m0 x1 h1 y1 ff1 fs0 fc0 sc0 ls0 ws0">Academic</div>
-                    <div class="t m0 x2 h1 y2 ff1 fs0 fc0 sc0 ls0 ws0">Excellence</div>
-                    <div
-                        class="t m0 x3 h2 y3 ff1 fs0 fc1 sc0 ls0 ws0"><?php echo "<p style='color:rgb(140,38,51);font-size:110px;'>" . $rowsmenu['OU_NAME'] . "</p>"; ?></div>
-                    <div class="t m0 x4 h2 y4 ff2 fs0 fc0 sc0 ls0 ws0"><?php echo "<p style='color:rgb(140,38,51);font-size:110px; margin-left: 300px;'>" . date('M-Y',strtotime($rowsbroad['ACAD_YEAR_DATE_END'])). "</p>"; ?></div>
+
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0 form-control" data-page-no="<?php echo $pageno; ?>" style="padding-left: 30px;">
+                <div class=WordSection1>
+
+                    <p class=MsoNormal align=center style='margin-top:80px;text-align:center'><b><span
+                                style='font-size:38.0pt;color:#8C2633'>Blueprint for </span></b></p>
+
+                    <p class=MsoNormal align=center style='text-align:center'><b><span
+                                style='font-size:38.0pt;color:#8C2633'>Academic Excellence</span></b></p>
+
+                    <p class=MsoNormal align=center style='margin-top:48.0pt;text-align:center'><b><span
+                                style='font-size:30.0pt;font-family:Open Sans, sans-serif;'><?php echo $rowbroad[1]; ?></span></b>
+                    </p>
+
+                    <p class=MsoNormal align=center style='margin-top:48.0pt;text-align:center'><span
+                            style='font-size:35.0pt;color:#8C2633'><?php echo date('M-Y',strtotime($rowsbroad['ACAD_YEAR_DATE_END'])); ?></span></p>
+
+                    <p class=MsoNormal align=center style='margin-top: 100px;text-align:center'><img width=476
+                                                                                                     height=130
+                                                                                                     src="../Resources/Images/uscbplogo.png"
+                                                                                                     align=middle
+                                                                                                     hspace=9><br
+                            clear=all style=' page-break-before:always'>
+                    </p>
+
                 </div>
-                <div class="pi"
-                     data-data='{"ctm":[1.000000,0.000000,0.000000,1.000000,0.000000,0.000000]}'></div>
             </div>
-            <div id="pf2" class="pf w0 h0" data-page-no="2">
-                <div class="pc pc2 w0 h0"><img class="bi x5 y5 w1 h3" alt=""
-                                               src="../Pages/blueprint/Blueprinthtml/bg2.png"/>
-                    <div class="t m0 x3 h4 y6 ff3 fs1 fc1 sc0 ls1 ws0">Executive Summary</div>
-                    <div class="t m0 x3 h5 y7 ff2 fs2 fc1 sc0 ls0 ws0"><span class="_ _0"></span>
-                        <p id="exesumtitle"></p>
-                    </div>
-                </div>
-                <div class="pi"
-                     data-data='{"ctm":[1.000000,0.000000,0.000000,1.000000,0.000000,0.000000]}'></div>
+            <?php $pageno++; ?>
+
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>">
+                <h2>Executive Summary</h2>
+                <p>&lt;Executive summary&gt;</p>
             </div>
-            <div id="pf3" class="pf w0 h0" data-page-no="3">
-                <div class="pc pc3 w0 h0"><img class="bi x5 y5 w1 h3" alt="" src="../Pages/blueprint/Blueprinthtml/bg3.png"/>
-                    <div class="t m0 x3 h4 y6 ff3 fs1 fc1 sc0 ls1 ws0">Blueprint for Academic Excellence
-                    </div>
-                    <div
-                        class="t m0 x3 h5 y7 ff2 fs2 fc1 sc0 ls0 ws0"><?php echo "<p>" . $rowsmenu['OU_NAME'] . "</p>"; ?></div>
-                    <div
-                        class="t m0 x3 h5 y2d ff2 fs2 fc1 sc0 ls0 ws0"><?php echo "<p>" . $rowsmenu['FNAME'] . "," . $rowsmenu['LNAME'] . "," . $rowsmenu['USER_RIGHT'] . "</p>"; ?></div>
-                    <div class="t m0 x3 h5 y2e ff2 fs2 fc1 sc0 ls0 ws0">Executive Summary<span class="_ _2"> </span>2</div>
-                    <div class="t m0 x3 h5 y2f ff2 fs2 fc1 sc0 ls0 ws0">Blueprint for Academic Excellence<span
-                            class="_ _3"> </span>3
-                    </div>
-                    <div class="t m0 x8 h5 y30 ff2 fs2 fc1 sc0 ls0 ws0">Mission<span class="_ _4"> </span>4</div>
-                    <div class="t m0 x8 h5 y31 ff2 fs2 fc1 sc0 ls0 ws0">Vision<span class="_ _5"> </span>4</div>
-                    <div class="t m0 x8 h5 y32 ff2 fs2 fc1 sc0 ls0 ws0">Values<span class="_ _6"> </span>4</div>
-                    <div class="t m0 x8 h5 y33 ff2 fs2 fc1 sc0 ls0 ws0">Goals<span class="_ _7"> </span>4</div>
-                    <div class="t m0 x3 h5 y34 ff2 fs2 fc1 sc0 ls0 ws0">Outcomes – 2015-2016 Academic Year<span
-                            class="_ _8"> </span>6
-                    </div>
-                    <div class="t m0 x8 h5 y35 ff2 fs2 fc1 sc0 ls0 ws0">Faculty Development &amp; Activities<span
-                            class="_ _9"> </span>6
-                    </div>
-                    <div class="t m0 x8 h5 y36 ff2 fs2 fc1 sc0 ls0 ws0">Faculty Awards<span class="_ _a"> </span>6</div>
-                    <div class="t m0 x8 h5 y37 ff2 fs2 fc1 sc0 ls0 ws0">Personnel – Faculty<span class="_ _b"> </span>7</div>
-                    <a class="l" href="#pf2" data-dest-detail='[2,"XYZ",72,720,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:595.314026px;width:5.575012px;height:13.427979px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a><a class="l" href="#pf3" data-dest-detail='[3,"XYZ",72,720,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:576.885986px;width:5.575012px;height:13.427979px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a><a class="l" href="#pf4" data-dest-detail='[4,"XYZ",72,698,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:558.458008px;width:5.575012px;height:13.427979px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a><a class="l" href="#pf4" data-dest-detail='[4,"XYZ",72,620,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:540.030029px;width:5.575012px;height:13.427979px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a><a class="l" href="#pf4" data-dest-detail='[4,"XYZ",72,541,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:521.602051px;width:5.575012px;height:13.427979px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a><a class="l" href="#pf4" data-dest-detail='[4,"XYZ",72,463,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:503.173981px;width:5.575012px;height:13.428009px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a><a class="l" href="#pf6" data-dest-detail='[6,"XYZ",72,720,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:484.746002px;width:5.575012px;height:13.428009px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a><a class="l" href="#pf6" data-dest-detail='[6,"XYZ",72,673,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:466.317993px;width:5.575012px;height:13.428009px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a><a class="l" href="#pf6" data-dest-detail='[6,"XYZ",72,417,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:447.889984px;width:5.575012px;height:13.428009px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a><a class="l" href="#pf7" data-dest-detail='[7,"XYZ",72,720,null]'>
-                        <div class="d m1"
-                             style="border-style:none;position:absolute;left:533.924988px;bottom:429.462006px;width:5.575012px;height:13.428009px;background-color:rgba(255,255,255,0.000001);"></div>
-                    </a></div>
-                <div class="pi" data-data='{"ctm":[1.000000,0.000000,0.000000,1.000000,0.000000,0.000000]}'></div>
+            <?php $pageno++; ?>
+
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>">
+                <h2>Blueprint for Academic Excellence</h2>
+                <p><?php echo $rowbroad[1]; ?></p>
+                <p><?php echo $rowsdean['FNAME']." ".$rowsdean['LNAME'].", DEAN"; ?></p>
+
+                <br />
+                <p style="text-align:left;">Executive Summary <span style="float:right;">2</span></p>
+                <p style="text-align:left;">Blueprint for Academic Excellence <span style="float:right;">3</span></p>
+                <p class="indent" style="text-align:left;">Mission <span style="float:right;">4</span></p>
+                <p class="indent" style="text-align:left;">Vision <span style="float:right;">4</span></p>
+                <p class="indent" style="text-align:left;">Values <span style="float:right;">4</span></p>
+                <p class="indent" style="text-align:left;">Goals <span style="float:right;">4</span></p>
+                <p style="text-align:left;">Outcomes – <?php echo substr($prevbpayname,2); ?> Academic Year <span style="float:right;">6</span></p>
+                <p class="indent" style="text-align:left;">Faculty Development &amp; Activities <span style="float:right;">6</span></p>
+                <p class="indent" style="text-align:left;">Faculty Awards <span style="float:right;">6</span></p>
+                <p class="indent" style="text-align:left;">Personnel – Faculty <span style="float:right;">7</span></p>
             </div>
-            <div id="pf4" class="pf w0 h0" data-page-no="4">
+            <?php $pageno++; ?>
 
-                <hr />
-                <h1><p class="mvv texthead"">Mission</p></h1>
-                <hr />
-                <p class="mvv "><?php echo $rowsmvv['MISSION_STATEMENT']; ?></p>
-                <hr />
-                <h1 class="mvv texthead">Vision</h1>
-                <hr/>
-                <p class="mvv"><?php echo $rowsmvv['VISION_STATEMENT']; ?></p>
-                <hr />
-                <h1 class="mvv texthead">Value</h1>
-                <hr/>
-                <p class="mvv"><?php echo $rowsmvv['VALUES_STATEMENT']; ?></p>
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>">
+                <h2 style="margin-bottom: 20px;border-bottom: transparent;">Blueprint for Academic Excellence</h2>
+                <h3>Mission</h3>
+                <p><?php echo $rowsmvv['MISSION_STATEMENT']; ?></p>
 
-                <hr/>
-                <h1 class="mvv texthead">Goals</h1>
-                <hr />
-                <?php while ($rowsunit = $resultunit->fetch_assoc()) {
-                    echo '<p class="mvv texthead">Goal - </p><hr/>';
-                    echo '<p class="mvv"> ' . $rowsunit['UNIT_GOAL_TITLE'] . '</p>';
+                <h3>Vision</h3>
+                <p><?php echo $rowsmvv['VISION_STATEMENT']; ?></p>
 
-                    echo '<p class="mvv texthead">Goal Statement </p><hr/>';
-                    echo '<p class="mvv">' . $rowsunit['GOAL_STATEMENT'] . '</p>';
+                <h3>Values</h3>
+                <p><?php echo $rowsmvv['VALUES_STATEMENT']; ?></p>
 
-                    echo '<p class="mvv texthead">Alignment with Mission, Vision and Values,</p><hr/>';
-                    echo '<p class="mvv">' . $rowsunit['GOAL_ALIGNMENT'] . '</p>';
+                <h3>Goals</h3>
+                <?php  while ($rowsunit = $resultunit->fetch_assoc()): ?>
 
-                    echo '<p class="mvv texthead">Status</p><hr/>';
-                    echo '<p class="mvv">' . $rowsunit['GOAL_STATUS'] . '</p>';
+                <p><b>Goal <?php echo $goalcount;?> - <?php echo $rowsunit['UNIT_GOAL_TITLE']; ?></b></p>
 
+                <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+                       style='margin-left:40.25pt;border-collapse:collapse;border:none'>
+                    <tr>
+                        <td width=95 valign=top style='width:94.75pt;border-top:solid #A6A6A6 1.0pt;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:none;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b>Linkage
+                                    to University Goal </b></p>
+                        </td>
+                        <td width=333 valign=top style='width:332.5pt;border-top:solid #A6A6A6 1.0pt;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:none;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'>
+                                <?php
 
-                    echo '<p class="mvv texthead">Achievement:</p>';
-                    echo '<p class="mvv">' . $rowsunit['GOAL_ACHIEVEMENTS'] . '</p>';
+                                $unigoallinks=$rowsunit['LINK_UNIV_GOAL'];
+                                $unigoal = explode(',',$unigoallinks);
 
+                                foreach ($unigoal as $value) {
+                                    if($value <> '') {
+                                        $sqlunigoallink = "select GOAL_TITLE from UniversityGoals where ID_UNIV_GOAL='$value' ";
+                                        $resultunigoallink = $mysqli1->query($sqlunigoallink);
+                                        $rowsunigoallink = $resultunigoallink->fetch_assoc();
+                                        echo '<span class="icon">S</span>'.$rowsunigoallink['GOAL_TITLE'].'<br>';
+                                    }
+                                }
+                                ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=95 valign=top style='width:94.75pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b>Goal </b></p>
+                        </td>
+                        <td width=333 valign=top style='width:332.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'>
+                                <?php echo $rowsunit['GOAL_STATEMENT']; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=95 valign=top style='width:94.75pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b>Alignment
+                                    with Mission, Vision, and Values </b></p>
+                        </td>
+                        <td width=333 valign=top style='width:332.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'>
+                                <?php echo $rowsunit['GOAL_ALIGNMENT']; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=95 valign=top style='width:94.75pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b>Status</b></p>
+                        </td>
+                        <td width=333 valign=top style='width:332.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'>
+                                <?php echo $rowsunit['STATUS']; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=95 valign=top style='width:94.75pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b>Achievements</b></p>
+                        </td>
+                        <td width=333 valign=top style='width:332.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'>
+                                <?php echo $rowsunit['GOAL_ACHIEVEMENTS']; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=95 valign=top style='width:94.75pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b>Resources
+                                    Utilized</b></p>
+                        </td>
+                        <td width=333 valign=top style='width:332.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'>
+                                <?php echo $rowsunit['GOAL_RSRCS_UTLZD']; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=95 valign=top style='width:94.75pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b>Continuation
+                                </b></p>
+                        </td>
+                        <td width=333 valign=top style='width:332.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'>
+                                <?php echo $rowsunit['GOAL_CONTINUATION']; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=95 valign=top style='width:94.75pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b>Resources
+                                    Needed</b></p>
+                        </td>
+                        <td width=333 valign=top style='width:332.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'>
+                                <?php echo $rowsunit['GOAL_RSRCS_NEEDED']; ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=95 valign=top style='width:94.75pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b>Notes</b></p>
+                        </td>
+                        <td width=333 valign=top style='width:332.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'>
+                                <?php echo $rowsunit['GOAL_NOTES']; ?>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
 
-                    echo '<p class="mvv">Resources Utilized</p>';
-                    echo '<p class="mvv">' . $rowsunit['GOAL_RSRCS_UTLZD'] . '</p>';
+                <?php $goalcount++;
+                    if($goalcount <= $countunit) { $pageno++;?>
 
-                    echo '<p class="mvv">Resources Utilized</p>';
-                    echo '<p class="mvv">' . $rowsunit['GOAL_RSRCS_UTLZD'] . '</p>';
-
-                    echo '<p class="mvv texthead">Goal Continuation:</p>';
-                    echo '<p class="mvv">' . $rowsunit['GOAL_CONTINUATION'] . '</p>';
-
-
-                    echo '<p class="mvv">Resources Needed</p>';
-                    echo '<p class="mvv">' . $rowsunit['GOAL_RSRCS_NEEDED'] . '</p>';
-
-                    echo '<p class="mvv">Notes</p>';
-                    echo '<p class="mvv">' . $rowsunit['GOAL_NOTES'] . '</p>';
-                }
-                    ?>
-
-
-<!--                <div class="pc pc4 w0 h0"><img class="bi x5 y38 w1 h7" alt="" src="../Pages/blueprint/Blueprinthtml/bg4.png"/>-->
-<!--                    <div class="t m0 x3 h8 y39 ff5 fs3 fc1 sc1 ls1 ws0">Mission</div>-->
-<!--                    <div class="t m0 x3 h5 y3a ff2 fs2 fc1 sc0 ls0 ws0"><p id='missiontext' style="word-break:normal;-->
-<!--    white-space: normal;width: 340%;">--><?php //echo $rowsmvv['MISSION_STATEMENT']; ?><!--</p></div>-->
-<!--                    <div class="t m0 x3 h8 y3b ff5 fs3 fc1 sc1 ls1 ws0">Vision</div>-->
-<!--                    <div class="t m0 x3 h5 y3c ff2 fs2 fc1 sc0 ls0 ws0"><p id='visiontext' style="word-break: normal;-->
-<!--    white-space: normal;width: 340%;">--><?php //echo $rowsmvv['VISION_STATEMENT']; ?><!--</p></div>-->
-<!--                    <div class="t m0 x3 h8 y3d ff5 fs3 fc1 sc1 ls1 ws0">Values</div>-->
-<!--                    <div class="t m0 x3 h5 y3e ff2 fs2 fc1 sc0 ls0 ws0"><p id='valuetext' style="word-break: normal;-->
-<!--    white-space: normal;width: 340%;">--><?php //echo $rowsmvv['VALUES_STATEMENT']; ?><!--</p></div>-->
-<!--                    <div class="t m0 x3 h8 y3f ff5 fs3 fc1 sc1 ls1 ws0">Goals</div>-->
-<!---->
-<!--                    --><?php //while ($rowsunit = $resultunit->fetch_assoc()) {
-//                    $x = 1; ?>
-<!---->
-<!--                    <div class="t m0 x3 h6 y40 ff1 fs2 fc1 sc0 ls0 ws0"><p>-->
-<!--                            Goal --><?php //echo $x . '-<' . $rowsunit['UNIT_GOAL_TITLE'] . '>'; ?><!-- </p></div>-->
-<!--                    <div class="c x9 y41 w2 h9">-->
-<!--                        <div class="t m0 xa h6 y42 ff1 fs2 fc1 sc0 ls0 ws0"></div>-->
-<!--                        <div class="t m0 xa h6 y43 ff1 fs2 fc1 sc0 ls0 ws0">GOAL_ACHIEVEMENTS</div>-->
-<!--                    </div>-->
-<!--                    <div class="c xb y41 w3 h9">-->
-<!--                        <div class="t m0 xa h5 y42 ff2 fs2 fc1 sc0 ls0 ws0"><p id="goalout" style='margin-top: 50px;-->
-<!--    margin-left: 50px;'></p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="c x9 y44 w2 ha">-->
-<!--                        <div class="t m0 xa h6 y45 ff1 fs2 fc1 sc0 ls0 ws0">Goal</div>-->
-<!--                    </div>-->
-<!--                    <div class="c xb y44 w3 ha">-->
-<!--                        <div-->
-<!--                            class="t m0 xa h5 y45 ff2 fs2 fc1 sc0 ls0 ws0">--><?php //echo $rowsunit['GOAL_STATEMENT'] ?><!--</div>-->
-<!--                    </div>-->
-<!--                    <div class="c x9 y46 w2 hb">-->
-<!--                        <div class="t m0 xa h6 y47 ff1 fs2 fc1 sc0 ls0 ws0">Alignment with</div>-->
-<!--                        <div class="t m0 xa h6 y42 ff1 fs2 fc1 sc0 ls0 ws0">Mission, Vision,</div>-->
-<!--                        <div class="t m0 xa h6 y43 ff1 fs2 fc1 sc0 ls0 ws0">and Values</div>-->
-<!--                    </div>-->
-<!--                    <div class="c xb y46 w3 hb">-->
-<!--                        <div class="t m0 xa h5 y47 ff2 fs2 fc1 sc0 ls0 ws0">-->
-<!--                            &lt;--><?php //echo $rowsunit['GOAL_ALIGNMENT'] ?><!--&gt;</div>-->
-<!--                    </div>-->
-<!--                    <div class="c x9 y48 w2 h9">-->
-<!--                        <div class="t m0 xa h6 y42 ff1 fs2 fc1 sc0 ls0 ws0">Status</div>-->
-<!--                    </div>-->
-<!--                    <div class="c xb y48 w3 h9">-->
-<!--                        <div class="t m0 xa h5 y42 ff2 fs2 fc1 sc0 ls0 ws0">&lt;--><?php //echo $rowsunit['GOAL_STATUS'] ?>
-<!--                            &gt;</div>-->
-<!--                    </div>-->
-<!--                    <div class="c x9 y49 w2 h9">-->
-<!--                        <div class="t m0 xa h6 y42 ff1 fs2 fc1 sc0 ls0 ws0">Achievements</div>-->
-<!--                    </div>-->
-<!--                    <div class="c xb y49 w3 h9">-->
-<!--                        <div class="t m0 xa h5 y42 ff2 fs2 fc1 sc0 ls0 ws0">-->
-<!--                            &lt;--><?php //echo $rowsunit['GOAL_ACHIEVEMENTS'] ?><!--&gt;</div>-->
-<!--                    </div>-->
-<!--                    <div class="c x9 y4a w2 h9">-->
-<!--                        <div class="t m0 xa h6 y42 ff1 fs2 fc1 sc0 ls0 ws0">Resources Utilized</div>-->
-<!--                    </div>-->
-<!--                    <div class="c xb y4a w3 h9">-->
-<!--                        <div class="t m0 xa h5 y42 ff2 fs2 fc1 sc0 ls0 ws0">-->
-<!--                            &lt;--><?php //echo $rowsunit['GOAL_RSRCS_UTLZD'] ?><!--&gt;</div>-->
-<!--                    </div>-->
-<!--                    <div class="c x9 y4b w2 h9">-->
-<!--                        <div class="t m0 xa h6 y42 ff1 fs2 fc1 sc0 ls0 ws0">Continuation</div>-->
-<!--                    </div>-->
-<!--                    <div class="c xb y4b w3 h9">-->
-<!--                        <div class="t m0 xa h5 y42 ff2 fs2 fc1 sc0 ls0 ws0">-->
-<!--                            &lt;--><?php //echo $rowsunit['GOAL_CONTINUATION'] ?><!--&gt;</div>-->
-<!--                    </div>-->
-<!--                    <div class="c x9 y4c w2 h9">-->
-<!--                        <div class="t m0 xa h6 y42 ff1 fs2 fc1 sc0 ls0 ws0">Resources Needed</div>-->
-<!--                    </div>-->
-<!--                    <div class="c xb y4c w3 h9">-->
-<!--                        <div class="t m0 xa h5 y42 ff2 fs2 fc1 sc0 ls0 ws0">-->
-<!--                            &lt;--><?php //echo $rowsunit['GOAL_RSRCS_NEEDED'] ?><!--&gt;</div>-->
-<!--                    </div>-->
-<!--                    <div class="c x9 y4d w2 h9">-->
-<!--                        <div class="t m0 xa h6 y42 ff1 fs2 fc1 sc0 ls0 ws0">Notes</div>-->
-<!--                    </div>-->
-<!--                    <div class="c xb y4d w3 h9">-->
-<!--                        <div class="t m0 xa h5 y42 ff2 fs2 fc1 sc0 ls0 ws0">&lt;--><?php //echo $rowsunit['GOAL_NOTES'] ?>
-<!--                            &gt;</div>-->
-<!--                    </div>-->
-<!--                    --><?php //$x++; } ?>
-                </div>
-
-                <div class="pi" data-data='{"ctm":[1.000000,0.000000,0.000000,1.000000,0.000000,0.000000]}'></div>
             </div>
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>" style="padding-top: 50px;">
+
+                <?php } endwhile; ?>
+
+            </div>
+            <?php $pageno++; ?>
+
+
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>">
+                <h2 style="margin-bottom: 20px;">Outcomes–2015-2016 Academic Year</h2>
+                <h3>Faculty Development &amp; Activities</h3>
+                <p><b>Development.</b> College efforts and initiatives for faculty development, including investments, activities, incentives, objectives, and outcomes.</p>
+
+                <p class="indent"><?php echo $rowsfacinfo['FACULTY_DEVELOPMENT']; ?></p>
+
+                <p><b>Creative Activity.</b> Significant artistic, creative, and performance activities of faculty.</p>
+
+                <p class="indent"><?php echo $rowsfacinfo['CREATIVE_ACTIVITY']; ?></p>
+
+                <p><b>Supplemental Info.</b> Additional information provided by the College for Faculty Development & Activities is provided in Appendix 1.</p>
+
+<!--                <p class="indent">&lt;link to Appendix 1, insert Appendix 1..99 at end of report, in numeric sequence&gt;</p>-->
+
+                <h3>Faculty Awards</h3>
+                <p><b>National Awards &amp; Recognition.</b> Among others, the Dean has selected to highlight the following awards and recognition received by the faculty during the <?php echo $bpayname; ?>.
+
+<!--                <p class="indent">&lt;merge AC_FacultyAwards as follows… note that DATE_AWARDED has been intentionally omitted; for now, insert as many as entered for the Unit&gt;</p>-->
+
+                    <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=437
+                           style='width: 300pt;margin-left:0in;border-collapse:collapse;border:none'>
+                        <tr>
+                            <th width=112 valign=top style='width:112.25pt;border-top:solid #A6A6A6 1.0pt;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:none;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                            style='color:#8C2633'>Recipient(s)</span></b></p>
+                </th>
+                <th width=71 valign=top style='width:70.8pt;border-top:solid #A6A6A6 1.0pt;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:none;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                style='color:#8C2633'>Award Type</span></b></p>
+                </th>
+                <th width=123 valign=top style='width:122.95pt;border-top:solid #A6A6A6 1.0pt;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:none;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                style='color:#8C2633'>Award </span></b></p>
+                </th>
+                <th width=131 valign=top style='width:130.5pt;border-top:solid #A6A6A6 1.0pt;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:none;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                    <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                style='color:#8C2633'>Organization</span></b></p>
+                </th>
+                </tr>
+                <?php while ($rowsfacaward = $resultfacaward->fetch_assoc()): ?>
+                    <tr>
+                        <td width=112 valign=top style='width:112.25pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-size:9.5pt'><?php echo $rowsfacaward['RECIPIENT_NAME_LAST'] . ', ' . $rowsfacaward['RECIPIENT_NAME_FIRST']; ?></span></b>
+                            </p>
+                        </td>
+                        <td width=71 valign=top style='width:70.8pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-size:9.5pt'><?php echo $rowsfacaward['AWARD_TYPE']; ?></span></b>
+                            </p>
+                        </td>
+                        <td width=123 valign=top style='width:122.95pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-size:9.5pt'><?php echo $rowsfacaward['AWARD_TITLE']; ?></span></b>
+                            </p>
+                        </td>
+                        <td width=131 valign=top style='width:130.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-size:9.5pt'><?php echo $rowsfacaward['AWARDING_ORG']; ?></span></b>
+                            </p>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+                </table>
+            </div>
+            <?php $pageno++; ?>
+
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>" style="padding-top: 40px;">
+                <h3>Personnel – Faculty</h3>
+                <p>Composition of the faculty during the <2015-2016> Academic Year, as compared to the previous 2 years.</p>
+                <p><b>Population by Type</b></p>
+                <p class="indent">&lt;insert values from IR_AC_FacultyPop&gt;</p>
+
+                <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=437
+                       style='margin-left:.5in;border-collapse:collapse;border:none'>
+                    <tr>
+                        <td width=198 rowspan=2 valign=top style='width:2.75in;border:solid #A6A6A6 1.0pt;
+  border-left:none;padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><span
+                                    style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=239 colspan=3 valign=top style='width:238.5pt;border-top:solid #A6A6A6 1.0pt;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:none;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Calibri Light"'>Academic Year</span></b></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=80 valign=top style='width:79.5pt;border-top:none;border-left:none;
+  border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><b><u><span style='font-family:"Calibri Light"'>2015-2016</span></u></b></p>
+                        </td>
+                        <td width=80 valign=top style='width:79.5pt;border-top:none;border-left:none;
+  border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><b><u><span style='font-family:"Calibri Light"'>2014-2015</span></u></b></p>
+                        </td>
+                        <td width=80 valign=top style='width:79.5pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><b><u><span style='font-family:"Calibri Light"'>2013-2014</span></u></b></p>
+                        </td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=198 valign=top style='width:2.75in;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light"'>Faculty Count Tenure</span></b></p>
+                        </td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=198 valign=top style='width:2.75in;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light"'>Faculty Count Tenure Track</span></b></p>
+                        </td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=198 valign=top style='width:2.75in;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light"'>Faculty Count Non-Tenture-Track</span></b></p>
+                        </td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=198 valign=top style='width:2.75in;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light"'>Faculty Count Adjunct</span></b></p>
+                        </td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=198 valign=top style='width:2.75in;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light"'>Faculty Count Affiliates</span></b></p>
+                        </td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=198 valign=top style='width:2.75in;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light"'>Faculty Hired</span></b></p>
+                        </td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=198 valign=top style='width:2.75in;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light"'>Faculty Unfilled Vacancies</span></b></p>
+                        </td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=198 valign=top style='width:2.75in;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light"'>Faculty Retention Packages</span></b></p>
+                        </td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=80 nowrap valign=top style='width:79.5pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                </table>
+
+            </div>
+            <?php $pageno++; ?>
+
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>" style="padding-top:50px; ">
+                <p><b>Population Diversity – Gender, Race/Ethnicity, and Citizenship</b></p>
+                <p>USC follows the federal self-identification and reporting categories for Race/Ethnicity. The values presented below reflect our estimation of the categories our faculty would be identified as, under the federal methodology. As such, each individual is reported in one category only; non-citizens are not included in Race/Ethnicity, and individuals who select Hispanic/Latino are reported as such, regardless of their selections on race.</p>
+
+                <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=437
+                       style='margin-left:.5in;border-collapse:collapse;border:none'>
+                    <tr>
+                        <td width=194 rowspan=2 valign=top style='width:193.5pt;border:solid #A6A6A6 1.0pt;
+  border-left:none;padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><span
+                                    style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=243 colspan=3 valign=top style='width:243.0pt;border-top:solid #A6A6A6 1.0pt;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:none;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><b><span style='font-family:"Calibri Light"'>Academic Year</span></b></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width=81 valign=top style='width:81.0pt;border-top:none;border-left:none;
+  border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><b><u><span style='font-family:"Calibri Light"'>2015-2016</span></u></b></p>
+                        </td>
+                        <td width=81 valign=top style='width:81.0pt;border-top:none;border-left:none;
+  border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><b><u><span style='font-family:"Calibri Light"'>2014-2015</span></u></b></p>
+                        </td>
+                        <td width=81 valign=top style='width:81.0pt;border:none;border-bottom:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><b><u><span style='font-family:"Calibri Light"'>2013-2014</span></u></b></p>
+                        </td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light";color:#8C2633'>Gender</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>Female</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>Male</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-bottom:0in;margin-bottom:.0001pt'><b><span
+                                        style='font-family:"Calibri Light";color:#8C2633'>Race/Ethnicity</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>African
+  American or Black</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>American
+  Indian or Alaska Native</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>Asian</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>Hispanic</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>Native
+  Hawaiian/Other Pacific Islander</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'></td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>White</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>Two
+  or More Races</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>Race/Ethnicity
+  Unknown</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                    </tr>
+                    <tr style='height:15.0pt'>
+                        <td width=194 valign=top style='width:193.5pt;border-top:none;border-left:
+  none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal style='margin-top:0in;margin-right:0in;margin-bottom:0in;
+  margin-left:15.1pt;margin-bottom:.0001pt'><b><span style='font-family:"Calibri Light"'>Nonresident
+  Alien (Non-Citizen)</span></b></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border-top:none;
+  border-left:none;border-bottom:solid #A6A6A6 1.0pt;border-right:solid #A6A6A6 1.0pt;
+  padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                        <td width=81 nowrap valign=top style='width:81.0pt;border:none;border-bottom:
+  solid #A6A6A6 1.0pt;padding:2.9pt 2.9pt 2.9pt 2.9pt;height:15.0pt'>
+                            <p class=MsoNormal align=center style='margin-bottom:0in;margin-bottom:.0001pt;
+  text-align:center'><span style='font-family:"Calibri Light"'>&nbsp;</span></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <?php $pageno++; ?>
+
+
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>" style="padding-top: 50px;">
+                <p>Student Enrollment</p>
+
+                <p>Population by Level</p>
+
+                <p>Portion of USC Columbia Enrollment</p>
+
+                <p>Race/Ethnicity &amp; Citizenship</p>
+            </div>
+            <?php $pageno++; ?>
         </div>
     </div>
 

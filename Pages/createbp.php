@@ -157,7 +157,7 @@ require_once("../Resources/Includes/menu.php");
             <div class="preview hidden" id="actionlist">
                 <div class="form-group col-xs-12" style="min-height: 600px;" id="actionlist4">
                     <p><br></p>
-                    <?php require_once("../Pages/pdfscript.php");?>
+                    <?php require_once("../Pages/temp_pdfscript.php");?>
                 </div>
 
                 <button type="submit" name="save"

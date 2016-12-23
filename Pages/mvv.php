@@ -40,14 +40,12 @@ $author = $_SESSION['login_userid'];
 
 
 if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev'; ";
-} else {
-    $sqlbroad = "select BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified from broadcast where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
+} else{
+    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 }
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
-//$broad_id = $rowbroad['ID_BROADCAST'];
-
 
 /*
  * SQL check if MVV was Started before so that existing value should be of indicated AY
@@ -203,8 +201,8 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
-        <p class="status"><span>Status:</span> <?php echo $rowbroad[1]; ?></p>
-        <p class="status"><span>Last Modified:</span> <?php echo date("F j, Y, g:i a", strtotime($rowbroad[2])); ?></p>
+        <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
+        <p class="status"><span>Last Modified:</span> <?php echo date("F j, Y, g:i a", strtotime($rowbroad[3])); ?></p>
     </div>
 
 

@@ -16,7 +16,7 @@ date_default_timezone_set('America/New_York');
 */
 require_once ("../Resources/Includes/connect.php");
 $email = $_SESSION['login_email'];
-$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE,SYS_USER_RIGHT, OU_ABBREV,FNAME,LNAME ,USER_OU_MEMBERSHIP from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
+$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE,SYS_USER_RIGHT, OU_ABBREV,FNAME,LNAME ,USER_OU_MEMBERSHIP,OU_TYPE from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
 inner join UserRoles on PermittedUsers.SYS_USER_ROLE = UserRoles.ID_USER_ROLE
 inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY WHERE  NETWORK_USERNAME ='$email';";
 $resultmenu = $menucon->query($sqlmenu);
@@ -29,7 +29,7 @@ $_SESSION['login_right'] = $rowsmenu['SYS_USER_RIGHT'];
 
 
 $menu = array(
-	//array("Home", "../$navdir"."Pages/account.php", "" ,"main","basic", true),
+	array("Upload OIRAA Data", "../$navdir"."Pages/uploadOIRAAdata.php", "" ,"main","service", true),
 	//array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe02f;" ,"main","user", true),
 	//array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true),
 	array("Add Academic Year", "../$navdir"."Pages/adday.php", "" ,"main","provost", true),
@@ -148,6 +148,7 @@ Generate PDF button currently disabled.
 
 		<li><a id="main" class="main hidden selected" href="account.php">Home</a></li>
 
+
 		<?php
 		for ($i = 0; $i < count($menu); $i++) {
 			if (strcmp($rowsmenu['SYS_USER_ROLE'], "provost") == 0) {
@@ -164,11 +165,19 @@ Generate PDF button currently disabled.
 				continue;
 			}
 
-			if ($menu[$i][3] == "main" && ($menu[$i][4] <> "provost" and $menu[$i][4] <> "approver")) {
-				echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
-			}
-		}
+            if ($rowsmenu['OU_TYPE'] == 'Service Unit') {
+                if ($menu[$i][3] == "main" && $menu[$i][4] == 'service' ) {
+                    echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+                }
+                continue;
+            }
+            if ($menu[$i][3] == "main" && ($menu[$i][4] <> "provost" and $menu[$i][4] <> "approver" and $menu[$i][4] <> "service")) {
+                echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+            }
+        }
 		?>
+
+        <li><a id="main" class="main hidden selected" href="account.php">View OIRAA Data</a></li>
 	</ul>
 
 	<!-- Blueprint Home Menu -->
