@@ -152,6 +152,19 @@ p.status span{
 	box-shadow: none;
 }
 
+.btn-primary:visited{
+	background-color: #9F0816;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	background-image: none;
+	border:3px #9F0816 solid;
+	text-shadow: none;
+	box-shadow: none;
+}
+
 .btn-primary:hover{
 	background-color: #9F0816;
 	padding: 12px 40px;
@@ -164,6 +177,32 @@ p.status span{
 	text-shadow: none;
 	box-shadow: none;
 }
+
+.btn-primary:focus {
+	background-color: #9F0816;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	background-image: none;
+	border:3px #9F0816 solid;
+	text-shadow: none;
+	box-shadow: none;
+}   
+
+.btn-primary:active {
+	background-color: #9F0816;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	background-image: none;
+	border:3px #9F0816 solid;
+	text-shadow: none;
+	box-shadow: none;
+} 
 
 .btn-primary.disabled, .btn-primary[disabled]{
 	background-color: #9C5C62;
