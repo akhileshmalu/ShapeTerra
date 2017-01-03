@@ -39,13 +39,15 @@ $resultay = $mysqli->query($sqlay);
  */
 
 $bpcontent = array(
-    array("Mission, Vision & Values","mvv.php"),
-    array("Goal Overview & Management","unitgoaloverview.php"),
-    array("Goal Outcomes Summary","goaloutcomeshome.php"),
-    array("Faculty Awards","facultyawards.php"),
-    array("Faculty Info","facultyInfo.php"),
-    array("Initiatives & Observations","initiatives.php"),
+    array("Mission, Vision & Values","mvv.php","Academic Unit"),
+    array("Goal Overview & Management","unitgoaloverview.php","Academic Unit"),
+    array("Goal Outcomes Summary","goaloutcomeshome.php","Academic Unit"),
+    array("Faculty Awards","facultyawards.php","Academic Unit"),
+    array("Faculty Info","facultyInfo.php","Academic Unit"),
+    array("Initiatives & Observations","initiatives.php","Academic Unit"),
 );
+
+
 
 if (isset($_POST['submit'])) {
     if (empty($_POST['AY'])) {
@@ -115,9 +117,10 @@ if (isset($_POST['submit'])) {
                 for ($j = 0; $j < count($bpcontent); $j++) {
                     $topicdesc = $bpcontent[$j][0];
                     $topiclink = $bpcontent[$j][1];
+                    $topictype = $bpcontent[$j][2];
 
                     $srno = $j+1;
-                    $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','$srno');";
+                    $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No,BP_OU_TYPE) VALUES ('$broad_id','$topicdesc','$topiclink','$time','$srno','$topictype');";
 
                 }
             }

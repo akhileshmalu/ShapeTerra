@@ -2,12 +2,14 @@
 session_start();
 
 $ouid = $_SESSION['login_ouid'];
+$outype = $_SESSION['login_outype'];
 
 require_once("../../Resources/Includes/connect.php");
 // require our class
 require_once("grid.php");
 
-if ($ouid <> 4) {
+if ($outype == "Academic Unit") {
+
     // load our grid with a table for other than Provost
     $grid = new Grid("broadcast", $mysqli ,array(
 
@@ -23,21 +25,23 @@ if ($ouid <> 4) {
             "BROADCAST_STATUS_OTHERS" => "broadcast.BROADCAST_STATUS_OTHERS",
             "BROADCAST_DESC" => "broadcast.BROADCAST_DESC",
             "OU_ABBREV" => "broadcast.OU_ABBREV",
-             "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
+            "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
             "LastModified"=> "DATE_FORMAT(broadcast.LastModified,'%Y-%m-%d %H:%i')",
 
         ),
         "joins"=>array(
             "inner JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR"
         ),
-        // "select" => 'selectFunction'
+// "select" => 'selectFunction'
     ));
+
 } else {
+
     // load our grid with a table for Provost
     $grid = new Grid("broadcast",$mysqli, array(
         "save" => false,
         "delete" => false,
-      //  "where" => "'",
+        //  "where" => "'",
         "fields"=>array(
 
             "BROADCAST_AY" => "broadcast.BROADCAST_AY",
@@ -72,3 +76,5 @@ if ($ouid <> 4) {
 // }
 
 ?>
+
+

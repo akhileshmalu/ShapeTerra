@@ -46,7 +46,7 @@ $sqlmvv = "Select * from BP_MissionVisionValues where UNIT_MVV_AY ='$bpayname' a
 $resultmvv = $mysqli->query($sqlmvv);
 $rowsmvv = $resultmvv->fetch_assoc();
 
-$sqlunit = "select * from BP_UnitGoals inner join BP_UnitGoalOutcomes on BP_UnitGoals.ID_UNIT_GOAL = BP_UnitGoalOutcomes.ID_UNIT_GOAL 
+$sqlunit = "select * from BP_UnitGoals RIGHT join BP_UnitGoalOutcomes on BP_UnitGoals.ID_UNIT_GOAL = BP_UnitGoalOutcomes.ID_UNIT_GOAL 
 INNER JOIN GoalStatus on BP_UnitGoalOutcomes.GOAL_STATUS=GoalStatus.ID_STATUS where find_in_set ('$bpayname',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
 $resultunit = $mysqli->query($sqlunit);
 $countunit = $resultunit->num_rows;

@@ -22,15 +22,14 @@ inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARC
 $resultmenu = $menucon->query($sqlmenu);
 $rowsmenu = $resultmenu ->fetch_assoc();
 $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
-$ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
 $_SESSION['login_ouname'] = $rowsmenu['OU_NAME'];
 $_SESSION['login_right'] = $rowsmenu['SYS_USER_RIGHT'];
-
+$ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
 
 
 $menu = array(
-	array("Upload OIRAA Data", "../$navdir"."Pages/uploadOIRAAdata.php", "" ,"main","service", true),
-	//array("Create BluePrint", "../$navdir"."Pages/createbp.php", "&#xe02f;" ,"main","user", true),
+	array("Upload OIRAA Data", "../$navdir"."Pages/ac_diversitystudent.php", "" ,"main","service", true),
+	array("Data Dictionary", "../$navdir"."Pages/datadicthome.php", "" ,"main","basic", true),
 	//array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true),
 	array("Add Academic Year", "../$navdir"."Pages/adday.php", "" ,"main","provost", true),
 	array("Edit Academic Year", "../$navdir"."Pages/editay.php", "" ,"main","provost", true),
@@ -140,7 +139,14 @@ Generate PDF button currently disabled.
 			<li class="" id="header"><a class="" href="<?php echo 'bphome.php?ayname='.$rowbroad[0].'&ou_abbrev='.$_SESSION['bpouabbrev']; ?>" >
 			<span id="" class="icon">l</span>Back To Dashboard</a></li>
 		<?php } ?>
-		
+		<?php if($BackToFileUploadHome){ ?>
+			<li class="" id="header"><a class="" href="<?php echo 'fileuploadhome.php?ayname='.$_SESSION['FUayname']; ?>" >
+					<span id="" class="icon">l</span>Back To Upload</a></li>
+		<?php } ?>
+		<?php if($BackToDataDictHome){ ?>
+			<li class="" id="header"><a class="" href="<?php echo 'datadicthome.php' ?>" >
+					<span id="" class="icon">l</span>Back To Dictionary</a></li>
+		<?php } ?>
 		<li class="" id="header"><a class="main" href="#" onclick="return false">
 		<span id="main" class="icon minus hidden">&#xe024;</span>
 		<span id="main" class="icon plus">&#xe035;</span>
@@ -152,21 +158,21 @@ Generate PDF button currently disabled.
 		<?php
 		for ($i = 0; $i < count($menu); $i++) {
 			if (strcmp($rowsmenu['SYS_USER_ROLE'], "provost") == 0) {
-				if ($menu[$i][3] == "main" && ($menu[$i][4] == "provost" OR $menu[$i][4] == "basic")) {
+				if ($menu[$i][3] == "main" && ($menu[$i][4] == "provost" or $menu[$i][4] == "basic")) {
 					echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 
 				}
 				continue;
 			}
 			if ($rowsmenu['SYS_USER_RIGHT'] == 3) {
-				if ($menu[$i][3] == "main" && ($menu[$i][4] == "approver" OR $menu[$i][4] == "basic")) {
+				if ($menu[$i][3] == "main" && ($menu[$i][4] == "approver" or $menu[$i][4] == "basic")) {
 					echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 				}
 				continue;
 			}
 
             if ($rowsmenu['OU_TYPE'] == 'Service Unit') {
-                if ($menu[$i][3] == "main" && $menu[$i][4] == 'service' ) {
+                if ($menu[$i][3] == "main" && ($menu[$i][4] == 'service'or $menu[$i][4] == "basic")) {
                     echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
                 }
                 continue;

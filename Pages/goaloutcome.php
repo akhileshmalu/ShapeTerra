@@ -256,7 +256,7 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     })
 </script>
-<script src="../Resources/Library/js/tabchange.js"></script>
+<!--<script src="../Resources/Library/js/tabchange.js"></script>-->
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>

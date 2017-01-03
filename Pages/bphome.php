@@ -15,9 +15,10 @@ require_once ("../Resources/Includes/connect.php");
 
 $bpayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
+$outype = $_SESSION['login_outype'];
 $_SESSION['bpayname'] = $bpayname;
 
-if ($ouid == 4) {
+if ($outype == "Administration" || $outype == "Service Unit" ) {
     $ouabbrev = $_GET['ou_abbrev'];
     $_SESSION['bpouabbrev'] = $_GET['ou_abbrev'];
 
@@ -26,7 +27,7 @@ if ($ouid == 4) {
 }
 
 
-if ($ouid == 4) {
+if ($outype == "Administration" || $outype == "Service Unit" ) {
     $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
 } else{
     $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
@@ -116,13 +117,12 @@ require_once("../Resources/Includes/menu.php");
         <div id="" style="margin-top: 10px; padding-left: 40px;">
             <table class="bphome" action="taskboard/bphomeajax.php" title="BluePrint Contents">
                 <tr>
-                    <th col="Sr_No" width="10" type="text"></th>
+
                     <th col="CONTENT_BRIEF_DESC" href="{{columns.CONTENT_LINK}}?linkid={{columns.ID_CONTENT}}" width="225" type="text">Section</th>
                     <th col="CONTENT_STATUS" width="125" type="text">Status</th>
                     <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
                     <th col="BP_AUTHOR"  width="110" type="text">Last Modified</th>
 
-                    <!--                                        <th col="" type="text">Actions</th>-->
                 </tr>
             </table>
         </div>

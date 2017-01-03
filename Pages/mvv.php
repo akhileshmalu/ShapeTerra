@@ -25,21 +25,23 @@ $contentlink_id = $_GET['linkid'];
 $bpayname = $_SESSION['bpayname'];
 //$bpouabbrev = $_SESSION['bpouabbrev'];
 $ouid = $_SESSION['login_ouid'];
-
-if ($ouid == 4) {
-    $ouabbrev = $_SESSION['bpouabbrev'];
-} else {
-    $ouabbrev = $_SESSION['login_ouabbrev'];
-}
+$outype = $_SESSION['login_outype'];
 
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
 
+if ($outype == "Administration" || $outype == "Service Unit" ) {
+    $ouabbrev = $_GET['ou_abbrev'];
+    $_SESSION['bpouabbrev'] = $_GET['ou_abbrev'];
+
+} else {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
+}
 
 
-if ($ouid == 4) {
+if ($outype == "Administration" || $outype == "Service Unit" ) {
     $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
 } else{
     $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
@@ -89,7 +91,6 @@ ON DUPLICATE KEY UPDATE `ID_UNIT_MVV` = VALUES(`ID_UNIT_MVV`),
     if ($mysqli->multi_query($sqlmission)) {
 
         $error[0] =  "Mission Updated Successfully";
-
 
     } else {
         $error[0] =   "Mission Could not be Updated. Please Retry.";

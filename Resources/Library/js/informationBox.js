@@ -10,4 +10,4 @@ $('.information h1').click(function(){
 		$('.information span.minus').addClass('hidden');
 		$('.information p').addClass('hidden');
 	}
-});s
+});

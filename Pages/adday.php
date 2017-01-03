@@ -5,6 +5,18 @@ $errorflag =0;
 
 require_once ("../Resources/Includes/connect.php");
 
+
+$uploaddatafiles = array(
+    array("IR_AC_DiversityPersonnel","ac_diversitypersonnel.php"),
+    array("IR_AC_DiversityStudent","ac_diversitystudent.php"),
+    array("IR_AC_Enrollments","uploadfile.php"),
+    array("IR_AC_Facilities","uploadfile.php"),
+    array("IR_AC_FacultyPop","ac_facultypop.php"),
+    array("IR_AC_Transfers","uploadfile.php"),
+    array("IR_AC_AdmTestScores","uploadfile.php"),
+);
+
+
 if(isset($_POST['submit'])) {
     if(!isset($_POST['startdate'])){
         $error[0]= "Please select a Start date for Academic Year";
@@ -32,8 +44,14 @@ if(isset($_POST['submit'])) {
         }
         if ($errorflag != 1) {
 
-            $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
-            if ($mysqli->query($sql)) {
+            foreach ($uploaddatafiles as $file) {
+                $filename = $file[0];
+                $filelink = $file[1];
+                $sql .= "INSERT INTO IR_SU_UploadStatus(NAME_UPLOADFILE,LINK_UPLOADFILE ,OUTCOME_AY) VALUES ('$file','$filelink','$desc');";
+            }
+
+            $sql .= "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
+            if ($mysqli->multi_query($sql)) {
                 $error[0] = "Academic Year Added Successfully.";
             } else {
                 $error [0] = "Academic Year Could not be added.";

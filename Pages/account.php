@@ -6,7 +6,7 @@ $sqlac = " SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP,OU_TYPE FROM Permitte
 $resultac = $mysqli->query($sqlac);                             	// Query Execution
 $rowsac = $resultac -> fetch_assoc();								//Fetching to Show on Account page
 $ouid = $rowsac['USER_OU_MEMBERSHIP'];
-
+$outype = $rowsac['OU_TYPE'];
 /*
  * Sessoin variables.
  */
@@ -14,6 +14,7 @@ $_SESSION['login_fname'] = $rowsac['FNAME'];
 $_SESSION['login_lname'] = $rowsac['LNAME'];
 $_SESSION['login_name'] = $rowsac['LNAME'].", ".$rowsac['FNAME'];
 $_SESSION['login_ouid'] = $ouid;
+$_SESSION['login_outype'] = $outype;
 $_SESSION['login_userid']=$rowsac['ID_STATUS'];
 
 //Menu control for back to dashboard button
@@ -57,11 +58,12 @@ require_once("../Resources/Includes/menu.php");
         <p class="status"><span>User role: </span> <?php echo $rowsmenu['USER_RIGHT']; ?></p>
     </div>
 
-    <?php
-    if ($rowsac['OU_TYPE'] == 'Academic Unit' || $rowsac['OU_TYPE'] == 'Administration') {
-        ?>
+
 
         <div id="main-box" class="col-xs-10 col-xs-offset-1">
+
+            <?php if ($outype == "Academic Unit" || $outype == "Administration" ) { ?>
+
             <h1 class="box-title">Select an Academic Year</h1>
             <div id="taskboard" class="">
                 <table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">
@@ -71,7 +73,7 @@ require_once("../Resources/Includes/menu.php");
                             Academic Year
                         </th>
                         <th col="BROADCAST_DESC" type="text">Description</th>
-                        <?php if ($ouid == 4) { ?>
+                        <?php if ($outype  == "Administration" ) { ?>
                             <th col="BROADCAST_STATUS" type="text">Status</th>
                         <?php } else { ?>
                             <th col="BROADCAST_STATUS_OTHERS" type="text">Status</th>
@@ -81,11 +83,26 @@ require_once("../Resources/Includes/menu.php");
                     </tr>
                 </table>
             </div>
+
+            <?php }
+            if ($outype == "Service Unit") {?>
+
+                <h1 class="box-title">Select an Academic Year to Upload Files</h1>
+                <div id="taskboard" class="">
+                    <table class="taskboard" action="taskboard/serviceunitajax.php" title="Service Unit">
+                        <tr>
+                            <th col="ACAD_YEAR_DESC" width="600" type="text"
+                                href="<?php echo '../Pages/fileuploadhome.php?ayname={{value}}'; ?>">
+                                Academic Year
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+
+            <?php } ?>
         </div>
 
-        <?php
-    }
-    ?>
+
 
     <?php
     require_once("../Resources/Includes/footer.php");

@@ -96,4 +96,4 @@ require_once("../Resources/Includes/menu.php");
 require_once("../Resources/Includes/footer.php");
 ?>
 
-<script src="../Resources/Library/js/tabchange.js"></script>
+<script src="../Resources/Library/js/tabAlert.js"></script>
