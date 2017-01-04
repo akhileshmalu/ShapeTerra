@@ -65,7 +65,7 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Hello <?php echo $_SESSION['login_lname']; ?>! </h1>
+        <h1 class="box-title">Hello <?php echo $_SESSION['login_fname']; ?>! </h1>
         <p class="status"><span>Org Unit Name: </span> <?php echo $_SESSION['login_ouname']; ?></p>
         <p class="status"><span>User role: </span> <?php echo $rowsmenu['USER_RIGHT']; ?></p>
     </div>
@@ -73,7 +73,7 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
 <!--        <div id="addnew" class="">-->
             <a id="add-datadict" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-right"
-               href="dataelement.php?id=0"><span class="icon">&#xe035;</span> Add Element Definition
+               href="dataelement.php?id="><span class="icon">&#xe035;</span> Add Element Definition
             </a>
 <!--        </div>-->
         <h1 class="box-title">Data Dictionary</h1>

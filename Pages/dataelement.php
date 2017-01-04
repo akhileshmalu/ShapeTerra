@@ -17,6 +17,66 @@ $elemid = $_GET['elem_id'];
 $elemstatus = $_GET['status'];
 $BackToDataDictHome = true;
 $bptopic =array();
+$bptopicstring = null;
+
+$timebasisoutcome = array (
+    'Academic Years only - final: Aug 16- Aug 15',
+	'Academic Years -final + Recent Fall -preliminary',
+	'Fall Terms only -final',
+	'Fiscal Year : July 1-June 30',
+	'Calendar Year',
+	'Not applicable',
+	'Other - explain in Interpretation & Usage Notes'
+);
+
+$bptopicset = array(
+    'Academic Programs',
+	'Alumni & Development',
+	'Blueprint System Administration',
+	'Collaborations',
+	'Community Engagement',
+	'Diversity & Inclusion',
+	'Facilities',
+	'Faculty',
+	'General Terminology',
+	'Goals & Goal Outcomes',
+	'Human Resources',
+	'Initiatives & Observations',
+	'Mission-Vision-Values',
+	'Student Admissions Test Scores',
+	'Student Enrollment Info',
+    'Student Retention, Transfer, Graduation',
+);
+
+$datatypeset = array(
+    'Text - simple (alpha, or alphanumeric)',
+	'Text - paragraph',
+	'Numeric',
+	'Date or Date-Time',
+	'Currency',
+    'Unknown',
+);
+
+$respartyset = array(
+    'Dean',
+	'Contributor (each College/School)',
+	'Human Resources',
+	'OIRAA',
+	'Provost Office',
+	'Reviewer',
+	'Team Lead',
+	'University Registrar',
+	'System Administrator',
+	'System Developer',
+	'System-generated Value'
+);
+
+$valuemandset = array(
+    'Required',
+	'Conditional',
+	'Optional',
+	'Unknown'
+);
 
 /*
  * Connection to DataBase.
@@ -39,6 +99,14 @@ $sqldataelem = "SELECT * FROM DataDictionary WHERE ID_DATA_ELEMENT='$elemid'; ";
 $resultdataelem = $mysqli -> query($sqldataelem);
 $rowsdataelem = $resultdataelem -> fetch_assoc();
 
+/*
+ * Data Classification Value
+ */
+$sqldataclass = "SELECT * FROM DataClassification;";
+$resultdataclass = $mysqli -> query($sqldataclass);
+$rowsdataclass = $resultdataclass -> fetch_assoc();
+
+
 if(isset($_POST['save'])) {
 
     $funcname = $_POST['functionalname'];
@@ -47,6 +115,9 @@ if(isset($_POST['save'])) {
     $basicmean = nl2br($_POST['basicmean']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
+    foreach ($bptopic as $item){
+        $bptopicstring .=$item.',';
+    }
     $usage = nl2br($_POST['usage']);
     $datasource = nl2br($_POST['datasource']);
     $resparty = $_POST['resparty'];
@@ -62,7 +133,7 @@ if(isset($_POST['save'])) {
     $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME, BASIC_MEANING, TIME_BASIS_OUTCOME, 
 INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON, 
 VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname',
-'$basicmean','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopic','$resparty','$contact',
+'$basicmean','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
 '$valuemand','$permitvalue','$constraint','$notes','$defauthor','$author','$time');";
 
     if($mysqli->query($sqladdelem)) {
@@ -82,6 +153,9 @@ if(isset($_POST['directsave'])) {
     $basicmean = nl2br($_POST['basicmean']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
+    foreach ($bptopic as $item){
+        $bptopicstring .=$item.',';
+    }
     $usage = nl2br($_POST['usage']);
     $datasource = nl2br($_POST['datasource']);
     $resparty = $_POST['resparty'];
@@ -97,13 +171,51 @@ if(isset($_POST['directsave'])) {
     $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,STATUS, BASIC_MEANING, TIME_BASIS_OUTCOME, 
 INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON, 
 VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','Approved',
-'$basicmean','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopic','$resparty','$contact',
+'$basicmean','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
 '$valuemand','$permitvalue','$constraint','$notes','$defauthor','$author','$time');";
 
     if($mysqli->query($sqladdelem)) {
         $error[0] = "Your Data Element has been added in Data Dictionary.";
     } else {
         $error[0] = "Data Element could not be added.";
+    }
+
+
+}
+
+if(isset($_POST['update'])) {
+
+    $funcname = $_POST['functionalname'];
+    $techname = $_POST['technicalname'];
+    $dataclass = $_POST['dataclass'];
+    $basicmean = nl2br($_POST['basicmean']);
+    $timebasis = $_POST['timebasis'];
+    $bptopic = $_POST['bptopic'];
+    foreach ($bptopic as $item){
+        $bptopicstring .=$item.',';
+    }
+    $usage = nl2br($_POST['usage']);
+    $datasource = nl2br($_POST['datasource']);
+    $resparty = $_POST['resparty'];
+    $contact = $_POST['contactperson'];
+    $datatype = $_POST['datatype'];
+    $datatrans = nl2br($_POST['datatrans']);
+    $valuemand = nl2br($_POST['valuemand']);
+    $permitvalue = nl2br($_POST['permitvalue']);
+    $constraint = nl2br($_POST['constraint']);
+    $notes = nl2br($_POST['notes']);
+    $defauthor = $_POST['defauthor'];
+
+    $sqladdelem = "Update DataDictionary  SET DATA_ELMNT_FUNC_NAME = '$funcname', DATA_ELEMENT_TECH_NAME= '$techname', BASIC_MEANING = '$basicmean',
+ TIME_BASIS_OUTCOME = '$timebasis', INTERP_USAGE = '$usage', DATA_CLASSIFICATION = '$dataclass', DATA_SOURCE = '$datasource',
+  DATA_TYPE = '$datatype', DATA_TRANSFORM = '$datatrans', BP_TOPIC ='$bptopicstring', RESPONSIBLE_PARTY ='$resparty', 
+  CONTACT_PERSON = '$contact', VALUES_MANDATORY = '$valuemand', VALUES_PERMITTED = '$permitvalue', VALUES_CONSTRAINTS = '$constraint', 
+  NOTES_DATA_ELEMENT = '$notes', AUTHOR = '$defauthor', MOD_BY = '$author', MOD_TIMESTAMP = '$time' where ID_DATA_ELEMENT = $elemid;";
+
+    if($mysqli->query($sqladdelem)) {
+        $error[0] = "Your Data Element has been updated in Data Dictionary.";
+    } else {
+        $error[0] = "Data Element could not be updated.";
     }
 
 
@@ -123,7 +235,18 @@ if(isset($_POST['approve'])) {
 
 }
 
+if(isset($_POST['discard'])) {
 
+
+    $sqladdelem = "update DataDictionary SET STATUS = 'Archived' where ID_DATA_ELEMENT = '$elemid';";
+
+    if($mysqli->query($sqladdelem)) {
+        $error[0] = "Data Element has been Archived & excluded from Data Dictionary.";
+    } else {
+        $error[0] = "Data Element could not be Archived.";
+    }
+
+}
 
 
 require_once("../Resources/Includes/header.php");
@@ -139,7 +262,7 @@ require_once("../Resources/Includes/menu.php");
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
 
 <div class="overlay hidden"></div>
-<?php if ( isset($_POST['save']) or isset($_POST['directsave']) or isset($_POST['discard']) or isset($_POST['approve'])) { ?>
+<?php if ( isset($_POST['save']) or isset($_POST['directsave']) or isset($_POST['discard']) or isset($_POST['approve']) or isset($_POST['update'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
@@ -201,7 +324,14 @@ require_once("../Resources/Includes/menu.php");
                                     than permitted by the assigned Classification.</em></small>
                         </p>
                         <select type="text" name="dataclass" class="form-control">
-                            <option value="1">Option1</option>
+                            <option value=""></option>
+                            <?php while($rowsdataclass = $resultdataclass -> fetch_assoc()){
+                                echo "<option value=".$rowsdataclass['ID_DATA_CLASS'];
+                                if($rowsdataelem['DATA_CLASSIFICATION'] == $rowsdataclass['ID_DATA_CLASS']) {
+                                    echo " selected = selected";
+                                }
+                                echo ">".$rowsdataclass['CLASSIFICATION']."</option>";
+                            } ?>
                         </select>
                     </div>
 
@@ -221,9 +351,15 @@ require_once("../Resources/Includes/menu.php");
                             <small><em>Indicate the time basis for which outcomes will be composed and reported in each
                                     Blueprint.</em></small>
                         </p>
-                        <div class="radio">
-                            <label><input type="radio" name="timebasis">Option 1</label>
-                        </div>
+                        <?php foreach ($timebasisoutcome as $key) {
+                        echo "<div class='radio'><label><input type='radio' name='timebasis' value='". $key."'";
+                        if ($rowsdataelem['TIME_BASIS_OUTCOME'] == $key) {
+                            echo " checked";
+                        }
+                        echo ">" . $key . "</label></div>";
+                        }
+                        ?>
+
                     </div>
 
                     <label for="bptopic">Blueprint Topic(s) <span
@@ -232,9 +368,16 @@ require_once("../Resources/Includes/menu.php");
                         <p>
                             <small><em>Topic the data element pertains to</em></small>
                         </p>
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="bptopic[]">Option 1</label>
-                        </div>
+
+                        <?php foreach ($bptopicset as $topic) {
+                            echo "<div class='checkbox'><label><input type='checkbox' name='bptopic[]' value=". $topic;
+                            if (strpos($rowsdataelem['BP_TOPIC'],$topic) !== false) {
+                                echo " checked";
+                            }
+                            echo ">" . $topic . "</label></div>";
+                        }
+                        ?>
+
                     </div>
 
 
@@ -286,7 +429,10 @@ require_once("../Resources/Includes/menu.php");
                                     element.</em></small>
                         </p>
                         <select type="text" name="resparty" class="form-control">
-                            <option value="1">Option1</option>
+                            <option value=""></option>
+                            <?php foreach ($respartyset as $party) { ?>
+                            <option value="<?php echo $party ?>" <?php if($rowsdataelem['RESPONSIBLE_PARTY'] == $party){ echo "selected"; } ?>><?php echo $party ?></option>
+                            <?php } ?>
                         </select>
                     </div>
 
@@ -310,7 +456,10 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <select type="text" name="datatype" class="form-control">
-                            <option value="1">Option1</option>
+                            <option value=""></option>
+                            <?php foreach ($datatypeset as $data) { ?>
+                                <option value="<?php echo $data ?>" <?php if($rowsdataelem['RESPONSIBLE_PARTY'] == $data){ echo "selected"; } ?>><?php echo $data ?></option>
+                            <?php } ?>
                         </select>
                     </div>
 
@@ -331,7 +480,10 @@ require_once("../Resources/Includes/menu.php");
                             <small><em>Describes whether a value must be provided for the data element.</em></small>
                         </p>
                         <select type="text" name="valuemand" class="form-control">
-                            <option value="1">Option1</option>
+                            <option value=""></option>
+                            <?php foreach ($valuemandset as $valmand) { ?>
+                                <option value="<?php echo $valmand ?>" <?php if($rowsdataelem['RESPONSIBLE_PARTY'] == $valmand){ echo "selected"; } ?>><?php echo $valmand ?></option>
+                            <?php } ?>
                         </select>
                     </div>
 
@@ -401,7 +553,8 @@ require_once("../Resources/Includes/menu.php");
                                     class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Save Element Def
                             </button>
                             <button id="cancel" type="button"
-                                    class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel & Discard
+                                    class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel &
+                                Discard
                             </button>
 
                         <?php }
@@ -410,22 +563,26 @@ require_once("../Resources/Includes/menu.php");
                             <button name="approve" type="submit"
                                     class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Approve Element Def
                             </button>
-                            <button id="cancel" type="submit" name="discard"
+                            <button  type="submit" name="discard"
                                     class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left"> Discard Def
                             </button>
 
+                        <?php } else { ?>
+                            <button name="update" type="submit"
+                                    class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Update Element Def
+                            </button>
                         <?php }
-                    } else {
-                        if ($elemid == 0) { ?>
-                            <button name="save" type="submit" class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right">
-                                Propose Element Def
-                            </button>
-                            <button id="cancel" type="button"
-                                    class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel & Discard
-                            </button>
+                    }
+                    if ($elemid == 0) { ?>
+                        <button name="save" type="submit" class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right">
+                            Propose Element Def
+                        </button>
+                        <button id="cancel" type="button"
+                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel &
+                            Discard
+                        </button>
 
-                        <?php }
-                    } ?>
+                    <?php } ?>
 
 
                 </div>

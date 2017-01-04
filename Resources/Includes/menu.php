@@ -28,7 +28,7 @@ $ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
 
 
 $menu = array(
-	array("Upload OIRAA Data", "../$navdir"."Pages/ac_diversitystudent.php", "" ,"main","service", true),
+//	array("Upload OIRAA Data", "../$navdir"."Pages/fileuploadhome.php", "" ,"main","service", true),
 	array("Data Dictionary", "../$navdir"."Pages/datadicthome.php", "" ,"main","basic", true),
 	//array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true),
 	array("Add Academic Year", "../$navdir"."Pages/adday.php", "" ,"main","provost", true),
