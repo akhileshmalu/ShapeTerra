@@ -12,6 +12,7 @@ $pagename = "bphome";
 session_start();
 $error = array();
 $errorflag = 0;
+$BackToDashboard = true;
 
 /*
  * Connection to DataBase.
@@ -133,7 +134,7 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Faculty Awards</h1>
-        <div id="" style="margin-top: 10px;">
+        <div id="taskboard" style="margin-top: 10px;">
             <table class="grid" action="taskboard/facultyajax.php" title="Faculty Awards">
                 <tr>
                     <th col="AWARD_TYPE" width="100" type="text">Type</th>

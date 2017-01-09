@@ -12,6 +12,7 @@ $pagename = "bphome";
 session_start();
 $error = array();
 $errorflag =0;
+$BackToDashboard = true;
 
 require_once ("../Resources/Includes/connect.php");
 

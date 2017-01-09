@@ -15,7 +15,8 @@
   overflow: hidden;
 }
 div.gridWrapper {
-  width: 100px;
+  width: 100% !important;
+  /*width: 100px;*/
   min-width: 515px;
   border: 1px solid #ddd;
   -webkit-border-radius: 4px;
@@ -228,6 +229,7 @@ div.gridWrapper .columns .col {
 }
 div.gridWrapper .columns .col.dynamic {
   min-width: 20px;
+  width: 4% !important;
 }
 div.gridWrapper .columns .col.dynamic .headerCell {
   min-width: 20px;

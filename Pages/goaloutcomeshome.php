@@ -11,6 +11,7 @@
 session_start();
 $error = array();
 $errorflag =0;
+$BackToDashboard = true;
 
 /*
  * Connection to DataBase.
@@ -91,7 +92,7 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Goals Outcomes & Management</h1>
         <p>Below are listed all active & current goals for <?php echo $_SESSION['login_ouname']; ?> for the above Academic Year.Click a Goal to compose outcome.</p>
-        <div id="" style="margin-top: 10px;">
+        <div id="taskboard" style="margin-top: 10px;">
             <table class="grid" action="taskboard/goaloutcomeajax.php" title="Unit Goals">
                 <tr>
                     <th col="UNIT_GOAL_TITLE" href="<?php echo "../Pages/goaloutcome.php?goal_id={{columns.ID_UNIT_GOAL}}&linkid=".$contentlink_id ?>" width="300" type="text">Goal Title</th>

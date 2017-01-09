@@ -8,7 +8,7 @@ $(function() {
         editing : false,
         deleting :false,
         nRowsShowing : 20,
-        width: 800,
+        width: $('#taskboard').width(),
         rowNumbers: true,
         checkboxes: false,
         cellTypes : {
@@ -42,7 +42,7 @@ $(function() {
         editing : false,
         deleting :false,
         nRowsShowing : 20,
-        width: 900,
+        width: $('#taskboard').width(),
         rowNumbers: true,
         checkboxes: false,
         cellTypes : {
@@ -85,7 +85,7 @@ $(function() {
         editing : false,
         deleting :false,
         nRowsShowing : 20,
-        width: 900,
+        width: $('#taskboard').width(),
         rowNumbers: true,
         checkboxes: false,
         orderBy:"BpContents.Sr_No",
@@ -123,10 +123,10 @@ $(function() {
         editing : false,
         deleting :false,
         nRowsShowing : 70,
-        width: 900,
+        width: $('#taskboard').width(),
         rowNumbers: true,
         checkboxes: false,
-        orderBy:"DataDictionary.STATUS",
+        orderBy:"STATUS",
         sort: "DESC",
         cellTypes : {
             "hashBang": function(value, columnOpts, grid) {
@@ -152,5 +152,6 @@ $(function() {
     }).on("save",function(e, row, res) {
         //console.log("save",row,res);
     });
+
 
 });

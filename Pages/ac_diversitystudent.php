@@ -5,6 +5,7 @@ $error = array();
 $errorflag = 0;
 $i = 0;
 $count = 1;
+$index = 0;
 
 
 $content_id = $_GET['linkid'];
@@ -14,6 +15,7 @@ $ouid = $_SESSION['login_ouid'];
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 $BackToFileUploadHome = true;
+$discardid = array();
 
 require_once ("../Resources/Includes/connect.php");
 
@@ -251,9 +253,26 @@ if(isset($_POST['error'])) {
     $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='No File Provided',LAST_MODIFIED_BY ='$author',LAST_MODIFIED_ON ='$time'  where  IR_SU_UploadStatus.ID_UPLOADFILE = '$content_id'; ";
 
     if ($mysqli->query($sqlupload)) {
-        $error[0] = "Data Deprecated.Please Reload the File";
+        $sqlupload = "SELECT ID_IR_AC_DIVERSITY_STUDENTS from IR_AC_DiversityStudent where OUTCOMES_AY = '$FUayname'; ";
+        $resultsqlupload = $mysqli->query($sqlupload);
+
+        while ($rowssqlupload = $resultsqlupload->fetch_assoc()) {
+            $discardid[$index] = $rowssqlupload['ID_IR_AC_DIVERSITY_STUDENTS'];
+            $index++;
+        }
+
+        foreach ($discardid as $delete) {
+            $sqldel .= "delete from IR_AC_DiversityStudent where ID_IR_AC_DIVERSITY_STUDENTS = '$delete'; ";
+        }
+
+        if ($mysqli->multi_query($sqldel)) {
+            $error[0] = "Data Deprecated.Please Reload the File";
+        } else {
+            $error[0] = "Error in Data Deprecation.Process Failed.";
+        }
+
     } else {
-        $error[0] = "Error in Data Deprecation.Process Failed.";
+        $error[0] = "Action Failed. Please Retry.";
     }
 
 }

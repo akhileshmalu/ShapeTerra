@@ -1,5 +1,9 @@
 <?php
 
+//Setting Default Time
+date_default_timezone_set('America/New_York');
+ini_set("date.timezone", "America/New_York");
+
 // Connect to MySql Database
 $db="TESTDB";
 
@@ -80,4 +84,4 @@ function mynl2br($text) {
 }
 
 
-?>
+

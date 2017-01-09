@@ -13,7 +13,7 @@ $uploaddatafiles = array(
     array("IR_AC_Facilities","uploadfile.php"),
     array("IR_AC_FacultyPop","ac_facultypop.php"),
     array("IR_AC_Transfers","uploadfile.php"),
-    array("IR_AC_AdmTestScores","uploadfile.php"),
+//    array("IR_AC_AdmTestScores","uploadfile.php"),
 );
 
 

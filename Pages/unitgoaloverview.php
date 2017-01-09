@@ -11,6 +11,7 @@
 session_start();
 $error = array();
 $errorflag =0;
+$BackToDashboard = true;
 
 /*
  * Connection to DataBase.
@@ -142,7 +143,7 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Goals Overview & Management</h1>
         <p>Below is a summary of your Unit Goals.</p>
-        <div id="" style="margin-top: 10px;">
+        <div id="taskboard" style="margin-top: 10px;">
             <table class="grid" action="taskboard/unitgoalajax.php" title="Unit Goals">
                 <tr>
                     <th col="UNIT_GOAL_TITLE" width="300" type="text">Goal Title</th>

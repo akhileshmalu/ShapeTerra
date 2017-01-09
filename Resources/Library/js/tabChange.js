@@ -14,7 +14,7 @@ $('.changeTab1').click(function () {
             alert("Please enter Technical Name.");
             nextcheck = false;
         } else {
-            if ($("input[name ='dataclass']").val() == "") {
+            if ($("select[name ='dataclass']").val() == "") {
                 alert("Please select data classification value.");
                 nextcheck = false;
 
@@ -31,10 +31,11 @@ $('.changeTab1').click(function () {
                             alert("Please select Blueprint Topic.");
                             nextcheck = false;
                         } else {
-                            if (!$.trim($("textarea[name ='usage']").val())) {
-                                alert("Please enter Interpretation & Usage.");
+                            if ($("#funcname_status").val() !== "") {
+                                alert("Please enter unique function name.");
                                 nextcheck = false;
                             } else {
+
                                 if (nextcheck) {
 
                                     $tabs.filter('.active').removeClass('active').next('li').removeClass('disabled').addClass('active');
@@ -42,9 +43,9 @@ $('.changeTab1').click(function () {
                                     $("#actionlist.active").addClass("hidden");
                                     $("#actionlist." + className).removeClass("hidden");
                                     $("#actionlist." + className).addClass("active");
+                                    window.scrollTo(0, 0);
                                 }
                             }
-
                         }
 
                     }
@@ -56,6 +57,7 @@ $('.changeTab1').click(function () {
         }
 
     }
+
 
 });
 
@@ -84,12 +86,13 @@ $('.changeTab2').click(function () {
                 } else {
 
                     if (nextcheck) {
-
                         $tabs.filter('.active').removeClass('active').next('li').removeClass('disabled').addClass('active');
                         var className = $tabs.filter('.active').attr("class").split(' ')[0];
                         $("#actionlist.active").addClass("hidden");
                         $("#actionlist." + className).removeClass("hidden");
                         $("#actionlist." + className).addClass("active");
+                        window.scrollTo(0,0);
+
                     }
                 }
 

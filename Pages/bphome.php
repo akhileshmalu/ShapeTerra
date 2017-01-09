@@ -114,7 +114,7 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">BluePrint Contents</h1>
-        <div id="" style="margin-top: 10px; padding-left: 40px;">
+        <div id="taskboard" style="margin-top: 10px; padding-left: 40px;">
             <table class="bphome" action="taskboard/bphomeajax.php" title="BluePrint Contents">
                 <tr>
 

@@ -14,6 +14,8 @@ $ouid = $_SESSION['login_ouid'];
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 $BackToFileUploadHome = true;
+$discardid = array();
+//$fields = array ();
 
 require_once ("../Resources/Includes/connect.php");
 
@@ -39,17 +41,26 @@ $resultfucontent = $mysqli->query($sqlfucontent);
 $rowsfucontent = $resultfucontent ->fetch_assoc();
 $tablename = $rowsfucontent['NAME_UPLOADFILE'];
 
+
+/*
+ * Primary Key of Table <ID>
+ */
+$sqlupload = "SELECT * from $tablename where OUTCOMES_AY = '$FUayname'; ";
+$resultsqlupload = $mysqli->query($sqlupload);
+$fields = $resultsqlupload->fetch_field();
+$primary_key = $fields->name;
+
+
 /*
  * Display Of Values in validation from IR_AC_DiversityStudent Table of Database
  */
-//$sqldatadisplay = "SELECT * FROM IR_AC_FacultyPop where ID_AC_FACULTY_POPULATION in (select max(ID_AC_FACULTY_POPULATION) from IR_AC_FacultyPop where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
-$sqldatadisplay = "SELECT * FROM $tablename where OUTCOMES_AY = '$FUayname' group by OU_ABBREV ;";
+$sqldatadisplay = "SELECT * FROM $tablename where $primary_key in (select max($primary_key) from $tablename where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
+//echo $sqldatadisplay;
+//$sqldatadisplay = "SELECT * FROM $tablename where OUTCOMES_AY = '$FUayname' group by OU_ABBREV ;";
 $resultdatadisplay = $mysqli -> query($sqldatadisplay);
 
 $dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
 $fieldcnt = $resultdatadisplay->field_count;
-
-
 
 $num_records = $resultdatadisplay->num_rows;
 
@@ -79,6 +90,7 @@ for ($j = 1; $j < $fieldcnt; $j++) {
     $dynamictable .= "</tr>";
 }
 $dynamictable .= '</table>';
+
 
 
 if (isset($_POST['upload'])) {
@@ -125,6 +137,7 @@ if (isset($_POST['upload'])) {
                                 $tablefileds[$i] = $csv[$row][$colindex] . ',';
 
                             } else {
+
 
                                 // Manual Author & Modified Time entry into SQL with row values of file
                                 if ($i == 3) {
@@ -232,10 +245,30 @@ if(isset($_POST['error'])) {
 
     $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='No File Provided',LAST_MODIFIED_BY ='$author',LAST_MODIFIED_ON ='$time'  where  IR_SU_UploadStatus.ID_UPLOADFILE = '$content_id'; ";
 
+//    if ($mysqli->query($sqlupload)) {
+//        $error[0] = "Data Deprecated.Please Reload the File";
+//    } else {
+//        $error[0] = "Error in Data Deprecation.Process Failed.";
+//    }
     if ($mysqli->query($sqlupload)) {
-        $error[0] = "Data Deprecated.Please Reload the File";
+
+
+        while ($rowssqlupload = $resultsqlupload->fetch_array(MYSQLI_NUM)) {
+            $discardid[$index] = $rowssqlupload[0];
+            $index++;
+        }
+        foreach ($discardid as $delete) {
+            $sqldel .= "delete from $tablename where $primary_key = '$delete'; ";
+        }
+        if ($mysqli->multi_query($sqldel)) {
+            $error[0] = "Data Deprecated.Please Reload the File";
+
+
+        } else {
+            $error[0] = "Error in Data Deprecation.Process Failed.";
+        }
     } else {
-        $error[0] = "Error in Data Deprecation.Process Failed.";
+        $error[0] = "Action Failed. Please Retry.";
     }
 
 }

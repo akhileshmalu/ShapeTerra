@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-
+$author = $_SESSION['login_userid'];
 
 require_once("../../Resources/Includes/connect.php");
 // require our class
@@ -13,7 +13,7 @@ if ($_SESSION['login_right'] == 7) {
         "save" => false,
         "delete" => false,
 
-//        "where" =>
+        "where" =>"STATUS <> 'Archived'  ",
 
         "fields" => array(
             "DATA_ELMNT_FUNC_NAME" => "DataDictionary.DATA_ELMNT_FUNC_NAME",
@@ -35,7 +35,7 @@ if ($_SESSION['login_right'] == 7) {
         "save" => false,
         "delete" => false,
 
-        "where" => "Status <> 'Proposed' ",
+        "where" => "STATUS = 'Approved' or ( STATUS = 'Proposed' and MOD_BY = '$author') ",
 
         "fields" => array(
             "DATA_ELMNT_FUNC_NAME" => "DataDictionary.DATA_ELMNT_FUNC_NAME",
@@ -52,6 +52,8 @@ if ($_SESSION['login_right'] == 7) {
     ));
 
 }
+
+
 
 
 ?>

@@ -13,6 +13,7 @@ $errorflag =0;
 $pageno =1;
 $goalcount=1;
 $unigoal = array();
+$BackToDashboard = true;
 
 require_once ("../Resources/Includes/connect.php");
 
@@ -67,7 +68,7 @@ $rowsdean = $resultdean -> fetch_assoc();
 //Menu control for back to dashboard button
 //true: Dont show button
 //false: show button
-$notBackToDashboard = false;
+
 
 
 

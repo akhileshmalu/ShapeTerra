@@ -30,6 +30,7 @@ $ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
 $menu = array(
 //	array("Upload OIRAA Data", "../$navdir"."Pages/fileuploadhome.php", "" ,"main","service", true),
 	array("Data Dictionary", "../$navdir"."Pages/datadicthome.php", "" ,"main","basic", true),
+    array("Footnotes", "../$navdir"."Pages/footnotehome.php", "" ,"main","basic", true),
 	//array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true),
 	array("Add Academic Year", "../$navdir"."Pages/adday.php", "" ,"main","provost", true),
 	array("Edit Academic Year", "../$navdir"."Pages/editay.php", "" ,"main","provost", true),
@@ -39,7 +40,40 @@ $menu = array(
 	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
 	);
 
+// Function to download templates for csv formats
+function download($filename){
+	if(!empty($filename)){
+		// Specify file path.
+		$path = '../uploads/csvtemplates/';
+		$download_file =  $path.$filename;
+		// Check file is exists on given path.
+		if(file_exists($download_file))
+		{
+			// Getting file extension.
+			$extension = explode('.',$filename);
+			$extension = $extension[count($extension)-1];
+			// For Gecko browsers
+			header('Content-Transfer-Encoding: binary');
+			header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($path)) . ' GMT');
+			// Supports for download resume
+			header('Accept-Ranges: bytes');
+			// Calculate File size
+			header('Content-Length: ' . filesize($download_file));
+			header('Content-Encoding: none');
+			// Change the mime type if the file is not PDF
+			header('Content-Type: application/'.$extension);
+			// Make the browser display the Save As dialog
+			header('Content-Disposition: attachment; filename=' . $filename);
+			readfile($download_file);
+			exit;
+		}
+		else
+		{
+			echo 'File does not exists on given path';
+		}
 
+	}
+}
 
 ?>
 
@@ -135,7 +169,7 @@ Generate PDF button currently disabled.
 	<!-- Main menu -->
 
 	<ul class="col-xs-12">
-		<?php if(!$notBackToDashboard){ ?>
+		<?php if($BackToDashboard){ ?>
 			<li class="" id="header"><a class="" href="<?php echo 'bphome.php?ayname='.$rowbroad[0].'&ou_abbrev='.$_SESSION['bpouabbrev']; ?>" >
 			<span id="" class="icon">l</span>Back To Dashboard</a></li>
 		<?php } ?>
@@ -147,9 +181,18 @@ Generate PDF button currently disabled.
 			<li class="" id="header"><a class="" href="<?php echo 'datadicthome.php' ?>" >
 					<span id="" class="icon">l</span>Back To Dictionary</a></li>
 		<?php } ?>
-		<li class="" id="header"><a class="main" href="#" onclick="return false">
+        <?php if($BackTofootnoteHome){ ?>
+            <li class="" id="header"><a class="" href="<?php echo 'footnotehome.php' ?>" >
+                    <span id="" class="icon">l</span>Back To Footnotes</a></li>
+        <?php } ?>
+		<?php if($BackToGoalOutHome){ ?>
+			<li class="" id="header"><a class="" href="<?php echo 'goaloutcomeshome.php?linkid='.$contentlink_id; ?>" >
+					<span id="" class="icon">l</span>Back To OutComes</a></li>
+		<?php } ?>
+
+        <li class="" id="header"><a class="main" href="#" onclick="return false">
 		<span id="main" class="icon minus hidden">&#xe024;</span>
-		<span id="main" class="icon plus">&#xe035;</span>
+	<span id="main" class="icon plus ">&#xe035;</span>
 		Main</a></li>
 
 		<li><a id="main" class="main hidden selected" href="account.php">Home</a></li>

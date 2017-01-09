@@ -29,25 +29,6 @@ $timebasisoutcome = array (
 	'Other - explain in Interpretation & Usage Notes'
 );
 
-$bptopicset = array(
-    'Academic Programs',
-	'Alumni & Development',
-	'Blueprint System Administration',
-	'Collaborations',
-	'Community Engagement',
-	'Diversity & Inclusion',
-	'Facilities',
-	'Faculty',
-	'General Terminology',
-	'Goals & Goal Outcomes',
-	'Human Resources',
-	'Initiatives & Observations',
-	'Mission-Vision-Values',
-	'Student Admissions Test Scores',
-	'Student Enrollment Info',
-    'Student Retention, Transfer, Graduation',
-);
-
 $datatypeset = array(
     'Text - simple (alpha, or alphanumeric)',
 	'Text - paragraph',
@@ -104,7 +85,15 @@ $rowsdataelem = $resultdataelem -> fetch_assoc();
  */
 $sqldataclass = "SELECT * FROM DataClassification;";
 $resultdataclass = $mysqli -> query($sqldataclass);
-$rowsdataclass = $resultdataclass -> fetch_assoc();
+
+
+
+/*
+ * Blueprint TopicAreas Value
+ */
+$sqltopicareas = "SELECT * FROM TopicAreas where TOPIC_FOR_DICTIONARY = 'Y';";
+$resulttopicareas = $mysqli -> query($sqltopicareas);
+
 
 
 if(isset($_POST['save'])) {
@@ -128,13 +117,14 @@ if(isset($_POST['save'])) {
     $permitvalue = nl2br($_POST['permitvalue']);
     $constraint = nl2br($_POST['constraint']);
     $notes = nl2br($_POST['notes']);
-    $defauthor = $_POST['defauthor'];
+    $defauthorfname = $_POST['defauthorfname'];
+    $defauthorlname = $_POST['defauthorlname'];
 
     $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME, BASIC_MEANING, TIME_BASIS_OUTCOME, 
 INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON, 
-VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname',
+VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname',
 '$basicmean','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
-'$valuemand','$permitvalue','$constraint','$notes','$defauthor','$author','$time');";
+'$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
 
     if($mysqli->query($sqladdelem)) {
         $error[0] = "Your Data Element has been submitted for review.This will be accepted in data dictionary post approval.";
@@ -166,13 +156,14 @@ if(isset($_POST['directsave'])) {
     $permitvalue = nl2br($_POST['permitvalue']);
     $constraint = nl2br($_POST['constraint']);
     $notes = nl2br($_POST['notes']);
-    $defauthor = $_POST['defauthor'];
+    $defauthorfname = $_POST['defauthorfname'];
+    $defauthorlname = $_POST['defauthorlname'];
 
     $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,STATUS, BASIC_MEANING, TIME_BASIS_OUTCOME, 
 INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON, 
-VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','Approved',
+VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','Approved',
 '$basicmean','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
-'$valuemand','$permitvalue','$constraint','$notes','$defauthor','$author','$time');";
+'$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
 
     if($mysqli->query($sqladdelem)) {
         $error[0] = "Your Data Element has been added in Data Dictionary.";
@@ -204,13 +195,14 @@ if(isset($_POST['update'])) {
     $permitvalue = nl2br($_POST['permitvalue']);
     $constraint = nl2br($_POST['constraint']);
     $notes = nl2br($_POST['notes']);
-    $defauthor = $_POST['defauthor'];
+    $defauthorfname = $_POST['defauthorfname'];
+    $defauthorlname = $_POST['defauthorlname'];
 
     $sqladdelem = "Update DataDictionary  SET DATA_ELMNT_FUNC_NAME = '$funcname', DATA_ELEMENT_TECH_NAME= '$techname', BASIC_MEANING = '$basicmean',
  TIME_BASIS_OUTCOME = '$timebasis', INTERP_USAGE = '$usage', DATA_CLASSIFICATION = '$dataclass', DATA_SOURCE = '$datasource',
   DATA_TYPE = '$datatype', DATA_TRANSFORM = '$datatrans', BP_TOPIC ='$bptopicstring', RESPONSIBLE_PARTY ='$resparty', 
   CONTACT_PERSON = '$contact', VALUES_MANDATORY = '$valuemand', VALUES_PERMITTED = '$permitvalue', VALUES_CONSTRAINTS = '$constraint', 
-  NOTES_DATA_ELEMENT = '$notes', AUTHOR = '$defauthor', MOD_BY = '$author', MOD_TIMESTAMP = '$time' where ID_DATA_ELEMENT = $elemid;";
+  NOTES_DATA_ELEMENT = '$notes', AUTHOR_FNAME = '$defauthorfname',AUTHOR_LNAME = '$defauthorlname', MOD_BY = '$author', MOD_TIMESTAMP = '$time' where ID_DATA_ELEMENT = $elemid;";
 
     if($mysqli->query($sqladdelem)) {
         $error[0] = "Your Data Element has been updated in Data Dictionary.";
@@ -281,7 +273,7 @@ require_once("../Resources/Includes/menu.php");
         <ul class="tabs-nav">
             <li class="tab1 active">1. Identification & Meaning</li>
             <li class="tab2 disabled">2. Source & Values</li>
-            <li class="tab3 disabled">3. Change Log</li>
+<!--            <li class="tab3 disabled">3. Change Log</li>-->
         </ul>
     </div>
 
@@ -298,8 +290,10 @@ require_once("../Resources/Includes/menu.php");
                             <small><em>Assigned, unique name for the data element, as most users should call it</em>
                             </small>
                         </p>
-                        <input id="fname" type="text" name="functionalname" maxlength="255" class="form-control"
+                        <input id="fname" type="text" name="functionalname" <?php if($elemid == 0){ echo "onblur = 'check_availability_func()' "; } ?> maxlength="255" class="form-control"
                                value="<?php echo $rowsdataelem['DATA_ELMNT_FUNC_NAME']; ?>">
+<!--                        To display error if name is not unique-->
+                        <p id="funcname_status" ></p>
                     </div>
 
                     <label for="techname">Technical Name <span style="color: red"><sup>*</sup></span></label>
@@ -308,8 +302,10 @@ require_once("../Resources/Includes/menu.php");
                             <small><em>The technical name for the data element, as established in the database, tables,
                                     or system</em></small>
                         </p>
-                        <input type="text" name="technicalname" maxlength="255" class="form-control"
+                        <input id="tecname" type="text" <?php if($elemid == 0){ echo "onblur = 'check_availability_tech()' "; } ?> name="technicalname" maxlength="255" class="form-control"
                                value="<?php echo $rowsdataelem['DATA_ELEMENT_TECH_NAME']; ?>">
+                        <!--                        To display error if name is not unique-->
+                        <p id="tecname_status"></p>
                     </div>
 
                     <label for="dataclass">Data Classification <span style="color: red"><sup>*</sup></span></label>
@@ -324,7 +320,7 @@ require_once("../Resources/Includes/menu.php");
                                     than permitted by the assigned Classification.</em></small>
                         </p>
                         <select type="text" name="dataclass" class="form-control">
-                            <option value=""></option>
+                            <option value="" ></option>
                             <?php while($rowsdataclass = $resultdataclass -> fetch_assoc()){
                                 echo "<option value=".$rowsdataclass['ID_DATA_CLASS'];
                                 if($rowsdataelem['DATA_CLASSIFICATION'] == $rowsdataclass['ID_DATA_CLASS']) {
@@ -369,19 +365,22 @@ require_once("../Resources/Includes/menu.php");
                             <small><em>Topic the data element pertains to</em></small>
                         </p>
 
-                        <?php foreach ($bptopicset as $topic) {
-                            echo "<div class='checkbox'><label><input type='checkbox' name='bptopic[]' value=". $topic;
-                            if (strpos($rowsdataelem['BP_TOPIC'],$topic) !== false) {
-                                echo " checked";
+                        <?php while ($rowstopicareas = $resulttopicareas -> fetch_assoc()) {
+                            echo "<div class='checkbox'><label><input type='checkbox' name='bptopic[]' value='". $rowstopicareas['ID_TOPIC']."'";
+                            $topicitem = explode(',',$rowsdataelem['BP_TOPIC']);
+                            foreach ($topicitem as $top) {
+                                if ($top == $rowstopicareas['ID_TOPIC']) {
+                                    echo " checked";
+                                }
                             }
-                            echo ">" . $topic . "</label></div>";
+                            echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'] . "</label></div>";
                         }
                         ?>
 
                     </div>
 
 
-                    <label for="usage">Interpretation & Usage <span style="color: red"><sup>*</sup></span></label>
+                    <label for="usage">Interpretation & Usage</label>
                     <div id="usage" class="form-group">
                         <p>
                             <small><em>In as much detail as necessary, describe the parameters under which this data
@@ -418,7 +417,7 @@ require_once("../Resources/Includes/menu.php");
                                     element).</em></small>
                         </p>
                         <textarea rows="4" name="datasource" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $rowsdataelem['DATA_SOURCE']; ?></textarea>
+                                  class="form-control" required><?php echo $rowsdataelem['DATA_SOURCE']; ?></textarea>
                     </div>
 
                     <div id="resparty" class="form-group">
@@ -428,10 +427,10 @@ require_once("../Resources/Includes/menu.php");
                             <small><em>Name of the office or person responsible for producing and/or providing this data
                                     element.</em></small>
                         </p>
-                        <select type="text" name="resparty" class="form-control">
+                        <select type="text" name="resparty" class="form-control" required>
                             <option value=""></option>
                             <?php foreach ($respartyset as $party) { ?>
-                            <option value="<?php echo $party ?>" <?php if($rowsdataelem['RESPONSIBLE_PARTY'] == $party){ echo "selected"; } ?>><?php echo $party ?></option>
+                            <option value="<?php echo $party ?>" <?php if($rowsdataelem['RESPONSIBLE_PARTY'] == $party){ echo " selected = selected"; } ?>><?php echo $party ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -455,10 +454,10 @@ require_once("../Resources/Includes/menu.php");
                                     Users to ensure that the content they submit complies with the parameters.</em>
                             </small>
                         </p>
-                        <select type="text" name="datatype" class="form-control">
+                        <select type="text" name="datatype" class="form-control" required>
                             <option value=""></option>
                             <?php foreach ($datatypeset as $data) { ?>
-                                <option value="<?php echo $data ?>" <?php if($rowsdataelem['RESPONSIBLE_PARTY'] == $data){ echo "selected"; } ?>><?php echo $data ?></option>
+                                <option value="<?php echo $data ?>" <?php if($rowsdataelem['DATA_TYPE'] == $data){ echo " selected = selected"; } ?>><?php echo $data ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -479,10 +478,10 @@ require_once("../Resources/Includes/menu.php");
                         <p>
                             <small><em>Describes whether a value must be provided for the data element.</em></small>
                         </p>
-                        <select type="text" name="valuemand" class="form-control">
+                        <select type="text" name="valuemand" class="form-control" required>
                             <option value=""></option>
                             <?php foreach ($valuemandset as $valmand) { ?>
-                                <option value="<?php echo $valmand ?>" <?php if($rowsdataelem['RESPONSIBLE_PARTY'] == $valmand){ echo "selected"; } ?>><?php echo $valmand ?></option>
+                                <option value="<?php echo $valmand ?>" <?php if($rowsdataelem['VALUES_MANDATORY'] == $valmand){ echo " selected = selected"; } ?>><?php echo $valmand ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -521,27 +520,35 @@ require_once("../Resources/Includes/menu.php");
                                   class="form-control"><?php echo $rowsdataelem['NOTES_DATA_ELEMENT']; ?></textarea>
                     </div>
 
-                    <button id="next-tab" type="button"
-                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right changeTab2"> Save & Continue
-                    </button>
-                    <button id="cancel" type="button"
-                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel & Discard
-                    </button>
-                </div>
-            </div>
-
-            <div class="form-group hidden tab3" id="actionlist">
-                <h1>Change Log</h1>
-
-                <div class="col-lg-8 col-sm-10 col-xs-12">
+<!--                    <button id="next-tab" type="button"-->
+<!--                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right changeTab2"> Save & Continue-->
+<!--                    </button>-->
+<!--                    <button id="cancel" type="button"-->
+<!--                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel & Discard-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!---->
+<!--            <div class="form-group hidden tab3" id="actionlist">-->
+<!--                <h1>Change Log</h1>-->
+<!---->
+<!--                <div class="col-lg-8 col-sm-10 col-xs-12">-->
 
                     <div id="author" class="form-group">
-                        <label>Definition Author </label>
+                        <label>Definition Author Name </label>
                         <p>
                             <small><em>Name of the individual who defined this data element initially.</em></small>
                         </p>
-                        <input type="text" name="defauthor" maxlength="255" class="form-control"
-                               value="<?php echo $rowsdataelem['AUTHOR']; ?>" required>
+                        <div class="col-lg-6">
+                            <label for="fname">First Name</label>
+                        <input id="fname" type="text" name="defauthorfname" maxlength="25" class="form-control"
+                               value="<?php echo $rowsdataelem['AUTHOR_FNAME']; ?>" required>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="lname">Last Name</label>
+                            <input id="lname" type="text" name="defauthorlname" maxlength="25" class="form-control"
+                                   value="<?php echo $rowsdataelem['AUTHOR_LNAME']; ?>" required>
+                        </div>
                     </div>
 
 
@@ -561,18 +568,22 @@ require_once("../Resources/Includes/menu.php");
                         if ($elemstatus == 'Proposed') { ?>
 
                             <button name="approve" type="submit"
-                                    class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Approve Element Def
+                                    class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-right"> Approve Def
+                            </button>
+                            <button name="update" type="submit"
+                                    class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-right"> Save Changes
                             </button>
                             <button  type="submit" name="discard"
-                                    class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left"> Discard Def
+                                    class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-left"> Discard Def
                             </button>
 
-                        <?php } else { ?>
+                        <?php } elseif($elemstatus == 'Approved') { ?>
                             <button name="update" type="submit"
                                     class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Update Element Def
                             </button>
+
                         <?php }
-                    }
+                    } else{
                     if ($elemid == 0) { ?>
                         <button name="save" type="submit" class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right">
                             Propose Element Def
@@ -582,7 +593,7 @@ require_once("../Resources/Includes/menu.php");
                             Discard
                         </button>
 
-                    <?php } ?>
+                    <?php }} ?>
 
 
                 </div>
@@ -608,6 +619,7 @@ require_once("../Resources/Includes/footer.php");
 
 
 </script>
+<script src="../Resources/Library/js/uniqueness.js"></script>
 <script src="../Resources/Library/js/cancelbox.js"></script>
 <script src="../Resources/Library/js/tabChange.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>

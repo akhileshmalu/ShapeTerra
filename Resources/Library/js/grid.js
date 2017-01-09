@@ -140,7 +140,7 @@ var grids = [];
 			
 			// wrap the columns with a div called gridWrapper. Jquery wrap doesnt work
 			// this will be our main html element
-			var $wrapper = $("<div class='gridWrapper'><span class='gridLoading'>Loading</span></div>");
+			var $wrapper = $("<div class='gridWrapper' id='main-size'><span class='gridLoading'>Loading</span></div>");
 			$wrapper.insertAfter($table)
 					.append($columns)
 					.width(this.opts.width);

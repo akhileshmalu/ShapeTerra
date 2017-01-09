@@ -22,6 +22,16 @@ $_SESSION['login_userid']=$rowsac['ID_STATUS'];
 //false: show button
 $notBackToDashboard = true;
 
+
+// Time Setting Check -
+// $script_tz = date_default_timezone_get();
+
+// if (strcmp($script_tz, ini_get('date.timezone'))){
+//     echo 'Script timezone differs from ini-set timezone.'.ini_get('date.timezone');
+// } else {
+//     echo 'Script timezone and ini-set timezone match.';
+// }
+
 require_once("../Resources/Includes/header.php");
 ?>
 
@@ -31,11 +41,13 @@ below headers for task board design purpose
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrapTable.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
-
-
 <link rel="stylesheet" href="Css/grid.css" title="openJsGrid"/>
-<script src="../Resources/Library/js/root.js"></script>
-<script src="../Resources/Library/js/grid.js"></script>
+
+<style>
+    div.gridWrapper .columns .cell.headerCell {
+        background: -webkit-linear-gradient(top, #fff 0%, #e4e4e4 100%);
+    }
+</style>
 
 <!--
   Above Headers are for Task Board design
@@ -103,8 +115,9 @@ require_once("../Resources/Includes/menu.php");
         </div>
 
 
-
     <?php
     require_once("../Resources/Includes/footer.php");
     ?>
     <script src="../Resources/Library/js/taskboard.js"></script>
+    <script src="../Resources/Library/js/root.js"></script>
+    <script src="../Resources/Library/js/grid.js"></script>

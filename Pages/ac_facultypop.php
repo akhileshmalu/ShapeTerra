@@ -4,6 +4,7 @@ session_start();
 $error = array();
 $errorflag = 0;
 $i = 0;
+$index = 0;
 $count = 1;
 
 
@@ -14,6 +15,7 @@ $ouid = $_SESSION['login_ouid'];
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 $BackToFileUploadHome = true;
+$discardid = array();
 
 require_once ("../Resources/Includes/connect.php");
 
@@ -21,8 +23,8 @@ require_once ("../Resources/Includes/connect.php");
 $csv = array();
 $tablefileds = array();
 $tablevalue = array();
-$sqlupload =null;
-$notBackToDashboard =true;
+$sqlupload = null;
+$notBackToDashboard = true;
 $sumtenurefac = array();
 $sumresearchfac = array();
 $sumclinicfac = array();
@@ -43,7 +45,7 @@ $tablename = $rowsfucontent['NAME_UPLOADFILE'];
  * Display Of Values in validation from IR_AC_DiversityStudent Table of Database
  */
 $sqldatadisplay = "SELECT * FROM IR_AC_FacultyPop where ID_AC_FACULTY_POPULATION in (select max(ID_AC_FACULTY_POPULATION) from IR_AC_FacultyPop where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
-$resultdatadisplay = $mysqli -> query($sqldatadisplay);
+$resultdatadisplay = $mysqli->query($sqldatadisplay);
 
 $dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
 $fieldcnt = $resultdatadisplay->field_count;
@@ -240,9 +242,26 @@ if(isset($_POST['error'])) {
     $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='No File Provided',LAST_MODIFIED_BY ='$author',LAST_MODIFIED_ON ='$time'  where  IR_SU_UploadStatus.ID_UPLOADFILE = '$content_id'; ";
 
     if ($mysqli->query($sqlupload)) {
-        $error[0] = "Data Deprecated.Please Reload the File";
+        $sqlupload = "SELECT ID_AC_FACULTY_POPULATION from IR_AC_FacultyPop where OUTCOMES_AY = '$FUayname'; ";
+        $resultsqlupload = $mysqli->query($sqlupload);
+
+        while ($rowssqlupload = $resultsqlupload->fetch_assoc()) {
+            $discardid[$index] = $rowssqlupload['ID_AC_FACULTY_POPULATION'];
+            $index++;
+        }
+
+        foreach ($discardid as $delete) {
+            $sqldel .= "delete from IR_AC_FacultyPop where ID_AC_FACULTY_POPULATION = '$delete'; ";
+        }
+
+        if ($mysqli->multi_query($sqldel)) {
+            $error[0] = "Data Deprecated.Please Reload the File";
+        } else {
+            $error[0] = "Error in Data Deprecation.Process Failed.";
+        }
+
     } else {
-        $error[0] = "Error in Data Deprecation.Process Failed.";
+        $error[0] = "Action Failed. Please Retry.";
     }
 
 }

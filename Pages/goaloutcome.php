@@ -9,6 +9,7 @@
 session_start();
 $error = array();
 $errorflag =0;
+$BackToGoalOutHome = true;
 
 /*
  * Connection to DataBase.
