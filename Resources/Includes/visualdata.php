@@ -13,7 +13,7 @@
 
   switch ($function) {
     case 1:
-      displayDataTable();
+
       break;
     default:
       break;
@@ -82,6 +82,82 @@
 
 
     }
-    
+
+    public function chartAcademicEnrollements(){
+
+      $yearDescription = "AY2014-2015";
+
+      $getAcademicEnrollements = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ?");
+      $getAcademicEnrollements->bindParam(1,$yearDescription,PDO::PARAM_STR);
+      $getAcademicEnrollements->execute();
+      $rowsGetAcademicEncrollements = $getAcademicEnrollements->rowCount();
+
+      if ($rowsGetAcademicEncrollements > 0){
+
+        while ($data = $getAcademicEnrollements->fetch()){
+
+            $freshman = $data["ENROLL_HC_FRESH"];
+            $sophmore = $data["ENROLL_HC_SOPH"];
+            $jumior = $data["ENROLL_HC_JUNR"];
+            $seniors = $data["ENROLL_HC_SENR"];
+            $masters = $data["ENROLL_HC_MASTERS"];
+            $doctorial = $data["ENROLL_HC_DOCTORAL"];
+            $medicine = $data["ENROLL_HC_MEDICINE"];
+            $law = $data["ENROLL_HC_LAW"];
+            $pharm = $data["ENROLL_HC_PHARMD"];
+            $cert = $data["ENROLL_HC_GRAD_CERT"];
+
+            echo "
+              <script>
+                var ctx = document.getElementById('chart1');
+                var myChart = new Chart(ctx, {
+                  type: 'doughnut',
+                  data: {
+                    labels: ['Freshman', 'Sophmore', 'Junior', 'Senior', 'Masters', 'Doctors','Medicine','Law','Pharama','Certification'],
+                    datasets: [{
+                      label: '# of Votes',
+                      data: [$freshman, $sophmore, $junior, $seniors, $masters, $doctorial, $medicine, $law, $phram, $cert],
+                      backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                      ],
+                      borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                      ],
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    responsive: false
+                  }
+                });
+              </script>
+            ";
+
+        }
+
+      }else{
+
+        echo "There are no enrollements in the database";
+
+      }
+
+    }
+
   }
 ?>
