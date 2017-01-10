@@ -1,245 +1,235 @@
 <?php
-/*
- * This page controlls Login and Registration menu of Academic BluePrint System.
- *
- * ----------Note 1 ----------------------------------------------------
- * <variable:status> User shall be allowed to login as per below Status of Account
- *          1 = Active
- *          0 = Inactive (need email verification) - Default in Database.
- *         -1 = Terminated (deleted User)
- *  -------- Note 1 Finished--------------------------------------------
- */
+  /*
+   * This page controlls Login and Registration menu of Academic BluePrint System.
+   *
+   * ----------Note 1 ----------------------------------------------------
+   * <variable:status> User shall be allowed to login as per below Status of Account
+   *          1 = Active
+   *          0 = Inactive (need email verification) - Default in Database.
+   *         -1 = Terminated (deleted User)
+   *  -------- Note 1 Finished--------------------------------------------
+   */
 
+       date_default_timezone_set("America/New_York");	//Setting time zone to EST time
 
-date_default_timezone_set("America/New_York");                  	//Setting time zone to EST time
+       session_start(); // Session Initiation
+       $error = array(); //Variable to store error msg
+       $errorflag = "";
 
-session_start();                                      		    	// Session Initiation
-$error =array();                                 		  		    //Variable to store error msg
-$errorflag = "";
+       if(isset($_POST['login'])) {
 
-if(isset($_POST['login'])) {
-    if ( empty($_POST['email']) || ( empty($_POST['password']) ) ) {
-        $error[0] =  "Invalid Email Address or password";
-    } else {
-        require_once ("../Resources/Includes/connect.php");         //Instance of Object class-connection Created
-        $email = test_input($_POST['email']);                       // Secured Input
-        $password = md5(test_input($_POST['password']));
+         if ( empty($_POST['email']) || ( empty($_POST['password']) ) ) {
+           $error[0] =  "Invalid Email Address or password";
+         } else {
+            require_once ("../Resources/Includes/connect.php");         //Instance of Object class-connection Created
+            $email = test_input($_POST['email']);                       // Secured Input
+            $password = md5(test_input($_POST['password']));
 
-        //Query into database for record check
-        $sql =  "SELECT * FROM PermittedUsers where NETWORK_USERNAME ='$email' AND PW_DEV ='$password' ";
+            //Query into database for record check
+            $sql =  "SELECT * FROM PermittedUsers where NETWORK_USERNAME ='$email' AND PW_DEV ='$password' ";
 
-        $result = $mysqli -> query($sql);                             //Query Execution
-        $row_cnt = $result -> num_rows;                               //count no of rows in result object.
-        if ($row_cnt >= '1') {                                        //If there exist one or more records
+            $result = $mysqli -> query($sql);                             //Query Execution
+            $row_cnt = $result -> num_rows;                               //count no of rows in result object.
+            if ($row_cnt >= '1') {                                        //If there exist one or more records
 
-            $record = $result->fetch_assoc();
-            /*
-             Refer to Note 1 for status variable in instruction
-             */
+              $record = $result->fetch_assoc();
+              /*
+               Refer to Note 1 for status variable in instruction
+               */
 
-            if($record['USER_STATUS']== '1') {
-                $_SESSION['login_email'] = $email;                   //session variable register
-                header("location:account.php");                           //redirect to account page
-            } else {
-            	if($record['USER_STATUS']== '0') {
-                	$error [0] = "Please activate your account by link provided in your email.";
-            	}
-            	// If User has been Terminated i.e. active = '-1'
-            	else {
-                	$error[0] = "Incorrect Email address or Password! ";
-            	}
-			}
+              if($record['USER_STATUS']== '1') {
+                  $_SESSION['login_email'] = $email;                   //session variable register
+                  header("location:account.php");                           //redirect to account page
+              } else {
+              	if($record['USER_STATUS']== '0') {
+                  	$error [0] = "Please activate your account by link provided in your email.";
+              	}
+              	// If User has been Terminated i.e. active = '-1'
+              	else {
+                  	$error[0] = "Incorrect Email address or Password! ";
+              	}
 
-        }
-        else {
+      			}
+
+          }else {
             $error[0] = "Incorrect Email address or Password! ";
+          }
+          $mysqli->close(); //Close Connection
         }
-        $mysqli->close();								               //Close Connection
-    }
-}
 
-if(isset($_POST['signup'])) {
+      }
 
-    if (empty($_POST['email'])) {
-        $error[0] = " Please enter email address.";
-        $errorflag = 1;
-    }else{
-        if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)){
+      if(isset($_POST['signup'])) {
+
+        if (empty($_POST['email'])) {
+          $error[0] = " Please enter email address.";
+          $errorflag = 1;
+        }else{
+
+          if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)){
             $error[0] = "Invalid Email Address.";
             $errorflag = 1;
+          }
 
         }
-    }
 
-    /*
-     * Manual Exception handling in case of browser not supporting HTML5.0
-     */
-    if (empty($_POST['password'])) {
-        $error[1] = " Please enter password.";
-        $errorflag = 1;
-    }
-    if (empty($_POST['confirmPassword'])) {
-        $error[2] = " Please confirm password.";
-        $errorflag = 1;
-    }
-    if (strcmp($_POST['password'],$_POST['confirmPassword'])) {
-        $error[3] = " Confirm Password does not match with Password.";
-        $errorflag = 1;
-    }
+        /*
+         * Manual Exception handling in case of browser not supporting HTML5.0
+         */
+        if (empty($_POST['password'])) {
+            $error[1] = " Please enter password.";
+            $errorflag = 1;
+        }
+        if (empty($_POST['confirmPassword'])) {
+            $error[2] = " Please confirm password.";
+            $errorflag = 1;
+        }
+        if (strcmp($_POST['password'],$_POST['confirmPassword'])) {
+            $error[3] = " Confirm Password does not match with Password.";
+            $errorflag = 1;
+        }
 
+        if($errorflag == 0){
 
-    if($errorflag == 0){
+            require_once ("../Resources/Includes/connect.php"); // Established Connection
 
-        require_once ("../Resources/Includes/connect.php");               // Established Connection
+            //Secured Input
+            $email = test_input($_POST['email']);
+            $password = md5(test_input($_POST['password']));
+            $hash = md5( rand(0,1000));
+            $type = 1;
+            $today = date("Y-m-d");
 
-        //Secured Input
-        $email = test_input($_POST['email']);
-        $password = md5(test_input($_POST['password']));
-        $hash = md5( rand(0,1000));
-        $type = 1;
-        $today = date("Y-m-d");
+            $sql = "INSERT INTO PermittedUsers(NETWORK_USERNAME,PW_DEV,DATE_BEGIN,HASH) VALUES ('$email','$password','$today','$hash')";
 
+            if($mysqli -> query($sql)) {
+                $error[0] = "User Registered Successfully.";
+                $error[0].="Kindly confirm your profile by logging to your email.";
 
-        $sql = "INSERT INTO PermittedUsers
-(NETWORK_USERNAME,PW_DEV,DATE_BEGIN,HASH) VALUES ('$email','$password','$today','$hash')";
+                //Confirmation Mail Variables
+                $sub = "Congratulations! You have successfully registered.";
+                $msg = "Hello User"."<br/>"."<br/>";
+                $msg .= "Please activate your profile by clicking over below link"."<br/>";
+                $link = "http://".$site."/Pages/verify.php?email=$email&hash=$hash&type=$type";
+      			    $msg .= "<a href='". $link. "'>" ."Activate your Account". "</a>\n\n";
+                $msg .= "<br/>"."Thank you";
+                mail($email,$sub,$msg,$headers);
 
-        if($mysqli -> query($sql)) {
-            $error[0] = "User Registered Successfully.";
-            $error[0].="Kindly confirm your profile by logging to your email.";
+      			    mkdir("../User/"."$email",755);
 
+              } else $error [0] = "Registration Failed. Please retry";
 
-            //Confirmation Mail Variables
-            $sub = "Congratulations! You have successfully registered.";
-            $msg = "Hello User"."<br/>"."<br/>";
-            $msg .= "Please activate your profile by clicking over below link"."<br/>";
+              $mysqli ->close();
 
-            $link = "http://".$site."/Pages/verify.php?email=$email&hash=$hash&type=$type";
-			
-			$msg .= "<a href='". $link. "'>" ."Activate your Account". "</a>\n\n";
-         
-            $msg .= "<br/>"."Thank you";
-            mail($email,$sub,$msg,$headers);
-			
-			mkdir("../User/"."$email",755);
+          }
+      }
 
-			
-        } else $error [0] = "Registration Failed. Please retry";
-
-        $mysqli ->close();
-
-    }
-}
-
-require_once("../Resources/Includes/header.php");
-?>
-
-
-<link href="Css/login.css" rel="stylesheet" type="text/css" />
-
-</head>
-<body>
-
-<div id ="Main" class="row">
+      require_once("../Resources/Includes/header.php");
+    ?>
+    <link href="Css/login.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+  <div id ="Main" class="row">
     <div class="login-box col-xs-6 col-xs-offset-3 col-xs-offset-5 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
-    <svg id="logo" class="col-xs-6 col-xs-offset-3" version="1.1" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
-    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 276 157.5"
-    enable-background="new 0 0 276 157.5" xml:space="preserve">
-    <switch>
-    <foreignObject requiredExtensions="&ns_ai;" x="0" y="0" width="1" height="1">
-        <i:pgfRef  xlink:href="#adobe_illustrator_pgf">
-        </i:pgfRef>
-    </foreignObject>
-    <g i:extraneous="self">
+      <svg id="logo" class="col-xs-6 col-xs-offset-3" version="1.1" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 276 157.5"
+  enable-background="new 0 0 276 157.5" xml:space="preserve">
+        <switch>
+        <foreignObject requiredExtensions="&ns_ai;" x="0" y="0" width="1" height="1">
+          <i:pgfRef  xlink:href="#adobe_illustrator_pgf"></i:pgfRef>
+        </foreignObject>
+        <g i:extraneous="self">
+      <g>
         <g>
-            <g>
-                <path fill="#FFFFFF" d="M67.7,112.4c-0.9,0.4-1.1,0.8-1.1,1.9l0,4.4v0.1c0,2.3,0.2,3,1.1,3.7c0.5,0.4,1.3,0.6,2.2,0.6
-                    c1.6,0,2.6-0.7,2.8-1.9c0.1-0.5,0.2-1,0.2-1.7v-0.2l0-3.9v-0.1c0-1.6-0.3-2.3-1.3-2.8h3.6c-1.1,0.7-1.4,1.2-1.4,3.1l-0.1,4.7
-                    c-0.1,2.6-1.4,3.6-4.3,3.6c-3.4,0-5.2-1.2-5.2-3.4v-0.2l-0.1-5.9c0-1.2-0.2-1.5-0.8-1.9H67.7z"/>
-                <path fill="#FFFFFF" d="M79.2,121.1c0-0.5,0-0.8,0-1c0-0.1,0-0.1,0-0.1l0-6.3c-0.3-0.6-0.8-1-1.6-1.3l3.6,0l7.2,8.3l0-5.1v-0.1
-                    c0-2-0.3-2.6-1.4-3.1h3.4c-0.4,0.1-0.8,0.7-1,1.3c-0.1,0.4-0.3,1.4-0.3,2.3l-0.1,2.4c0,0,0,0,0,0.1c0,0.1,0,0.2,0,0.3
-                    c0,0.1,0,0.2,0,0.3c0,0.1,0,0.1,0,0.1l-0.1,4.5l-1.3,0l-0.1-0.1c-0.2-0.3-1.4-1.7-3.5-4.3c-1.9-2.3-3.3-3.9-4-4.6l-0.2-0.2v4.8
-                    v0.5l0.1,1.1c0.1,1.9,0.2,2.2,1,2.6l0.1,0.1h-3.3C78.8,123.1,79.1,122.5,79.2,121.1z"/>
-                <path fill="#FFFFFF" d="M94.4,121.6v-0.1v-7.1v-0.1c0-1.1-0.2-1.5-0.9-1.8h4.2c-0.7,0.4-0.8,0.9-0.8,2.2v0.1l0,6.8v0.1
-                    c0,1.1,0.2,1.6,0.7,1.9h-4.1C94.3,123.1,94.4,122.8,94.4,121.6z"/>
-                <path fill="#FFFFFF" d="M105.3,123.6l-0.8-1.9l-0.7-1.8l-0.1-0.1l-2.4-5.6c-0.4-1-0.8-1.5-1.2-1.8l4.6,0c-0.7,0.4-0.9,0.6-0.9,1
-                    c0,0.2,0.1,0.5,0.2,0.8l0.1,0.1l0.8,2.1c0,0.1,0,0.1,0,0.1c0.1,0.2,0.2,0.4,0.4,0.9c0.1,0.2,0.2,0.5,0.4,0.9
-                    c0,0.1,0,0.1,0.1,0.1l1.4,3.2l2.4-5.5c0.4-1,0.8-2.2,0.8-2.6c0-0.4-0.3-0.8-0.9-1.2h3.3c-0.6,0.4-1.2,1.2-1.7,2.1l-0.7,1.5
-                    l-0.1,0.2l-2,4.5l-0.1,0.1l-0.6,1.4l-0.6,1.4l-0.1,0.2h-1.6L105.3,123.6z"/>
-                <path fill="#FFFFFF" d="M115,121l0-0.7v-0.5v-5.1v-0.1l0-0.6c-0.1-0.8-0.4-1.4-1-1.6h0.2l3.9,0.1l4-0.1l0.1,0l0.2,2.4l-0.1,0
-                    c-0.6-1.3-1.7-1.8-3.5-1.8h-1.3l-0.1,4.5h1.1h0c1.6,0,2.4-0.4,2.6-1.4h0.1v3.3h-0.1c-0.2-1-1.1-1.5-2.4-1.5l-0.2,0h-1.2v3.3v0.2
-                    l0.1,0.9c0,0.6,0.3,0.8,1.2,0.8c1.7,0,2.6-0.3,3.5-1.1c0.4-0.3,0.5-0.5,0.7-0.9l0.1,0l-0.7,2.4H114
-                    C114.9,123.2,114.9,123.1,115,121z"/>
-                <path fill="#FFFFFF" d="M126.5,121.7l0-2.2v-0.2v-0.8v-0.7c0-0.1,0-0.1,0-0.2l-0.1-3.5c0-0.9-0.3-1.5-0.9-1.7h1c0,0,0.1,0,0.1,0
-                    c0.1,0,0.5,0,1,0c0.1,0,0.5,0,1.2,0l1.6-0.1c2.4,0,3.5,0.4,4.2,1.5c0.3,0.4,0.4,0.9,0.4,1.4c0,1.5-1,2.6-2.7,2.9l2.2,2.5
-                    l0.1,0.1c0.1,0.1,0.4,0.4,1,1.1c0.5,0.5,0.8,0.9,1,1c0.1,0.1,0.4,0.3,0.9,0.7l0.1,0.1c-0.3,0.1-0.4,0.1-0.9,0.1l-0.7,0
-                    c-0.1,0-0.1,0-0.2,0c-1.3,0-2.2-0.5-3.1-1.7c0-0.1-0.1-0.1-0.1-0.1l-2.9-3.4H129l0.1,3.2v0.1c0,0.9,0.2,1.2,0.8,1.7l0.1,0.1
-                    h-4.4C126.2,123.3,126.5,122.7,126.5,121.7z M129.9,118L129.9,118c1.8,0,2.8-0.9,2.8-2.6c0-1.5-1-2.5-2.4-2.5
-                    c-0.1,0-0.1,0-0.2,0c-0.1,0-0.1,0-0.1,0l-1,0l0,5L129.9,118z"/>
-                <path fill="#FFFFFF" d="M138.7,120.2h0.2c0.7,2,2.2,3.2,4,3.2c1.4,0,2.4-0.9,2.4-2c0-1.1-0.7-1.7-2.9-2.5
-                    c-2.1-0.8-2.9-1.3-3.3-2.2c-0.2-0.4-0.3-0.8-0.3-1.2c0-1.9,1.7-3.4,3.9-3.4c0.9,0,1.6,0.2,2.7,0.6c0.3,0.1,0.4,0.1,0.5,0.1
-                    c0.2,0,0.4-0.1,0.7-0.5l0.1,2.8h-0.2c-0.5-1.4-2.1-2.5-3.5-2.5c-1.2,0-1.9,0.7-1.9,1.8c0,1.1,0.5,1.6,2.6,2.3
-                    c1.9,0.7,2.9,1.3,3.4,2.2c0.3,0.5,0.4,1,0.4,1.5c0,2.1-1.9,3.5-4.5,3.5c-1.6,0-3.7-0.7-4.4-1.4L138.7,120.2z"/>
-                <path fill="#FFFFFF" d="M151.5,121.6v-0.1v-7.1v-0.1c0-1.1-0.2-1.5-0.9-1.8h4.2c-0.7,0.4-0.8,0.9-0.8,2.2v0.1l0,6.8v0.1
-                    c0,1.1,0.2,1.6,0.7,1.9h-4.1C151.3,123.1,151.5,122.8,151.5,121.6z"/>
-                <path fill="#FFFFFF" d="M161.2,121.4v-0.2l0-8.1h-0.2c-1,0-1.7,0.2-2.5,0.7c-0.6,0.4-0.7,0.6-1.1,1.1l-0.2-0.1l0.8-2.6
-                    c0.6,0.2,0.8,0.2,3,0.2h1.9c2.6,0,4.5-0.1,5.1-0.2l0.2,0.2l-1,2.2l-0.2-0.1c0-0.1,0-0.1,0-0.2c0-1.1-0.6-1.5-1.9-1.5h-0.1
-                    l-1.3,0l0.1,8.3c0,1.5,0.2,1.9,1.1,2.3h-4.8C161,123.3,161.2,122.8,161.2,121.4z"/>
-                <path fill="#FFFFFF" d="M173.7,123.4c0.8-0.5,0.9-0.7,0.9-1.8v-2.7l-3.3-4.9c-0.6-0.9-1-1.4-1.5-1.6l4.9,0l-0.2,0.1l-0.3,0.1
-                    c-0.1,0.1-0.2,0.2-0.3,0.3c-0.1,0.1-0.2,0.3-0.2,0.4c0,0.2,0.2,0.6,0.5,1l2.4,3.7l1.5-2.3l0.1-0.1c0.4-0.7,0.8-1.6,0.8-2
-                    c0-0.5-0.3-0.8-0.9-1.1h3.7c-0.5,0.3-0.9,0.7-1.5,1.5c-0.3,0.4-0.8,1.1-1.5,2c0,0.1-0.1,0.1-0.1,0.1l-1.8,2.7v2.3v0.1
-                    c0,1.4,0.2,2,0.9,2.3h-4.4C173.6,123.5,173.6,123.5,173.7,123.4z"/>
-                <path fill="#FFFFFF" d="M188.8,118c0-3.4,2.8-5.9,6.6-5.9c3.8,0,6.6,2.4,6.6,5.8c0,3.5-2.8,5.9-6.8,5.9
-                    C191.6,123.9,188.8,121.4,188.8,118z M199.4,118c0-3-1.6-5.3-3.8-5.3c-2.2,0-3.8,2.3-3.8,5.5c0,3,1.5,5.1,3.6,5.1
-                    C197.7,123.2,199.4,121,199.4,118z"/>
-                <path fill="#FFFFFF" d="M205.9,121.7c0-0.6,0.1-1.3,0.1-2.2v-0.2l0-3.5v-0.1v-0.3c0-2-0.3-2.9-1-3l7.8-0.1l0.1,2.5h-0.1
-                    c-0.3-1.3-1.3-2-2.7-2l-0.2,0l-1.4,0l0,4.6h1.4c1.3,0,1.7-0.2,2.3-1.3c0-0.1,0-0.1,0.1-0.1h0.1l0,3.4l-0.1,0
-                    c-0.3-1-1-1.6-2.3-1.6h-0.1l-1.3,0v3.3v0.1c0,1.4,0.3,2.1,0.9,2.2H205C205.6,123.3,205.8,122.8,205.9,121.7z"/>
-            </g>
-            <g>
-                <path fill="#FFFFFF" d="M189.4,155.1c-4.7,0-8-4.6-8-11.3c0-6.6,3.2-11.2,8-11.2c4.7,0,8.3,4.8,8.3,11.2
-                    C197.6,150.5,194.2,155.1,189.4,155.1z M189,156.2c7.8,0,13.5-5.3,13.5-12.5c0-7.1-5.4-12.2-12.8-12.2
-                    c-7.8,0-13.7,5.4-13.7,12.5C176,151,181.6,156.2,189,156.2z"/>
-                <path fill="#FFFFFF" d="M202.4,155.8h0.4c1.9-0.1,5-0.2,8.6-0.2c2.5,0,4.8,0.1,6.6,0.2h0.1l1.4-6.2l-0.3,0l-0.1,0.2
-                    c-1.7,3.7-3.5,4.8-7.2,4.8c-2.7,0-3.2-0.3-3.2-1.9l0-16.5c0-2,0.8-3.3,2.4-4.1h-9c1.8,0.7,2.3,1.7,2.4,4.4l0.1,8
-                    c0,0,0,8.4,0,8.5C204.6,154.1,203.8,155.1,202.4,155.8z"/>
-                <path fill="#FFFFFF" d="M219.5,155.8h8c-1.5-0.7-2.1-1.7-2.1-3.6l0-16c0-2.4,0.3-3.1,2-4.1h-7.8c1.5,1,1.7,1.5,1.7,3.4v0.7
-                    l-0.1,16.1C221.2,154.1,220.8,154.9,219.5,155.8z"/>
-                <path fill="#FFFFFF" d="M31.3,131.4c-7.8,0-13.6,5.4-13.6,12.5c0,0.6,0.1,1.3,0.1,1.9c-1.1-1.9-3.3-3.3-7.5-4.8l-1.5-0.5
-                    c-2.9-1.1-4.2-2.3-4.2-4.4c0-2.2,1.9-4,4.2-4c2.3,0,4.8,1.3,6.2,3.1c0.6,0.8,0.8,1.2,1.3,2.3l0.6-0.1l-0.4-5.7l-0.4,0
-                    c-0.3,0.5-0.6,0.6-1.1,0.6c-0.3,0-0.6,0-1.1-0.3c-1.7-0.7-3.6-1.2-5.4-1.2c-4.7,0-8.1,2.7-8.1,6.5c0,3.5,2.1,5.6,8,7.9
-                    c1.1,0.4,1.7,0.7,2,0.8c2.6,1.1,4.1,2.8,4.1,4.9c0,2.7-2.3,4.7-5.3,4.7c-3.7,0-7-2.6-8.6-6.8L0,149l0.2,5
-                    c0.4,0.3,0.6,0.4,1.3,0.8c2.9,1.5,4.7,2,7.6,2c1.7,0,3.2-0.3,4.6-0.7c2.9-1.1,5-4.1,5-7c0-0.2,0-0.3,0-0.5
-                    c1.9,4.6,6.5,7.7,12.1,7.7c7.8,0,13.4-5.3,13.4-12.6C44.1,136.6,38.7,131.5,31.3,131.4z M31.1,155.1c-4.7,0-8-4.6-8-11.2
-                    c0-6.6,3.2-11.2,7.9-11.2c4.7,0,8.3,4.7,8.3,11.2C39.3,150.4,35.9,155.1,31.1,155.1z"/>
-                <path fill="#FFFFFF" d="M105.4,143.6l0-5.8l0.1-2.8c0-1.2,0.7-2.1,1.9-2.9h-8.4c1.2,0.8,1.6,1.8,1.7,4v0.1l-0.1,7.5H89.6l0-5.4
-                    v-0.2c0-3.9,0.3-4.8,2.4-6l0.1-0.1l-9,0l-15.5,0l-6.8,0c1.5,0.7,2.2,2.1,2.2,5.1l-0.3,10.9c0,1.4-0.1,2.2-0.4,3
-                    c-0.6,2.2-2.9,3.5-6,3.5c-2.5,0-4.7-0.9-5.6-2.3c-0.8-1.2-1.1-2.6-1.1-5.1l0-10.5l0.1-1.6c0.1-1.8,0.6-2.6,2.2-3.2h-8.8
-                    c1.3,0.4,1.8,1.2,1.9,3.2l0,13.9c0,2.5,0.7,4,2.3,5.1c1.9,1.3,4.5,1.9,7.9,1.9c6.3,0,9.4-2.7,9.4-8.4l0.2-8.6c0-4,1.5-6,6.1-6
-                    l1.6,0l0.1,17.6c0,3-0.5,4.2-1.9,4.8h8.9c-1.8-0.6-2.4-1.7-2.4-4.6l-0.1-17.9l3.1,0c4.3,0,4.5,2,4.5,6.2l0,6.5v0.2l-0.1,2.5v0.3
-                    l-0.1,2.8c-0.1,1.9-0.6,3.1-1.6,3.9l-0.3,0.2h8.4c-1.3-0.8-1.8-1.6-1.8-3.4l0-7.2h11.1l-0.1,5.9c0,2.6-0.6,3.8-2.1,4.7h9
-                    c-1.5-0.7-2.1-1.9-2.1-3.9l0-6.8L105.4,143.6z"/>
-                <path fill="#FFFFFF" d="M266.6,155.8h9.4c-1.2-0.4-2-1.3-3.1-3.5c0,0-3.2-7.1-3.4-7.6c-0.5-1.1-0.5-1-5.4-13.1
-                    c-0.5,0.2-2.5,0.5-2.6,0.5c0,0-0.8,1.9-1.3,3c-0.7,1.7-4,8.7-4,8.7l-3.5,7.8c-0.5,1.1-1,2-1.7,2.7l-0.1-3.2l0-5l0.1-3l0.3-6.3
-                    c0.1-2.5,0.5-3.5,2-4.6h-5.7c1.4,0.6,2,2.4,2,5.6l0,2.5l-0.2,9.3l-14.4-17.4l-6.9,0c1.3,0.7,2.2,1.4,3,2.2l0,16.5
-                    c0,2.8-0.5,3.9-2.5,4.9h7.2c-2.2-0.7-3-1.8-3-4.6l0-15.1l16.2,19.6h0.4h1.7h5.3c-1.2-0.5-2-1.4-2-2.5c0-0.9,0.4-3.1,0.9-4.3
-                    l1.8-3.9h8l3,7.5c0,0,0,0,0.1,0.2c0.2,0.4,0.3,1,0.3,1.2C268.5,154.7,267.9,155.4,266.6,155.8z M257.9,143.7l3.4-7.9l3.2,7.9
-                    H257.9z"/>
-                <path fill="#FFFFFF" d="M178.8,155.1c-0.9-0.7-1.6-1.6-2.8-2.8c-0.6-0.7-2.1-2.3-2.9-3.2c-0.1-0.1-0.1-0.1-0.1-0.2l-3.9-4.8
-                    c3.6-0.9,5.5-3,5.5-6.1c0-2.1-1.1-4-2.9-5.1c-1.3-0.7-3.3-1.1-5.7-1.1c-0.2,0-0.8,0-0.8,0l-5.1,0.1l-1.1,0l-3.8,0
-                    c1.6,0.8,2.1,1.7,2.1,3.7l0,16l0,0.4c0,0.9-0.2,1.6-0.6,2.2c-0.4-0.5-0.8-1.2-1.3-2.2c0,0-3.2-7.1-3.4-7.6
-                    c-0.5-1.1-0.5-1-5.4-13.1c-0.5,0.2-2.5,0.5-2.6,0.5c0,0-0.8,1.9-1.3,3c-0.7,1.7-2.4,5.4-2.4,5.4l-1.6,3.3l-2.9,6.6
-                    c-0.4,0.9-0.7,1.2-1.5,2.1c-2,2.2-4.1,3.2-6.5,3.2c-5.6,0-9.3-4.9-9.3-12.3c0-7,3.4-11.7,8.4-11.7c3.2,0,5.9,2,8.8,6.3l0.1,0.2
-                    l0.5,0l-0.6-5.8c-0.4,0.1-0.6,0.2-0.8,0.2c-0.1,0-0.2,0-0.3-0.1c-2.2-1.1-5.3-1.9-7.8-1.9c-8,0-13.7,5.5-13.7,13.2
-                    c0,7.6,5.6,13.1,13.4,13.1c2,0,3.8-0.3,5.8-1h6.6c-1.2-0.5-2-1.4-2-2.5c0-0.9,0.4-3.1,0.9-4.3l1.8-3.9h8c0,0,3,7.5,3.1,7.7
-                    c0.2,0.4,0.3,1,0.3,1.2c0,0.8-0.7,1.4-1.9,1.8h5.8h3.5h6.2c-2.2-0.6-2.9-1.6-2.9-4.2l-0.1-6.6l1.1-0.1c1,0,1.3,0.1,2,0.9
-                    l1.2,1.4c0,0,4.2,5.2,4.3,5.4c1.2,1.3,1.9,2.1,2.2,2.4c1.2,1.1,3.2,2.4,6.9,2.5c1.9,0.1,2.6-0.2,3.9-0.7
-                    C181.3,156.5,180,156,178.8,155.1z M140.3,143.7l3.4-7.9l3.2,7.9H140.3z M164.2,143.9c-0.2,0-2.5-0.1-2.5-0.1l0-10.6l2.2-0.1
-                    c1.4,0,2.6,0.2,3.5,0.6c1.6,0.6,2.7,2.6,2.7,4.9C170.1,142.1,168,143.9,164.2,143.9z"/>
-            </g>
-            <g>
-                <path fill="#FFFFFF" d="M137.6,94.5c-3.3,0-5.2-0.3-8.3-1.4c-3-1.1-4.6-1.9-7-3.9l1.1-1.7c2.3,1.8,3.6,2.7,6.3,3.6
-                    c2.9,1.1,4.7,1.4,7.8,1.4c3.1,0,5-0.3,7.9-1.4c2.7-1,4.1-1.8,6.3-3.6l1.1,1.7c-2.4,2-4.1,2.9-7,3.9
-                    C142.8,94.1,140.9,94.5,137.6,94.5z"/>
+          <path fill="#FFFFFF" d="M67.7,112.4c-0.9,0.4-1.1,0.8-1.1,1.9l0,4.4v0.1c0,2.3,0.2,3,1.1,3.7c0.5,0.4,1.3,0.6,2.2,0.6
+              c1.6,0,2.6-0.7,2.8-1.9c0.1-0.5,0.2-1,0.2-1.7v-0.2l0-3.9v-0.1c0-1.6-0.3-2.3-1.3-2.8h3.6c-1.1,0.7-1.4,1.2-1.4,3.1l-0.1,4.7
+              c-0.1,2.6-1.4,3.6-4.3,3.6c-3.4,0-5.2-1.2-5.2-3.4v-0.2l-0.1-5.9c0-1.2-0.2-1.5-0.8-1.9H67.7z"/>
+          <path fill="#FFFFFF" d="M79.2,121.1c0-0.5,0-0.8,0-1c0-0.1,0-0.1,0-0.1l0-6.3c-0.3-0.6-0.8-1-1.6-1.3l3.6,0l7.2,8.3l0-5.1v-0.1
+              c0-2-0.3-2.6-1.4-3.1h3.4c-0.4,0.1-0.8,0.7-1,1.3c-0.1,0.4-0.3,1.4-0.3,2.3l-0.1,2.4c0,0,0,0,0,0.1c0,0.1,0,0.2,0,0.3
+              c0,0.1,0,0.2,0,0.3c0,0.1,0,0.1,0,0.1l-0.1,4.5l-1.3,0l-0.1-0.1c-0.2-0.3-1.4-1.7-3.5-4.3c-1.9-2.3-3.3-3.9-4-4.6l-0.2-0.2v4.8
+              v0.5l0.1,1.1c0.1,1.9,0.2,2.2,1,2.6l0.1,0.1h-3.3C78.8,123.1,79.1,122.5,79.2,121.1z"/>
+          <path fill="#FFFFFF" d="M94.4,121.6v-0.1v-7.1v-0.1c0-1.1-0.2-1.5-0.9-1.8h4.2c-0.7,0.4-0.8,0.9-0.8,2.2v0.1l0,6.8v0.1
+              c0,1.1,0.2,1.6,0.7,1.9h-4.1C94.3,123.1,94.4,122.8,94.4,121.6z"/>
+          <path fill="#FFFFFF" d="M105.3,123.6l-0.8-1.9l-0.7-1.8l-0.1-0.1l-2.4-5.6c-0.4-1-0.8-1.5-1.2-1.8l4.6,0c-0.7,0.4-0.9,0.6-0.9,1
+              c0,0.2,0.1,0.5,0.2,0.8l0.1,0.1l0.8,2.1c0,0.1,0,0.1,0,0.1c0.1,0.2,0.2,0.4,0.4,0.9c0.1,0.2,0.2,0.5,0.4,0.9
+              c0,0.1,0,0.1,0.1,0.1l1.4,3.2l2.4-5.5c0.4-1,0.8-2.2,0.8-2.6c0-0.4-0.3-0.8-0.9-1.2h3.3c-0.6,0.4-1.2,1.2-1.7,2.1l-0.7,1.5
+              l-0.1,0.2l-2,4.5l-0.1,0.1l-0.6,1.4l-0.6,1.4l-0.1,0.2h-1.6L105.3,123.6z"/>
+          <path fill="#FFFFFF" d="M115,121l0-0.7v-0.5v-5.1v-0.1l0-0.6c-0.1-0.8-0.4-1.4-1-1.6h0.2l3.9,0.1l4-0.1l0.1,0l0.2,2.4l-0.1,0
+              c-0.6-1.3-1.7-1.8-3.5-1.8h-1.3l-0.1,4.5h1.1h0c1.6,0,2.4-0.4,2.6-1.4h0.1v3.3h-0.1c-0.2-1-1.1-1.5-2.4-1.5l-0.2,0h-1.2v3.3v0.2
+              l0.1,0.9c0,0.6,0.3,0.8,1.2,0.8c1.7,0,2.6-0.3,3.5-1.1c0.4-0.3,0.5-0.5,0.7-0.9l0.1,0l-0.7,2.4H114
+              C114.9,123.2,114.9,123.1,115,121z"/>
+          <path fill="#FFFFFF" d="M126.5,121.7l0-2.2v-0.2v-0.8v-0.7c0-0.1,0-0.1,0-0.2l-0.1-3.5c0-0.9-0.3-1.5-0.9-1.7h1c0,0,0.1,0,0.1,0
+              c0.1,0,0.5,0,1,0c0.1,0,0.5,0,1.2,0l1.6-0.1c2.4,0,3.5,0.4,4.2,1.5c0.3,0.4,0.4,0.9,0.4,1.4c0,1.5-1,2.6-2.7,2.9l2.2,2.5
+              l0.1,0.1c0.1,0.1,0.4,0.4,1,1.1c0.5,0.5,0.8,0.9,1,1c0.1,0.1,0.4,0.3,0.9,0.7l0.1,0.1c-0.3,0.1-0.4,0.1-0.9,0.1l-0.7,0
+              c-0.1,0-0.1,0-0.2,0c-1.3,0-2.2-0.5-3.1-1.7c0-0.1-0.1-0.1-0.1-0.1l-2.9-3.4H129l0.1,3.2v0.1c0,0.9,0.2,1.2,0.8,1.7l0.1,0.1
+              h-4.4C126.2,123.3,126.5,122.7,126.5,121.7z M129.9,118L129.9,118c1.8,0,2.8-0.9,2.8-2.6c0-1.5-1-2.5-2.4-2.5
+              c-0.1,0-0.1,0-0.2,0c-0.1,0-0.1,0-0.1,0l-1,0l0,5L129.9,118z"/>
+          <path fill="#FFFFFF" d="M138.7,120.2h0.2c0.7,2,2.2,3.2,4,3.2c1.4,0,2.4-0.9,2.4-2c0-1.1-0.7-1.7-2.9-2.5
+              c-2.1-0.8-2.9-1.3-3.3-2.2c-0.2-0.4-0.3-0.8-0.3-1.2c0-1.9,1.7-3.4,3.9-3.4c0.9,0,1.6,0.2,2.7,0.6c0.3,0.1,0.4,0.1,0.5,0.1
+              c0.2,0,0.4-0.1,0.7-0.5l0.1,2.8h-0.2c-0.5-1.4-2.1-2.5-3.5-2.5c-1.2,0-1.9,0.7-1.9,1.8c0,1.1,0.5,1.6,2.6,2.3
+              c1.9,0.7,2.9,1.3,3.4,2.2c0.3,0.5,0.4,1,0.4,1.5c0,2.1-1.9,3.5-4.5,3.5c-1.6,0-3.7-0.7-4.4-1.4L138.7,120.2z"/>
+          <path fill="#FFFFFF" d="M151.5,121.6v-0.1v-7.1v-0.1c0-1.1-0.2-1.5-0.9-1.8h4.2c-0.7,0.4-0.8,0.9-0.8,2.2v0.1l0,6.8v0.1
+              c0,1.1,0.2,1.6,0.7,1.9h-4.1C151.3,123.1,151.5,122.8,151.5,121.6z"/>
+          <path fill="#FFFFFF" d="M161.2,121.4v-0.2l0-8.1h-0.2c-1,0-1.7,0.2-2.5,0.7c-0.6,0.4-0.7,0.6-1.1,1.1l-0.2-0.1l0.8-2.6
+              c0.6,0.2,0.8,0.2,3,0.2h1.9c2.6,0,4.5-0.1,5.1-0.2l0.2,0.2l-1,2.2l-0.2-0.1c0-0.1,0-0.1,0-0.2c0-1.1-0.6-1.5-1.9-1.5h-0.1
+              l-1.3,0l0.1,8.3c0,1.5,0.2,1.9,1.1,2.3h-4.8C161,123.3,161.2,122.8,161.2,121.4z"/>
+          <path fill="#FFFFFF" d="M173.7,123.4c0.8-0.5,0.9-0.7,0.9-1.8v-2.7l-3.3-4.9c-0.6-0.9-1-1.4-1.5-1.6l4.9,0l-0.2,0.1l-0.3,0.1
+              c-0.1,0.1-0.2,0.2-0.3,0.3c-0.1,0.1-0.2,0.3-0.2,0.4c0,0.2,0.2,0.6,0.5,1l2.4,3.7l1.5-2.3l0.1-0.1c0.4-0.7,0.8-1.6,0.8-2
+              c0-0.5-0.3-0.8-0.9-1.1h3.7c-0.5,0.3-0.9,0.7-1.5,1.5c-0.3,0.4-0.8,1.1-1.5,2c0,0.1-0.1,0.1-0.1,0.1l-1.8,2.7v2.3v0.1
+              c0,1.4,0.2,2,0.9,2.3h-4.4C173.6,123.5,173.6,123.5,173.7,123.4z"/>
+          <path fill="#FFFFFF" d="M188.8,118c0-3.4,2.8-5.9,6.6-5.9c3.8,0,6.6,2.4,6.6,5.8c0,3.5-2.8,5.9-6.8,5.9
+              C191.6,123.9,188.8,121.4,188.8,118z M199.4,118c0-3-1.6-5.3-3.8-5.3c-2.2,0-3.8,2.3-3.8,5.5c0,3,1.5,5.1,3.6,5.1
+              C197.7,123.2,199.4,121,199.4,118z"/>
+          <path fill="#FFFFFF" d="M205.9,121.7c0-0.6,0.1-1.3,0.1-2.2v-0.2l0-3.5v-0.1v-0.3c0-2-0.3-2.9-1-3l7.8-0.1l0.1,2.5h-0.1
+              c-0.3-1.3-1.3-2-2.7-2l-0.2,0l-1.4,0l0,4.6h1.4c1.3,0,1.7-0.2,2.3-1.3c0-0.1,0-0.1,0.1-0.1h0.1l0,3.4l-0.1,0
+              c-0.3-1-1-1.6-2.3-1.6h-0.1l-1.3,0v3.3v0.1c0,1.4,0.3,2.1,0.9,2.2H205C205.6,123.3,205.8,122.8,205.9,121.7z"/>
+      </g>
+      <g>
+        <path fill="#FFFFFF" d="M189.4,155.1c-4.7,0-8-4.6-8-11.3c0-6.6,3.2-11.2,8-11.2c4.7,0,8.3,4.8,8.3,11.2
+            C197.6,150.5,194.2,155.1,189.4,155.1z M189,156.2c7.8,0,13.5-5.3,13.5-12.5c0-7.1-5.4-12.2-12.8-12.2
+            c-7.8,0-13.7,5.4-13.7,12.5C176,151,181.6,156.2,189,156.2z"/>
+        <path fill="#FFFFFF" d="M202.4,155.8h0.4c1.9-0.1,5-0.2,8.6-0.2c2.5,0,4.8,0.1,6.6,0.2h0.1l1.4-6.2l-0.3,0l-0.1,0.2
+            c-1.7,3.7-3.5,4.8-7.2,4.8c-2.7,0-3.2-0.3-3.2-1.9l0-16.5c0-2,0.8-3.3,2.4-4.1h-9c1.8,0.7,2.3,1.7,2.4,4.4l0.1,8
+            c0,0,0,8.4,0,8.5C204.6,154.1,203.8,155.1,202.4,155.8z"/>
+        <path fill="#FFFFFF" d="M219.5,155.8h8c-1.5-0.7-2.1-1.7-2.1-3.6l0-16c0-2.4,0.3-3.1,2-4.1h-7.8c1.5,1,1.7,1.5,1.7,3.4v0.7
+            l-0.1,16.1C221.2,154.1,220.8,154.9,219.5,155.8z"/>
+        <path fill="#FFFFFF" d="M31.3,131.4c-7.8,0-13.6,5.4-13.6,12.5c0,0.6,0.1,1.3,0.1,1.9c-1.1-1.9-3.3-3.3-7.5-4.8l-1.5-0.5
+            c-2.9-1.1-4.2-2.3-4.2-4.4c0-2.2,1.9-4,4.2-4c2.3,0,4.8,1.3,6.2,3.1c0.6,0.8,0.8,1.2,1.3,2.3l0.6-0.1l-0.4-5.7l-0.4,0
+            c-0.3,0.5-0.6,0.6-1.1,0.6c-0.3,0-0.6,0-1.1-0.3c-1.7-0.7-3.6-1.2-5.4-1.2c-4.7,0-8.1,2.7-8.1,6.5c0,3.5,2.1,5.6,8,7.9
+            c1.1,0.4,1.7,0.7,2,0.8c2.6,1.1,4.1,2.8,4.1,4.9c0,2.7-2.3,4.7-5.3,4.7c-3.7,0-7-2.6-8.6-6.8L0,149l0.2,5
+            c0.4,0.3,0.6,0.4,1.3,0.8c2.9,1.5,4.7,2,7.6,2c1.7,0,3.2-0.3,4.6-0.7c2.9-1.1,5-4.1,5-7c0-0.2,0-0.3,0-0.5
+            c1.9,4.6,6.5,7.7,12.1,7.7c7.8,0,13.4-5.3,13.4-12.6C44.1,136.6,38.7,131.5,31.3,131.4z M31.1,155.1c-4.7,0-8-4.6-8-11.2
+            c0-6.6,3.2-11.2,7.9-11.2c4.7,0,8.3,4.7,8.3,11.2C39.3,150.4,35.9,155.1,31.1,155.1z"/>
+        <path fill="#FFFFFF" d="M105.4,143.6l0-5.8l0.1-2.8c0-1.2,0.7-2.1,1.9-2.9h-8.4c1.2,0.8,1.6,1.8,1.7,4v0.1l-0.1,7.5H89.6l0-5.4
+            v-0.2c0-3.9,0.3-4.8,2.4-6l0.1-0.1l-9,0l-15.5,0l-6.8,0c1.5,0.7,2.2,2.1,2.2,5.1l-0.3,10.9c0,1.4-0.1,2.2-0.4,3
+            c-0.6,2.2-2.9,3.5-6,3.5c-2.5,0-4.7-0.9-5.6-2.3c-0.8-1.2-1.1-2.6-1.1-5.1l0-10.5l0.1-1.6c0.1-1.8,0.6-2.6,2.2-3.2h-8.8
+            c1.3,0.4,1.8,1.2,1.9,3.2l0,13.9c0,2.5,0.7,4,2.3,5.1c1.9,1.3,4.5,1.9,7.9,1.9c6.3,0,9.4-2.7,9.4-8.4l0.2-8.6c0-4,1.5-6,6.1-6
+            l1.6,0l0.1,17.6c0,3-0.5,4.2-1.9,4.8h8.9c-1.8-0.6-2.4-1.7-2.4-4.6l-0.1-17.9l3.1,0c4.3,0,4.5,2,4.5,6.2l0,6.5v0.2l-0.1,2.5v0.3
+            l-0.1,2.8c-0.1,1.9-0.6,3.1-1.6,3.9l-0.3,0.2h8.4c-1.3-0.8-1.8-1.6-1.8-3.4l0-7.2h11.1l-0.1,5.9c0,2.6-0.6,3.8-2.1,4.7h9
+            c-1.5-0.7-2.1-1.9-2.1-3.9l0-6.8L105.4,143.6z"/>
+        <path fill="#FFFFFF" d="M266.6,155.8h9.4c-1.2-0.4-2-1.3-3.1-3.5c0,0-3.2-7.1-3.4-7.6c-0.5-1.1-0.5-1-5.4-13.1
+            c-0.5,0.2-2.5,0.5-2.6,0.5c0,0-0.8,1.9-1.3,3c-0.7,1.7-4,8.7-4,8.7l-3.5,7.8c-0.5,1.1-1,2-1.7,2.7l-0.1-3.2l0-5l0.1-3l0.3-6.3
+            c0.1-2.5,0.5-3.5,2-4.6h-5.7c1.4,0.6,2,2.4,2,5.6l0,2.5l-0.2,9.3l-14.4-17.4l-6.9,0c1.3,0.7,2.2,1.4,3,2.2l0,16.5
+            c0,2.8-0.5,3.9-2.5,4.9h7.2c-2.2-0.7-3-1.8-3-4.6l0-15.1l16.2,19.6h0.4h1.7h5.3c-1.2-0.5-2-1.4-2-2.5c0-0.9,0.4-3.1,0.9-4.3
+            l1.8-3.9h8l3,7.5c0,0,0,0,0.1,0.2c0.2,0.4,0.3,1,0.3,1.2C268.5,154.7,267.9,155.4,266.6,155.8z M257.9,143.7l3.4-7.9l3.2,7.9
+            H257.9z"/>
+        <path fill="#FFFFFF" d="M178.8,155.1c-0.9-0.7-1.6-1.6-2.8-2.8c-0.6-0.7-2.1-2.3-2.9-3.2c-0.1-0.1-0.1-0.1-0.1-0.2l-3.9-4.8
+            c3.6-0.9,5.5-3,5.5-6.1c0-2.1-1.1-4-2.9-5.1c-1.3-0.7-3.3-1.1-5.7-1.1c-0.2,0-0.8,0-0.8,0l-5.1,0.1l-1.1,0l-3.8,0
+            c1.6,0.8,2.1,1.7,2.1,3.7l0,16l0,0.4c0,0.9-0.2,1.6-0.6,2.2c-0.4-0.5-0.8-1.2-1.3-2.2c0,0-3.2-7.1-3.4-7.6
+            c-0.5-1.1-0.5-1-5.4-13.1c-0.5,0.2-2.5,0.5-2.6,0.5c0,0-0.8,1.9-1.3,3c-0.7,1.7-2.4,5.4-2.4,5.4l-1.6,3.3l-2.9,6.6
+            c-0.4,0.9-0.7,1.2-1.5,2.1c-2,2.2-4.1,3.2-6.5,3.2c-5.6,0-9.3-4.9-9.3-12.3c0-7,3.4-11.7,8.4-11.7c3.2,0,5.9,2,8.8,6.3l0.1,0.2
+            l0.5,0l-0.6-5.8c-0.4,0.1-0.6,0.2-0.8,0.2c-0.1,0-0.2,0-0.3-0.1c-2.2-1.1-5.3-1.9-7.8-1.9c-8,0-13.7,5.5-13.7,13.2
+            c0,7.6,5.6,13.1,13.4,13.1c2,0,3.8-0.3,5.8-1h6.6c-1.2-0.5-2-1.4-2-2.5c0-0.9,0.4-3.1,0.9-4.3l1.8-3.9h8c0,0,3,7.5,3.1,7.7
+            c0.2,0.4,0.3,1,0.3,1.2c0,0.8-0.7,1.4-1.9,1.8h5.8h3.5h6.2c-2.2-0.6-2.9-1.6-2.9-4.2l-0.1-6.6l1.1-0.1c1,0,1.3,0.1,2,0.9
+            l1.2,1.4c0,0,4.2,5.2,4.3,5.4c1.2,1.3,1.9,2.1,2.2,2.4c1.2,1.1,3.2,2.4,6.9,2.5c1.9,0.1,2.6-0.2,3.9-0.7
+            C181.3,156.5,180,156,178.8,155.1z M140.3,143.7l3.4-7.9l3.2,7.9H140.3z M164.2,143.9c-0.2,0-2.5-0.1-2.5-0.1l0-10.6l2.2-0.1
+            c1.4,0,2.6,0.2,3.5,0.6c1.6,0.6,2.7,2.6,2.7,4.9C170.1,142.1,168,143.9,164.2,143.9z"/>
+      </g>
+      <g>
+        <path fill="#FFFFFF" d="M137.6,94.5c-3.3,0-5.2-0.3-8.3-1.4c-3-1.1-4.6-1.9-7-3.9l1.1-1.7c2.3,1.8,3.6,2.7,6.3,3.6
+            c2.9,1.1,4.7,1.4,7.8,1.4c3.1,0,5-0.3,7.9-1.4c2.7-1,4.1-1.8,6.3-3.6l1.1,1.7c-2.4,2-4.1,2.9-7,3.9
+            C142.8,94.1,140.9,94.5,137.6,94.5z"/>
+      </g>
                 <g>
                     <path fill="#FFFFFF" d="M128,88.2l1.8,0.8c-0.2-0.2-0.3-0.4-0.1-0.9l1.4-3c-0.3,0-0.7-0.1-1.4-0.3l-0.1,0c0,0,0.1,0,0.1,0.1
                         c0.2,0.2,0.3,0.3,0.1,0.7c0,0-0.9,2-1,2.1c-0.3,0.5-0.3,0.6-0.7,0.6C128.1,88.2,128.1,88.2,128,88.2z"/>
@@ -261,7 +251,7 @@ require_once("../Resources/Includes/header.php");
                         c0.3-0.1,0.4,0,0.6,0.3c0,0,1,2,1,2.1C145.9,88.5,145.9,88.6,145.6,89C145.7,88.9,145.7,88.9,145.6,89z"/>
                 </g>
                 <polygon fill="#FFFFFF" points="147.3,52.2 160.3,52.2 158.8,54.6 148.7,54.6                 "/>
-                <polygon fill="#FFFFFF" points="149,55.7 158.8,55.7 158.8,64.2 174.5,64.2 174.5,65.3 158.8,65.3 158.8,76.1 156.8,76.1 
+                <polygon fill="#FFFFFF" points="149,55.7 158.8,55.7 158.8,64.2 174.5,64.2 174.5,65.3 158.8,65.3 158.8,76.1 156.8,76.1
                     156.8,57.8 151.1,57.8 151.1,76.1 149,76.1               "/>
                 <path fill="#FFFFFF" d="M161.2,58.8c1.1-0.5,1.7,0,1.7,0v17.3h-1.7V58.8z"/>
                 <path fill="#FFFFFF" d="M165.5,60.8c1.1-0.5,1.7,0,1.7,0v15.3h-1.7V60.8z"/>
@@ -271,7 +261,7 @@ require_once("../Resources/Includes/header.php");
                     c1.1,0.8,1.6,1.4,2.5,2.5c1.1,1.4,1.6,2.3,2.3,4v-5.2c-0.8-0.7-1.3-1.1-2.3-1.7c-1.5-0.9-2.5-1.2-4.2-1.6l-4.1,4.9h3.1l-2.8,4.3
                     h2.6l-3.1,3.3l0,15.8L142.6,76.1z"/>
                 <polygon fill="#FFFFFF" points="127.9,52.2 114.9,52.2 116.3,54.6 126.5,54.6                 "/>
-                <polygon fill="#FFFFFF" points="126.1,55.7 116.3,55.7 116.3,64.2 100.7,64.2 100.7,65.3 116.3,65.3 116.3,76.1 118.3,76.1 
+                <polygon fill="#FFFFFF" points="126.1,55.7 116.3,55.7 116.3,64.2 100.7,64.2 100.7,65.3 116.3,65.3 116.3,76.1 118.3,76.1
                     118.3,57.8 124.1,57.8 124.1,76.1 126.1,76.1                 "/>
                 <path fill="#FFFFFF" d="M113.9,58.8c-1.1-0.5-1.7,0-1.7,0v17.3h1.7V58.8z"/>
                 <path fill="#FFFFFF" d="M109.6,60.8c-1.1-0.5-1.7,0-1.7,0v15.3h1.7V60.8z"/>
@@ -333,39 +323,27 @@ require_once("../Resources/Includes/header.php");
                         c0.1,0.1,0.2,0.3,0.2,0.5c0,0.3-0.2,0.6-0.5,0.6v0c0.2,0,0.4,0.2,0.4,0.6c0.1,0.4,0.1,0.6,0.2,0.6H175
                         c-0.1-0.1-0.1-0.3-0.2-0.7c-0.1-0.3-0.2-0.5-0.6-0.5l-0.3,0L173.9,84z M173.9,82.6h0.3c0.3,0,0.6-0.1,0.6-0.4
                         c0-0.2-0.2-0.5-0.6-0.5c-0.1,0-0.2,0-0.3,0V82.6z"/>
-                </g>
-            </g>
-        </g>
-    </g>
-        </switch>     
-    <div id="login-form" class="col-lg-10 col-xs-offset-1">
-    <form name = "loginform" action ="" method="POST">
-        <label id="error" class="text-center"> <?php foreach ($error as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
-        <input id ="email" type="email"  placeholder="Email" name="email" class = "col-xs-12" required />  
-        <input id="password" type="password" placeholder="Password" name="password" class ="col-xs-12" required/>
-        <input id="confirm-password" type="password" placeholder="Confirm Password" name="confirmPassword" class ="col-xs-12 hidden"/>
-        <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a>
-
-        
-        <input type="submit" name = "login" class = "col-xs-12" value="Login" id ="login-button">
-
-        <button type="button" class="col-xs-12" id="signupShow">
-            Sign Up
-        </button>
-
-        <button type ="submit"  name = "signup" class = "col-xs-12 hidden" id="signup">
-            Sign Up
-        </button>
-        <a href="login.php"  id="back-link" class="col-xs-12 hidden">Go Back</a>
-    </form>
+                      </g>
+                  </g>
+              </g>
+          </g>
+        </switch>
+        <div id="login-form" class="col-lg-10 col-xs-offset-1">
+          <form name = "loginform" action ="" method="POST">
+            <label id="error" class="text-center"> <?php foreach ($error as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
+            <input id ="email" type="email"  placeholder="Email" name="email" class = "col-xs-12" required />
+            <input id="password" type="password" placeholder="Password" name="password" class ="col-xs-12" required/>
+            <input id="confirm-password" type="password" placeholder="Confirm Password" name="confirmPassword" class ="col-xs-12 hidden"/>
+            <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a>
+            <input type="submit" name = "login" class = "col-xs-12" value="Login" id ="login-button">
+            <button type="button" class="col-xs-12" id="signupShow">Sign Up</button>
+            <button type ="submit"  name = "signup" class = "col-xs-12 hidden" id="signup">Sign Up</button>
+            <a href="login.php"  id="back-link" class="col-xs-12 hidden">Go Back</a>
+          </form>
+        </div>
+      </div>
     </div>
-
-    </div>
-</div>
-
-
-
-<?php
-require_once("../Resources/Includes/footer.php");
-?>
-<script src="../Resources/Library/js/login.js"></script>
+    <?php require_once("../Resources/Includes/footer.php"); ?>
+    <script src="../Resources/Library/js/login.js"></script>
+  </body>
+</html>

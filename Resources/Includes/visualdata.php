@@ -115,7 +115,7 @@
                   data: {
                     labels: ['Freshman', 'Sophmore', 'Junior', 'Senior', 'Masters', 'Doctors','Medicine','Law','Pharama','Certification'],
                     datasets: [{
-                      label: '# of Votes',
+                      label: 'School Population',
                       data: [$freshman, $sophmore, $junior, $seniors, $masters, $doctorial, $medicine, $law, $phram, $cert],
                       backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
