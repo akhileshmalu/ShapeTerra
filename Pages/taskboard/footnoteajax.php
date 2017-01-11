@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-
+$author = $_SESSION['login_userid'];
 
 require_once("../../Resources/Includes/connect.php");
 // require our class
@@ -35,7 +35,7 @@ if ($_SESSION['login_right'] == 7) {
         "save" => false,
         "delete" => false,
 
-        "where" => "FOOTNOTE_STATUS = 'Approved' ",
+        "where" => "FOOTNOTE_STATUS = 'Approved' or ( FOOTNOTE_STATUS = 'Proposed' and MOD_BY = '$author') ",
 
         "fields" => array(
             "FOOTNOTE_DESC" => "Footnotes.FOOTNOTE_DESC",

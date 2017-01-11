@@ -188,7 +188,7 @@ if(isset($_POST['approve'])) {
 if(isset($_POST['discard'])) {
 
 
-    $sqladdfoot = "update Footnotes SET STATUS = 'Archived' where ID_FOOTNOTE = '$elemid';";
+    $sqladdfoot = "update Footnotes SET FOOTNOTE_STATUS = 'Archived' where ID_FOOTNOTE = '$elemid';";
 
     if($mysqli->query($sqladdfoot)) {
         $error[0] = "This Footnote has been Archived & excluded from Footnotes.";
@@ -324,36 +324,37 @@ require_once("../Resources/Includes/menu.php");
                     if ($elemid == 0) { ?>
 
                         <button name="directsave" type="submit"
-                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Save Element Def
+                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Save Footnote
                         </button>
                         <button id="cancel" type="button"
-                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel &
-                            Discard
+                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel
                         </button>
 
                     <?php }
                     if ($elemstatus == 'Proposed') { ?>
 
                         <button name="approve" type="submit"
-                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Approve Element Def
+                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Approve Footnote
                         </button>
-                        <button  type="submit" name="discard"
-                                 class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left"> Discard Def
+                        <button  type="submit" name="discard" onclick="return confirm('Are you certain you want to delete the Footnote?');"
+                                 class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left"> Discard Footnote
                         </button>
 
                     <?php } elseif($elemstatus == 'Approved') { ?>
                         <button name="update" type="submit"
-                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Update Element Def
+                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Update Footnote
+                        </button>
+                        <button  type="submit" name="discard" onclick="return confirm('Are you certain you want to delete the Footnote?');"
+                                 class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left"> Discard Footnote
                         </button>
                     <?php }
                 } else{
                     if ($elemid == 0) { ?>
                         <button name="save" type="submit" class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right">
-                            Propose Element Def
+                            Propose Footnote
                         </button>
                         <button id="cancel" type="button"
-                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel &
-                            Discard
+                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel
                         </button>
 
                     <?php } } ?>
@@ -378,6 +379,9 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     });
 
+//    function confirmaction() {
+//
+//    }
 
 </script>
 <script src="../Resources/Library/js/uniqueness.js"></script>

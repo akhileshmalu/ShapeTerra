@@ -323,25 +323,34 @@
                         c0.1,0.1,0.2,0.3,0.2,0.5c0,0.3-0.2,0.6-0.5,0.6v0c0.2,0,0.4,0.2,0.4,0.6c0.1,0.4,0.1,0.6,0.2,0.6H175
                         c-0.1-0.1-0.1-0.3-0.2-0.7c-0.1-0.3-0.2-0.5-0.6-0.5l-0.3,0L173.9,84z M173.9,82.6h0.3c0.3,0,0.6-0.1,0.6-0.4
                         c0-0.2-0.2-0.5-0.6-0.5c-0.1,0-0.2,0-0.3,0V82.6z"/>
-                      </g>
-                  </g>
-              </g>
-          </g>
-        </switch>
-        <div id="login-form" class="col-lg-10 col-xs-offset-1">
-          <form name = "loginform" action ="" method="POST">
-            <label id="error" class="text-center"> <?php foreach ($error as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
-            <input id ="email" type="email"  placeholder="Email" name="email" class = "col-xs-12" required />
-            <input id="password" type="password" placeholder="Password" name="password" class ="col-xs-12" required/>
-            <input id="confirm-password" type="password" placeholder="Confirm Password" name="confirmPassword" class ="col-xs-12 hidden"/>
-            <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a>
-            <input type="submit" name = "login" class = "col-xs-12" value="Login" id ="login-button">
-            <button type="button" class="col-xs-12" id="signupShow">Sign Up</button>
-            <button type ="submit"  name = "signup" class = "col-xs-12 hidden" id="signup">Sign Up</button>
-            <a href="login.php"  id="back-link" class="col-xs-12 hidden">Go Back</a>
-          </form>
-        </div>
-      </div>
+
+                </g>
+            </g>
+        </g>
+    </g>
+        </switch>     
+    <div id="login-form" class="col-lg-10 col-xs-offset-1">
+    <form name = "loginform" action ="" method="POST">
+        <label id="error" class="text-center"> <?php foreach ($error as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
+        <input id ="email" type="email"  placeholder="Email" name="email" class = "col-xs-12" required />  
+        <input id="password" type="password" placeholder="Password" name="password" class ="col-xs-12" required/>
+        <input id="confirm-password" type="password" placeholder="Confirm Password" name="confirmPassword" class ="col-xs-12 hidden"/>
+        <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a>
+
+        
+        <input type="submit" name = "login" class = "col-xs-12" value="Login" id ="login-button">
+
+<!--        <button type="button" class="col-xs-12" id="signupShow">-->
+<!--            Sign Up-->
+<!--        </button>-->
+<!---->
+<!--        <button type ="submit"  name = "signup" class = "col-xs-12 hidden" id="signup">-->
+<!--            Sign Up-->
+<!--        </button>-->
+        <a href="login.php"  id="back-link" class="col-xs-12 hidden">Go Back</a>
+    </form>
+    </div>
+
     </div>
     <?php require_once("../Resources/Includes/footer.php"); ?>
     <script src="../Resources/Library/js/login.js"></script>

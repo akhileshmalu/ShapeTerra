@@ -44,7 +44,7 @@ $tablename = $rowsfucontent['NAME_UPLOADFILE'];
 /*
  * Display Of Values in validation from IR_AC_DiversityStudent Table of Database
  */
-$sqldatadisplay = "SELECT * FROM IR_AC_DiversityStudent where ID_IR_AC_DIVERSITY_STUDENTS in (select max(ID_IR_AC_DIVERSITY_STUDENTS) from IR_AC_DiversityStudent where OUTCOMES_AY = '$FUayname' group by OU_ABBREV ) ";
+$sqldatadisplay = "SELECT * FROM IR_AC_DiversityStudent where OU_ABBREV='USCAAU' AND ID_IR_AC_DIVERSITY_STUDENTS in (select max(ID_IR_AC_DIVERSITY_STUDENTS) from IR_AC_DiversityStudent where OUTCOMES_AY = '$FUayname' group by OU_ABBREV ) ";
 $resultdatadisplay = $mysqli -> query($sqldatadisplay);
 
 
@@ -122,6 +122,7 @@ if(isset($_POST['upload'])) {
                         if ($i != count($data)) {
 
                             if ($row == 0) {
+                                // Fields of Table
                                 $tablefileds[$i] = $csv[$row][$colindex] . ',';
                             } else {
 
@@ -211,8 +212,15 @@ if(isset($_POST['upload'])) {
 
                     if ($mysqli->multi_query($sqlupload)) {
 
-                        $error[0] = "Data Uploaded Successfully.";
+                        //USCALLAU USC ALL Academic Units Aggregator record creation . Also includes the idea to let user update more units in future
+                        // Below query group all discrete units and resolve collusion basis latest (max) ID value and then sum the records and constitute USCAAU
 
+                        $sqlupload = "INSERT INTO IR_AC_DiversityStudent (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, UGRAD_FEMALE, UGRAD_MALE, UGRAD_AMERIND_ALASKNAT, UGRAD_ASIAN, UGRAD_BLACK, UGRAD_HISPANIC, UGRAD_HI_PAC_ISL, UGRAD_NONRESIDENT_ALIEN, UGRAD_TWO_OR_MORE, UGRAD_UNKNOWN_RACE_ETHNCTY, UGRAD_WHITE, GRAD_FEMALE, GRAD_MALE, GRAD_AMERIND_ALASKNAT, GRAD_ASIAN, GRAD_BLACK, GRAD_HISPANIC, GRAD_HI_PAC_ISL, GRAD_NONRESIDENT_ALIEN, GRAD_TWO_OR_MORE, GRAD_UNKNOWN_RACE_ETHNCTY, GRAD_WHITE) 
+SELECT 'USCAAU' AS OU,'$FUayname' AS AY,'$author' AS AUTHOR,'$time' AS MOD_Time,sum(UGRAD_FEMALE), sum(UGRAD_MALE), sum(UGRAD_AMERIND_ALASKNAT), sum(UGRAD_ASIAN), sum(UGRAD_BLACK), sum(UGRAD_HISPANIC), sum(UGRAD_HI_PAC_ISL), sum(UGRAD_NONRESIDENT_ALIEN), sum(UGRAD_TWO_OR_MORE), sum(UGRAD_UNKNOWN_RACE_ETHNCTY), sum(UGRAD_WHITE), sum(GRAD_FEMALE), sum(GRAD_MALE), sum(GRAD_AMERIND_ALASKNAT), sum(GRAD_ASIAN), sum(GRAD_BLACK), sum(GRAD_HISPANIC), sum(GRAD_HI_PAC_ISL), sum(GRAD_NONRESIDENT_ALIEN), sum(GRAD_TWO_OR_MORE),
+ sum(GRAD_UNKNOWN_RACE_ETHNCTY), sum(GRAD_WHITE) FROM IR_AC_DiversityStudent where ID_IR_AC_DIVERSITY_STUDENTS in (select max(ID_IR_AC_DIVERSITY_STUDENTS) from IR_AC_DiversityStudent where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
+                        $mysqli->query($sqlupload);
+
+                        $error[0] = "Data Uploaded Successfully.";
                     } else {
 
                         $error[0] = "Error in Data. Upload Failed.";
@@ -262,7 +270,7 @@ if(isset($_POST['error'])) {
         }
 
         foreach ($discardid as $delete) {
-            $sqldel .= "delete from IR_AC_DiversityStudent where ID_IR_AC_DIVERSITY_STUDENTS = '$delete'; ";
+            $sqldel .= "DELETE FROM IR_AC_DiversityStudent WHERE ID_IR_AC_DIVERSITY_STUDENTS = '$delete'; ";
         }
 
         if ($mysqli->multi_query($sqldel)) {
@@ -356,7 +364,7 @@ require_once("../Resources/Includes/menu.php");
                             <?php echo $dynamictable; ?>
 
 
-                            <p>Please Select Save to Confirm Uploading If Below Data is Correct.</p>
+                            <p>Please Select <strong>Validation Confirmed</strong> to Confirm Uploading If Below Data is Correct.</p>
                         </div>
 
 

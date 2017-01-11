@@ -211,6 +211,14 @@ if (isset($_POST['upload'])) {
 
                     if ($mysqli->multi_query($sqlupload)) {
 
+                        //USCALLAU USC ALL Academic Units Aggregator record creation . Also includes the idea to let user update more units in future
+                        // Below query group all discrete units and resolve collusion basis latest (max) ID value and then sum the records and constitute USCAAU
+
+                        $sqlupload = "INSERT INTO IR_AC_DiversityPersonnel (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FAC_FEMALE, FAC_MALE, FAC_AMERIND_ALASKNAT, FAC_ASIAN, FAC_BLACK, FAC_HISPANIC, FAC_HI_PAC_ISL, FAC_NONRESIDENT_ALIEN, FAC_TWO_OR_MORE, FAC_UNKNOWN_RACE_ETHNCTY, FAC_WHITE, STAFF_FEMALE, STAFF_MALE, STAFF_AMERIND_ALASKNAT, STAFF_ASIAN, STAFF_BLACK, STAFF_HISPANIC, STAFF_HI_PAC_ISL, STAFF_NONRESIDENT_ALIEN, STAFF_TWO_OR_MORE, STAFF_UNKNOWN_RACE_ETHNCTY, STAFF_WHITE)  
+SELECT 'USCAAU' AS OU,'$FUayname' AS AY,'$author' AS AUTHOR,'$time' AS MOD_Time,sum(FAC_FEMALE), sum(FAC_MALE), sum(FAC_AMERIND_ALASKNAT), sum(FAC_ASIAN), sum(FAC_BLACK), sum(FAC_HISPANIC), sum(FAC_HI_PAC_ISL), sum(FAC_NONRESIDENT_ALIEN), sum(FAC_TWO_OR_MORE), sum(FAC_UNKNOWN_RACE_ETHNCTY), sum(FAC_WHITE), sum(STAFF_FEMALE), sum(STAFF_MALE), sum(STAFF_AMERIND_ALASKNAT), sum(STAFF_ASIAN), sum(STAFF_BLACK), sum(STAFF_HISPANIC), sum(STAFF_HI_PAC_ISL), sum(STAFF_NONRESIDENT_ALIEN), sum(STAFF_TWO_OR_MORE),
+ sum(STAFF_UNKNOWN_RACE_ETHNCTY), sum(STAFF_WHITE) FROM IR_AC_DiversityPersonnel where ID_IR_AC_DIVERSITY_PERSONNEL in (select max(ID_IR_AC_DIVERSITY_PERSONNEL) from IR_AC_DiversityPersonnel where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
+                        $mysqli->query($sqlupload);
+
                         $error[0] = "Data Uploaded Successfully.";
 
                     } else {
@@ -355,7 +363,7 @@ require_once("../Resources/Includes/menu.php");
                             <?php echo $dynamictable; ?>
 
 
-                            <p>Please Select Save to Confirm Uploading If Below Data is Correct.</p>
+                            <p>Please Select <strong>Validation Confirmed</strong> to Confirm Uploading If Below Data is Correct.</p>
                         </div>
 
 

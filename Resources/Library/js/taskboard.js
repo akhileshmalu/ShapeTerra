@@ -7,7 +7,7 @@ $(function() {
         showPager : true,
         editing : false,
         deleting :false,
-        nRowsShowing : 20,
+        nRowsShowing : 60,
         width: $('#taskboard').width(),
         rowNumbers: true,
         checkboxes: false,

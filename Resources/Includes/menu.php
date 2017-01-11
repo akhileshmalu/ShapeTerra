@@ -37,7 +37,7 @@ $menu = array(
 	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "" ,"main","provost", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe04e" ,"admin","basic", false),
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "" ,"admin","basic", false),
-	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
+//	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
 	);
 
 // Function to download templates for csv formats
@@ -191,42 +191,42 @@ Generate PDF button currently disabled.
 		<?php } ?>
 
         <li class="" id="header"><a class="main" href="#" onclick="return false">
-		<span id="main" class="icon minus hidden">&#xe024;</span>
-	<span id="main" class="icon plus ">&#xe035;</span>
+		<span id="main" class="icon minus">&#xe024;</span>
+	<span id="main" class="icon plus hidden">&#xe035;</span>
 		Main</a></li>
 
-		<li><a id="main" class="main hidden selected" href="account.php">Home</a></li>
+		<li><a id="main" class="main  selected" href="account.php">Home</a></li>
 
 
 		<?php
 		for ($i = 0; $i < count($menu); $i++) {
 			if (strcmp($rowsmenu['SYS_USER_ROLE'], "provost") == 0) {
 				if ($menu[$i][3] == "main" && ($menu[$i][4] == "provost" or $menu[$i][4] == "basic")) {
-					echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+					echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " ' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 
 				}
 				continue;
 			}
 			if ($rowsmenu['SYS_USER_RIGHT'] == 3) {
 				if ($menu[$i][3] == "main" && ($menu[$i][4] == "approver" or $menu[$i][4] == "basic")) {
-					echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+					echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " ' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
 				}
 				continue;
 			}
 
             if ($rowsmenu['OU_TYPE'] == 'Service Unit') {
                 if ($menu[$i][3] == "main" && ($menu[$i][4] == 'service'or $menu[$i][4] == "basic")) {
-                    echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+                    echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " ' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
                 }
                 continue;
             }
             if ($menu[$i][3] == "main" && ($menu[$i][4] <> "provost" and $menu[$i][4] <> "approver" and $menu[$i][4] <> "service")) {
-                echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " hidden' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+                echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " ' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
             }
         }
 		?>
 
-        <li><a id="main" class="main hidden selected" href="account.php">View OIRAA Data</a></li>
+<!--        <li><a id="main" class="main  selected" href="account.php">View OIRAA Data</a></li>-->
 	</ul>
 
 	<!-- Blueprint Home Menu -->

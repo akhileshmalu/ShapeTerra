@@ -394,10 +394,10 @@ require_once("../Resources/Includes/menu.php");
                     </div>
 
                     <button id="next-tab" type="button"
-                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right changeTab1"> Save & Continue
+                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right changeTab1">Continue
                     </button>
                     <button id="cancel" type="button"
-                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel & Discard
+                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox">Cancel
                     </button>
                 </div>
             </div>
@@ -560,8 +560,7 @@ require_once("../Resources/Includes/menu.php");
                                     class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Save Element Def
                             </button>
                             <button id="cancel" type="button"
-                                    class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel &
-                                Discard
+                                    class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel
                             </button>
 
                         <?php }
@@ -573,7 +572,7 @@ require_once("../Resources/Includes/menu.php");
                             <button name="update" type="submit"
                                     class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-right"> Save Changes
                             </button>
-                            <button  type="submit" name="discard"
+                            <button  type="submit" name="discard" onclick="return confirm('Are you certain you want to delete the definition?');"
                                     class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-left"> Discard Def
                             </button>
 
@@ -581,7 +580,9 @@ require_once("../Resources/Includes/menu.php");
                             <button name="update" type="submit"
                                     class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Update Element Def
                             </button>
-
+                            <button  type="submit" name="discard" onclick="return confirm('Are you certain you want to delete the definition?');"
+                                     class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-left"> Discard Def
+                            </button>
                         <?php }
                     } else{
                     if ($elemid == 0) { ?>
@@ -589,8 +590,7 @@ require_once("../Resources/Includes/menu.php");
                             Propose Element Def
                         </button>
                         <button id="cancel" type="button"
-                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel &
-                            Discard
+                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel
                         </button>
 
                     <?php }} ?>

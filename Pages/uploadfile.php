@@ -135,6 +135,7 @@ if (isset($_POST['upload'])) {
                             if ($row == 0) {
 
                                 $tablefileds[$i] = $csv[$row][$colindex] . ',';
+                                $tablefld = $csv[$row][$colindex];
 
                             } else {
 
@@ -203,6 +204,23 @@ if (isset($_POST['upload'])) {
                 if ($errorflag == 0) {
 
                     if ($mysqli->multi_query($sqlupload)) {
+
+//USCALLAU USC ALL Academic Units Aggregator record creation . Also includes the idea to let user update more units in future
+                        // Below query group all discrete units and resolve collusion basis latest (max) ID value and then sum the records and constitute USCAAU
+
+                        $sqlupload = "INSERT INTO $tablename (";
+                        for($i = 1;$i<count($tablefileds)-1;$i++) {
+                            $sqlupload .=$tablefileds[$i].',';
+                        }
+                        $sqlupload .=$tablefileds[$i].") SELECT 'USCAAU' AS OU,'$FUayname' AS AY,'$author' AS AUTHOR,'$time' AS MOD_Time,";
+
+                        for($i = 5;$i<count($tablefileds)-1;$i++) {
+                            $sqlupload .="SUM(".$tablefileds[$i]."),";
+                        }
+
+                        $sqlupload .= "SUM(".$tablefileds[$i].") FROM $tablename where $primary_key in (SELECT MAX($primary_key) from $tablename where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
+
+                        $mysqli->query($sqlupload);
 
                         $error[0] = "Data Uploaded Successfully.";
 
@@ -345,7 +363,7 @@ require_once("../Resources/Includes/menu.php");
 
                             <?php echo $dynamictable; ?>
 
-                            <p>Please Select Save to Confirm Uploading If Below Data is Correct.</p>
+                            <p>Please Select <strong>Validation Confirmed</strong> to Confirm Uploading If Below Data is Correct.</p>
                         </div>
 
 
