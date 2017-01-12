@@ -14,7 +14,7 @@
 
        session_start(); // Session Initiation
        $error = array(); //Variable to store error msg
-       $errorflag = "";
+       $errorflag = null;
 
        if(isset($_POST['login'])) {
 

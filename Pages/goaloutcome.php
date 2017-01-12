@@ -99,7 +99,7 @@ if(isset($_POST['approve'])) {
     $goalreportstatus = "Pending approval";
     $sqlgoaloutap = "update BP_UnitGoalOutcomes set GOAL_REPORT_STATUS = '$goalreportstatus' where ID_UNIT_GOAL = '$goal_id'; ";
 
-    $sqlgoaloutap = "Update  BpContents set CONTENT_STATUS = '$goalreportstatus', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlgoaloutap = "Update  BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
     if($resultgoaloutap = $mysqli->multi_query($sqlgoaloutap)) {
         $error[1] = "Goal Outcome submitted for Approval.";
@@ -140,9 +140,10 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
-            <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
-            <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1];  ?></p>
-            <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
+                <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
+                <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1];  ?></p>
+                <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
+                <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
 
 <!--        <div class="col-xs-4">-->
@@ -182,12 +183,12 @@ require_once("../Resources/Includes/menu.php");
                 </div>
                 <label for ="goalstate" ><h1>Goal Statement </h1></label>
                 <div id="goalstate" class="form-group">
-                    <textarea  rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo $rowsunitgoal['GOAL_STATEMENT']; ?></textarea>
+                    <textarea  rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']); ?></textarea>
                 </div>
 
                 <label for ="goalalign" ><h1>Goal Alignment</h1></label>
                 <div id="goalalign" class="form-group">
-                    <textarea   rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo $rowsunitgoal['GOAL_ALIGNMENT']; ?></textarea>
+                    <textarea   rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
                 <label for ="goalstatus" ><h1>Goal Status</h1></label>
@@ -203,36 +204,36 @@ require_once("../Resources/Includes/menu.php");
                 </div>
                 <label for ="goalach" ><h1>Goal Achievement </h1></label>
                 <div id="goalach" class="form-group">
-                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexgoalout['GOAL_ACHIEVEMENTS']; ?></textarea>
+                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
                 </div>
 
 
                 <div id="goalresutil" class="form-group hidden">
                     <label for ="goalresutiltext" ><h1>Resources Utilized </h1></label>
-                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexgoalout['GOAL_RSRCS_UTLZD']; ?></textarea>
+                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
                 </div>
 
 
                 <div id="goalconti" class="form-group hidden">
                     <label for ="goalcontitext" ><h1>Goal Continuation </h1></label>
-                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexgoalout['GOAL_CONTINUATION']; ?></textarea>
+                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
                 </div>
 
 
                 <div id="resoneed" class="form-group hidden">
                     <label for ="resoneedtext" ><h1>Resource Needed </h1></label>
-                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexgoalout['GOAL_RSRCS_NEEDED']; ?></textarea>
+                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
                 </div>
 
                 <label for ="notes" ><h1>Notes </h1></label>
                 <div id="notes" class="form-group">
-                    <textarea name="goal_notes" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexgoalout['GOAL_NOTES']; ?></textarea>
+                    <textarea name="goal_notes" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_NOTES']); ?></textarea>
                 </div>
 
                 <!--                        Reviewer Edit Control-->
                 <?php if ($_SESSION['login_right'] != 1): ?>
 
-                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
+                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
 
                 <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right">
                 <input type="submit" id="savebtn" name="save_draft" value="Save Draft" class="btn-secondary pull-right">

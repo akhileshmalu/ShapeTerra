@@ -35,10 +35,6 @@ if ($outype == "Administration" || $outype == "Service Unit" ) {
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
-//Menu control for back to dashboard button
-//true: Dont show button
-//false: show button
-$notBackToDashboard = true;
 
 
 if(isset($_POST['submit_bp'])) {
@@ -113,7 +109,7 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">BluePrint Contents</h1>
+        <h1 class="box-title">Blueprint Contents</h1>
         <div id="taskboard" style="margin-top: 10px; padding-left: 40px;">
             <table class="bphome" action="taskboard/bphomeajax.php" title="BluePrint Contents">
                 <tr>

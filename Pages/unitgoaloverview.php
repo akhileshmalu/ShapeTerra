@@ -68,7 +68,7 @@ if(isset($_POST['goal_submit'])) {
 
     $sqlcreatebp .= "INSERT INTO BP_UnitGoals( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
 
-    $sqlcreatebp .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlcreatebp .= "Update  BpContents set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
     if($mysqli->multi_query($sqlcreatebp)) {
 
@@ -85,7 +85,7 @@ if(isset($_POST['approve'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlcreatebp .= "Update  BpContents set CONTENT_STATUS = 'Pending approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlcreatebp .= "Update  BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
     if ($mysqli->query($sqlcreatebp)) {
 
@@ -141,7 +141,19 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
+        <!--                        Reviewer Edit Control-->
+        <?php if ($_SESSION['login_right'] != 1): ?>
+            <div>
+                <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-right"
+                        onclick ="$('#approve').removeAttr('disabled');"
+                        data-toggle="modal"
+                        data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Goal
+                </button>
+            </div>
+        <?php endif; ?>
         <h1 class="box-title">Goals Overview & Management</h1>
+
+
         <p>Below is a summary of your Unit Goals.</p>
         <div id="taskboard" style="margin-top: 10px;">
             <table class="grid" action="taskboard/unitgoalajax.php" title="Unit Goals">
@@ -157,16 +169,10 @@ require_once("../Resources/Includes/menu.php");
         <!--                        Reviewer Edit Control-->
         <?php if ($_SESSION['login_right'] != 1): ?>
 
-        <div id="addnew" class="">
-            <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left"
-                    onclick ="$('#approve').removeAttr('disabled');"
-                    data-toggle="modal"
-                    data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Goal
-            </button>
-        <form action="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id ?>" method="POST" class="ajaxform">
+
+        <form action="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id ?>" method="POST" >
             <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right" >
         </form>
-        </div>
 
         <?php endif; ?>
     </div>

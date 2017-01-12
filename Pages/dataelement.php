@@ -338,7 +338,7 @@ require_once("../Resources/Includes/menu.php");
                                     sentences</em></small>
                         </p>
                         <textarea rows="4" name="basicmean" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $rowsdataelem['BASIC_MEANING']; ?></textarea>
+                                  class="form-control"><?php echo mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
                     </div>
 
                     <label for="timebasis">Time Basis for Outcome <span style="color: red"><sup>*</sup></span></label>
@@ -390,7 +390,7 @@ require_once("../Resources/Includes/menu.php");
                                     use the field designated for that purpose (below).</em></small>
                         </p>
                         <textarea rows="4" name="usage" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $rowsdataelem['INTERP_USAGE']; ?></textarea>
+                                  class="form-control"><?php echo mybr2nl($rowsdataelem['INTERP_USAGE']); ?></textarea>
                     </div>
 
                     <button id="next-tab" type="button"
@@ -417,7 +417,7 @@ require_once("../Resources/Includes/menu.php");
                                     element).</em></small>
                         </p>
                         <textarea rows="4" name="datasource" cols="25" wrap="hard"
-                                  class="form-control" required><?php echo $rowsdataelem['DATA_SOURCE']; ?></textarea>
+                                  class="form-control" required><?php echo mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
                     </div>
 
                     <div id="resparty" class="form-group">
@@ -469,7 +469,7 @@ require_once("../Resources/Includes/menu.php");
                                     in producing the values for this data element</em></small>
                         </p>
                         <textarea rows="4" name="datatrans" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $rowsdataelem['DATA_TRANSFORM']; ?></textarea>
+                                  class="form-control"><?php echo mybr2nl($rowsdataelem['DATA_TRANSFORM']); ?></textarea>
                     </div>
 
                     <div id="valuemand" class="form-group">
@@ -494,7 +494,7 @@ require_once("../Resources/Includes/menu.php");
                                     provide all available choices.</em></small>
                         </p>
                         <textarea rows="4" name="permitvalue" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $rowsdataelem['VALUES_PERMITTED']; ?></textarea>
+                                  class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_PERMITTED']); ?></textarea>
                     </div>
 
                     <div id="constraint" class="form-group">
@@ -508,7 +508,7 @@ require_once("../Resources/Includes/menu.php");
                                     not here.</em></small>
                         </p>
                         <textarea rows="4" name="constraint" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $rowsdataelem['VALUES_CONSTRAINTS']; ?></textarea>
+                                  class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_CONSTRAINTS']); ?></textarea>
                     </div>
 
                     <div id="notes" class="form-group">
@@ -517,7 +517,7 @@ require_once("../Resources/Includes/menu.php");
                             <small><em>Any miscellaneous notes that do not fit elsewhere.</em></small>
                         </p>
                         <textarea rows="4" name="notes" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $rowsdataelem['NOTES_DATA_ELEMENT']; ?></textarea>
+                                  class="form-control"><?php echo mybr2nl($rowsdataelem['NOTES_DATA_ELEMENT']); ?></textarea>
                     </div>
 
 <!--                    <button id="next-tab" type="button"-->

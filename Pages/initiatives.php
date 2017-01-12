@@ -92,7 +92,7 @@ if ($_FILES['supinfo']['tmp_name'] !="") {
 `OU_ABBREV` = VALUES(`OU_ABBREV`),`OUTCOMES_AY` = VALUES(`OUTCOMES_AY`),`OUTCOMES_AUTHOR` = VALUES(`OUTCOMES_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`EXPERIENTIAL_LEARNING_UGRAD` = VALUES(`EXPERIENTIAL_LEARNING_UGRAD`),
 `EXPERIENTIAL_LEARNING_GRAD` =VALUES(`EXPERIENTIAL_LEARNING_GRAD`), `AFFORDABILITY`=VALUES(`AFFORDABILITY`),`REPUTATION_ENHANCE`=VALUES(`REPUTATION_ENHANCE`),`COOL_STUFF`=VALUES(`COOL_STUFF`),`CHALLENGES`=VALUES(`CHALLENGES`),`AC_SUPPL_INITIATIVES_OBSRV`=VALUES(`AC_SUPPL_INITIATIVES_OBSRV`);";
 
-        $sqlinitiatives .="Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlinitiatives .="Update  BpContents set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
         if ($mysqli->multi_query($sqlinitiatives)) {
 
@@ -108,7 +108,7 @@ if(isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlinitiatives .= " Update  BpContents set CONTENT_STATUS = 'Pending approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlinitiatives .= " Update  BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
     if ($mysqli->query($sqlinitiatives)) {
 
@@ -157,8 +157,9 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
-            <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
+            <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;  ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
 
@@ -192,7 +193,7 @@ require_once("../Resources/Includes/menu.php");
                 <div id="afford" class="form-group">
                     <p><small><em>Describe your unit's assessment of affordability and efforts to address affordability during the Academic Year.</em></small></p>
 
-                        <textarea  name="afford" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['AFFORDABILITY']; ?></textarea>
+                        <textarea  name="afford" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['AFFORDABILITY']); ?></textarea>
 
 
                 </div>
@@ -202,7 +203,7 @@ require_once("../Resources/Includes/menu.php");
                     <p><small><em>Describe innovations, happy accidents, good news, etc. that occurred within your unit during the Academic Year, not noted elsewhere in your reporting.
                             </em></small></p>
 
-                    <textarea  name="reputation" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['REPUTATION_ENHANCE']; ?></textarea>
+                    <textarea  name="reputation" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['REPUTATION_ENHANCE']); ?></textarea>
 
                 </div>
 
@@ -211,7 +212,7 @@ require_once("../Resources/Includes/menu.php");
                     <p><small><em>Describe your unit's assessment of affordability and efforts to address affordability during the Academic Year.
                             </em></small></p>
 
-                    <textarea  name="coolstuff" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['COOL_STUFF']; ?></textarea>
+                    <textarea  name="coolstuff" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['COOL_STUFF']); ?></textarea>
 
                 </div>
 
@@ -220,7 +221,7 @@ require_once("../Resources/Includes/menu.php");
                     <p><small><em>Describe challenges and resource needs you anticipate for the current and upcoming Academic Years, not noted elsewhere in your reporting - or which merit additional attention.
                             </em></small></p>
 
-                    <textarea  name="challenges" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['CHALLENGES']; ?></textarea>
+                    <textarea  name="challenges" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['CHALLENGES']); ?></textarea>
 
                 </div>
 
@@ -237,7 +238,7 @@ require_once("../Resources/Includes/menu.php");
                 <!--                        Reviewer Edit Control-->
                 <?php if ($_SESSION['login_right'] != 1): ?>
 
-                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
+                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
                 <input type="submit" id="approve" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">
                 <input type="submit" id="savebtn" name="savedraft" value="Save Draft" class="btn-secondary pull-right">
 
@@ -259,7 +260,11 @@ require_once("../Resources/Includes/footer.php");
 <script type="text/javascript">
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
+    function selectorfile(selected) {
+        var b = $(selected).val().substr(12);
+        alert(b + " is selected.");
+    }
 </script>
 <script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
@@ -267,9 +272,3 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/outcomecntrl.js"></script>
-<script>
-    function selectorfile(selected) {
-        var b = $(selected).val().substr(12);
-        alert(b + " is selected.");
-    }
-</script>

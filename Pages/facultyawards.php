@@ -133,6 +133,17 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
+        <!--                        Reviewer Edit Control-->
+        <?php if ($_SESSION['login_right'] != 1): ?>
+
+            <div id="addnew" class="">
+                <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-right"
+                        data-toggle="modal"
+                        data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Awards
+                </button>
+            </div>
+
+        <?php endif; ?>
         <h1 class="box-title">Faculty Awards</h1>
         <div id="taskboard" style="margin-top: 10px;">
             <table class="grid" action="taskboard/facultyajax.php" title="Faculty Awards">
@@ -145,17 +156,7 @@ require_once("../Resources/Includes/menu.php");
             </table>
         </div>
 
-        <!--                        Reviewer Edit Control-->
-        <?php if ($_SESSION['login_right'] != 1): ?>
 
-        <div id="addnew" class="">
-            <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left"
-                    data-toggle="modal"
-                    data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Awards
-            </button>
-        </div>
-
-        <?php endif; ?>
 
     </div>
 </div>

@@ -77,11 +77,16 @@ function stringtoid ($string){
     return $id;
 }
 /*
- * Function for taking paragraph with lines input in goal statement
+ * Function for preserving HTML line breaks in Text area
  */
 function mynl2br($text) {
     return strtr($text, array("\r\n" => '<br />', "\r" => '<br />', "\n" => '<br />'));
 }
+
+function mybr2nl($text) {
+    return strtr($text, array("<br />" => "\r\n"));
+}
+
 
 
 

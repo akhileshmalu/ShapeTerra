@@ -175,7 +175,7 @@ require_once("../Resources/Includes/menu.php");
             <div id="facdev" class="form-group">
                 <label for="factextarea"><small><em>Optional. List and describe your unit's efforts at faculty development during the Academic Year, including investments, activities, incentives, objectives, and outcomes.
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac)</em></small></label>
-                <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['FACULTY_DEVELOPMENT']; ?></textarea>
+                <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']); ?></textarea>
             </div>
 
             <label for ="createact" ><h1>Creative Activity</h1></label>
@@ -183,7 +183,7 @@ require_once("../Resources/Includes/menu.php");
                 <label for="cractivity"><small><em>Optional.  List and describe significant artistic, creative, and performance activities of faculty in your unit during the Academic Year.  List by each individual's last name, first name, name of activity, and date (month and year are sufficient).
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac).</em></small>
                 </label>
-                <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control"><?php echo $rowsexvalue['CREATIVE_ACTIVITY']; ?></textarea>
+                <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']); ?></textarea>
             </div>
 
             <label for ="suppfacinfo" ><h1>Supplemental Faculty Info</h1></label>

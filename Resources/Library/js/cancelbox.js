@@ -6,12 +6,19 @@ if(choice == true){
 }
 });
 
+$('.cancelbpbox').on("click",function () {
+
+    var ayname = $('#ayname').text();
+    var ouname = $('#ouabbrev').text();
+    if(confirm("Are you sure you want to cancel")) {
+        $(window).attr('location','bphome.php?ayname='+ayname+"&ou_abbrev="+ouname);
+    }
+});
 
 $('.cancelFUbox').on("click",function () {
 
     var ay = document.getElementById('fuayname');
     var te = ay.value;
-    alert(te);
     var choice = confirm("Are you sure you want to cancel");
     if(choice == true){
         $(window).attr('location','fileuploadhome.php?ayname='+ay)

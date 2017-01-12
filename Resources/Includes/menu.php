@@ -24,6 +24,7 @@ $rowsmenu = $resultmenu ->fetch_assoc();
 $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
 $_SESSION['login_ouname'] = $rowsmenu['OU_NAME'];
 $_SESSION['login_right'] = $rowsmenu['SYS_USER_RIGHT'];
+$_SESSION['login_role'] = $rowsmenu['SYS_USER_ROLE'];
 $ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
 
 
