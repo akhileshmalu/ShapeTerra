@@ -46,6 +46,8 @@ $tablename = $rowsfucontent['NAME_UPLOADFILE'];
  */
 $sqldatadisplay = "SELECT * FROM IR_AC_FacultyPop where ID_AC_FACULTY_POPULATION in (select max(ID_AC_FACULTY_POPULATION) from IR_AC_FacultyPop where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
 $resultdatadisplay = $mysqli->query($sqldatadisplay);
+$rowsdatadisplay = $resultdatadisplay ->fetch_array(MYSQLI_NUM);
+
 
 $dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
 $fieldcnt = $resultdatadisplay->field_count;
@@ -68,18 +70,18 @@ while($rowsdatadisplay = $resultdatadisplay ->fetch_array(MYSQLI_NUM)) {
     $count++;
 }
 
-for ($j = 1; $j < $fieldcnt; $j++) {
-    for ($i = 0; $i <= $num_records; $i++) {
-        if($i == 0)    {
-            $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-        } else {
-            $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-        }
+// for ($j = 1; $j < $fieldcnt; $j++) {
+//     for ($i = 0; $i <= $num_records; $i++) {
+//         if($i == 0)    {
+//             $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
+//         } else {
+//             $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
+//         }
 
-    }
-    $dynamictable .= "</tr>";
-}
-$dynamictable .= '</table>';
+//     }
+//     $dynamictable .= "</tr>";
+// }
+// $dynamictable .= '</table>';
 
 
 if (isset($_POST['upload'])) {
@@ -341,11 +343,93 @@ require_once("../Resources/Includes/menu.php");
                                 appears as intended, Please Confirm.</em></small>
                     </label>
                     <div id="validitychk" class="form-group">
+                        <form action="" method="POST" >
+                        <h2 class="data-display">Select Academic Unit to View</h2>
+                            <div class="col-xs-3">
+                                <select  name="AY" class="col-xs-4 form-control" id="AYgoal">
+                                    <option value="USC Columbia All Academic Units">USC Columbia All Academic Units</option>
+                                    <option value="Other Units">Other Units</option>
+                                    <option value="Other Units">Other Units</option>
+                                    <option value="Other Units">Other Units</option>
+                                    <option value="Other Units">Other Units</option>
+                                </select>
+                            </div>
+                        </form>
 
-                        <div id="display">
-                            <p><b>Display Data - Table Name: <?php echo $tablename; ?></b></p>
 
-                            <?php echo $dynamictable; ?>
+
+                        <div id="display" class="col-xs-12">
+
+                            
+                            <h2 class="data-display">Display Data - Table Name: <?php echo $tablename; ?></h2>
+
+                            <p><b class="garnet">Academic Year:</b> 2001</p>                            
+
+                            <p><b class="garnet">College/School:</b> CEC</p>                             
+
+                            <p><b class="garnet">Outcomes Author:</b> Blake Finn </p>                             
+
+                            <p><b class="garnet">Last Modified:</b> <?php echo $rowsdatadisplay['TTF_FTE_PROF_TNR']; ?> </p> 
+
+
+                            <h2 class="data-display">Tenure-track Faculty (FTE Positions)</h2>
+
+                            
+                            <p class="indent"><b class="garnet">Professor, with tenure:</b>
+                            <?php echo $rowsdatadisplay['TTF_FTE_PROF_TNR']; ?> </p>                             
+                            <p class="indent"><b class="garnet">Associate Professor, with tenure:</b> <?php echo $rowsdatadisplay['TTF_FTE_ASSOC_PROF_TNR']; ?> </p> 
+
+                            <p class="indent"><b class="garnet">Professor:</b> <?php echo $rowsdatadisplay['TTF_FTE_PROF']; ?>  </p> 
+
+                            <p class="indent"><b class="garnet">Associate Professor:</b> <?php echo $rowsdatadisplay['TTF_FTE_ASSOC_PROF']; ?> </p> 
+
+                            <p class="indent"><b class="garnet">Assistant Professor:</b> <?php echo $rowsdatadisplay['TTF_FTE_ASSIST_PROF']; ?> </p> 
+
+                            <br />
+
+                            <p class="indent"><b class="garnet">Total - Tenure-track Faculty (FTE positions):</b> <?php echo $rowsdatadisplay['TTF_FTE_ALL']; ?> </p> 
+
+
+                            <h2 class="data-display">Research Faculty (FTE Positions)</h2>
+
+                            
+                            <p class="indent"><b class="garnet">Research Professor:</b> <?php echo $rowsdatadisplay['RSRCH_FTE_PROF']; ?> </p>                             
+                            <p class="indent"><b class="garnet">Research Associate Professor:</b> <?php echo $rowsdatadisplay['RSRCH_FTE_ASSOC_PROF']; ?> </p> 
+
+                            <p class="indent"><b class="garnet">Research Assistant Professor:</b> <?php echo $rowsdatadisplay['RSRCH_FTE_ASSIST_PROF']; ?>  </p> 
+
+                            <br />
+
+                            <p class="indent"><b class="garnet">Total - Research Faculty (FTE Positions):</b> <?php echo $rowsdatadisplay['RSRCH_FTE_ALL']; ?> </p> 
+
+                            <h2 class="data-display">Clinical/Instructional Faculty (FTE Positions)</h2>
+
+                            
+                            <p class="indent"><b class="garnet">Clinical  Professor:</b> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_PROF']; ?> </p>                             
+                            <p class="indent"><b class="garnet">Clinical  Associate Professor:</b> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_ASSOC_PROF']; ?> </p> 
+
+                            <p class="indent"><b class="garnet">Clinical  Assistant Professor:</b> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_ASSIST_PRO']; ?>  </p> 
+
+                            <p class="indent"><b class="garnet">Instructor/Lecturer:</b> <?php echo $rowsdatadisplay['CIF_FTE_INSTR_LCTR']; ?>  </p> 
+
+                            <br />
+
+                            <p class="indent"><b class="garnet">Total - Clinical/Instructional Faculty (FTE positions):</b> <?php echo $rowsdatadisplay['CIF_FTE_ALL']; ?> </p> 
+
+                            <h2 class="data-display">Other Faculty</h2>
+
+                            
+                            <p class="indent"><b class="garnet">Adjunct Faculty</b> <?php echo $rowsdatadisplay['OTHRFAC_PT_ADJUNCT']; ?> </p>                             
+                            <p class="indent"><b class="garnet">Other Faculty:</b> <?php echo $rowsdatadisplay['OTHRFAC_PT_OTHER']; ?> </p>
+
+                            <br /> 
+
+                            <p class="indent"><b class="garnet">Total - Other Faculty:</b> <?php echo $rowsdatadisplay['OTHRFAC_ALL']; ?>  </p> 
+
+                            <h2 class="data-display">Student Faculty Ratio</h2>
+
+                            
+                            <p class="indent"><b class="garnet">Student Faculty Ratio</b> <?php echo $rowsdatadisplay['STUDENT_FACULTY_RATIO']; ?> </p>
 
                             <p>Please Select <strong>Validation Confirmed</strong> to Confirm Uploading If Below Data is Correct.</p>
                         </div>

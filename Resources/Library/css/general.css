@@ -35,6 +35,14 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	margin-right: 0;
 }
 
+.garnet{
+	color:#591B21 !important;
+}
+
+.indent{
+	text-indent: 50px;
+}
+
 /********************************************************
 * 
 * Main Box Styles
@@ -129,6 +137,13 @@ p.status span{
 
 .textbox {
 	height: 200px;
+}
+
+.data-display{
+	font-size: 20px;
+	font-weight: 400;
+	margin-top: 15px !important;
+	margin-bottom: 10px !important;
 }
 /********************************************************
 * 
