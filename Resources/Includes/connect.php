@@ -7,14 +7,14 @@ ini_set("date.timezone", "America/New_York");
 // Connect to MySql Database
 $db="TESTDB";
 
-$mysqli = new mysqli("localhost","root","root",$db);
-$mysqli1 = new mysqli("localhost","root","root",$db);
-$mysqli2 = new mysqli("localhost","root","root",$db);
+$mysqli = new mysqli("localhost","root","",$db);
+$mysqli1 = new mysqli("localhost","root","",$db);
+$mysqli2 = new mysqli("localhost","root","",$db);
 
 
 $site = "localhost:8888/shapeterra";
 
-$menucon= new mysqli("localhost","root","root",$db);
+$menucon= new mysqli("localhost","root","",$db);
 
 /*
  * Menu directive for local server
@@ -86,7 +86,3 @@ function mynl2br($text) {
 function mybr2nl($text) {
     return strtr($text, array("<br />" => "\r\n"));
 }
-
-
-
-

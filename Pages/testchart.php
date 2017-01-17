@@ -6,7 +6,7 @@
   $resultuser = $mysqli->query($sqluser);
   $rowsuser = $resultuser->fetch_assoc();
 
-  require ("../Resources/Includes/visualdata.php");
+  require ("../Resources/Includes/visualData.php");
   $VisualData = new VisualData;
 
 ?>
@@ -24,9 +24,8 @@
 <body>
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active"><a href="#grade" aria-controls="grade" role="tab" data-toggle="tab">By Grade</a></li>
-    <li role="presentation"><a href="#diversity" aria-controls="diversity" role="tab" data-toggle="tab">By Diversity</a></li>
-    <li role="presentation"><a href="#personnel" aria-controls="personnel" role="tab" data-toggle="tab">By Personnel</a></li>
     <li role="presentation"><a href="#faculty" aria-controls="faculty" role="tab" data-toggle="tab">By Faculty</a></li>
+    <li role="presentation"><a href="#diversity" aria-controls="diversity" role="tab" data-toggle="tab">By Diversity</a></li>
   </ul>
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="grade">
@@ -44,10 +43,32 @@
       </div>
     </div>
     <div role="tabpanel" class="tab-pane" id="diversity">
-      
+      <div class="col-md-3">
+        <h5>Select filter by year</h5>
+        <?php $VisualData->getDiversityStudentYears(); ?>
+        <div class="p-a-2"></div>
+        <h5>Select filter by year</h5>
+        <?php $VisualData->getDiversityFacultyYears(); ?>
+      </div>
+      <div class="col-md-9">
+        <h1 class='text-center'>Student Diversity</h1>
+        <div id="student-diversity-chart">
+        </div>
+        <h1 class='text-center'>Faculty Diversity</h1>
+        <div id="faculty-diversity-chart">
+        </div>
+      </div>
     </div>
-    <div role="tabpanel" class="tab-pane" id="personnel">...</div>
-    <div role="tabpanel" class="tab-pane" id="faculty">...</div>
+    <div role="tabpanel" class="tab-pane" id="faculty">
+      <div class="col-md-3">
+        <h5>Select filter by year</h5>
+        <?php $VisualData->getFacultyYears($mysqli); ?>
+      </div>
+      <div class="col-md-9">
+        <div id="faculty-chart">
+        </div>
+      </div>
+    </div>
   </div>
   <script src="../Resources/Library/js/visualData.js"></script>
   <?php require_once("../Resources/Includes/footer.php"); ?>
