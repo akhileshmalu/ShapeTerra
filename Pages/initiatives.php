@@ -14,6 +14,7 @@ $BackToDashboard = true;
 
 require_once ("../Resources/Includes/connect.php");
 
+$bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
@@ -40,10 +41,19 @@ if ($ouid == 4) {
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
-
-$sqlexvalue = "SELECT * from AC_InitObsrv where OU_ABBREV='$ouabbrev' and OUTCOMES_AY='$bpayname' ";
+/*
+ * Values for placeholders
+ */
+$sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV='$ouabbrev' and OUTCOMES_AY='$bpayname' ";
 $resultexvalue = $mysqli->query($sqlexvalue);
 $rowsexvalue = $resultexvalue -> fetch_assoc();
+
+/*
+ * SQL check Status of Blueprint Content for Edit restrictions
+ */
+$sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = '$contentlink_id';";
+$resultbpstatus = $mysqli->query($sqlbpstatus);
+$rowsbpstatus = $resultbpstatus->fetch_assoc();
 
 
 if (isset($_POST['savedraft'])) {
@@ -56,14 +66,12 @@ if (isset($_POST['savedraft'])) {
     $coolstuff = nl2br($_POST['coolstuff']);
     $challenges = nl2br($_POST['challenges']);
 
-
-
-
 //    if ($_FILES["supinfo"]["error"] > 0) {
 //        $error[0] = "Return Code: No Input " . $_FILES["supinfo"]["error"] . "<br />";
 //        $errorflag = 1;
 //
 //    } else {
+
 if ($_FILES['supinfo']['tmp_name'] !="") {
     $target_dir = "../uploads/initiatives/";
     $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
@@ -86,13 +94,13 @@ if ($_FILES['supinfo']['tmp_name'] !="") {
 }
 
     if ($errorflag != 1) {
-        $sqlinitiatives = "INSERT INTO AC_InitObsrv (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, EXPERIENTIAL_LEARNING_UGRAD, EXPERIENTIAL_LEARNING_GRAD, AFFORDABILITY, REPUTATION_ENHANCE,COOL_STUFF, CHALLENGES,AC_SUPPL_INITIATIVES_OBSRV)
+        $sqlinitiatives = "INSERT INTO `AC_InitObsrv` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, EXPERIENTIAL_LEARNING_UGRAD, EXPERIENTIAL_LEARNING_GRAD, AFFORDABILITY, REPUTATION_ENHANCE,COOL_STUFF, CHALLENGES,AC_SUPPL_INITIATIVES_OBSRV)
  VALUES ('$ouabbrev','$bpayname','$author','$time','$ugexplearn','$gradexplearn','$afford','$reputation','$coolstuff','$challenges','$supinfopath')
- ON DUPLICATE KEY UPDATE 
-`OU_ABBREV` = VALUES(`OU_ABBREV`),`OUTCOMES_AY` = VALUES(`OUTCOMES_AY`),`OUTCOMES_AUTHOR` = VALUES(`OUTCOMES_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`EXPERIENTIAL_LEARNING_UGRAD` = VALUES(`EXPERIENTIAL_LEARNING_UGRAD`),
-`EXPERIENTIAL_LEARNING_GRAD` =VALUES(`EXPERIENTIAL_LEARNING_GRAD`), `AFFORDABILITY`=VALUES(`AFFORDABILITY`),`REPUTATION_ENHANCE`=VALUES(`REPUTATION_ENHANCE`),`COOL_STUFF`=VALUES(`COOL_STUFF`),`CHALLENGES`=VALUES(`CHALLENGES`),`AC_SUPPL_INITIATIVES_OBSRV`=VALUES(`AC_SUPPL_INITIATIVES_OBSRV`);";
+ ON DUPLICATE KEY UPDATE `OU_ABBREV` = VALUES(`OU_ABBREV`),`OUTCOMES_AY` = VALUES(`OUTCOMES_AY`),`OUTCOMES_AUTHOR` = VALUES(`OUTCOMES_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`EXPERIENTIAL_LEARNING_UGRAD` = VALUES(`EXPERIENTIAL_LEARNING_UGRAD`),
+`EXPERIENTIAL_LEARNING_GRAD` =VALUES(`EXPERIENTIAL_LEARNING_GRAD`), `AFFORDABILITY`=VALUES(`AFFORDABILITY`),`REPUTATION_ENHANCE`=VALUES(`REPUTATION_ENHANCE`),`COOL_STUFF`=VALUES(`COOL_STUFF`),`CHALLENGES`=VALUES(`CHALLENGES`),`AC_SUPPL_INITIATIVES_OBSRV`= VALUES(`AC_SUPPL_INITIATIVES_OBSRV`);";
 
-        $sqlinitiatives .="Update  BpContents set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlinitiatives .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlinitiatives .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = '$author', LastModified = '$time' where ID_BROADCAST = '$bpid'; ";
 
         if ($mysqli->multi_query($sqlinitiatives)) {
 
@@ -108,7 +116,7 @@ if(isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlinitiatives .= " Update  BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlinitiatives .= " Update BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR = '$author', MOD_TIMESTAMP = '$time' where ID_CONTENT ='$contentlink_id';";
 
     if ($mysqli->query($sqlinitiatives)) {
 
@@ -118,6 +126,28 @@ if(isset($_POST['submit_approval'])) {
         $error[0] = "Initiatives & Observation Could not be submitted. Please Retry.";
     }
 
+}
+
+if(isset($_POST['approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Initiatives Approved Successfully";
+    } else {
+        $error[0] = "Initiatives Could not be Approved. Please Retry.";
+    }
+}
+
+if(isset($_POST['reject'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Initiatives Rejected Successfully";
+    } else {
+        $error[0] = "Initiatives Could not be Rejected. Please Retry.";
+    }
 }
 
 
@@ -230,19 +260,48 @@ require_once("../Resources/Includes/menu.php");
                     <p><small><em>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Initiatives & Observations for the Academic Year.
                             </em></small></p>
 
-                    <label for="supinfofile">Select File
-                    </label>
+                    <label for="supinfofile">Select File</label>
                     <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
                 </div>
 
-                <!--                        Reviewer Edit Control-->
-                <?php if ($_SESSION['login_right'] != 1): ?>
+                <!--                        Reviewer Edit Control
+                <?php //if ($_SESSION['login_right'] != 1): ?>
 
                 <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
                 <input type="submit" id="approve" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">
                 <input type="submit" id="savebtn" name="savedraft" value="Save Draft" class="btn-secondary pull-right">
 
-                <?php endif; ?>
+                <?php //endif; ?>
+                -->
+
+                <!--                      Edit Control-->
+
+                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+
+                    <button id="save" type="submit" name="savedraft"
+                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                        Save Draft
+                    </button>
+                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
+                    <button type="submit" id="submit_approve" name="submit_approve"
+                            class="btn-primary pull-right">Submit For Approval</button>
+
+                <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
+
+                    <button id="save" type="submit" name="savedraft"
+                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                        Save Draft
+                    </button>
+
+                    <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
+                        <input type="submit" id="approve" name="approve" value="Approve"
+                               class="btn-primary pull-right">
+
+                        <input type="submit" id="reject" name="reject" value="Reject"
+                               class="btn-primary pull-right">
+
+                    <?php endif; } ?>
 
             </form>
         </div>

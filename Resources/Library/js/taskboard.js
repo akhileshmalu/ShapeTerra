@@ -64,13 +64,11 @@ $(function() {
     }).on("rowClick",function(e, $rows,rowData) {
         //console.log("rowClick",$rows,rowData);
         var id =$rows.attr('data-row');
-
-
         // $($rows).css("background","black").filter('.grid-row-'+id).css("background","rgba(0,0,0,0.05)");
-
         $('.col .row-hover').removeClass('row-hover');
+        $(".grid-row-"+id).toggleClass('row-hover','row-hoverOut');
+        // $(".grid-row-"+id).attr('id','selectable');
 
-    $(".grid-row-"+id).toggleClass('row-hover','row-hoverOut');
 
 
     }).on("save",function(e, row, res) {
@@ -121,7 +119,7 @@ $(function() {
         page : 1,
         showPager : true,
         editing : false,
-        deleting :false,
+        deleting :true,
         nRowsShowing : 70,
         width: $('#taskboard').width(),
         rowNumbers: true,

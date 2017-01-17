@@ -114,6 +114,12 @@ require_once("../Resources/Includes/menu.php");
 
     </div>
 
+<!--    <div>-->
+<!--        <object data="../uploads/facultyInfo/FacultyDevelopmentPlan.pdf" type="application/pdf" width="300" height="200">-->
+<!--            alt : <a href="../uploads/facultyInfo/FacultyDevelopmentPlan.pdf">test.pdf</a>-->
+<!--        </object>-->
+<!--    </div>-->
+
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">BluePrint Preview</h1>
 

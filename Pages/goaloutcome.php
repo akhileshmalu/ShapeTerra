@@ -19,6 +19,7 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Local & Session variable Initialization
  */
+$bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $goal_id=intval($_GET['goal_id']);
 $bpayname =$_SESSION['bpayname'];
@@ -64,7 +65,7 @@ $rowsunitgoal = $resultunitgoal -> fetch_assoc();
  * Add Modal Record Addition
  */
 
-if(isset($_POST['save_draft'])){
+if(isset($_POST['savedraft'])){
 
     $goalstatus = $_POST['goal_status'];
     $goalach = nl2br($_POST['goal_ach']);
@@ -78,36 +79,60 @@ if(isset($_POST['save_draft'])){
 
 
 
-    $sqlgoalout = "INSERT INTO BP_UnitGoalOutcomes (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_NOTES) 
+    $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_NOTES) 
 VALUES ('$goal_id','$author','$time','$goalreportstatus','$goalstatus','$goalach','$resutilzed','$goalconti','$resneed','$goalnote'); ";
 
-    $sqlgoalout .="Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlgoalout .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
+
+    $sqlgoalout .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
     if($resultgoalout = $mysqli->multi_query($sqlgoalout)) {
         $error[0] = "Goal Outcome Saved.";
-    }
-    else{
+    } else{
         $error[0] = "Goal Outcome could not be Saved.";
     }
 
 }
 
-if(isset($_POST['approve'])) {
+if(isset($_POST['submit_approve'])) {
 
     $goal_id = $_GET['goal_id'];
     $contentlink_id = $_GET['linkid'];
-    $goalreportstatus = "Pending approval";
-    $sqlgoaloutap = "update BP_UnitGoalOutcomes set GOAL_REPORT_STATUS = '$goalreportstatus' where ID_UNIT_GOAL = '$goal_id'; ";
+    $goalreportstatus = "Pending Approval";
+    $sqlgoaloutap .= "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = '$goalreportstatus' where ID_UNIT_GOAL = '$goal_id'; ";
 
-    $sqlgoaloutap = "Update  BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    //$sqlgoaloutap .= "Update `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
 
     if($resultgoaloutap = $mysqli->multi_query($sqlgoaloutap)) {
         $error[1] = "Goal Outcome submitted for Approval.";
-    }
-    else{
+    } else {
         $error[1] = "Goal Outcome could not be Submitted.";
     }
 
+}
+
+//Dean Approve or Reject
+
+if(isset($_POST['approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Approved' where ID_UNIT_GOAL = '$goal_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Goal Outcome Approved Successfully";
+    } else {
+        $error[0] = "Goal Outcome Could not be Approved. Please Retry.";
+    }
+}
+
+if(isset($_POST['reject'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Rejected' where ID_UNIT_GOAL = '$goal_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Goal Outcome Rejected Successfully";
+    } else {
+        $error[0] = "Goal Outcome Could not be Rejected. Please Retry.";
+    }
 }
 
 
@@ -121,15 +146,15 @@ require_once("../Resources/Includes/menu.php");
 
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
-<!--<div class="overlay hidden"></div>-->
-<?php //if (isset($_POST['save_draft'])) { ?>
-<!--    <div class="alert">-->
-<!--        <a href="#" class="close end"><span class="icon">9</span></a>-->
-<!--        <h1 class="title"></h1>-->
-<!--        <p class="description">--><?php //foreach ($error as $value) echo $value; ?><!--</p>-->
-<!--        <button type="button" redirect="" class="end btn-primary">Close</button>-->
-<!--    </div>-->
-<?php //} ?>
+<div class="overlay hidden"></div>
+<?php if (isset($_POST['savedraft']) OR isset($_POST['submit_approve']) OR isset($_POST['approve']) OR isset($_POST['reject']) ) { ?>
+    <div class="alert">
+        <a href="#" class="close end"><span class="icon">9</span></a>
+        <h1 class="title"></h1>
+        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <button type="button" redirect="goaloutcomeshome.php?linkid=<?php echo $contentlink_id ?>" class="end btn-primary">Close</button>
+    </div>
+<?php } ?>
 
 <div class="hr"></div>
 
@@ -164,7 +189,7 @@ require_once("../Resources/Includes/menu.php");
                     style="color: grey">Goal : <?php echo $rowsunitgoal['UNIT_GOAL_TITLE']; ?></p></h4>
             <!--                </div>-->
 
-            <form action="<?php echo "goaloutcome.php?goal_id=$goal_id&linkid=$contentlink_id"; ?>" method="POST" class="ajaxform">
+            <form action="<?php echo "goaloutcome.php?goal_id=$goal_id&linkid=$contentlink_id"; ?>" method="POST">
 
                 <div class="form-group">
                     <label for="goallink"><h1>Linked to University Goal(s)</h1></label>
@@ -231,14 +256,44 @@ require_once("../Resources/Includes/menu.php");
                 </div>
 
                 <!--                        Reviewer Edit Control-->
-                <?php if ($_SESSION['login_right'] != 1): ?>
+<!--                --><?php //if ($_SESSION['login_right'] != 1): ?>
+<!---->
+<!--                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">-->
+<!---->
+<!--                <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right">-->
+<!--                <input type="submit" id="savebtn" name="save_draft" value="Save Draft" class="btn-secondary pull-right">-->
+<!---->
+<!--                --><?php //endif; ?>
 
-                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
+                <!--                      Edit Control-->
 
-                <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right">
-                <input type="submit" id="savebtn" name="save_draft" value="Save Draft" class="btn-secondary pull-right">
+                <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) { ?>
 
-                <?php endif; ?>
+                    <button id="save" type="submit" name="savedrft"
+                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                        Save Draft
+                    </button>
+                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
+                    <button type="submit" id="submit_approve" name="submit_approve"
+                            class="btn-primary pull-right">Submit For Approval</button>
+
+                <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
+
+                    <button id="save" type="submit" name="savedraft"
+                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                        Save Draft
+                    </button>
+
+                    <?php if($rowsexgoalout['GOAL_REPORT_STATUS'] == 'Pending Approval'): ?>
+                        <input type="submit" id="approve" name="approve" value="Approve"
+                               class="btn-primary pull-right">
+
+                        <input type="submit" id="reject" name="reject" value="Reject"
+                               class="btn-primary pull-right">
+
+                    <?php endif; } ?>
 
             </form>
         </div>

@@ -22,6 +22,7 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Local & Session variable Initialization
  */
+$bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $bpayname = $_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
@@ -69,11 +70,13 @@ if(isset($_POST['award_submit'])){
     $dateAward = $_POST['dateAward'];
     $contentlink_id = $_GET['linkid'];
 
-    $sqlAcFacAward = "INSERT INTO AC_FacultyAwards
+    $sqlAcFacAward = "INSERT INTO `AC_FacultyAwards`
 (OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,RECIPIENT_NAME_LAST,RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED)
 VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$recipLname','$recipFname','$awardTitle','$awardOrg','$dateAward');";
 
-    $sqlAcFacAward .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR = '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlAcFacAward .= "Update `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    $sqlAcFacAward .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
     if($mysqli->multi_query($sqlAcFacAward)){
 

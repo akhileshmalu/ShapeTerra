@@ -13,10 +13,12 @@ $errorflag =0;
 
 require_once ("../Resources/Includes/connect.php");
 
+$bpid = $_GET['id'];
 $bpayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 $_SESSION['bpayname'] = $bpayname;
+$_SESSION['bpid'] = $bpid;
 
 if ($outype == "Administration" || $outype == "Service Unit" ) {
     $ouabbrev = $_GET['ou_abbrev'];
@@ -39,17 +41,17 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
 if(isset($_POST['submit_bp'])) {
 
-    $status = "Pending approval";
+    $status = "Submitted Draft";
     $bpayname = $_GET['ayname'];
     $ouid = $_GET['ouid'];
 
-    $sqlbroadupdate = "update broadcast set BROADCAST_STATUS='$status',BROADCAST_STATUS_OTHERS='$status'where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid';  ";
+    $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='$status', BROADCAST_STATUS_OTHERS='$status' where BROADCAST_AY='$bpayname' AND BROADCAST_OU ='$ouid';  ";
 
     if($mysqli->query($sqlbroadupdate)){
-        $error[0] = "Academic BluePrint Submitted Successfully.";
+        $error[0] = "Academic BluePrint Draft Submitted Successfully.";
 
     } else {
-        $error[0] = "Academic BluePrint could not be Submitted. Please retry.";
+        $error[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
     }
 
 }
@@ -123,9 +125,11 @@ require_once("../Resources/Includes/menu.php");
             </table>
         </div>
         <form action="<?php echo "bphome.php?ayname=$bpayname&ouname=$ouid"; ?>" method="POST">
-        <div>
+            <?php if ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
+            <div>
             <input type="submit" name="submit_bp" value="Submit BluePrint" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-        </div>
+            </div>
+            <?php } ?>
         </form>
     </div>
 
