@@ -199,27 +199,25 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Faculty information</h1>
-        <div id="" style="margin-top: 10px;">
             <form action="<?php echo "facultyInfo.php?linkid=".$contentlink_id; ?>" method="POST" enctype="multipart/form-data">
-            <label for ="facdev" ><h1>Faculty Development: </h1></label>
-            <div id="facdev" class="form-group">
-                <label for="factextarea"><small><em>Optional. List and describe your unit's efforts at faculty development during the Academic Year, including investments, activities, incentives, objectives, and outcomes.
-                    You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac)</em></small></label>
+            <h3>Faculty Development: </h3>
+            <div id="facdev" class="form-group form-indent">
+                <p class="status"><small>Optional. List and describe your unit's efforts at faculty development during the Academic Year, including investments, activities, incentives, objectives, and outcomes.
+                    You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac)</small></p>
                 <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']); ?></textarea>
             </div>
 
-            <label for ="createact" ><h1>Creative Activity</h1></label>
-            <div id="createact" class="form-group">
-                <label for="cractivity"><small><em>Optional.  List and describe significant artistic, creative, and performance activities of faculty in your unit during the Academic Year.  List by each individual's last name, first name, name of activity, and date (month and year are sufficient).
-                    You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac).</em></small>
-                </label>
+            <h3>Creative Activity</h3>
+            <div id="createact" class="form-group form-indent">
+                <p class="status"><small>Optional.  List and describe significant artistic, creative, and performance activities of faculty in your unit during the Academic Year.  List by each individual's last name, first name, name of activity, and date (month and year are sufficient).
+                    You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac).</small></p>
+                
                 <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']); ?></textarea>
             </div>
 
-            <label for ="suppfacinfo" ><h1>Supplemental Faculty Info</h1></label>
-            <div id="suppfacinfo" class="form-group">
-                <label for="supinfo"><small><em>Optional.  You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide additional detail on Faculty for the Academic Year.  This document will appear as an Appendix in the Draft Report and Final Report.</em></small>
-                </label>
+            <h3>Supplemental Faculty Info</h3>
+            <div id="suppfacinfo" class="form-group form-indent">
+                <p class="status"><small>Optional.  You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide additional detail on Faculty for the Academic Year.  This document will appear as an Appendix in the Draft Report and Final Report.</small></p>
                 <input id="supinfo" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
             </div>
 
@@ -262,7 +260,7 @@ require_once("../Resources/Includes/menu.php");
                     <?php endif; } ?>
 
             </form>
-        </div>
+        
     </div>
 
 </div>

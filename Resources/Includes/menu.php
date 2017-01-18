@@ -191,10 +191,7 @@ Generate PDF button currently disabled.
 					<span id="" class="icon">l</span>Back To OutComes</a></li>
 		<?php } ?>
 
-        <li class="" id="header"><a class="main" href="#" onclick="return false">
-		<span id="main" class="icon minus">&#xe024;</span>
-	<span id="main" class="icon plus hidden">&#xe035;</span>
-		Main</a></li>
+        <li class="" id="header">Main</li>
 
 		<li><a id="main" class="main  selected" href="account.php">Home</a></li>
 

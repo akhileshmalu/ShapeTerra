@@ -103,16 +103,58 @@ require_once("../Resources/Includes/menu.php");
         </div>
     </div>
 
-    <div id="main-box" class="information col-xs-10 col-xs-offset-1">
+    <!-- <div id="main-box" class="information col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
             <h1 class="box-title"><span class="plus">+</span><span class="minus hidden">-</span> Information</h1>
             <p class="hidden">Information here</p>
         </div>
-    </div>
+    </div> -->
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Blueprint Contents</h1>
-        <div id="taskboard" style="margin-top: 10px; padding-left: 40px;">
+        <h1 class="box-title">Blueprint</h1>
+        <div id="list">
+            <ul class="list-nav">
+                <li class="col-xs-5">Section</li>
+                <li class="col-xs-2">Last Edited By</li>
+                <li class="col-xs-2">Last Edited On</li>
+                <li class="col-xs-3">Status</li>
+            </ul>
+            <!-- Start the loop to pull from database here -->
+            <a href="LINK_TO_CONTENT">
+                <ul class="items">
+                    <li class="col-xs-5">CONTENT_TITLE</li>
+                    <li class="col-xs-2">NAME</li>
+                    <li class="col-xs-2">DATE</li>
+                    <li class="col-xs-3">STATUS</li>
+                </ul>
+            </a>
+            
+        </div>
+
+        <h1 class="box-title">Outcomes</h1>
+        <div id="list">
+            <ul class="list-nav">
+                <li class="col-xs-5">Section</li>
+                <li class="col-xs-2">Last Edited By</li>
+                <li class="col-xs-2">Last Edited On</li>
+                <li class="col-xs-3">Status</li>
+            </ul>
+            <!-- Start the loop to pull from database here -->
+            <a href="LINK_TO_CONTENT">
+                <ul class="items">
+                    <li class="col-xs-5">CONTENT_TITLE</li>
+                    <li class="col-xs-2">NAME</li>
+                    <li class="col-xs-2">DATE</li>
+                    <li class="col-xs-3">STATUS</li>
+                </ul>
+            </a>
+        </div>
+
+        <!--
+        - Old grid below -
+        -->
+
+        <!-- <div id="taskboard" style="margin-top: 10px; padding-left: 40px;">
             <table class="bphome" action="taskboard/bphomeajax.php" title="BluePrint Contents">
                 <tr>
 
@@ -123,7 +165,8 @@ require_once("../Resources/Includes/menu.php");
 
                 </tr>
             </table>
-        </div>
+        </div> -->
+
         <form action="<?php echo "bphome.php?ayname=$bpayname&ouname=$ouid"; ?>" method="POST">
             <?php if ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
             <div>
@@ -150,4 +193,4 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
 
-0
+

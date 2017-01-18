@@ -63,9 +63,9 @@ nav ul{
 	margin-left:0; 
 }
 
-nav ul li#header a{
+nav ul li#header{
 	color: #fff;
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 800;
 	margin-bottom: 10px;
 }
@@ -94,8 +94,8 @@ nav ul li#header a:hover, nav ul li#header a:visited, nav ul li#header a:active,
 }
 
 nav ul li{
-	margin-bottom: 21px;
-	padding-left: 25px;
+	margin-bottom: 18px;
+	padding-left: 15px;
 }
 
 nav ul li#header{
@@ -121,6 +121,11 @@ nav ul li a:hover{
 	color: #fff;
 }
 
+nav ul li a:hover span.icon{
+	text-decoration: none;
+	color: #fff;
+}
+
 #top-bar span.icon{
 	font-size:22px;
 	padding-right: 10px;
@@ -142,10 +147,12 @@ nav ul li a:hover{
 
 
 nav span.icon{
-	font-size:26px;
+	font-size:20px;
 	padding-right: 10px;
 	vertical-align: middle;
+	color: #9b7679;
 }
+
 #ContentRight{
 	float:left;
 	margin-top:20px;
