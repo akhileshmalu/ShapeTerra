@@ -100,8 +100,11 @@ if(isset($_POST['save'])) {
 
     $funcname = $_POST['functionalname'];
     $techname = $_POST['technicalname'];
+    $syslabel = $_POST['syslabel'];
+    $printlabel = $_POST['printlabel'];
     $dataclass = $_POST['dataclass'];
     $basicmean = nl2br($_POST['basicmean']);
+    $userinst = nl2br($_POST['userinstr']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
     foreach ($bptopic as $item){
@@ -120,10 +123,10 @@ if(isset($_POST['save'])) {
     $defauthorfname = $_POST['defauthorfname'];
     $defauthorlname = $_POST['defauthorlname'];
 
-    $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME, BASIC_MEANING, TIME_BASIS_OUTCOME, 
+    $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,LABEL_SYSTEM,LABEL_PRINT, BASIC_MEANING,USER_INSTRCTN, TIME_BASIS_OUTCOME, 
 INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON, 
-VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname',
-'$basicmean','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
+VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','$syslabel','$printlabel',
+'$basicmean','$userinst','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
 '$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
 
     if($mysqli->query($sqladdelem)) {
@@ -139,8 +142,11 @@ if(isset($_POST['directsave'])) {
 
     $funcname = $_POST['functionalname'];
     $techname = $_POST['technicalname'];
+    $syslabel = $_POST['syslabel'];
+    $printlabel = $_POST['printlabel'];
     $dataclass = $_POST['dataclass'];
     $basicmean = nl2br($_POST['basicmean']);
+    $userinst = nl2br($_POST['userinstr']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
     foreach ($bptopic as $item){
@@ -159,10 +165,10 @@ if(isset($_POST['directsave'])) {
     $defauthorfname = $_POST['defauthorfname'];
     $defauthorlname = $_POST['defauthorlname'];
 
-    $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,STATUS, BASIC_MEANING, TIME_BASIS_OUTCOME, 
+    $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,LABEL_SYSTEM,LABEL_PRINT,STATUS, BASIC_MEANING,USER_INSTRCTN, TIME_BASIS_OUTCOME, 
 INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON, 
-VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','Approved',
-'$basicmean','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
+VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','$syslabel','$printlabel','Approved',
+'$basicmean','$userinst','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
 '$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
 
     if($mysqli->query($sqladdelem)) {
@@ -178,8 +184,11 @@ if(isset($_POST['update'])) {
 
     $funcname = $_POST['functionalname'];
     $techname = $_POST['technicalname'];
+    $syslabel = $_POST['syslabel'];
+    $printlabel = $_POST['printlabel'];
     $dataclass = $_POST['dataclass'];
     $basicmean = nl2br($_POST['basicmean']);
+    $userinst = nl2br($_POST['userinstr']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
     foreach ($bptopic as $item){
@@ -198,8 +207,8 @@ if(isset($_POST['update'])) {
     $defauthorfname = $_POST['defauthorfname'];
     $defauthorlname = $_POST['defauthorlname'];
 
-    $sqladdelem = "Update DataDictionary  SET DATA_ELMNT_FUNC_NAME = '$funcname', DATA_ELEMENT_TECH_NAME= '$techname', BASIC_MEANING = '$basicmean',
- TIME_BASIS_OUTCOME = '$timebasis', INTERP_USAGE = '$usage', DATA_CLASSIFICATION = '$dataclass', DATA_SOURCE = '$datasource',
+    $sqladdelem = "Update DataDictionary  SET DATA_ELMNT_FUNC_NAME = '$funcname', DATA_ELEMENT_TECH_NAME= '$techname',LABEL_SYSTEM = '$syslabel', LABEL_PRINT = '$printlabel', BASIC_MEANING = '$basicmean',
+ USER_INSTRCTN = '$userinst',TIME_BASIS_OUTCOME = '$timebasis', INTERP_USAGE = '$usage', DATA_CLASSIFICATION = '$dataclass', DATA_SOURCE = '$datasource',
   DATA_TYPE = '$datatype', DATA_TRANSFORM = '$datatrans', BP_TOPIC ='$bptopicstring', RESPONSIBLE_PARTY ='$resparty', 
   CONTACT_PERSON = '$contact', VALUES_MANDATORY = '$valuemand', VALUES_PERMITTED = '$permitvalue', VALUES_CONSTRAINTS = '$constraint', 
   NOTES_DATA_ELEMENT = '$notes', AUTHOR_FNAME = '$defauthorfname',AUTHOR_LNAME = '$defauthorlname', MOD_BY = '$author', MOD_TIMESTAMP = '$time' where ID_DATA_ELEMENT = $elemid;";
@@ -308,6 +317,24 @@ require_once("../Resources/Includes/menu.php");
                         <p id="tecname_status"></p>
                     </div>
 
+                    <label for="syslabel">Label in System</label>
+                    <div id="syslabel" class="form-group">
+                        <p>
+                            <small><em>The label that should appear alongside the data element in the system (on screen).</em></small>
+                        </p>
+                        <input  type="text" name="syslabel" maxlength="125" class="form-control"
+                               value="<?php echo $rowsdataelem['LABEL_SYSTEM']; ?>">
+                    </div>
+
+                    <label for="printlabel">Label in Print</label>
+                    <div id="printlabel" class="form-group">
+                        <p>
+                            <small><em>The label that should appear alongside the data element in printed reports and other outputs.</em></small>
+                        </p>
+                        <input  type="text" name="printlabel" maxlength="125" class="form-control"
+                               value="<?php echo $rowsdataelem['LABEL_PRINT']; ?>">
+                    </div>
+
                     <label for="dataclass">Data Classification <span style="color: red"><sup>*</sup></span></label>
                     <div id="dataclass" class="form-group">
                         <p>
@@ -339,6 +366,15 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <textarea rows="4" name="basicmean" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
+                    </div>
+
+                    <label for="userinstr">User Instructions</label>
+                    <div id="userinstr" class="form-group">
+                        <p>
+                            <small><em>The instructions users should follow when responding to or completing the data element or item.</em></small>
+                        </p>
+                        <textarea rows="3" name="userinstr" cols="25" wrap="hard"
+                                  class="form-control"><?php echo mybr2nl($rowsdataelem['USER_INSTRCTN']); ?></textarea>
                     </div>
 
                     <label for="timebasis">Time Basis for Outcome <span style="color: red"><sup>*</sup></span></label>

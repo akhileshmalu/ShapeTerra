@@ -130,6 +130,3 @@ require_once("../Resources/Includes/footer.php");
 <!---->
 <!--        });-->
 <!--    });-->
-<!--</script>-->
-
-0

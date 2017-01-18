@@ -20,7 +20,7 @@ if ($outype == "Academic Unit") {
         "where" => "BROADCAST_OU = '$ouid' ",
 
         "fields"=>array(
-
+            "ID" => "broadcast.ID_BROADCAST",
             "BROADCAST_AY" => "broadcast.BROADCAST_AY",
             "BROADCAST_STATUS_OTHERS" => "broadcast.BROADCAST_STATUS_OTHERS",
             "BROADCAST_DESC" => "broadcast.BROADCAST_DESC",
@@ -43,7 +43,7 @@ if ($outype == "Academic Unit") {
         "delete" => false,
         //  "where" => "'",
         "fields"=>array(
-
+            "ID" => "broadcast.ID_BROADCAST",
             "BROADCAST_AY" => "broadcast.BROADCAST_AY",
             "BROADCAST_STATUS" => "broadcast.BROADCAST_STATUS",
             "BROADCAST_DESC" => "broadcast.BROADCAST_DESC",

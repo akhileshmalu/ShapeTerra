@@ -21,7 +21,7 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Local & Session variable Initialization
  */
-
+$bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $bpayname =$_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
@@ -35,7 +35,12 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-
+/*
+ * SQL check Status of Blueprint Content for Edit restrictions
+ */
+$sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
+$resultbpstatus = $mysqli->query($sqlbpstatus);
+$rowsbpstatus = $resultbpstatus->fetch_assoc();
 
 /*
  * faculty Award Grid ; conditional for provost & other users
@@ -66,9 +71,11 @@ if(isset($_POST['goal_submit'])) {
     $goalalignment = mynl2br($_POST['goalalignment']);
 
 
-    $sqlcreatebp .= "INSERT INTO BP_UnitGoals( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+    $sqlcreatebp .= "INSERT INTO `BP_UnitGoals` ( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
 
-    $sqlcreatebp .= "Update  BpContents set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlcreatebp .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    $sqlcreatebp .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
     if($mysqli->multi_query($sqlcreatebp)) {
 
@@ -81,11 +88,11 @@ if(isset($_POST['goal_submit'])) {
 
 }
 
-if(isset($_POST['approve'])) {
+if(isset($_POST['submit_approve'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlcreatebp .= "Update  BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlcreatebp .= "Update  `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
     if ($mysqli->query($sqlcreatebp)) {
 
@@ -98,6 +105,27 @@ if(isset($_POST['approve'])) {
 
 }
 
+if(isset($_POST['approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Unit Goals Approved Successfully";
+    } else {
+        $error[0] = "Unit Goals Could not be Approved. Please Retry.";
+    }
+}
+
+if(isset($_POST['reject'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Unit Goals Rejected Successfully";
+    } else {
+        $error[0] = "Unit Goals Could not be Rejected. Please Retry.";
+    }
+}
 
 
 require_once("../Resources/Includes/header.php");
@@ -145,7 +173,7 @@ require_once("../Resources/Includes/menu.php");
         <?php if ($_SESSION['login_right'] != 1): ?>
             <div>
                 <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-right"
-                        onclick ="$('#approve').removeAttr('disabled');"
+                        onclick ="//$('#approve').removeAttr('disabled');"
                         data-toggle="modal"
                         data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Goal
                 </button>
@@ -161,20 +189,29 @@ require_once("../Resources/Includes/menu.php");
                     <th col="UNIT_GOAL_TITLE" width="300" type="text">Goal Title</th>
                     <th col="MOD_TIMESTAMP" width="200" type="text">Last Edited On</th>
                     <th col="AUTHOR" width="200" type="text">Last Modified By</th>
-                    <!--                                        <th col="" type="text">Actions</th>-->
+
                 </tr>
             </table>
         </div>
 
-        <!--                        Reviewer Edit Control-->
-        <?php if ($_SESSION['login_right'] != 1): ?>
-
-
         <form action="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id ?>" method="POST" >
-            <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right" >
+
+        <!--                        Edit Control-->
+            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+
+            <input type="submit" id="approve" name="submit_approve" value="Submit For Approval" class="btn-primary pull-right" >
+
+            <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') {
+                if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval') { ?>
+                    <input type="submit" id="approve" name="approve" value="Approve"
+                       class="btn-primary pull-right">
+                    <input type="submit" id="reject" name="reject" value="Reject"
+                       class="btn-primary pull-right">
+            <?php }
+            } ?>
         </form>
 
-        <?php endif; ?>
+
     </div>
 </div>
 
@@ -267,3 +304,4 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
+

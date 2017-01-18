@@ -47,6 +47,12 @@ if ($ouid == 4) {
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
+/*
+ * SQL check Status of Blueprint Content for Edit restrictions
+ */
+$sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
+$resultbpstatus = $mysqli->query($sqlbpstatus);
+$rowsbpstatus = $resultbpstatus->fetch_assoc();
 
 
 require_once("../Resources/Includes/header.php");
@@ -99,10 +105,26 @@ require_once("../Resources/Includes/menu.php");
                     <th col="GOAL_REPORT_STATUS" width="150" type="text">Report Status</th>
                     <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
                     <th col="AUTHOR" width="150" type="text">Last Modified By</th>
-                    <!--                                        <th col="" type="text">Actions</th>-->
                 </tr>
             </table>
         </div>
+
+        <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=".$contentlink_id ?>" method="POST" >
+
+            <!--                        Edit Control-->
+            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+
+                <input type="submit" id="approve" name="submit_approve" value="Submit For Approval" class="btn-primary pull-right" >
+
+            <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') {
+                if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval') { ?>
+                    <input type="submit" id="approve" name="approve" value="Approve"
+                           class="btn-primary pull-right">
+                    <input type="submit" id="reject" name="reject" value="Reject"
+                           class="btn-primary pull-right">
+                <?php }
+            } ?>
+        </form>
     </div>
 </div>
 

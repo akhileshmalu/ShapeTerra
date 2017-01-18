@@ -21,7 +21,7 @@ require_once("../Resources/Includes/connect.php");
 /*
  * Local & Session variable Initialization
  */
-
+$bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $bpayname = $_SESSION['bpayname'];
 $prevbpid = stringtoid($bpayname);
@@ -153,13 +153,13 @@ if (isset($_POST['submit'])) {
     $contentlink_id = $_GET['linkid'];
 
 
-    $sqlmission = "INSERT INTO BP_MissionVisionValues (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT,VISION_STATEMENT,VALUES_STATEMENT) 
+    $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT,VISION_STATEMENT,VALUES_STATEMENT) 
 VALUES ('$ouabbrev','$author','$time','$bpayname','$missionstatement','$visionstatement','$valuestatement');";
 
-    $sqlmission .= "Update  BpContents set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    $sqlmission .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
 
-//    $sqlmission .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time'
-//where BROADCAST_AY ='$bpayname' AND  BROADCAST_OU = '$ouabbrev' ; ";
+    $sqlmission .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time' 
+where ID_BROADCAST = '$bpid'; ";
 
     if ($mysqli->multi_query($sqlmission)) {
         $error[0] =  "Mission Updated Successfully";
@@ -292,9 +292,7 @@ require_once("../Resources/Includes/menu.php");
 
                     <!--                      Edit Control-->
 
-
-
-                        <?php if ($_SESSION['login_role'] == 'contributor' AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+                        <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
 
                             <button id="save" type="submit" name="submit"
                                     onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
@@ -305,7 +303,7 @@ require_once("../Resources/Includes/menu.php");
                         <button type="submit" id="submit_approve" name="submit_approve"
                                class="btn-primary pull-right">Submit For Approval</button>
 
-                    <?php } elseif ($_SESSION['login_role'] == 'dean') { ?>
+                    <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
                             <button id="save" type="submit" name="submit"
                                     onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
@@ -313,14 +311,14 @@ require_once("../Resources/Includes/menu.php");
                                 Save Draft
                             </button>
 
+                            <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
                             <input type="submit" id="approve" name="approve" value="Approve"
-                                   onclick="//$('#mvvform').removeClass('ajaxform');"
                                    class="btn-primary pull-right">
 
                             <input type="submit" id="reject" name="reject" value="Reject"
                                    class="btn-primary pull-right">
 
-                        <?php } ?>
+                        <?php endif; } ?>
 
 
                 </div>

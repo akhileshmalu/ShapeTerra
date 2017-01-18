@@ -39,7 +39,7 @@ function test_input($data){
 //Global Email Variable
 $headers = "MIME-Version: 1.0" . "\r\n";
 $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-$headers .= 'From: ShapeTerra <admin@ShapeTerra.com>' . "\r\n";
+$headers .= "From: ShapeTerra <admin@ShapeTerra.com>" . "\r\n";
 
 /*Common String function to interchange AY-ID and Desc
 */

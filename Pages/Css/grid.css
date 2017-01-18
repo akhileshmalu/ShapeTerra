@@ -381,3 +381,20 @@ div.gridWrapper.touch .gridPager .slider .sliderThumb {
     top: 25px;
   }
 }
+/*custom Styling for sortable*/
+#sortable {
+  list-style-type: none; margin: 0; padding: 0; width: 60%;
+}
+#sortable li {
+  margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px;
+}
+#sortable li span {
+  position: absolute; margin-left: -1.3em;
+}
+#draggable {
+  width: 150px; height: 150px; padding: 0.5em;
+}
+#selectable { background: #FECA40; }
+#selectable { background: #F39814; color: #ff3242; }
+#selectable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+#selectable div { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }

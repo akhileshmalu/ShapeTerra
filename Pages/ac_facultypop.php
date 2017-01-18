@@ -363,11 +363,11 @@ require_once("../Resources/Includes/menu.php");
                             
                             <h2 class="data-display">Display Data - Table Name: <?php echo $tablename; ?></h2>
 
-                            <p><b class="garnet">Academic Year:</b> 2001</p>                            
+                            <p><b class="garnet">Academic Year:</b>2001</p>
 
-                            <p><b class="garnet">College/School:</b> CEC</p>                             
+                            <p><b class="garnet">College/School:</b>CEC</p>
 
-                            <p><b class="garnet">Outcomes Author:</b> Blake Finn </p>                             
+                            <p><b class="garnet">Outcomes Author:</b>Blake Finn</p>
 
                             <p><b class="garnet">Last Modified:</b> <?php echo $rowsdatadisplay['TTF_FTE_PROF_TNR']; ?> </p> 
 
