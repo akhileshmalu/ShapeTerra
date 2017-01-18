@@ -70,22 +70,20 @@ require_once("../Resources/Includes/menu.php");
         <p class="status"><span>User role: </span> <?php echo $rowsmenu['USER_RIGHT']; ?></p>
     </div>
 
+    <div id="main-box" class="col-xs-10 col-xs-offset-1">
 
-
-        <div id="main-box" class="col-xs-10 col-xs-offset-1">
-
-            <?php if ($outype == "Academic Unit" || $outype == "Administration" ) { ?>
+        <?php if ($outype == "Academic Unit" || $outype == "Administration") { ?>
 
             <h1 class="box-title">Select an Academic Year</h1>
             <div id="taskboard" class="">
                 <table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">
                     <tr>
                         <th col="BROADCAST_AY" width="125" type="text"
-                            href="<?php echo '../Pages/bphome.php?ayname={{value}}&ou_abbrev={{columns.OU_ABBREV}}'; ?>">
+                            href="<?php echo '../Pages/bphome.php?ayname={{value}}&ou_abbrev={{columns.OU_ABBREV}}&id={{columns.ID}}'; ?>">
                             Academic Year
                         </th>
                         <th col="BROADCAST_DESC" type="text">Description</th>
-                        <?php if ($outype  == "Administration" ) { ?>
+                        <?php if ($outype == "Administration") { ?>
                             <th col="BROADCAST_STATUS" type="text">Status</th>
                         <?php } else { ?>
                             <th col="BROADCAST_STATUS_OTHERS" type="text">Status</th>
@@ -96,28 +94,42 @@ require_once("../Resources/Includes/menu.php");
                 </table>
             </div>
 
-            <?php }
-            if ($outype == "Service Unit") {?>
+        <?php }
+        if ($outype == "Service Unit") { ?>
 
-                <h1 class="box-title">Select an Academic Year to Upload Files</h1>
-                <div id="taskboard" class="">
-                    <table class="taskboard" action="taskboard/serviceunitajax.php" title="Service Unit">
-                        <tr>
-                            <th col="ACAD_YEAR_DESC" width="600" type="text"
-                                href="<?php echo '../Pages/fileuploadhome.php?ayname={{value}}'; ?>">
-                                Academic Year
-                            </th>
-                        </tr>
-                    </table>
-                </div>
+            <h1 class="box-title">Select an Academic Year to Upload Files</h1>
+            <div id="taskboard" class="">
+                <table class="taskboard" action="taskboard/serviceunitajax.php" title="Service Unit">
+                    <tr>
+                        <th col="ACAD_YEAR_DESC" width="600" type="text"
+                            href="<?php echo '../Pages/fileuploadhome.php?ayname={{value}}'; ?>">
+                            Academic Year
+                        </th>
+                    </tr>
+                </table>
+            </div>
 
-            <?php } ?>
-        </div>
+        <?php } ?>
+    </div>
+</div>
+<?php
+require_once("../Resources/Includes/footer.php");
+?>
+<script src="../Resources/Library/js/taskboard.js"></script>
+<script src="../Resources/Library/js/root.js"></script>
+<script src="../Resources/Library/js/grid.js"></script>
+<!--<script>-->
+<!--    $(function () {-->
+<!--        var that = $(".taskboard");-->
+<!--        console.log(that);-->
+<!--        that.find('[col]').each(function (index, value) {-->
+<!--            var that = $(this),-->
+<!--                col = that.attr('col');-->
+<!--            console.log(col);-->
+<!--            //           value = that.val();-->
+<!---->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
 
-
-    <?php
-    require_once("../Resources/Includes/footer.php");
-    ?>
-    <script src="../Resources/Library/js/taskboard.js"></script>
-    <script src="../Resources/Library/js/root.js"></script>
-    <script src="../Resources/Library/js/grid.js"></script>
+0
