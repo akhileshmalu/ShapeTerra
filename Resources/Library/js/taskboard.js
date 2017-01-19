@@ -119,7 +119,7 @@ $(function() {
         page : 1,
         showPager : true,
         editing : false,
-        deleting :true,
+        deleting :false,
         nRowsShowing : 70,
         width: $('#taskboard').width(),
         rowNumbers: true,

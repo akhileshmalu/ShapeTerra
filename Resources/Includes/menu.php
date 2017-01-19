@@ -172,7 +172,7 @@ Generate PDF button currently disabled.
 	<ul class="col-xs-12">
 		<?php if($BackToDashboard){ ?>
 			<li class="" id="header"><a class="" href="<?php echo 'bphome.php?ayname='.$rowbroad[0].'&ou_abbrev='.$_SESSION['bpouabbrev']; ?>" >
-			<span id="" class="icon">l</span>Back To Dashboard</a></li>
+			<span id="" class="icon">l</span>Back To Contents</a></li>
 		<?php } ?>
 		<?php if($BackToFileUploadHome){ ?>
 			<li class="" id="header"><a class="" href="<?php echo 'fileuploadhome.php?ayname='.$_SESSION['FUayname']; ?>" >
