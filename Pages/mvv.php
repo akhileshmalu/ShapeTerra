@@ -153,12 +153,12 @@ if (isset($_POST['submit'])) {
     $contentlink_id = $_GET['linkid'];
 
 
-    $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT,VISION_STATEMENT,VALUES_STATEMENT) 
+    $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT,VISION_STATEMENT,VALUES_STATEMENT)
 VALUES ('$ouabbrev','$author','$time','$bpayname','$missionstatement','$visionstatement','$valuestatement');";
 
     $sqlmission .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
 
-    $sqlmission .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time' 
+    $sqlmission .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time'
 where ID_BROADCAST = '$bpid'; ";
 
     if ($mysqli->multi_query($sqlmission)) {
@@ -207,20 +207,15 @@ require_once("../Resources/Includes/header.php");
 // Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
-
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrapTable.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
 <link rel="stylesheet" href="Css/grid.css" title="openJsGrid"/>
 <script src="../Resources/Library/js/root.js"></script>
 <script src="../Resources/Library/js/grid.js"></script>
-
-
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
-
-
 <?php //if (isset($_POST['mission_submit']) || isset($_POST['vision_submit']) || isset($_POST['value_submit']) || isset($_POST['approve'])  ) { ?>
 <?php if (isset($_POST['submit']) || isset($_POST['submit_approve']) || isset($_POST['approve'])  ) { ?>
     <div class="overlay hidden"></div>
@@ -231,100 +226,65 @@ require_once("../Resources/Includes/menu.php");
         <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
-
 <div class="hr"></div>
-
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
         <h1 id="title">Blueprint Home</h1>
     </div>
-
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
         <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         <p class="status"><span>Last Modified:</span> <?php echo date("F j, Y, g:i a", strtotime($rowbroad[3])); ?></p>
     </div>
-
-
-
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <label for ="headtitle"><h1>Mission, Vision & Values</h1></label>
+        <label for="headtitle"><h1>Mission, Vision & Values</h1></label>
         <div id="headtitle">
-            <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=" . $contentlink_id ?>" method="POST" class=" mission">
-
+            <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=" . $contentlink_id ?>" method="POST" class="mission">
                 <div class="mission-status-alert hidden text-center">
                     <h1>Mission Updated Successfully</h1>
                     <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To
                         Dashboard</a>
                     <a href="#" class="mission-next-tab btn-primary" onclick="return false;">Next Tab</a>
                 </div>
-
-
                 <p>
-                    <small><em>Instruction: Enter your BluePrint content for the Academic Year indicated above.The
-                            components below are highest level statements of
-                            what <?php echo $_SESSION['login_ouname']; ?> considers foundation to your goals &
-                            related outcomes.</em></small>
+                  <small><em>Instruction: Enter your BluePrint content for the Academic Year indicated above.The
+                          components below are highest level statements of
+                          what <?php echo $_SESSION['login_ouname']; ?> considers foundation to your goals &
+                          related outcomes.</em></small>
                 </p>
-
-                <label class="col-xs-12" for="missiontitle">Mission Statement</label>
-
-                <div class="col-xs-12">
-
-                        <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement"
-                                  id="missiontitle"
-                                  required><?php echo mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
+                <h3>Creative Activity</h3>
+                <div class="col-xs-12 form-group form-indent">
+                  <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement" id="missiontitle" required><?php echo mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
                 </div>
-
-                <label class="col-xs-12" for="visiontitle">Vision Statement</label>
-
-                <div class="col-xs-12">
-                            <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement"
-                                      id="visiontitle"
-                                      required><?php echo mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
+                <h3>Vision Statement</h3>
+                <div class="col-xs-12 form-group form-indent">
+                  <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" id="visiontitle" required><?php echo mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
                 </div>
-
-                <label class="col-xs-12" for="visiontitle">Value Statement</label>
-                <div class="col-xs-12">
-                        <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"
-                                  id="valuetitle"
-                                  required><?php echo mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
-
-                    <!--                      Edit Control-->
-
-                        <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
-
-                            <button id="save" type="submit" name="submit"
-                                    onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                                Save Draft
-                            </button>
-
-                        <button type="submit" id="submit_approve" name="submit_approve"
-                               class="btn-primary pull-right">Submit For Approval</button>
-
-                    <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-
-                            <button id="save" type="submit" name="submit"
-                                    onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                                Save Draft
-                            </button>
-
-                            <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                            <input type="submit" id="approve" name="approve" value="Approve"
-                                   class="btn-primary pull-right">
-
-                            <input type="submit" id="reject" name="reject" value="Reject"
-                                   class="btn-primary pull-right">
-
-                        <?php endif; } ?>
-
-
+                <h3>Value Statement</h3>
+                <div class="col-xs-12 form-group form-indent">
+                  <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"id="valuetitle" required><?php echo mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
+                  <!--Edit Control-->
+                  <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+                  <button id="save" type="submit" name="submit"
+                          onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                          class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                      Save Draft
+                  </button>
+                  <button type="submit" id="submit_approve" name="submit_approve" class="btn-primary pull-right">Submit For Approval</button>
+                  <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
+                  <button id="save" type="submit" name="submit"
+                          onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                          class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                      Save Draft
+                  </button>
+                  <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
+                  <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
+                  <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
+                <?php endif; } ?>
                 </div>
             </form>
         </div>
-<!--        <!-- Nav tabs -->-->
+<!--        <!-- Nav tabs -->
 <!--        <ul class="nav nav-pills" role="tablist">-->
 <!--            <li role="presentation" class="active"><a href="#mission" aria-controls="mission" role="tab"-->
 <!--                                                      data-toggle="pill">Mission</a></li>-->
@@ -364,7 +324,7 @@ require_once("../Resources/Includes/menu.php");
 <!--                                  id="missiontitle"-->
 <!--                                  required>--><?php //echo $rowsmission['MISSION_STATEMENT']; ?><!--</textarea>-->
 <!---->
-<!--                        <!--                        Reviewer Edit Control-->-->
+<!--                        <!--                        Reviewer Edit Control-->
 <!--                        --><?php //if ($_SESSION['login_right'] != 1): ?>
 <!---->
 <!--                            <button type="submit" name="mission_submit" onclick="$('#approve').removeAttr('disabled');"-->
@@ -389,8 +349,8 @@ require_once("../Resources/Includes/menu.php");
 <!--                    </div>-->
 <!---->
 <!---->
-<!--                    <!--                <form action="-->-->
-<!--                    --><?php ////echo "mvv.php?linkid=" . $contentlink_id ?><!--<!--" method="POST" class="ajaxform vision">-->-->
+<!--                    <!--                <form action="-->
+<!--                    --><?php ////echo "mvv.php?linkid=" . $contentlink_id ?><!--<!--" method="POST" class="ajaxform vision">-->
 <!---->
 <!---->
 <!--                    <label class="col-xs-12" for="visiontitle">Vision Statement</label>-->
@@ -400,7 +360,7 @@ require_once("../Resources/Includes/menu.php");
 <!--                                      id="visiontitle"-->
 <!--                                      required>--><?php //echo $rowsmission['VISION_STATEMENT']; ?><!--</textarea>-->
 <!---->
-<!--                        <!--                        Reviewer Edit Control-->-->
+<!--                        <!--                        Reviewer Edit Control-->
 <!--                        --><?php //if ($_SESSION['login_right'] != 1): ?>
 <!---->
 <!--                            <button type="submit" name="vision_submit" onclick="$('#approve').removeAttr('disabled');"-->
@@ -410,7 +370,7 @@ require_once("../Resources/Includes/menu.php");
 <!---->
 <!--                        --><?php //endif; ?>
 <!--                    </div>-->
-<!--                    <!--                </form>-->-->
+<!--                    <!--                </form>-->
 <!--                </div>-->
 <!---->
 <!---->
@@ -422,8 +382,8 @@ require_once("../Resources/Includes/menu.php");
 <!--                            Dashboard</a>-->
 <!--                    </div>-->
 <!---->
-<!--                    <!--                <form id="mvvform" action="-->-->
-<!--                    --><?php ////echo "mvv.php?linkid=" . $contentlink_id ?><!--<!--" method="POST" class="ajaxform value">-->-->
+<!--                    <!--                <form id="mvvform" action="-->
+<!--                    --><?php ////echo "mvv.php?linkid=" . $contentlink_id ?><!--<!--" method="POST" class="ajaxform value">-->
 <!---->
 <!--                    <label class="col-xs-12" for="visiontitle">Value Statement</label>-->
 <!---->
@@ -433,7 +393,7 @@ require_once("../Resources/Includes/menu.php");
 <!--                                  id="valuetitle"-->
 <!--                                  required>--><?php //echo $rowsmission['VALUES_STATEMENT']; ?><!--</textarea>-->
 <!---->
-<!--                        <!--                        Reviewer Edit Control-->-->
+<!--                        <!--                        Reviewer Edit Control-->
 <!--                        --><?php //if ($_SESSION['login_right'] != 1): ?>
 <!---->
 <!---->
@@ -454,13 +414,7 @@ require_once("../Resources/Includes/menu.php");
 <!---->
 <!--    </div>-->
 </div>
-
-
-<?php
-//Include Footer
-require_once("../Resources/Includes/footer.php");
-?>
-
+<?php require_once("../Resources/Includes/footer.php"); //Include Footer ?>
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 <script type="text/javascript">
     $('.nav a').click(function (e) {
@@ -475,4 +429,3 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
 <script src="../Resources/Library/js/content.js"></script>
-

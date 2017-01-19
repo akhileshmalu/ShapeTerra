@@ -177,26 +177,18 @@ require_once("../Resources/Includes/menu.php");
         <button type="button" redirect="<?php echo "bphome.php?ayname=".$rowbroad[0]; ?> " class="end btn-primary">Close</button>
     </div>
 <?php } ?>
-
 <div class="hr"></div>
-
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
         <h1 id="title">Blueprint Home</h1>
     </div>
-
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
             <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
-
-
-
-
     </div>
-
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Faculty information</h1>
             <form action="<?php echo "facultyInfo.php?linkid=".$contentlink_id; ?>" method="POST" enctype="multipart/form-data">
@@ -206,15 +198,13 @@ require_once("../Resources/Includes/menu.php");
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac)</small></p>
                 <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']); ?></textarea>
             </div>
-
             <h3>Creative Activity</h3>
             <div id="createact" class="form-group form-indent">
                 <p class="status"><small>Optional.  List and describe significant artistic, creative, and performance activities of faculty in your unit during the Academic Year.  List by each individual's last name, first name, name of activity, and date (month and year are sufficient).
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac).</small></p>
-                
+
                 <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']); ?></textarea>
             </div>
-
             <h3>Supplemental Faculty Info</h3>
             <div id="suppfacinfo" class="form-group form-indent">
                 <p class="status"><small>Optional.  You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide additional detail on Faculty for the Academic Year.  This document will appear as an Appendix in the Draft Report and Final Report.</small></p>
@@ -239,7 +229,7 @@ require_once("../Resources/Includes/menu.php");
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
-                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
+                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-secondary cancelbpbox pull-left">
                     <button type="submit" id="submit_approve" name="submit_approve"
                             class="btn-primary pull-right">Submit For Approval</button>
 
@@ -260,7 +250,7 @@ require_once("../Resources/Includes/menu.php");
                     <?php endif; } ?>
 
             </form>
-        
+
     </div>
 
 </div>

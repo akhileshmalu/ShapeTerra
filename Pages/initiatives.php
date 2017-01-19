@@ -176,15 +176,11 @@ require_once("../Resources/Includes/menu.php");
         <button type="button" redirect="<?php echo "initiatives.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
-
-
 <div class="hr"></div>
-
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
         <h1 id="title">Blueprint Management</h1>
     </div>
-
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
             <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
@@ -192,78 +188,49 @@ require_once("../Resources/Includes/menu.php");
             <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;  ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
-
-
-
-
     </div>
-
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Initiatives & Observations</h1>
         <div id="" style="margin-top: 10px;">
             <form action="initiatives.php?linkid=<?php echo $contentlink_id;?>" method="POST" enctype="multipart/form-data">
                 <label for ="explearning" ><h1>Experiential Learning: </h1></label>
                 <div id="explearning" class="form-group">
-                    <p><small><em>Describe your unit's initiatives, improvements, challenges, and progress with Experiential Learning at each level during the Academic Year (as applicable).</em></small></p>
-
-
-                    <div  class="form-group" style="padding-left: 30px;">
-                        <label for="undergrad"><h3>Undergraduate</h3></label>
-                    <textarea id="undergrad" name="ugexplearning" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo $rowsexvalue['EXPERIENTIAL_LEARNING_UGRAD']; ?></textarea>
+                    <p class="status"><small>Describe your unit's initiatives, improvements, challenges, and progress with Experiential Learning at each level during the Academic Year (as applicable).</small></p>
+                    <h3>Undergraduate</h3>
+                    <div class="form-group form-indent">
+                      <textarea id="undergrad" name="ugexplearning" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo $rowsexvalue['EXPERIENTIAL_LEARNING_UGRAD']; ?></textarea>
                     </div>
-
-                    <div  class="form-group" style="padding-left: 30px;">
-                        <label for="graduate"><h3>Graduate</h3></label>
+                    <h3>Graduate</h3>
+                    <div class="form-group form-indent">
                         <textarea id="graduate" name="gradexplearning" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['EXPERIENTIAL_LEARNING_GRAD']; ?></textarea>
                     </div>
-
                 </div>
-
-                <label for ="afford" ><h1>Affordability</h1></label>
-                <div id="afford" class="form-group">
-                    <p><small><em>Describe your unit's assessment of affordability and efforts to address affordability during the Academic Year.</em></small></p>
-
-                        <textarea  name="afford" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['AFFORDABILITY']); ?></textarea>
-
-
+                <h3>Affordability</h3>
+                <div id="afford" class="form-group form-indent">
+                    <p class="status"><small>Describe your unit's assessment of affordability and efforts to address affordability during the Academic Year.</small></p>
+                    <textarea  name="afford" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['AFFORDABILITY']); ?></textarea>
                 </div>
-
-                <label for ="reputation" ><h1>Reputation Enhancement</h1></label>
-                <div id="reputation" class="form-group">
-                    <p><small><em>Describe innovations, happy accidents, good news, etc. that occurred within your unit during the Academic Year, not noted elsewhere in your reporting.
-                            </em></small></p>
-
+                <h3>Reputation Enhancement</h3>
+                <div id="reputation" class="form-group form-indent">
+                    <p class="status"><small>Describe innovations, happy accidents, good news, etc. that occurred within your unit during the Academic Year, not noted elsewhere in your reporting.</small></p>
                     <textarea  name="reputation" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['REPUTATION_ENHANCE']); ?></textarea>
-
                 </div>
-
-                <label for ="coolstuff" ><h1>Cool Stuff</h1></label>
-                <div id="coolstuff" class="form-group">
-                    <p><small><em>Describe your unit's assessment of affordability and efforts to address affordability during the Academic Year.
-                            </em></small></p>
-
+                <h3>Cool Stuff</h3>
+                <div id="coolstuff" class="form-group form-indent">
+                    <p class="status"><small>Describe your unit's assessment of affordability and efforts to address affordability during the Academic Year.</small></p>
                     <textarea  name="coolstuff" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['COOL_STUFF']); ?></textarea>
-
                 </div>
-
-                <label for ="challenge" ><h1>Challenges</h1></label>
-                <div id="challenge" class="form-group">
-                    <p><small><em>Describe challenges and resource needs you anticipate for the current and upcoming Academic Years, not noted elsewhere in your reporting - or which merit additional attention.
-                            </em></small></p>
-
+                <h3>Challenges</h3>
+                <div id="challenge" class="form-group form-indent">
+                    <p class="status"><small>Describe challenges and resource needs you anticipate for the current and upcoming Academic Years, not noted elsewhere in your reporting - or which merit additional attention.</small></p>
                     <textarea  name="challenges" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['CHALLENGES']); ?></textarea>
-
                 </div>
-
-                <label for ="suppinfo" ><h1>Supplemental Info</h1></label>
-                <div id="suppinfo" class="form-group">
-                    <p><small><em>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Initiatives & Observations for the Academic Year.
-                            </em></small></p>
-
+                <h3>Supplemental Info</h3>
+                <div id="suppinfo" class="form-group form-indent">
+                    <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Initiatives & Observations for the Academic Year.</small></p>
                     <label for="supinfofile">Select File</label>
                     <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
                 </div>
-
                 <!--                        Reviewer Edit Control
                 <?php //if ($_SESSION['login_right'] != 1): ?>
 
@@ -277,7 +244,6 @@ require_once("../Resources/Includes/menu.php");
                 <!--                      Edit Control-->
 
                 <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
-
                     <button id="save" type="submit" name="savedraft"
                             onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
@@ -295,12 +261,8 @@ require_once("../Resources/Includes/menu.php");
                     </button>
 
                     <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                        <input type="submit" id="approve" name="approve" value="Approve"
-                               class="btn-primary pull-right">
-
-                        <input type="submit" id="reject" name="reject" value="Reject"
-                               class="btn-primary pull-right">
-
+                        <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
+                        <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
                     <?php endif; } ?>
 
             </form>
