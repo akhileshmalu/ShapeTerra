@@ -286,17 +286,16 @@ require_once("../Resources/Includes/menu.php");
         </ul>
     </div>
 
-    <div id="form" class="col-lg-10 col-md-8 col-xs-8">
-
+    <div id="main-box" class="col-lg-8 col-xs-offset-1 col-md-8 col-xs-8">
         <form action="" method="POST">
             <div class="form-group tab1 active" id="actionlist">
                 <h1>Identification & Meaning</h1>
-                <div class="col-lg-8 col-sm-10 col-xs-12">
+                <div class="col-xs-12">
 
-                    <label for="funcname">Functional Name <span style="color: red"><sup>*</sup></span></label>
-                    <div id="funcname" class="form-group">
-                        <p>
-                            <small><em>Assigned, unique name for the data element, as most users should call it</em>
+                    <h3>Functional Name <span style="color: red"><sup>*</sup></span></h3>
+                    <div id="funcname" class="form-group form-indent">
+                        <p class="status">
+                            <small>Assigned, unique name for the data element, as most users should call it
                             </small>
                         </p>
                         <input id="fname" type="text" name="functionalname" <?php if($elemid == 0){ echo "onblur = 'check_availability_func()' "; } ?> maxlength="255" class="form-control"
@@ -305,11 +304,11 @@ require_once("../Resources/Includes/menu.php");
                         <p id="funcname_status" ></p>
                     </div>
 
-                    <label for="techname">Technical Name <span style="color: red"><sup>*</sup></span></label>
-                    <div id="techname" class="form-group">
-                        <p>
-                            <small><em>The technical name for the data element, as established in the database, tables,
-                                    or system</em></small>
+                    <h3>Technical Name <span style="color: red"><sup>*</sup></span></h3>
+                    <div id="techname" class="form-group form-indent">
+                        <p class="status">
+                            <small>The technical name for the data element, as established in the database, tables,
+                                    or system</small>
                         </p>
                         <input id="tecname" type="text" <?php if($elemid == 0){ echo "onblur = 'check_availability_tech()' "; } ?> name="technicalname" maxlength="255" class="form-control"
                                value="<?php echo $rowsdataelem['DATA_ELEMENT_TECH_NAME']; ?>">
@@ -317,34 +316,34 @@ require_once("../Resources/Includes/menu.php");
                         <p id="tecname_status"></p>
                     </div>
 
-                    <label for="syslabel">Label in System</label>
-                    <div id="syslabel" class="form-group">
-                        <p>
-                            <small><em>The label that should appear alongside the data element in the system (on screen).</em></small>
+                    <h3>Label in System</h3>
+                    <div id="syslabel" class="form-group form-indent">
+                        <p class="status">
+                            <small>The label that should appear alongside the data element in the system (on screen).</small>
                         </p>
                         <input  type="text" name="syslabel" maxlength="125" class="form-control"
                                value="<?php echo $rowsdataelem['LABEL_SYSTEM']; ?>">
                     </div>
 
-                    <label for="printlabel">Label in Print</label>
-                    <div id="printlabel" class="form-group">
-                        <p>
-                            <small><em>The label that should appear alongside the data element in printed reports and other outputs.</em></small>
+                    <h3>Label in Print</h3>
+                    <div id="printlabel" class="form-group form-indent">
+                        <p class="status">
+                            <small>The label that should appear alongside the data element in printed reports and other outputs.</small>
                         </p>
                         <input  type="text" name="printlabel" maxlength="125" class="form-control"
                                value="<?php echo $rowsdataelem['LABEL_PRINT']; ?>">
                     </div>
 
-                    <label for="dataclass">Data Classification <span style="color: red"><sup>*</sup></span></label>
-                    <div id="dataclass" class="form-group">
-                        <p>
-                            <small><em>The formal Classification of the Data Element based on sensitivity of the
+                    <h3>Data Classification <span style="color: red"><sup>*</sup></span></h3>
+                    <div id="dataclass" class="form-group form-indent">
+                        <p class="status">
+                            <small>The formal Classification of the Data Element based on sensitivity of the
                                     intended
                                     or actual contents; this setting is established by the System Administrator and it
                                     is
                                     the obligation of End Users to ensure that the content they submit is not more
                                     sensitive
-                                    than permitted by the assigned Classification.</em></small>
+                                    than permitted by the assigned Classification.</small>
                         </p>
                         <select type="text" name="dataclass" class="form-control">
                             <option value="" ></option>
@@ -358,30 +357,30 @@ require_once("../Resources/Includes/menu.php");
                         </select>
                     </div>
 
-                    <label for="basicmean">Basic Meaning <span style="color: red"><sup>*</sup></span></label>
-                    <div id="basicmean" class="form-group">
-                        <p>
-                            <small><em>The basic definition or meaning of the data element; recommend no more than 2-3
-                                    sentences</em></small>
+                    <h3>Basic Meaning <span style="color: red"><sup>*</sup></span></h3>
+                    <div id="basicmean" class="form-group form-indent">
+                        <p class="status">
+                            <small>The basic definition or meaning of the data element; recommend no more than 2-3
+                                    sentences</small>
                         </p>
                         <textarea rows="4" name="basicmean" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
                     </div>
 
-                    <label for="userinstr">User Instructions</label>
-                    <div id="userinstr" class="form-group">
-                        <p>
-                            <small><em>The instructions users should follow when responding to or completing the data element or item.</em></small>
+                    <h3>User Instructions</h3>
+                    <div id="userinstr" class="form-group form-indent">
+                        <p class="status">
+                            <small>The instructions users should follow when responding to or completing the data element or item.</small>
                         </p>
                         <textarea rows="3" name="userinstr" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['USER_INSTRCTN']); ?></textarea>
                     </div>
 
-                    <label for="timebasis">Time Basis for Outcome <span style="color: red"><sup>*</sup></span></label>
-                    <div id="timebasis" class="form-group">
-                        <p>
-                            <small><em>Indicate the time basis for which outcomes will be composed and reported in each
-                                    Blueprint.</em></small>
+                    <h3>Time Basis for Outcome <span style="color: red"><sup>*</sup></span></h3>
+                    <div id="timebasis" class="form-group form-indent">
+                        <p class="status">
+                            <small>Indicate the time basis for which outcomes will be composed and reported in each
+                                    Blueprint.</small>
                         </p>
                         <?php foreach ($timebasisoutcome as $key) {
                         echo "<div class='radio'><label><input type='radio' name='timebasis' value='". $key."'";
@@ -394,36 +393,47 @@ require_once("../Resources/Includes/menu.php");
 
                     </div>
 
-                    <label for="bptopic">Blueprint Topic(s) <span
-                            style="color: red"><sup>*</sup></span></label>
-                    <div id="bptopic" class="form-group">
-                        <p>
-                            <small><em>Topic the data element pertains to</em></small>
+                    <h3>Blueprint Topic(s) <span
+                            style="color: red"><sup>*</sup></span></h3>
+                    <div id="bptopic" class="form-group form-indent">
+                        <p class="status">
+                            <small>Topic the data element pertains to</small>
                         </p>
 
-                        <?php while ($rowstopicareas = $resulttopicareas -> fetch_assoc()) {
-                            echo "<div class='checkbox'><label><input type='checkbox' name='bptopic[]' value='". $rowstopicareas['ID_TOPIC']."'";
-                            $topicitem = explode(',',$rowsdataelem['BP_TOPIC']);
-                            foreach ($topicitem as $top) {
-                                if ($top == $rowstopicareas['ID_TOPIC']) {
-                                    echo " checked";
+                        <?php 
+
+                            $i = 0;
+                            $columns = 3;
+                            while ($rowstopicareas = $resulttopicareas -> fetch_assoc()) {
+                                if($i % $column == 0){
+                                   echo "<div class='col-xs-6 chcekbox'><label>";
+                                }
+                                echo "<input type='checkbox' name='bptopic[]' value='". $rowstopicareas['ID_TOPIC']."'";
+                                $topicitem = explode(',',$rowsdataelem['BP_TOPIC']);
+                                foreach ($topicitem as $top) {
+                                    if ($top == $rowstopicareas['ID_TOPIC']) {
+                                        echo " checked";
+                                    }
+                                }
+                                echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'];
+                                $i++;
+                                if($i % $column == 0){
+                                    echo "</label></div>";
                                 }
                             }
-                            echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'] . "</label></div>";
-                        }
                         ?>
 
                     </div>
 
 
-                    <label for="usage">Interpretation & Usage</label>
-                    <div id="usage" class="form-group">
-                        <p>
-                            <small><em>In as much detail as necessary, describe the parameters under which this data
+                    <h3>Interpretation & Usage</h3>
+                    <div id="usage" class="form-group form-indent">
+                        <p class="status">
+                            <small>In as much detail as necessary, describe the parameters under which this data
                                     element can.
                                     may, or should be used, and how its meaning should be interpreted. Do not list
                                     permitted values here;
-                                    use the field designated for that purpose (below).</em></small>
+                                    use the field designated for that purpose (below).</small>
                         </p>
                         <textarea rows="4" name="usage" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['INTERP_USAGE']); ?></textarea>
@@ -433,7 +443,7 @@ require_once("../Resources/Includes/menu.php");
                             class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right changeTab1">Continue
                     </button>
                     <button id="cancel" type="button"
-                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox">Cancel
+                            class="btn-secondary col-lg-3 col-md-5 col-sm-6 pull-left canceldatadictbox">Cancel
                     </button>
                 </div>
             </div>
@@ -442,26 +452,24 @@ require_once("../Resources/Includes/menu.php");
                 <h1>Source & Values</h1>
 
                 <div class="col-lg-8 col-sm-10 col-xs-12">
-
-                    <div id="datasource" class="form-group">
-                        <label>Data Source <span
-                                style="color: red"><sup>*</sup></span></label>
-
-                        <p>
-                            <small><em>Describe the authoritative source of the information in as much detail as
+                <h3>Data Source <span style="color: red"><sup>*</sup></span></h3>
+                    <div id="datasource" class="form-group form-indent">
+                        <p class="status">
+                            <small>Describe the authoritative source of the information in as much detail as
                                     possible (providing office, person/job title, information system, table, data
-                                    element).</em></small>
+                                    element).</small>
                         </p>
                         <textarea rows="4" name="datasource" cols="25" wrap="hard"
                                   class="form-control" required><?php echo mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
                     </div>
 
-                    <div id="resparty" class="form-group">
-                        <label>Responsible Party <span
-                                style="color: red"><sup>*</sup></span></label>
-                        <p>
-                            <small><em>Name of the office or person responsible for producing and/or providing this data
-                                    element.</em></small>
+                    <h3>Responsible Party <span
+                                style="color: red"><sup>*</sup></span></h3>
+
+                    <div id="resparty" class="form-group form-indent">
+                        <p class="status">
+                            <small>Name of the office or person responsible for producing and/or providing this data
+                                    element.</small>
                         </p>
                         <select type="text" name="resparty" class="form-control" required>
                             <option value=""></option>
@@ -471,23 +479,27 @@ require_once("../Resources/Includes/menu.php");
                         </select>
                     </div>
 
-                    <div id="contact" class="form-group">
-                        <label>Contact Person </label>
-                        <p>
-                            <small><em>Last Name, First Name of person to contact with questions related to this data
-                                    element, plus email address and area code+phone number.</em></small>
+                    <h3>Contact Person </h3>
+
+                    <div id="contact" class="form-group form-indent">
+                        
+                        <p class="status">
+                            <small>Last Name, First Name of person to contact with questions related to this data
+                                    element, plus email address and area code+phone number.</small>
                         </p>
                         <input type="text" name="contactperson" maxlength="255" style="height: 60px;"
                                class="form-control" value="<?php echo $rowsdataelem['CONTACT_PERSON']; ?>">
                     </div>
 
-                    <div id="datatype" class="form-group">
-                        <label>Data Type <span
-                                style="color: red"><sup>*</sup></span></label>
-                        <p>
-                            <small><em>Describes the type of data for values stored in the data element; this
+                    <h3>Data Type <span
+                                style="color: red"><sup>*</sup></span></h3>
+
+                    <div id="datatype" class="form-group form-indent">
+                        
+                        <p class="status">
+                            <small>Describes the type of data for values stored in the data element; this
                                     determination is made by the System Administator and it is the obligation of End
-                                    Users to ensure that the content they submit complies with the parameters.</em>
+                                    Users to ensure that the content they submit complies with the parameters.
                             </small>
                         </p>
                         <select type="text" name="datatype" class="form-control" required>
@@ -498,21 +510,24 @@ require_once("../Resources/Includes/menu.php");
                         </select>
                     </div>
 
-                    <div id="datatrans" class="form-group">
-                        <label>Data Transformation </label>
-                        <p>
-                            <small><em>Describe any transformations, groupings, logic, or mathematical procedures used
-                                    in producing the values for this data element</em></small>
+                    <h3>Data Transformation </h3>
+
+                    <div id="datatrans" class="form-group form-indent">
+                        <p class="status">
+                            <small>Describe any transformations, groupings, logic, or mathematical procedures used
+                                    in producing the values for this data element</small>
                         </p>
                         <textarea rows="4" name="datatrans" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['DATA_TRANSFORM']); ?></textarea>
                     </div>
 
-                    <div id="valuemand" class="form-group">
-                        <label>Values Mandatory <span
-                                style="color: red"><sup>*</sup></span></label>
-                        <p>
-                            <small><em>Describes whether a value must be provided for the data element.</em></small>
+                    <h3>Values Mandatory <span
+                                style="color: red"><sup>*</sup></span></h3>
+
+                    <div id="valuemand" class="form-group form-indent">
+                        
+                        <p class="status">
+                            <small>Describes whether a value must be provided for the data element.</small>
                         </p>
                         <select type="text" name="valuemand" class="form-control" required>
                             <option value=""></option>
@@ -522,35 +537,41 @@ require_once("../Resources/Includes/menu.php");
                         </select>
                     </div>
 
-                    <div id="permitvalue" class="form-group">
-                        <label>Permitted Values </label>
-                        <p>
-                            <small><em>Describes the values that are permitted in the data element, for example a
+                    <h3>Permitted Values </h3>
+
+                    <div id="permitvalue" class="form-group form-indent">
+                        
+                        <p class="status">
+                            <small>Describes the values that are permitted in the data element, for example a
                                     numeric range or number of decimals, or set of choices. If a pick-list item, please
-                                    provide all available choices.</em></small>
+                                    provide all available choices.</small>
                         </p>
                         <textarea rows="4" name="permitvalue" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_PERMITTED']); ?></textarea>
                     </div>
 
-                    <div id="constraint" class="form-group">
-                        <label>Constraints on Values </label>
-                        <p>
-                            <small><em>Any constraints on permitted values for this data element, including limitations
+                    <h3>Constraints on Values </h3>
+
+                    <div id="constraint" class="form-group form-indent">
+                        
+                        <p class="status">
+                            <small>Any constraints on permitted values for this data element, including limitations
                                     or requirements for types of data such as: field length, unit of measure (days vs.
                                     years), permitted languages, or specified sequence for keying in characters such as
                                     MM-DD-YYYY, etc.
                                     If data element is governed by a pick-list, enter those values in 'Permitted Values,
-                                    not here.</em></small>
+                                    not here.</small>
                         </p>
                         <textarea rows="4" name="constraint" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_CONSTRAINTS']); ?></textarea>
                     </div>
 
-                    <div id="notes" class="form-group">
-                        <label>Notes / Misc </label>
-                        <p>
-                            <small><em>Any miscellaneous notes that do not fit elsewhere.</em></small>
+                    <h3>Notes / Misc </h3>
+
+                    <div id="notes" class="form-group form-indent">
+                        
+                        <p class="status">
+                            <small>Any miscellaneous notes that do not fit elsewhere.</small>
                         </p>
                         <textarea rows="4" name="notes" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['NOTES_DATA_ELEMENT']); ?></textarea>
@@ -565,15 +586,17 @@ require_once("../Resources/Includes/menu.php");
 <!--                </div>-->
 <!--            </div>-->
 <!---->
-<!--            <div class="form-group hidden tab3" id="actionlist">-->
+<!--            <div class="form-group form-indent hidden tab3" id="actionlist">-->
 <!--                <h1>Change Log</h1>-->
 <!---->
 <!--                <div class="col-lg-8 col-sm-10 col-xs-12">-->
 
-                    <div id="author" class="form-group">
-                        <label>Definition Author Name </label>
-                        <p>
-                            <small><em>Name of the individual who defined this data element initially.</em></small>
+                    <h3>Definition Author Name </h3>
+
+                    <div id="author" class="form-group form-indent">
+                        
+                        <p class="status">
+                            <small>Name of the individual who defined this data element initially.</small>
                         </p>
                         <div class="col-lg-6">
                             <label for="fname">First Name</label>
