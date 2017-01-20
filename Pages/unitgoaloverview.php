@@ -191,7 +191,7 @@ require_once("../Resources/Includes/menu.php");
         <div id="taskboard" style="margin-top: 10px;">
             <table class="grid" action="taskboard/unitgoalajax.php" title="Unit Goals">
                 <tr>
-                    <th col="UNIT_GOAL_TITLE" width="300" type="text">Goal Title</th>
+                    <th col="UNIT_GOAL_TITLE" width="300" href="<?php echo "unitgoal_detail.php?linkid=".$contentlink_id."&goal_id="?>{{columns.ID_UNIT_GOAL}}" type="text">Goal Title</th>
                     <th col="MOD_TIMESTAMP" width="200" type="text">Last Edited On</th>
                     <th col="AUTHOR" width="200" type="text">Last Modified By</th>
 

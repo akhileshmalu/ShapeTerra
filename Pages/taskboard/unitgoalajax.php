@@ -17,6 +17,7 @@ if ($ouid <> 4) {
         "delete" => false,
         "where" => "OU_ABBREV = '$ouabbrev' and UNIT_GOAL_AY='$bpayname'  ",
         "fields"=>array(
+            "ID_UNIT_GOAL"=>"BP_UnitGoals.ID_UNIT_GOAL",
             "UNIT_GOAL_TITLE"=>"BP_UnitGoals.UNIT_GOAL_TITLE",
             "MOD_TIMESTAMP"=>"DATE_FORMAT(BP_UnitGoals.MOD_TIMESTAMP,'%Y-%m-%d %H:%i')",
             "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
@@ -37,6 +38,7 @@ if ($ouid <> 4) {
         "where" => " OU_ABBREV = '$bpouabbrev' and  UNIT_GOAL_AY='$bpayname' ",
 
         "fields"=>array(
+            "ID_UNIT_GOAL"=>"BP_UnitGoals.ID_UNIT_GOAL",
             "UNIT_GOAL_TITLE"=>"BP_UnitGoals.UNIT_GOAL_TITLE",
             "MOD_TIMESTAMP"=>"DATE_FORMAT(BP_UnitGoals.MOD_TIMESTAMP,'%Y-%m-%d %H:%i')",
             "AUTHOR"=>"CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",

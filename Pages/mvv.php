@@ -218,7 +218,7 @@ require_once("../Resources/Includes/menu.php");
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
-<?php //if (isset($_POST['mission_submit']) || isset($_POST['vision_submit']) || isset($_POST['value_submit']) || isset($_POST['approve'])  ) { ?>
+
 <?php if (isset($_POST['submit']) || isset($_POST['submit_approve']) || isset($_POST['approve'])  ) { ?>
     <div class="overlay hidden"></div>
     <div class="alert">

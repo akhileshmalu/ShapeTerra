@@ -1,6 +1,10 @@
 <?php
 
-  session_start();
+session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
   require_once ("../Resources/Includes/connect.php");
   $ouabbrev= $_SESSION['login_ouabbrev'];
   $sqluser = "select NETWORK_USERNAME,OU_NAME,SYS_USER_ROLE,FNAME,LNAME from PermittedUsers Inner Join Hierarchy ON PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.OU_ABBREV where OU_ABBREV = '$ouabbrev'";

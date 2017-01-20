@@ -190,6 +190,10 @@ Generate PDF button currently disabled.
 			<li class="" id="header"><a class="" href="<?php echo 'goaloutcomeshome.php?linkid='.$contentlink_id; ?>" >
 					<span id="" class="icon">l</span>Back To OutComes</a></li>
 		<?php } ?>
+		<?php if($BackToGoal){ ?>
+			<li class="" id="header"><a class="" onclick="window.history.back();" >
+					<span id="" class="icon">l</span>Back To Goals</a></li>
+		<?php } ?>
 
         <li class="" id="header">Main</li>
 

@@ -195,20 +195,20 @@ require_once("../Resources/Includes/menu.php");
 </div>
 
 
-    <?php
-    //Include Footer
-    require_once("../Resources/Includes/footer.php");
-    ?>
+<?php
+//Include Footer
+require_once("../Resources/Includes/footer.php");
+?>
 
-    <!--Calender Bootstrap inclusion for date picker INPUT-->
-    <script type="text/javascript">
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    </script>
-    <script src="../Resources/Library/js/tabAlert.js"></script>
-    <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
-    <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
-    <script src="../Resources/Library/js/calender.js"></script>
-    <script src="../Resources/Library/js/chkbox.js"></script>
-    <script src="../Resources/Library/js/taskboard.js"></script>
+<!--Calender Bootstrap inclusion for date picker INPUT-->
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+<script src="../Resources/Library/js/tabAlert.js"></script>
+<script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
+<script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
+<script src="../Resources/Library/js/calender.js"></script>
+<script src="../Resources/Library/js/chkbox.js"></script>
+<script src="../Resources/Library/js/taskboard.js"></script>
