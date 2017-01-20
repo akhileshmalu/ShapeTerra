@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 $error = array();
 $errorflag = 0;
 $i = 0;
@@ -46,29 +50,29 @@ $tablename = $rowsfucontent['NAME_UPLOADFILE'];
  */
 $sqldatadisplay = "SELECT * FROM IR_AC_FacultyPop where ID_AC_FACULTY_POPULATION in (select max(ID_AC_FACULTY_POPULATION) from IR_AC_FacultyPop where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
 $resultdatadisplay = $mysqli->query($sqldatadisplay);
-$rowsdatadisplay = $resultdatadisplay ->fetch_array(MYSQLI_NUM);
+$rowsdatadisplay = $resultdatadisplay ->fetch_assoc();
 
 
-$dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
-$fieldcnt = $resultdatadisplay->field_count;
-
-
-
-$num_records = $resultdatadisplay->num_rows;
-
-
-while($meta = $resultdatadisplay->fetch_field()) {
-    $datavalues[0][$i]=$meta->name;
-    $i++;
-}
-
-
-while($rowsdatadisplay = $resultdatadisplay ->fetch_array(MYSQLI_NUM)) {
-    for($col = 0;$col<$fieldcnt;$col++) {
-        $datavalues[$count][$col] = $rowsdatadisplay[$col];
-    }
-    $count++;
-}
+//$dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
+//$fieldcnt = $resultdatadisplay->field_count;
+//
+//
+//
+//$num_records = $resultdatadisplay->num_rows;
+//
+//
+//while($meta = $resultdatadisplay->fetch_field()) {
+//    $datavalues[0][$i]=$meta->name;
+//    $i++;
+//}
+//
+//
+//while($rowsdatadisplay = $resultdatadisplay ->fetch_array(MYSQLI_NUM)) {
+//    for($col = 0;$col<$fieldcnt;$col++) {
+//        $datavalues[$count][$col] = $rowsdatadisplay[$col];
+//    }
+//    $count++;
+//}
 
 // for ($j = 1; $j < $fieldcnt; $j++) {
 //     for ($i = 0; $i <= $num_records; $i++) {

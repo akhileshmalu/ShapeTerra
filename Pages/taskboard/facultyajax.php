@@ -22,6 +22,7 @@ $grid = new Grid("AC_FacultyAwards", $mysqli, array(
     "where" => "OU_ABBREV = '$ouabbrev' and OUTCOMES_AY='$bpayname' ",
     "fields" => array(
         "RECIPIENT_NAME" => "CONCAT(RECIPIENT_NAME_LAST,', ',SUBSTRING(RECIPIENT_NAME_FIRST,1,1))",
+        "ID_FACULTY_AWARDS" => "AC_FacultyAwards.ID_FACULTY_AWARDS",
     ),
 ));
 

@@ -1,5 +1,9 @@
 <?php
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 require_once ("../Resources/Includes/connect.php");
 $error =array();
 $fname = $_SESSION['login_fname'];

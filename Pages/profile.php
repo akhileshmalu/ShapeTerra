@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 $error = array();                                               //Error Array Created
 $errorflag = 0;                                                 //Flag Create
 

@@ -7,8 +7,12 @@
  * This Page controls Intiation of Academic BluePrint module.
  */
 
-$time  = date('Y-m-d H:i:s');
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
+$time  = date('Y-m-d H:i:s');
 $error = array();
 $errorflag =0;
 

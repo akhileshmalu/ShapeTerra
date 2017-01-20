@@ -9,6 +9,10 @@
  * Session & Error control Initialization.
  */
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 $notBackToDashboard = true;
 $error = array();
 $errorflag =0;

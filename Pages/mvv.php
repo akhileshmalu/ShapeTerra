@@ -8,6 +8,10 @@
  * Session & Error control Initialization.
  */
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 $error = array();
 $errorflag = 0;
 $BackToDashboard = true;
@@ -34,19 +38,17 @@ $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
 
-if ($outype == "Administration" || $outype == "Service Unit" ) {
-    $ouabbrev = $_GET['ou_abbrev'];
-    $_SESSION['bpouabbrev'] = $_GET['ou_abbrev'];
-
+if ($outype == "Administration" OR $outype == "Service Unit" ) {
+    $ouabbrev = $_SESSION['bpouabbrev'];
 } else {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
 // Display Information of Main-box basis roles
 if ($outype == "Administration" || $outype == "Service Unit" ) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
+    $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified FROM broadcast INNER JOIN Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY='$bpayname' AND Hierarchy.OU_ABBREV ='$ouabbrev';";
 } else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+    $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY='$bpayname' AND BROADCAST_OU ='$ouid'; ";
 }
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
@@ -234,6 +236,7 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
         <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
+        <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
         <p class="status"><span>Last Modified:</span> <?php echo date("F j, Y, g:i a", strtotime($rowbroad[3])); ?></p>
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">

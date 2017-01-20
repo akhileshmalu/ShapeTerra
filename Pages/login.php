@@ -39,7 +39,8 @@ if (isset($_POST['login'])) {
 
             if ($record['USER_STATUS'] == '1') {
                 $_SESSION['login_email'] = $email;                   //session variable register
-                header("location:account.php");                           //redirect to account page
+                header("location:account.php");                     //redirect to account page
+                $_SESSION['isLogged'] = true;
             } else {
                 if ($record['USER_STATUS'] == '0') {
                     $error [0] = "Please activate your account by link provided in your email.";

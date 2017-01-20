@@ -10,6 +10,10 @@ $pagename = "bphome";
  * Session & Error control Initialization.
  */
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 $error = array();
 $errorflag = 0;
 $BackToDashboard = true;
@@ -47,6 +51,13 @@ if ($ouid == 4) {
 }
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+
+/*
+ * SQL check Status of Blueprint Content for Edit restrictions
+ */
+$sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
+$resultbpstatus = $mysqli->query($sqlbpstatus);
+$rowsbpstatus = $resultbpstatus->fetch_assoc();
 
 /*
  * New award modal Input values
@@ -88,6 +99,44 @@ VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$recipLname','$re
 
 }
 
+if(isset($_POST['submit_approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+
+    $sqlcreatebp .= "Update  `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    if ($mysqli->query($sqlcreatebp)) {
+
+        $error[0] = "Faculty Awards submitted Successfully";
+
+    } else {
+        $error[0] = "Faculty Awards Could not be submitted. Please Retry.";
+    }
+
+
+}
+
+if(isset($_POST['approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Faculty Awards Approved Successfully";
+    } else {
+        $error[0] = "Faculty Awards Could not be Approved. Please Retry.";
+    }
+}
+
+if(isset($_POST['reject'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Faculty Awards Rejected Successfully";
+    } else {
+        $error[0] = "Faculty Awards Could not be Rejected. Please Retry.";
+    }
+}
 
 require_once("../Resources/Includes/header.php");
 
@@ -107,7 +156,7 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit'])) { ?>
+<?php if (isset($_POST['award_submit']) OR isset($_POST['submit_approve']) OR isset($_POST['approve']) OR isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
@@ -125,8 +174,9 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
-            <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
+            <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
         
@@ -152,14 +202,28 @@ require_once("../Resources/Includes/menu.php");
             <table class="grid" action="taskboard/facultyajax.php" title="Faculty Awards">
                 <tr>
                     <th col="AWARD_TYPE" width="100" type="text">Type</th>
-                    <th col="AWARD_TITLE" width="300" type="text">Award</th>
+                    <th col="AWARD_TITLE" href="<?php echo "facultyawards_detail.php?linkid=".$contentlink_id."&award_id="?>{{columns.ID_FACULTY_AWARDS}}" width="300" type="text">Award</th>
                     <th col="RECIPIENT_NAME" width="200" type="text">Recipient(s)</th>
 <!--                                        <th col="" type="text">Actions</th>-->
                 </tr>
             </table>
         </div>
+        <form action="<?php echo "facultyawards.php?linkid=".$contentlink_id ?>" method="POST" >
 
+            <!--                        Edit Control-->
+            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
 
+                <input type="submit" id="approve" name="submit_approve" value="Submit For Approval" class="btn-primary pull-right" >
+
+            <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') {
+                if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval') { ?>
+                    <input type="submit" id="approve" name="approve" value="Approve"
+                           class="btn-primary pull-right">
+                    <input type="submit" id="reject" name="reject" value="Reject"
+                           class="btn-primary pull-right">
+                <?php }
+            } ?>
+        </form>
 
     </div>
 </div>

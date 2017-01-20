@@ -9,6 +9,10 @@
  * Session & Error control Initialization.
  */
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 
 $error = array();
 $errorflag =0;
@@ -679,7 +683,6 @@ require_once("../Resources/Includes/footer.php");
 
 </script>
 <script src="../Resources/Library/js/uniqueness.js"></script>
-<script src="../Resources/Library/js/cancelbox.js"></script>
 <script src="../Resources/Library/js/tabChange.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>

@@ -1,5 +1,9 @@
 <?php
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 require_once("../Resources/Includes/connect.php");
 
 global $sqlcreatebp;
@@ -37,19 +41,6 @@ if(isset($_POST['goal_submit'])) {
     }
     $goalstatement = mynl2br($_POST['goalstatement']);
     $goalalignment = mynl2br($_POST['goalalignment']);
-//
-//    $sqlcreatebp.= "CREATE TABLE IF NOT EXISTS tempunitgoals (
-//  `ID_UNIT_GOAL` int(4) NOT NULL,
-//  `OU_ABBREV` varchar(40) NOT NULL,
-//  `GOAL_AUTHOR` varchar(45) NOT NULL,
-//  `MOD_TIMESTAMP` datetime NOT NULL,
-//  `UNIT_GOAL_AY` varchar(40) NOT NULL,
-//  `PRIORITY_GOAL_AY` int(1) ,
-//  `UNIT_GOAL_TITLE` varchar(150) NOT NULL,
-//  `LINK_UNIV_GOAL` varchar(45) DEFAULT NULL,
-//  `GOAL_STATEMENT` longtext NOT NULL,
-//  `GOAL_ALIGNMENT` longtext NOT NULL
-//);";
 
     $sqlcreatebp .= "INSERT INTO tempunitgoals ( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ay','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
 

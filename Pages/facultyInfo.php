@@ -10,6 +10,10 @@ $pagename = "bphome";
  */
 
 session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 $error = array();
 $errorflag =0;
 $BackToDashboard = true;
@@ -184,8 +188,9 @@ require_once("../Resources/Includes/menu.php");
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
-            <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
+            <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
     </div>

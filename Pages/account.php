@@ -1,5 +1,10 @@
 <?php
-session_start();										  	//session Started
+session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}										  	//session Started
+
 require_once ("../Resources/Includes/connect.php");          	//Instance of Object class-connection Created
 $email = $_SESSION['login_email'];					  			//Session Variable store
 $sqlac = " SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP,OU_TYPE FROM PermittedUsers 
@@ -27,10 +32,10 @@ $notBackToDashboard = true;
  * SQL TO DISPLAY BLUEPRINTS ON PAGE
  */
 if ($outype == "Academic Unit") {
-    $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE BROADCAST_OU = '$ouid'; ";
+    $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE BROADCAST_OU ='$ouid' ORDER BY BROADCAST_AY ASC ; ";
     $resultbpunit = $mysqli->query($sqlbpunit);
 } elseif ($outype == "Administration") {
-    $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR; ";
+    $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR ORDER BY BROADCAST_AY ASC ; ";
     $resultbpunit = $mysqli->query($sqlbpunit);
 }
 
