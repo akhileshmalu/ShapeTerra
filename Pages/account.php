@@ -2,7 +2,8 @@
 session_start();										  	//session Started
 require_once ("../Resources/Includes/connect.php");          	//Instance of Object class-connection Created
 $email = $_SESSION['login_email'];					  			//Session Variable store
-$sqlac = " SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP,OU_TYPE FROM PermittedUsers INNER JOIN Hierarchy ON ID_HIERARCHY = PermittedUsers.USER_OU_MEMBERSHIP where NETWORK_USERNAME ='$email' ";														//Query to Database
+$sqlac = " SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP,OU_TYPE FROM PermittedUsers 
+ INNER JOIN Hierarchy ON ID_HIERARCHY = PermittedUsers.USER_OU_MEMBERSHIP where NETWORK_USERNAME ='$email' ";														//Query to Database
 $resultac = $mysqli->query($sqlac);                             	// Query Execution
 $rowsac = $resultac -> fetch_assoc();								//Fetching to Show on Account page
 $ouid = $rowsac['USER_OU_MEMBERSHIP'];
@@ -21,6 +22,18 @@ $_SESSION['login_userid']=$rowsac['ID_STATUS'];
 //true: Dont show button
 //false: show button
 $notBackToDashboard = true;
+
+/*
+ * SQL TO DISPLAY BLUEPRINTS ON PAGE
+ */
+if ($outype == "Academic Unit") {
+    $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE BROADCAST_OU = '$ouid'; ";
+    $resultbpunit = $mysqli->query($sqlbpunit);
+} elseif ($outype == "Administration") {
+    $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR; ";
+    $resultbpunit = $mysqli->query($sqlbpunit);
+}
+
 
 
 // Time Setting Check -
@@ -75,139 +88,66 @@ require_once("../Resources/Includes/menu.php");
 
         <?php if ($outype == "Academic Unit" || $outype == "Administration") { ?>
 
-    <!-- Possible new list card style -->
+            <!--            <h1 class="box-title">Select an Academic Year</h1>-->
+            <!--            <div id="taskboard" class="">-->
+            <!--                <table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">-->
+            <!--                    <tr>-->
+            <!--                        <th col="BROADCAST_AY" width="125" type="text"-->
+            <!--                            href="--><?php //echo '../Pages/bphome.php?ayname={{value}}&ou_abbrev={{columns.OU_ABBREV}}&id={{columns.ID}}'; ?><!--">-->
+            <!--                            Academic Year-->
+            <!--                        </th>-->
+            <!--                        <th col="BROADCAST_DESC" type="text">Description</th>-->
+            <!--                        --><?php //if ($outype == "Administration") { ?>
+            <!--                            <th col="BROADCAST_STATUS" type="text">Status</th>-->
+            <!--                        --><?php //} else { ?>
+            <!--                            <th col="BROADCAST_STATUS_OTHERS" type="text">Status</th>-->
+            <!--                        --><?php //} ?>
+            <!--                        <th col="AUTHOR" type="text">Last Edited On</th>-->
+            <!--                        <th col="LastModified" type="text">Last Modified By</th>-->
+            <!--                    </tr>-->
+            <!--                </table>-->
+            <!--            </div>-->
 
-    <div id="" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title col-xs-12">Select An Academic Year</h1>
+            <!-- Possible new list card style -->
 
-        <div class="input-group col-xs-4 card-search">
-          <span class="input-group-addon icon" id="basic-addon1">&#xe041;</span>
-          <input type="text" class="form-control" class="col-xs-4" id="search-box" placeholder="Search" aria-describedby="basic-addon1"></input>
-        </div>
-        
-    </div>
+            <div id="" class="col-xs-10 col-xs-offset-1">
+                <h1 class="box-title col-xs-12">Select An Academic Year</h1>
 
-    <a href="#">
-        <div id="" class="col-xs-10 col-xs-offset-1 card">
-            <div id="ay-year" class="col-xs-3">
-                <h1>AY2014-2015</h1>
-                <p>CEC Academic BluePrint</p>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited By</p>
-                <h3>Blake Finn</h3>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited on</p>
-                <h3>12/22/2016</h3>
-            </div>
+                <div class="input-group col-xs-4 card-search">
+                    <span class="input-group-addon icon" id="basic-addon1">&#xe041;</span>
+                    <input type="text" class="form-control" class="col-xs-4" id="search-box" placeholder="Search"
+                           aria-describedby="basic-addon1">
+                </div>
 
-            <div class="col-xs-3 text-center">
-                <p>Status</p>
-                <h3>Initiated By Provost</h3>
             </div>
-        </div>
-    </a>
-    <a href="#">
-        <div id="" class="col-xs-10 col-xs-offset-1 card">
-            <div id="ay-year" class="col-xs-3">
-                <h1>AY2016-2017</h1>
-                <p>CEC Academic BluePrint</p>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited By</p>
-                <h3>John Doe</h3>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited on</p>
-                <h3>1/19/2017</h3>
-            </div>
+            <?php while ($rowsbpunit = $resultbpunit->fetch_assoc()) : ?>
+                <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] . '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>">
+                    <div id="" class="col-xs-10 col-xs-offset-1 card">
+                        <div id="ay-year" class="col-xs-3">
+                            <h1><?php echo $rowsbpunit['BROADCAST_AY']; ?></h1>
+                            <p><?php echo $rowsbpunit['BROADCAST_DESC']; ?></p>
+                        </div>
+                        <div class="col-xs-4 text-center">
+                            <p>Last Edited By</p>
+                            <h3><?php echo $rowsbpunit['LNAME'] . ", " . $rowsbpunit['FNAME']; ?></h3>
+                        </div>
+                        <div class="col-xs-2 text-center">
+                            <p>Last Edited on</p>
+                            <h3><?php echo date("m/d/Y", strtotime($rowsbpunit['LastModified'])); ?></h3>
+                        </div>
 
-            <div class="col-xs-3 text-center">
-                <p>Status</p>
-                <h3>Completed</h3>
-            </div>
-        </div>
-    </a>
-    <a href="#">
-        <div id="" class="col-xs-10 col-xs-offset-1 card">
-            <div id="ay-year" class="col-xs-3">
-                <h1>AY2018-2019</h1>
-                <p>COE Academic BluePrint</p>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited By</p>
-                <h3>Jane Girl</h3>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited on</p>
-                <h3>2/4/2018</h3>
-            </div>
-
-            <div class="col-xs-3 text-center">
-                <p>Status</p>
-                <h3>Approved</h3>
-            </div>
-        </div>
-    </a>
-    <a href="#">
-        <div id="" class="col-xs-10 col-xs-offset-1 card">
-            <div id="ay-year" class="col-xs-3">
-                <h1>AY2014-2015</h1>
-                <p>CEC Academic BluePrint</p>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited By</p>
-                <h3>Blake Finn</h3>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited on</p>
-                <h3>12/22/2016</h3>
-            </div>
-
-            <div class="col-xs-3 text-center">
-                <p>Status</p>
-                <h3>Initiated By Provost</h3>
-            </div>
-        </div>
-    </a>
-    <a href="#">
-        <div id="" class="col-xs-10 col-xs-offset-1 card">
-            <div id="ay-year" class="col-xs-3">
-                <h1>AY2014-2015</h1>
-                <p>CEC Academic BluePrint</p>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited By</p>
-                <h3>Blake Finn</h3>
-            </div>
-            <div class="col-xs-3 text-center">
-                <p>Last Edited on</p>
-                <h3>12/22/2016</h3>
-            </div>
-
-            <div class="col-xs-3 text-center">
-                <p>Status</p>
-                <h3>Initiated By Provost</h3>
-            </div>
-        </div>
-    </a>
-        
-<!--<script>-->
-<!--    $(function () {-->
-<!--        var that = $(".taskboard");-->
-<!--        console.log(that);-->
-<!--        that.find('[col]').each(function (index, value) {-->
-<!--            var that = $(this),-->
-<!--                col = that.attr('col');-->
-<!--            console.log(col);-->
-<!--            //           value = that.val();-->
-<!---->
-<!--        });-->
-<!--    });-->
-
-            <?php }
-            if ($outype == "Service Unit") {?>
+                        <div class="col-xs-3 text-center">
+                            <p>Status</p>
+                            <h3><?php if ($outype == "Academic Unit") {
+                                    echo $rowsbpunit['BROADCAST_STATUS_OTHERS'];
+                                } elseif ($outype == "Administration") {
+                                    echo $rowsbpunit['BROADCAST_STATUS'];
+                                } ?></h3>
+                        </div>
+                    </div>
+                </a>
+            <?php endwhile;
+        } elseif ($outype == "Service Unit") { ?>
 
                 <h1 class="box-title">Select an Academic Year to Upload Files</h1>
                 <div id="taskboard" class="">
@@ -220,11 +160,8 @@ require_once("../Resources/Includes/menu.php");
                         </tr>
                     </table>
                 </div>
-
-            <?php } ?>
+        <?php } ?>
         </div>
-
-
     <?php
     require_once("../Resources/Includes/footer.php");
     ?>

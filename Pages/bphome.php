@@ -20,13 +20,26 @@ $outype = $_SESSION['login_outype'];
 $_SESSION['bpayname'] = $bpayname;
 $_SESSION['bpid'] = $bpid;
 
-if ($outype == "Administration" || $outype == "Service Unit" ) {
+if ($outype == "Administration") {
     $ouabbrev = $_GET['ou_abbrev'];
     $_SESSION['bpouabbrev'] = $_GET['ou_abbrev'];
-
 } else {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
+
+/*
+ * SQL to display Blueprint Content
+ */
+if ($outype == "Academic Unit") {
+    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
+ LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
+    $resultbpcontent = $mysqli->query($sqlbpcontent);
+} elseif ($outype == "Administration") {
+    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
+ LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
+    $resultbpcontent = $mysqli->query($sqlbpcontent);
+}
+
 
 
 if ($outype == "Administration" || $outype == "Service Unit" ) {
@@ -120,35 +133,29 @@ require_once("../Resources/Includes/menu.php");
                 <li class="col-xs-3">Status</li>
             </ul>
             <!-- Start the loop to pull from database here -->
-            <a href="LINK_TO_CONTENT">
+            <?php while($rowsbpcontent = $resultbpcontent->fetch_assoc()) :
+                if ($rowsbpcontent['Sr_No'] == '3') { ?>
+            </div>
+        <h1 class="box-title">Outcomes</h1>
+            <div id="list">
+                <ul class="list-nav">
+                    <li class="col-xs-5">Section</li>
+                    <li class="col-xs-2">Last Edited By</li>
+                    <li class="col-xs-2">Last Edited On</li>
+                    <li class="col-xs-3">Status</li>
+                </ul>
+        <?php } ?>
+            <a href="<?php echo $rowsbpcontent['CONTENT_LINK'].'?linkid='.$rowsbpcontent['ID_CONTENT'] ?>">
                 <ul class="items">
-                    <li class="col-xs-5">CONTENT_TITLE</li>
-                    <li class="col-xs-2">NAME</li>
-                    <li class="col-xs-2">DATE</li>
-                    <li class="col-xs-3">STATUS</li>
+                    <li class="col-xs-4"><?php echo $rowsbpcontent['CONTENT_BRIEF_DESC'] ?></li>
+                    <li class="col-xs-3"><?php echo $rowsbpcontent['LNAME'].', '.$rowsbpcontent['FNAME']; ?></li>
+                    <li class="col-xs-2"><?php echo date("m/d/Y", strtotime($rowsbpcontent['MOD_TIMESTAMP'])); ?></li>
+                    <li class="col-xs-3"><?php echo $rowsbpcontent['CONTENT_STATUS'] ?></li>
                 </ul>
             </a>
-            
+            <?php endwhile; ?>
         </div>
 
-        <h1 class="box-title">Outcomes</h1>
-        <div id="list">
-            <ul class="list-nav">
-                <li class="col-xs-5">Section</li>
-                <li class="col-xs-2">Last Edited By</li>
-                <li class="col-xs-2">Last Edited On</li>
-                <li class="col-xs-3">Status</li>
-            </ul>
-            <!-- Start the loop to pull from database here -->
-            <a href="LINK_TO_CONTENT">
-                <ul class="items">
-                    <li class="col-xs-5">CONTENT_TITLE</li>
-                    <li class="col-xs-2">NAME</li>
-                    <li class="col-xs-2">DATE</li>
-                    <li class="col-xs-3">STATUS</li>
-                </ul>
-            </a>
-        </div>
 
         <!--
         - Old grid below -
@@ -170,7 +177,13 @@ require_once("../Resources/Includes/menu.php");
         <form action="<?php echo "bphome.php?ayname=$bpayname&ouname=$ouid"; ?>" method="POST">
             <?php if ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
             <div>
-            <input type="submit" name="submit_bp" value="Submit BluePrint" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+            <input type="submit" name="submit_bp" value="Submit BluePrint"
+                <?php
+                $sqlbpcontent .= " and CONTENT_STATUS = 'Dean Approved' ;";
+                $resultcontent = $mysqli->query($sqlbpcontent);
+                $numrow = $resultcontent->num_rows;
+                if ($numrow < 6) { echo 'disabled'; } ?>
+                   class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
             </div>
             <?php } ?>
         </form>
