@@ -151,14 +151,14 @@ require_once("../Resources/Includes/menu.php");
         <?php } ?>
             <a href="<?php echo $rowsbpcontent['CONTENT_LINK'].'?linkid='.$rowsbpcontent['ID_CONTENT'] ?>">
                 <ul class="items">
-                    <li class="col-xs-4"><?php echo $rowsbpcontent['CONTENT_BRIEF_DESC'] ?></li>
-                    <li class="col-xs-3"><?php echo $rowsbpcontent['LNAME'].', '.$rowsbpcontent['FNAME']; ?></li>
+                    <li class="col-xs-5"><?php echo $rowsbpcontent['CONTENT_BRIEF_DESC'] ?></li>
+                    <li class="col-xs-2"><?php echo $rowsbpcontent['LNAME'].', '.$rowsbpcontent['FNAME']; ?></li>
                     <li class="col-xs-2"><?php echo date("m/d/Y", strtotime($rowsbpcontent['MOD_TIMESTAMP'])); ?></li>
                     <li class="col-xs-3"><?php echo $rowsbpcontent['CONTENT_STATUS'] ?></li>
                 </ul>
             </a>
             <?php endwhile; ?>
-        </div>
+            </div>
 
 
         <!--

@@ -166,12 +166,122 @@ require_once("../Resources/Includes/menu.php");
                     </table>
                 </div>
         <?php } ?>
+            <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] . '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>" onclick="return false;">
+                <div id="AY2016-2017" class="col-xs-10 col-xs-offset-1 card provost-card">
+                    <div  class="col-xs-3">
+                        <h1>AY2016-2017 <span id="open" class="icon">T</span><span id="close" class="icon hidden">W</span></h1>
+
+                    </div>
+                </div>
+            </a>
+            
+                <div id="AY2016-2017" class="col-xs-9 col-xs-offset-2 provost-dropdown noDisplay">
+                    <div id="list">
+                        <ul class="list-nav">
+                            <li class="col-xs-5">Section</li>
+                            <li class="col-xs-2">Last Edited By</li>
+                            <li class="col-xs-2">Last Edited On</li>
+                            <li class="col-xs-3">Status</li>
+                        </ul>
+                        <a href="#">
+                            <ul class="items">
+                                <li class="col-xs-5">CEC Academic Blueprint</li>
+                                <li class="col-xs-2">Blake Finn</li>
+                                <li class="col-xs-2">12-23-2016</li>
+                                <li class="col-xs-3">Initiated By Provost</li>
+                            </ul>
+                        </a>
+                        <a href="#">
+                            <ul class="items">
+                                <li class="col-xs-5">COC Academic Blueprint</li>
+                                <li class="col-xs-2">Blake Dave</li>
+                                <li class="col-xs-2">12-23-2016</li>
+                                <li class="col-xs-3">Initiated By Provost</li>
+                            </ul>
+                        </a>
+                        <a href="#">
+                            <ul class="items">
+                                <li class="col-xs-5">CEC Academic Blueprint</li>
+                                <li class="col-xs-2">Blake Finn</li>
+                                <li class="col-xs-2">12-23-2016</li>
+                                <li class="col-xs-3">Initiated By Provost</li>
+                            </ul>
+                        </a>
+                        <a href="#">
+                            <ul class="items">
+                                <li class="col-xs-5">CEC Academic Blueprint</li>
+                                <li class="col-xs-2">Blake Finn</li>
+                                <li class="col-xs-2">12-23-2016</li>
+                                <li class="col-xs-3">Initiated By Provost</li>
+                            </ul>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] . '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>" onclick="return false;">
+                <div id="AY2017-2018" class="col-xs-10 col-xs-offset-1 card provost-card">
+                    <div  class="col-xs-3">
+                        <h1>AY2017-2018 <span id="open" class="icon">T</span><span id="close" class="icon hidden">W</span></h1>
+
+                    </div>
+                </div>
+            </a>
+                <div id="AY2017-2018" class="col-xs-9 col-xs-offset-2 provost-dropdown noDisplay">
+                    <div id="list">
+                        <ul class="list-nav">
+                            <li class="col-xs-5">Section</li>
+                            <li class="col-xs-2">Last Edited By</li>
+                            <li class="col-xs-2">Last Edited On</li>
+                            <li class="col-xs-3">Status</li>
+                        </ul>
+                        <a href="#">
+                            <ul class="items">
+                                <li class="col-xs-5">CEC Academic Blueprint</li>
+                                <li class="col-xs-2">Blake Finn</li>
+                                <li class="col-xs-2">12-23-2016</li>
+                                <li class="col-xs-3">Initiated By Provost</li>
+                            </ul>
+                        </a>
+                        <a href="#">
+                            <ul class="items">
+                                <li class="col-xs-5">COC Academic Blueprint</li>
+                                <li class="col-xs-2">Blake Dave</li>
+                                <li class="col-xs-2">12-23-2016</li>
+                                <li class="col-xs-3">Initiated By Provost</li>
+                            </ul>
+                        </a>
+                        <a href="#">
+                            <ul class="items">
+                                <li class="col-xs-5">CEC Academic Blueprint</li>
+                                <li class="col-xs-2">Blake Finn</li>
+                                <li class="col-xs-2">12-23-2016</li>
+                                <li class="col-xs-3">Initiated By Provost</li>
+                            </ul>
+                        </a>
+                        <a href="#">
+                            <ul class="items">
+                                <li class="col-xs-5">CEC Academic Blueprint</li>
+                                <li class="col-xs-2">Blake Finn</li>
+                                <li class="col-xs-2">12-23-2016</li>
+                                <li class="col-xs-3">Initiated By Provost</li>
+                            </ul>
+                        </a>
+                    </div>
+                </div>
         </div>
     <?php
+
+
+
+
     require_once("../Resources/Includes/footer.php");
     ?>
+
+    
+
     <script src="../Resources/Library/js/search.js"></script>
     <script src="../Resources/Library/js/taskboard.js"></script>
     <script src="../Resources/Library/js/root.js"></script>
     <script src="../Resources/Library/js/grid.js"></script>
+     <script src="../Resources/Library/js/dashboard.js"></script>
 
