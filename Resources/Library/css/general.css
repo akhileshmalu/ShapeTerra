@@ -1,0 +1,402 @@
+/********************************************************
+* This is the general css class to effect the entire site
+*
+*
+*
+*
+* Font color: #333;
+*
+*
+********************************************************/
+
+
+/********************************************************
+* 
+* Basic Styles
+*
+********************************************************/
+@font-face{
+	font-family:'dripicons';
+	src:url('../../Fonts/dripicons-v2.ttf');
+}
+
+.icon{
+	font-family: 'dripicons';
+}
+
+h1,h2,h3,h4,h5,h6,p,a,li,button{
+	font-family: 'Open Sans', sans-serif !important;
+    font-weight: 600;
+    color:#333;
+}
+
+.row{
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.garnet{
+	color:#591B21 !important;
+}
+
+.indent{
+	text-indent: 50px;
+}
+
+.form-indent{
+	margin-left: 25px;
+}
+
+.noDisplay{
+	display: none;
+}
+
+/********************************************************
+* 
+* Main Box Styles
+*
+********************************************************/
+
+#title{
+	margin-bottom: 36px;
+	margin-top: -45px;
+	font-weight: 600;
+	color: #333;
+	font-size: 24px;
+	padding-left: 25px;
+}
+
+#main-content{
+	padding-left: 0px;
+	padding-right: 0px;
+	background-color: #F6F6F6;
+	height: 1980px;
+}
+
+#main-box{
+	background-color: #fff;
+	-webkit-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+    -moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	padding: 0px 25px 25px;
+	margin-top: 25px;
+}
+
+#main-box h2{
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+#main-box ul {
+	list-style: none;
+}
+
+#main-box ul li{
+	font-size: 18px;
+}
+
+h2{
+	font-size: 20px;
+	font-weight: 400;
+}
+
+#main-box select{
+	background-color: #F6F6F6 !important;
+	box-shadow: none;
+	padding: 15px 30px;
+	font-size: 14px;
+}
+
+h1.box-title{
+	font-size: 24px;
+	margin-top: 20px;
+	margin-bottom: 15px;
+}
+
+#main-box h3{
+	font-size: 20px;
+}
+
+#main-box h3:first-child{
+	margin-top: 45px;
+}
+
+p.status{
+	color:#767676;
+	font-weight: 400;
+	margin-bottom: 5px;
+	font-size: 14px;
+}
+
+p.status span{
+	font-weight: 600;
+}
+
+#main-box label{
+	color:#444;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+#errorplate{
+	padding: 10px 20px;
+	margin-left: 90px;
+}
+
+#ouname{
+	margin-left:12px;
+}
+
+.content-general{
+	margin-top: 25px;
+}
+
+.textbox {
+	height: 200px;
+}
+
+.data-display{
+	font-size: 20px;
+	font-weight: 400;
+	margin-top: 15px !important;
+	margin-bottom: 10px !important;
+}
+
+/********************************************************
+* 
+* Button Styles
+*
+********************************************************/
+
+.btn-primary{
+	margin-top: 20px;
+	background-color: #8D0511;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	float: right;
+	background-image: none;
+	border:3px #8D0511 solid;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+.btn-primary:visited{
+	background-color: #9F0816;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	background-image: none;
+	border:3px #9F0816 solid;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+.btn-primary:hover{
+	background-color: #9F0816;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	background-image: none;
+	border:3px #9F0816 solid;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+.btn-primary:focus {
+	background-color: #9F0816;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	background-image: none;
+	border:3px #9F0816 solid;
+	text-shadow: none;
+	box-shadow: none;
+}   
+
+.btn-primary:active {
+	background-color: #9F0816;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	background-image: none;
+	border:3px #9F0816 solid;
+	text-shadow: none;
+	box-shadow: none;
+} 
+
+.btn-primary.disabled, .btn-primary[disabled]{
+	background-color: #9C5C62;
+	border:solid 3px #9C5C62;
+}
+
+.btn-primary.disabled:hover, .btn-primary[disabled]:hover{
+	background-color: #9C5C62;
+	border:solid 3px #9C5C62;
+}
+
+.btn-secondary{
+	margin-top: 20px;
+	background-color: transparent;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	color:#8D0511;
+	float: right;
+	background-image: none;
+	border:3px #8D0511 solid;
+	text-shadow: none;
+	box-shadow: none;
+	outline-offset: -8px;
+}
+
+.btn-secondary:hover{
+	background-color: #8D0511;
+	padding: 12px 40px;
+	font-size: 14px;
+	border-radius: 15px;
+	font-weight: 600;
+	font-family: 'Open Sans', sans-serif;
+	color:#fff;
+	background-image: none;
+	border:3px #8D0511 solid;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+.btn-secondary.disabled, .btn-secondary[disabled]{
+	border:solid 3px #9C5C62;
+	color: #9C5C62;
+	background-color: #f1f1f1;
+}
+
+.btn-secondary.disabled:hover, .btn-secondary[disabled]:hover{
+	border:solid 3px #9C5C62;
+	color: #9C5C62;
+	background-color: #f1f1f1;
+}
+
+#save{
+	margin-right: 30px;
+}
+
+/********************************************************
+* 
+* List Styles
+*
+********************************************************/
+
+#list{
+	margin-top: 45px;
+	padding-bottom: 125px;
+}
+
+#list ul.list-nav li{
+	display: inline;
+	color:#555;
+	font-size: 12px;
+	border-bottom: solid 2px #EAEAEA;
+}
+
+#list a:hover ul li{
+	background-color: #EAEAEA;
+}
+
+#list ul.items li{
+	padding-top: 12px;
+	padding-bottom: 12px;
+	font-size: 16px;
+}
+
+/********************************************************
+* 
+* Card Styles
+*
+********************************************************/
+
+.card{
+	background-color: #fff;
+	-webkit-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+    -moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	padding: 15px 15px 15px;
+	margin-top: 25px;
+	border-left: 3px solid #591B21;
+	z-index: 2;
+}
+
+.card #ay-year{
+	border-right: solid #333 2px;
+}
+
+.card h1{
+	font-size: 24px;
+}
+
+.card h3{
+	font-size: 18px;
+}
+
+.card p{
+	color:#888888;
+	font-size: 12px;
+}
+
+a:hover .card{
+	background-color: #591B21;
+	border-left: 3px solid #fff;
+}
+
+a:hover .card p,a:hover .card h1,a:hover .card h3{
+	color:#fff;
+}
+
+a:hover .card #ay-year{
+	border-right: solid #fff 2px;
+}
+
+.card-search{
+	margin-top: 20px;
+}
+
+.provost-dropdown{
+	margin-top: -30px;
+	background-color: #fff;
+	-webkit-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+    -moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	z-index: 0;
+}
+
+/********************************************************
+* 
+* Overide Styles
+*
+********************************************************/
+
+.modal-footer{
+	border-top:none;
+}
+
+/********************************************************
+* 
+* Other
+*
+********************************************************/
+
+.status-alert{
+	text-align: center;
+}
+

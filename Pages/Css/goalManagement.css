@@ -1,0 +1,81 @@
+#title{
+	margin-bottom: 36px;
+	margin-top: 25px;
+	font-weight: 400;
+	padding-left: 55px;
+	color: #000 !important;
+}
+
+button#add-goal{
+	margin-top: 25px;
+}
+
+.alert{
+	margin-top: 25px;
+}
+
+button span{
+	vertical-align: middle;
+}
+
+#main-content{
+	padding-left: 0px !important;
+}
+
+#table-container{
+	padding-left: 0;
+	margin-top: 37px;
+	border-top: 1px #979797 solid;
+	border-right:1px #979797 solid;
+	padding-right: 0;
+	/*Arbitrary height until content is added to match*/
+	height: 1860px;
+}
+
+table th{
+	background-color: #C6CACD;
+	padding: 20px !important;
+	padding-left: 55px !important;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 600;
+}
+
+table td{
+	padding: 20px !important;
+	padding-left: 55px !important;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+}
+
+aside{
+	margin-top: 15px;
+	border-bottom: 1px #979797 solid;
+	z-index: 20;
+	overflow-y:scroll; 
+	overflow-x: hidden;
+}
+
+h3.title{
+	color:#4A90E2;
+	font-size: 13px;
+	margin-bottom: 7px;
+	margin-top: 40px;
+	font-weight: 400;
+}
+
+aside h2{
+	margin-top: 0;
+	font-size: 24px;
+	font-weight: 400;
+}
+
+aside p{
+	font-weight: 400;
+	font-size: 18px;
+}
+
+
+
+.modal-footer{
+	border-top:none;
+}

@@ -2,17 +2,21 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<title>ShapeTerra</title>
+<title>Academic BluePrint</title>
 	<meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+<!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <link rel="stylesheet" href="../Resources/Library/css/bootstrap.css">
   <link rel="stylesheet" href="../Resources/Library/css/bootstrap-theme.css">
   <link rel="stylesheet" href="../Resources/Library/css/animate.css">
-  <link href="css/layout.css" rel="stylesheet" type="text/css" />
-  
+  <link rel="stylesheet" href="../Resources/Library/css/general.css">
+  <link rel="stylesheet" href="../Resources/Library/css/alert.css">
 
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
-
+</head>
+<body>
 

@@ -1,0 +1,35 @@
+#main-content{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+#title{
+    padding-left: 25px;
+}
+
+table{
+    padding: 0;
+}
+
+table th{
+    background-color: #C6CACD;
+    padding: 20px !important;
+    padding-left: 55px !important;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+}
+
+table td{
+    padding: 20px !important;
+    padding-left: 55px !important;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+}
+
+table td.Approved{
+    color:green;
+}
+
+table td.Initiated{
+    color:yellow;
+}

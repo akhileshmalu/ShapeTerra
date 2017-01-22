@@ -20,22 +20,33 @@ if(isset($_POST['forgot'])){
     if($errorflag == 0){
 
         //Establish Connection
-        require_once ("connect.php");
+        require_once ("../Resources/Includes/connect.php");
         $email = test_input($_POST['email']);
 
-        $sql ="select fname, password FROM user where email = '$email'";
+        $sql ="select FNAME,PW_DEV FROM PermittedUsers where NETWORK_USERNAME = '$email'";
         $result = $mysqli -> query($sql);
         $rows = $result -> num_rows;
 
         if($rows != 0){
             while($record =$result ->fetch_assoc()) {
                 $fname = $record['fname'];
-                $password = $record['password'];
+                $hash = md5( rand(0,1000));
+                $type = 0;
+
+                /* Type is defined as request type for email link verification
+                1-  Active Account Verification
+                0-  Forgot Password Verification
+                 */
+
+                $sql = "update PermittedUsers SET HASH = $hash where NETWORK_USERNAME ='$email'";
+                $mysqli->query($sql);
 
                 //Confirmation Mail Variables
                 $sub = "You have successfully retrieved password.";
                 $msg = "Hello $fname" . "<br/>" . "<br/>";
-                $msg .= "You Password is: $password" . "<br/><br/>" . "Thank you for giving us chance to serve you";
+                $msg .= "Please reset your password by clicking over below link"."<br/>";
+                $msg .= "http://".$site."/Pages/verify.php?email=$email&hash=$hash&type=$type";
+
                 mail($email, $sub, $msg, $headers);
                 $error[0] = "Your Password has been sent to registered email id";
             }
@@ -56,7 +67,7 @@ require_once("../Resources/Includes/header.php");
 
 ?>
 
-<link href="css/forgotpassword.css" rel="stylesheet" type="text/css" />
+<link href="Css/forgotpassword.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
@@ -262,8 +273,10 @@ require_once("../Resources/Includes/header.php");
     <h1 class="col-xs-12">Forgot your password?</h1>   
     <div id="login-form" class="col-xs-6 col-xs-offset-3 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
     <form action="" id="forgotpassword" name="forgotpasswordform" method="POST">
+        <label id="error" class="text-center"> <?php foreach ($error as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
         <input class="col-xs-12" name="email" type="email" placeholder="Enter your Email" required>
         <input type="submit" name="forgot" class ="col-xs-12" value="Retrieve Password" >
+        <a href="login.php" id="login-link" class="pull-right">Return to Login ? </a>
     </form>
     </div>
 

@@ -1,0 +1,160 @@
+#top-bar{
+	/*Correct for row default margin*/
+	margin-left: 0;
+	margin-right: 0;
+	padding: 15px 30px;
+	height: 64px;
+	background-color: #F6F6F6;
+}
+
+
+#logo-box h1{
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 18px;
+	font-weight: 400;
+	color:#fff;
+}
+
+#logo-box h1 span{
+	font-weight: 800;
+}
+
+#logo-box{
+	background-color: #8D0511;
+	padding:5px 0 20px 35px;
+	height: 64px;
+	margin-left: 0;
+	margin-right: 0;
+	min-width: 200px;
+}
+
+#generate-pdf{
+	float: right;
+	vertical-align: middle;
+	margin-top: 5px;
+	margin-right:20px;
+}
+
+#user-name{
+	float: right;
+	margin-top: 5px;
+	margin-right:20px;
+	z-index: 999;
+}
+
+#user-name button{
+	color:#131415;
+	background-color: transparent;
+	border: none;
+}
+
+nav{
+	padding-top: 20px;
+	background-color: #591B21;
+	/*Arbitrary height until content is added to match*/
+	height: 2000px;
+	min-width: 200px;
+}
+
+nav ul{
+	list-style: none;
+	padding-left: 0;
+	margin-left:0; 
+}
+
+nav ul li#header{
+	color: #fff;
+	font-size: 12px;
+	font-weight: 800;
+	margin-bottom: 10px;
+}
+
+nav ul li#tasks a{
+	color: #fff;
+	font-size: 14px;
+	font-weight: 400;
+	margin-bottom: 10px;
+}
+
+nav ul li#tasks a:hover{
+
+	font-weight: 600;
+}
+
+
+
+nav ul li#header a:hover, nav ul li#header a:visited, nav ul li#header a:active, nav ul li#header a:link{
+	text-decoration: none;
+}
+
+.icon.add {
+    border-top-width: 0;
+    border-bottom: 4px solid #fff;
+}
+
+nav ul li{
+	margin-bottom: 18px;
+	padding-left: 15px;
+}
+
+nav ul li#header{
+	padding-left: 0;
+}
+
+nav ul li a{
+	color: #a0a5ab;
+	padding-left: 5px;
+	font-size: 16px;
+	font-weight: 400;
+	vertical-align: middle;
+	line-height: 20px;
+}
+
+nav ul li a.selected{
+	color: #9b7679;
+	font-weight: 400;
+}
+
+nav ul li a:hover{
+	text-decoration: none;
+	color: #fff;
+}
+
+nav ul li a:hover span.icon{
+	text-decoration: none;
+	color: #fff;
+}
+
+#top-bar span.icon{
+	font-size:22px;
+	padding-right: 10px;
+	vertical-align: middle;
+}
+
+#log-out{
+	font-weight: 400;
+	color: #000;
+	padding-left: 20px;
+
+}
+
+#log-out:hover{
+	text-decoration: none;
+	color: #000;
+	font-weight: 600;
+}
+
+
+nav span.icon{
+	font-size:20px;
+	padding-right: 10px;
+	vertical-align: middle;
+	color: #9b7679;
+}
+
+#ContentRight{
+	float:left;
+	margin-top:20px;
+	margin-left:auto;
+}
