@@ -35,10 +35,10 @@ function control (select) {
 
 }
 
-$('#savebtn').on('click',function () {
-
-    $('#savebtn').addClass('hidden');
-    $('#cancelbtn').addClass('hidden');
-    $('#approve').removeClass('hidden');
-
-});
+// $('#savebtn').on('click',function () {
+//
+//     $('#savebtn').addClass('hidden');
+//     $('#cancelbtn').addClass('hidden');
+//     $('#approve').removeClass('hidden');
+//
+// });

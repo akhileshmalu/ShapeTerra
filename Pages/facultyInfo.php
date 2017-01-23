@@ -121,7 +121,7 @@ if(isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
     if ($mysqli->query($sqlfacinfo)) {
 
@@ -164,21 +164,21 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['savedraft'])) { ?>
+<?php //if (isset($_POST['savedraft'])) { ?>
+<!--    <div class="alert">-->
+<!--        <a href="#" class="close end"><span class="icon">9</span></a>-->
+<!--        <h1 class="title"></h1>-->
+<!--        <p class="description">--><?php //foreach ($error as $value) echo $value; ?><!--</p>-->
+<!--<!--        Save will redirect to same page so user can approve -->-->
+<!--        <button type="button" redirect="--><?php //echo "facultyInfo.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?><!-- " class="end btn-primary">Close</button>-->
+<!--    </div>-->
+<?php //} ?>
+<?php if (isset($_POST['submit_approval']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-<!--        Save will redirect to same page so user can approve -->
-        <button type="button" redirect="<?php echo "facultyInfo.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?> " class="end btn-primary">Close</button>
-    </div>
-<?php } ?>
-<?php if (isset($_POST['submit_approval'])) { ?>
-    <div class="alert">
-        <a href="#" class="close end"><span class="icon">9</span></a>
-        <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="<?php echo "bphome.php?ayname=".$rowbroad[0]; ?> " class="end btn-primary">Close</button>
+        <button type="button" redirect="<?php echo "bphome.php?ayname=".$rowbroad[0]."&id=".$bpid; ?> " class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 <div class="hr"></div>

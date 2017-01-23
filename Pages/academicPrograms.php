@@ -35,7 +35,7 @@ if ($ouid == 4) {
 $time = date('Y-m-d H:i:s');
 
 /*
- * faculty Award Grid ; conditional for provost & other users
+ *  Main Title Box  ; conditional for provost & other users
  */
 if ($ouid == 4) {
     $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
@@ -48,7 +48,7 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 /*
  * Values for placeholders
  */
-$sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV='$ouabbrev' and OUTCOMES_AY='$bpayname' ";
+$sqlexvalue = "SELECT * FROM `AC_Programs` where ID_AC_PROGRAMS in (select max(ID_AC_PROGRAMS) from AC_Programs where OUTCOMES_AY = '$bpayname' group by OU_ABBREV)";
 $resultexvalue = $mysqli->query($sqlexvalue);
 $rowsexvalue = $resultexvalue -> fetch_assoc();
 
@@ -59,8 +59,88 @@ $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = '$con
 $resultbpstatus = $mysqli->query($sqlbpstatus);
 $rowsbpstatus = $resultbpstatus->fetch_assoc();
 
+if (isset($_POST['savedraft'])) {
+    $programranking = mynl2br($_POST['programranking']);
+    $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
+    $launch = mynl2br($_POST['launch']);
+    $programterminators = mynl2br($_POST['programterminators']);
+
+    if ($_FILES['supinfo']['tmp_name'] != "") {
+        $target_dir = "../uploads/ac_programs/";
+        $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+        $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
 
 
+        if ($imageFileType != "pdf") {
+            $error[1] = "Sorry, only PDf files are allowed.";
+            $errorflag = 1;
+
+        } else {
+            if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+                // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
+                $supinfopath = $target_file;
+            } else {
+                $error[2] = "Sorry, there was an error uploading your file.";
+            }
+        }
+    }
+    if ($errorflag != 1) {
+
+        $sqlacprogramme = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) 
+VALUES ('$ouabbrev','$bpayname','$author','$time','$programranking','$instructionalmodalities','$launch','$programterminators','$supinfopath');";
+
+        $sqlacprogramme .= "Update  `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+        $sqlacprogramme .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+
+        if ($mysqli->multi_query($sqlacprogramme)) {
+
+            $error[0] = "Academic Program Info Added Succesfully.";
+        } else {
+            $error[3] = "Academic Program Info could not be added.";
+        }
+    }
+
+}
+
+if(isset($_POST['submit_approval'])) {
+
+    $contentlink_id = $_GET['linkid'];
+
+    $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    if ($mysqli->query($sqlfacinfo)) {
+
+        $error[0] = "Faculty Information submitted Successfully";
+
+    } else {
+        $error[0] = "Faculty Information Could not be submitted. Please Retry.";
+    }
+
+}
+
+if(isset($_POST['approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Faculty Information Approved Successfully";
+    } else {
+        $error[0] = "Faculty Information Could not be Approved. Please Retry.";
+    }
+}
+
+if(isset($_POST['reject'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Faculty Information Rejected Successfully";
+    } else {
+        $error[0] = "Faculty Information Could not be Rejected. Please Retry.";
+    }
+}
 
 require_once("../Resources/Includes/header.php");
 
@@ -71,20 +151,20 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit_approval'])) { ?>
+<?php //if (isset($_POST['submit_approval'])) { ?>
+<!--    <div class="alert">-->
+<!--        <a href="#" class="close end"><span class="icon">9</span></a>-->
+<!--        <h1 class="title"></h1>-->
+<!--        <p class="description">--><?php //foreach ($error as $value) echo $value; ?><!--</p>-->
+<!--        <button type="button" redirect="bphome.php?ayname=--><?php //echo $rowbroad[0]; ?><!--" class="end btn-primary">Close</button>-->
+<!--    </div>-->
+<?php //} ?>
+<?php if (isset($_POST['savedraft']) or isset($_POST['submit_approval']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
-    </div>
-<?php } ?>
-<?php if (isset($_POST['savedraft'])) { ?>
-    <div class="alert">
-        <a href="#" class="close end"><span class="icon">9</span></a>
-        <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="<?php echo "initiatives.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
+        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]."&id=".$bpid; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 <div class="hr"></div>
@@ -102,31 +182,26 @@ require_once("../Resources/Includes/menu.php");
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Academic Programs</h1>
-        <form action="ACTION" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF'].'?linkid='.$contentlink_id; ?>" method="POST" enctype="multipart/form-data">
             <h3>Program Rankings</h3>
                 <div class="form-group form-indent">
                     <p class="status">List any academic programs that were nationally ranked during the Academic Year.  For each, provide the formal name of the academic program followed by the name of the organization that issued the ranking, the date of notification, effective date range, and notes. </p>  
-                    <textarea name="programranking" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo $rowsexvalue['']; ?></textarea>
+                    <textarea name="programranking" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo mybr2nl($rowsexvalue['PROGRAM_RANKINGS']); ?></textarea>
                 </div>
             <h3>Instructional Modalities</h3>
                 <div class="form-group form-indent">
                     <p class="status">List and describe innovations and changes to Instructional Modalities in your unit's programmatic and course offerings that were enacted during the Academic Year.  </p> 
-                    <textarea name="instructionalmodalities" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['']; ?></textarea>
+                    <textarea name="instructionalmodalities" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['INSTRUCT_MODALITIES']); ?></textarea>
                 </div>
             <h3>Program Launches</h3>
                 <div class="form-group form-indent">
                     <p class="status"><small>List any Academic Programs that were newly launched during the Academic Year; those that have received required approvals but which have not yet enrolled students should not be included. For each, list the formal name of the academic program and the responsible department. </small></p>
-                    <textarea  name="afford" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['']); ?></textarea>
-                </div>
-            <h3>Reputation Enhancement</h3>
-                <div class="form-group form-indent">
-                    <p class="status"><small>Describe innovations, happy accidents, good news, etc. that occurred within your unit during the Academic Year, not noted elsewhere in your reporting.</small></p>
-                    <textarea  name="reputationenhancement" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['']); ?></textarea>
+                    <textarea  name="launch" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['PROGRAM_LAUNCHES']); ?></textarea>
                 </div>
             <h3>Program Terminators</h3>
                 <div class="form-group form-indent">
                     <p class="status"><small>List any Academic Programs that were newly terminated or discontinued during the Academic Year as follows: for each clearly indicate whether the decision to terminate was made during the Academic Year or whether the program ceased having any enrolled students during the Academic Year.  </small></p>
-                    <textarea  name="programterminators" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['']); ?></textarea>
+                    <textarea  name="programterminators" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['PROGRAM_TERMINATIONS']); ?></textarea>
                 </div>
             <h3>Supplemental Info</h3>
                 <div id="suppinfo" class="form-group form-indent">
@@ -134,21 +209,11 @@ require_once("../Resources/Includes/menu.php");
                     <label for="supinfofile">Select File</label>
                     <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
                 </div>
-                <!--                        Reviewer Edit Control
-                <?php //if ($_SESSION['login_right'] != 1): ?>
-
-                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                <input type="submit" id="approve" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">
-                <input type="submit" id="savebtn" name="savedraft" value="Save Draft" class="btn-secondary pull-right">
-
-                <?php //endif; ?>
-                -->
 
                 <!--                      Edit Control-->
 
                 <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
                     <button id="save" type="submit" name="savedraft"
-                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
@@ -162,7 +227,7 @@ require_once("../Resources/Includes/menu.php");
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
-
+                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
                     <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
                         <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
                         <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">

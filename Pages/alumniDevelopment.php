@@ -8,10 +8,10 @@
  */
 
 session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+//if(!$_SESSION['isLogged']) {
+//    header("location:login.php");
+//    die();
+//}
 $error = array();
 $errorflag =0;
 $BackToDashboard = true;
@@ -48,7 +48,7 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 /*
  * Values for placeholders
  */
-$sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV='$ouabbrev' and OUTCOMES_AY='$bpayname' ";
+$sqlexvalue = "SELECT * FROM `AC_AlumDev` where ID_ALUMNI_DEV in (select max(ID_ALUMNI_DEV) from AC_AlumDev where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
 $resultexvalue = $mysqli->query($sqlexvalue);
 $rowsexvalue = $resultexvalue -> fetch_assoc();
 
@@ -59,7 +59,88 @@ $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = '$con
 $resultbpstatus = $mysqli->query($sqlbpstatus);
 $rowsbpstatus = $resultbpstatus->fetch_assoc();
 
+if (isset($_POST['savedraft'])) {
+    $programranking = mynl2br($_POST['programranking']);
+    $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
+    $launch = mynl2br($_POST['launch']);
+    $programterminators = mynl2br($_POST['programterminators']);
 
+    if ($_FILES['supinfo']['tmp_name'] != "") {
+        $target_dir = "../uploads/ac_programs/";
+        $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+        $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
+
+
+        if ($imageFileType != "pdf") {
+            $error[1] = "Sorry, only PDf files are allowed.";
+            $errorflag = 1;
+
+        } else {
+            if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+                // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
+                $supinfopath = $target_file;
+            } else {
+                $error[2] = "Sorry, there was an error uploading your file.";
+            }
+        }
+    }
+    if ($errorflag != 1) {
+
+        $sqlacprogramme = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) 
+VALUES ('$ouabbrev','$bpayname','$author','$time','$programranking','$instructionalmodalities','$launch','$programterminators','$supinfopath');";
+
+        $sqlacprogramme .= "Update  `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+        $sqlacprogramme .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+
+        if ($mysqli->multi_query($sqlacprogramme)) {
+
+            $error[0] = "Academic Program Info Added Succesfully.";
+        } else {
+            $error[3] = "Academic Program Info could not be added.";
+        }
+    }
+
+}
+
+if(isset($_POST['submit_approval'])) {
+
+    $contentlink_id = $_GET['linkid'];
+
+    $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    if ($mysqli->query($sqlfacinfo)) {
+
+        $error[0] = "Faculty Information submitted Successfully";
+
+    } else {
+        $error[0] = "Faculty Information Could not be submitted. Please Retry.";
+    }
+
+}
+
+if(isset($_POST['approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Faculty Information Approved Successfully";
+    } else {
+        $error[0] = "Faculty Information Could not be Approved. Please Retry.";
+    }
+}
+
+if(isset($_POST['reject'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlmission)) {
+        $error[0] = "Faculty Information Rejected Successfully";
+    } else {
+        $error[0] = "Faculty Information Could not be Rejected. Please Retry.";
+    }
+}
 
 
 require_once("../Resources/Includes/header.php");
@@ -71,20 +152,12 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit_approval'])) { ?>
+<?php if (isset($_POST['submit_approval']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
-    </div>
-<?php } ?>
-<?php if (isset($_POST['savedraft'])) { ?>
-    <div class="alert">
-        <a href="#" class="close end"><span class="icon">9</span></a>
-        <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="<?php echo "initiatives.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
+        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]."&id=".$bpid; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 <div class="hr"></div>

@@ -35,8 +35,8 @@ if ($outype == "Academic Unit") {
     $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE BROADCAST_OU ='$ouid' ORDER BY BROADCAST_AY ASC ; ";
     $resultbpunit = $mysqli->query($sqlbpunit);
 } elseif ($outype == "Administration") {
-    $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR ORDER BY BROADCAST_AY ASC ; ";
-    $resultbpunit = $mysqli->query($sqlbpunit);
+    $sqldistinctay = "SELECT DISTINCT(BROADCAST_AY) FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR ORDER BY BROADCAST_AY ASC ; ";
+    $resultdistinctay = $mysqli->query($sqldistinctay);
 }
 
 
@@ -91,7 +91,17 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
 
-        <?php if ($outype == "Academic Unit" || $outype == "Administration") { ?>
+        <div id="" class="col-xs-10 col-xs-offset-1">
+            <h1 class="box-title col-xs-12">Select An Academic Year</h1>
+
+            <div class="input-group col-xs-4 card-search">
+                <span class="input-group-addon icon" id="basic-addon1">&#xe041;</span>
+                <input type="text" class="form-control" class="col-xs-4" id="search-box" placeholder="Search"
+                       aria-describedby="basic-addon1">
+            </div>
+
+        </div>
+        <?php if ($outype == "Academic Unit") { ?>
 
             <!--            <h1 class="box-title">Select an Academic Year</h1>-->
             <!--            <div id="taskboard" class="">-->
@@ -115,16 +125,7 @@ require_once("../Resources/Includes/menu.php");
 
             <!-- Possible new list card style -->
 
-            <div id="" class="col-xs-10 col-xs-offset-1">
-                <h1 class="box-title col-xs-12">Select An Academic Year</h1>
 
-                <div class="input-group col-xs-4 card-search">
-                    <span class="input-group-addon icon" id="basic-addon1">&#xe041;</span>
-                    <input type="text" class="form-control" class="col-xs-4" id="search-box" placeholder="Search"
-                           aria-describedby="basic-addon1">
-                </div>
-
-            </div>
             <?php while ($rowsbpunit = $resultbpunit->fetch_assoc()) : ?>
                 <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] . '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>">
                     <div id="" class="col-xs-10 col-xs-offset-1 card">
@@ -143,16 +144,49 @@ require_once("../Resources/Includes/menu.php");
 
                         <div class="col-xs-3 text-center">
                             <p>Status</p>
-                            <h3><?php if ($outype == "Academic Unit") {
-                                    echo $rowsbpunit['BROADCAST_STATUS_OTHERS'];
-                                } elseif ($outype == "Administration") {
-                                    echo $rowsbpunit['BROADCAST_STATUS'];
-                                } ?></h3>
+                            <h3><?php echo $rowsbpunit['BROADCAST_STATUS_OTHERS']; ?></h3>
                         </div>
                     </div>
                 </a>
             <?php endwhile;
-        } elseif ($outype == "Service Unit") { ?>
+        } elseif ($outype == "Administration") {
+            while($rowsdistinctay = $resultdistinctay->fetch_assoc()) {?>
+
+            <a href="#" onclick="return false;">
+                <div id="<?php echo $rowsdistinctay['BROADCAST_AY']; ?>" class="col-xs-11 col-xs-offset-0 card provost-card">
+                    <div  class="col-xs-4">
+                        <h1><?php echo $rowsdistinctay['BROADCAST_AY']; ?><span id="open" class="icon">T</span><span id="close" class="icon hidden">W</span></h1>
+
+                    </div>
+                </div>
+            </a>
+            <div id="<?php echo $rowsdistinctay['BROADCAST_AY'] ?>" class="col-xs-10 col-xs-offset-1 provost-dropdown noDisplay">
+                <div id="list">
+                    <ul class="list-nav">
+                        <li class="col-xs-4">Section</li>
+                        <li class="col-xs-3">Last Edited By</li>
+                        <li class="col-xs-2">Last Edited On</li>
+                        <li class="col-xs-3">Status</li>
+                    </ul>
+                <?php
+                $ay = $rowsdistinctay['BROADCAST_AY'];
+                $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE BROADCAST_AY = '$ay' ORDER BY BROADCAST_AY ASC ; ";
+                $resultbpunit = $mysqli->query($sqlbpunit);
+                while($rowsbpunit = $resultbpunit->fetch_assoc()) { ?>
+                    <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] . '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>">
+                        <ul class="items">
+                            <li class="col-xs-4"><?php echo $rowsbpunit['BROADCAST_DESC']; ?></li>
+                            <li class="col-xs-3"><?php echo $rowsbpunit['LNAME'] . ", " . $rowsbpunit['FNAME']; ?></li>
+                            <li class="col-xs-2"><?php echo date("m/d/Y", strtotime($rowsbpunit['LastModified'])); ?></li>
+                            <li class="col-xs-3"><?php  echo $rowsbpunit['BROADCAST_STATUS']; ?></li>
+                        </ul>
+                    </a>
+                    <?php } ?>
+                </div>
+            </div>
+                <?php } ?>
+
+        <?php } elseif ($outype == "Service Unit") { ?>
 
                 <h1 class="box-title">Select an Academic Year to Upload Files</h1>
                 <div id="taskboard" class="">
@@ -166,119 +200,10 @@ require_once("../Resources/Includes/menu.php");
                     </table>
                 </div>
         <?php } ?>
-            <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] . '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>" onclick="return false;">
-                <div id="AY2016-2017" class="col-xs-10 col-xs-offset-1 card provost-card">
-                    <div  class="col-xs-3">
-                        <h1>AY2016-2017 <span id="open" class="icon">T</span><span id="close" class="icon hidden">W</span></h1>
-
-                    </div>
-                </div>
-            </a>
-            
-                <div id="AY2016-2017" class="col-xs-9 col-xs-offset-2 provost-dropdown noDisplay">
-                    <div id="list">
-                        <ul class="list-nav">
-                            <li class="col-xs-5">Section</li>
-                            <li class="col-xs-2">Last Edited By</li>
-                            <li class="col-xs-2">Last Edited On</li>
-                            <li class="col-xs-3">Status</li>
-                        </ul>
-                        <a href="#">
-                            <ul class="items">
-                                <li class="col-xs-5">CEC Academic Blueprint</li>
-                                <li class="col-xs-2">Blake Finn</li>
-                                <li class="col-xs-2">12-23-2016</li>
-                                <li class="col-xs-3">Initiated By Provost</li>
-                            </ul>
-                        </a>
-                        <a href="#">
-                            <ul class="items">
-                                <li class="col-xs-5">COC Academic Blueprint</li>
-                                <li class="col-xs-2">Blake Dave</li>
-                                <li class="col-xs-2">12-23-2016</li>
-                                <li class="col-xs-3">Initiated By Provost</li>
-                            </ul>
-                        </a>
-                        <a href="#">
-                            <ul class="items">
-                                <li class="col-xs-5">CEC Academic Blueprint</li>
-                                <li class="col-xs-2">Blake Finn</li>
-                                <li class="col-xs-2">12-23-2016</li>
-                                <li class="col-xs-3">Initiated By Provost</li>
-                            </ul>
-                        </a>
-                        <a href="#">
-                            <ul class="items">
-                                <li class="col-xs-5">CEC Academic Blueprint</li>
-                                <li class="col-xs-2">Blake Finn</li>
-                                <li class="col-xs-2">12-23-2016</li>
-                                <li class="col-xs-3">Initiated By Provost</li>
-                            </ul>
-                        </a>
-                    </div>
-                </div>
-
-                <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] . '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>" onclick="return false;">
-                <div id="AY2017-2018" class="col-xs-10 col-xs-offset-1 card provost-card">
-                    <div  class="col-xs-3">
-                        <h1>AY2017-2018 <span id="open" class="icon">T</span><span id="close" class="icon hidden">W</span></h1>
-
-                    </div>
-                </div>
-            </a>
-                <div id="AY2017-2018" class="col-xs-9 col-xs-offset-2 provost-dropdown noDisplay">
-                    <div id="list">
-                        <ul class="list-nav">
-                            <li class="col-xs-5">Section</li>
-                            <li class="col-xs-2">Last Edited By</li>
-                            <li class="col-xs-2">Last Edited On</li>
-                            <li class="col-xs-3">Status</li>
-                        </ul>
-                        <a href="#">
-                            <ul class="items">
-                                <li class="col-xs-5">CEC Academic Blueprint</li>
-                                <li class="col-xs-2">Blake Finn</li>
-                                <li class="col-xs-2">12-23-2016</li>
-                                <li class="col-xs-3">Initiated By Provost</li>
-                            </ul>
-                        </a>
-                        <a href="#">
-                            <ul class="items">
-                                <li class="col-xs-5">COC Academic Blueprint</li>
-                                <li class="col-xs-2">Blake Dave</li>
-                                <li class="col-xs-2">12-23-2016</li>
-                                <li class="col-xs-3">Initiated By Provost</li>
-                            </ul>
-                        </a>
-                        <a href="#">
-                            <ul class="items">
-                                <li class="col-xs-5">CEC Academic Blueprint</li>
-                                <li class="col-xs-2">Blake Finn</li>
-                                <li class="col-xs-2">12-23-2016</li>
-                                <li class="col-xs-3">Initiated By Provost</li>
-                            </ul>
-                        </a>
-                        <a href="#">
-                            <ul class="items">
-                                <li class="col-xs-5">CEC Academic Blueprint</li>
-                                <li class="col-xs-2">Blake Finn</li>
-                                <li class="col-xs-2">12-23-2016</li>
-                                <li class="col-xs-3">Initiated By Provost</li>
-                            </ul>
-                        </a>
-                    </div>
-                </div>
         </div>
     <?php
-
-
-
-
     require_once("../Resources/Includes/footer.php");
     ?>
-
-    
-
     <script src="../Resources/Library/js/search.js"></script>
     <script src="../Resources/Library/js/taskboard.js"></script>
     <script src="../Resources/Library/js/root.js"></script>

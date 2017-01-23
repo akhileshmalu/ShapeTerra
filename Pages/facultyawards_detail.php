@@ -66,6 +66,10 @@ $rowsbpstatus = $resultbpstatus->fetch_assoc();
 $sqlaward = "select * from AwardType;";
 $resultaward = $mysqli->query($sqlaward);
 
+$sqlawardLoc = "select * from AwardLocation;";
+$resultawardLoc = $mysqli->query($sqlawardLoc);
+
+
 /*
  * SQL for pre-existing Awards Value
  */
@@ -80,6 +84,7 @@ $rowsexvalue = $resultexvalue->fetch_assoc();
 if(isset($_POST['award_submit'])){
 
     $awardType = $_POST['awardType'];
+    $awardLoc = $_POST['awardLoc'];
     $recipLname = $_POST['recipLname'];
     $recipFname = $_POST['recipFname'];
     $awardTitle = $_POST['awardTitle'];
@@ -88,8 +93,8 @@ if(isset($_POST['award_submit'])){
     $contentlink_id = $_GET['linkid'];
 
     $sqlAcFacAward = "UPDATE `AC_FacultyAwards`
-SET OUTCOMES_AUTHOR = '$author',MOD_TIMESTAMP = '$time',AWARD_TYPE = '$awardType',RECIPIENT_NAME_LAST = '$recipLname',
-RECIPIENT_NAME_FIRST = '$recipFname', AWARD_TITLE = '$awardTitle',AWARDING_ORG = '$awardOrg',DATE_AWARDED ='$dateAward' WHERE ID_FACULTY_AWARDS = '$award_id' ;";
+SET OUTCOMES_AUTHOR = '$author',MOD_TIMESTAMP = '$time',AWARD_TYPE = '$awardType', AWARD_LOCATION = '$awardLoc', RECIPIENT_NAME_LAST = '$recipLname',
+RECIPIENT_NAME_FIRST = '$recipFname', AWARD_TITLE = '$awardTitle', AWARDING_ORG = '$awardOrg',DATE_AWARDED ='$dateAward' WHERE ID_FACULTY_AWARDS = '$award_id' ;";
 
     if($mysqli->query($sqlAcFacAward)){
 
@@ -163,6 +168,17 @@ require_once("../Resources/Includes/menu.php");
                     <?php } endwhile; ?>
                 </select>
 
+                <label for="awardLoc">Select Award Location:</label>
+                <select name="awardLoc" class="form-control" id="awardLoc">
+                    <option value=""></option>
+                    <?php while ($rowsawardLoc = $resultawardLoc->fetch_assoc()): { ?>
+                        <option
+                            value="<?php echo $rowsawardLoc['ID_AWARD_LOCATION']; ?>"
+                            <?php if($rowsawardLoc['ID_AWARD_LOCATION'] == $rowsexvalue['AWARD_LOCATION']) echo " selected = selected"; ?>>
+                            <?php echo $rowsaward['AWARD_LOCATION']; ?> </option>
+                    <?php } endwhile; ?>
+                </select>
+
                 <label for="recipLname">Recipient Last Name:</label>
                 <input type="text" class="form-control" name="recipLname" value="<?php echo $rowsexvalue['RECIPIENT_NAME_LAST'] ?>" id="recipLname" required>
 
@@ -183,7 +199,7 @@ require_once("../Resources/Includes/menu.php");
                         </span>
                 </div>
 
-                <?php if ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee'): ?>
+                <?php if ($_SESSION['login_role'] != 'reviewer'): ?>
                 <input type="submit" id="awardbtn" name="award_submit" value="Save" class="btn-primary">
                 <?php endif; ?>
 

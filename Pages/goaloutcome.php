@@ -25,7 +25,7 @@ require_once ("../Resources/Includes/connect.php");
  */
 $bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
-$goal_id=intval($_GET['goal_id']);
+$goal_id=$_GET['goal_id'];
 $bpayname =$_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 
@@ -57,8 +57,9 @@ $sqlexgoalout = "select * from BP_UnitGoalOutcomes where ID_UNIT_GOAL = '$goal_i
 $resultexgoalout = $mysqli->query($sqlexgoalout);
 $rowsexgoalout = $resultexgoalout -> fetch_assoc();
 
-
-
+/*
+ * values to show for goals, If exist.
+ */
 $sqlunitgoal = "select * from BP_UnitGoals where ID_UNIT_GOAL = '$goal_id' ";
 $resultunitgoal = $mysqli->query($sqlunitgoal);
 $rowsunitgoal = $resultunitgoal -> fetch_assoc();
@@ -69,7 +70,7 @@ $rowsunitgoal = $resultunitgoal -> fetch_assoc();
  * Add Modal Record Addition
  */
 
-if(isset($_POST['savedraft'])){
+if(isset($_POST['savedraft'])) {
 
     $goalstatus = $_POST['goal_status'];
     $goalach = nl2br($_POST['goal_ach']);
@@ -79,14 +80,17 @@ if(isset($_POST['savedraft'])){
     $goalnote = nl2br($_POST['goal_notes']);
     $goalreportstatus = "In progress";
     $contentlink_id = $_GET['linkid'];
-    $goal_id=intval($_GET['goal_id']);
+    $goal_id = $_GET['goal_id'];
 
 
 
     $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_NOTES) 
-VALUES ('$goal_id','$author','$time','$goalreportstatus','$goalstatus','$goalach','$resutilzed','$goalconti','$resneed','$goalnote'); ";
+VALUES ('$goal_id','$author','$time','$goalreportstatus','$goalstatus','$goalach','$resutilzed','$goalconti','$resneed','$goalnote')
+ON DUPLICATE KEY UPDATE `ID_UNIT_GOAL` = VALUES(`ID_UNIT_GOAL`), OUTCOMES_AUTHOR = VALUES(`OUTCOMES_AUTHOR`), MOD_TIMESTAMP = VALUES(`MOD_TIMESTAMP`),
+GOAL_REPORT_STATUS = VALUES(`GOAL_REPORT_STATUS`), GOAL_STATUS = VALUES(`GOAL_STATUS`), GOAL_ACHIEVEMENTS = VALUES(`GOAL_ACHIEVEMENTS`), GOAL_RSRCS_UTLZD = VALUES(`GOAL_RSRCS_UTLZD`),
+GOAL_CONTINUATION = VALUES(`GOAL_CONTINUATION`), GOAL_RSRCS_NEEDED = VALUES(`GOAL_RSRCS_NEEDED`),GOAL_NOTES = VALUES(`GOAL_NOTES`); ";
 
-    $sqlgoalout .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
+    $sqlgoalout .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
 
     $sqlgoalout .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
@@ -148,7 +152,7 @@ require_once("../Resources/Includes/menu.php");
 ?>
 
 
-<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
+<!--<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />-->
 
 <div class="overlay hidden"></div>
 <?php if (isset($_POST['savedraft']) OR isset($_POST['submit_approve']) OR isset($_POST['approve']) OR isset($_POST['reject']) ) { ?>
@@ -156,7 +160,7 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="goaloutcomeshome.php?linkid=<?php echo $contentlink_id ?>" class="end btn-primary">Close</button>
+        <button type="button" redirect="<?php echo "goaloutcomeshome.php?linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 
@@ -175,12 +179,6 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
 
-<!--        <div class="col-xs-4">-->
-<!--            <a href="#" class="btn-primary">Preview</a>-->
-<!--        </div>-->
-
-
-
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
@@ -193,7 +191,7 @@ require_once("../Resources/Includes/menu.php");
                     style="color: grey">Goal : <?php echo $rowsunitgoal['UNIT_GOAL_TITLE']; ?></p></h4>
             <!--                </div>-->
 
-            <form action="<?php echo "goaloutcome.php?goal_id=$goal_id&linkid=$contentlink_id"; ?>" method="POST">
+            <form action="<?php echo "goaloutcome.php?goal_id=".$goal_id."&linkid=".$contentlink_id; ?>" method="POST">
 
                 <div class="form-group">
                     <label for="goallink"><h1>Linked to University Goal(s)</h1></label>
@@ -225,9 +223,10 @@ require_once("../Resources/Includes/menu.php");
                     <select id="goalstlist" name="goal_status" onchange="control(this);" class="form-control">
                     <?php $sqlgoalstatus ="select * from GoalStatus";
                     $resultgoalstatus = $mysqli->query($sqlgoalstatus);
-                    while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :
-                    ?>
-                        <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"> <?php echo $rowsgoalstatus['STATUS']; ?> </option>
+                    while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :?>
+                        <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"
+                            <?php if($rowsgoalstatus['ID_STATUS'] == $rowsexgoalout['GOAL_STATUS']) echo " selected = selected"; ?>
+                        > <?php echo $rowsgoalstatus['STATUS']; ?> </option>
                         <?php  endwhile; ?>
                     </select>
                 </div>
@@ -259,22 +258,12 @@ require_once("../Resources/Includes/menu.php");
                     <textarea name="goal_notes" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_NOTES']); ?></textarea>
                 </div>
 
-                <!--                        Reviewer Edit Control-->
-<!--                --><?php //if ($_SESSION['login_right'] != 1): ?>
-<!---->
-<!--                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">-->
-<!---->
-<!--                <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right">-->
-<!--                <input type="submit" id="savebtn" name="save_draft" value="Save Draft" class="btn-secondary pull-right">-->
-<!---->
-<!--                --><?php //endif; ?>
 
                 <!--                      Edit Control-->
 
                 <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) { ?>
 
-                    <button id="save" type="submit" name="savedrft"
-                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                    <button id="save" type="submit" name="savedraft"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
@@ -285,7 +274,6 @@ require_once("../Resources/Includes/menu.php");
                 <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
                     <button id="save" type="submit" name="savedraft"
-                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
@@ -305,22 +293,17 @@ require_once("../Resources/Includes/menu.php");
 
 </div>
 
-
 <?php
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
 
 <!--Calender Bootstrap inclusion for date picker INPUT-->
-<script type="text/javascript">
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-</script>
 <!--<script src="../Resources/Library/js/tabchange.js"></script>-->
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
+<script src="../Resources/Library/js/alert.js"></script>
 <script src="../Resources/Library/js/outcomecntrl.js"></script>
 

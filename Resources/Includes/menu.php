@@ -192,7 +192,7 @@ Generate PDF button currently disabled.
 		<?php } ?>
 		<?php if($BackToGoal){ ?>
 			<li class="" id="header"><a class="" onclick="window.history.back();" >
-					<span id="" class="icon">l</span>Back To Goals</a></li>
+					<span id="" class="icon">l</span>Back To Previous</a></li>
 		<?php } ?>
 
         <li class="" id="header">Main</li>

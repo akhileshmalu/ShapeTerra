@@ -60,10 +60,13 @@ $resultbpstatus = $mysqli->query($sqlbpstatus);
 $rowsbpstatus = $resultbpstatus->fetch_assoc();
 
 /*
- * New award modal Input values
+ * New award modal Input values : Award type
  */
 $sqlaward = "select * from AwardType;";
 $resultaward = $mysqli->query($sqlaward);
+
+$sqlawardLoc = "select * from AwardLocation;";
+$resultawardLoc = $mysqli->query($sqlawardLoc);
 
 
 
@@ -74,6 +77,7 @@ $resultaward = $mysqli->query($sqlaward);
 if(isset($_POST['award_submit'])){
 
     $awardType = $_POST['awardType'];
+    $awardLoc = $_POST['awardLoc'];
     $recipLname = $_POST['recipLname'];
     $recipFname = $_POST['recipFname'];
     $awardTitle = $_POST['awardTitle'];
@@ -82,8 +86,8 @@ if(isset($_POST['award_submit'])){
     $contentlink_id = $_GET['linkid'];
 
     $sqlAcFacAward = "INSERT INTO `AC_FacultyAwards`
-(OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,RECIPIENT_NAME_LAST,RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED)
-VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$recipLname','$recipFname','$awardTitle','$awardOrg','$dateAward');";
+(OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST,RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED)
+VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$awardLoc','$recipLname','$recipFname','$awardTitle','$awardOrg','$dateAward');";
 
     $sqlAcFacAward .= "Update `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
@@ -156,7 +160,16 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['award_submit']) OR isset($_POST['submit_approve']) OR isset($_POST['approve']) OR isset($_POST['reject'])) { ?>
+<?php if (isset($_POST['award_submit'])) { ?>
+    <div class="alert">
+        <a href="#" class="close end"><span class="icon">9</span></a>
+        <h1 class="title"></h1>
+        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <button type="button" redirect="<?php echo $_SERVER['PHP_SELF'].'?linkid='.$contentlink_id; ?>" class="end btn-primary">Close</button>
+    </div>
+<?php } ?>
+
+<?php if ( isset($_POST['submit_approve']) OR isset($_POST['approve']) OR isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
@@ -240,7 +253,7 @@ require_once("../Resources/Includes/menu.php");
             <h4 class="modal-title" id="myModalLabel">Add Faculty Awards</h4>
         </div>
         <div class="modal-body">
-            <form method="POST" action="<?php echo "facultyawards.php?linkid=".$contentlink_id; ?>" class="ajaxform">
+            <form method="POST" action="<?php echo "facultyawards.php?linkid=".$contentlink_id; ?>">
                 <div class="form-group">
 
                     <label for="awardtype">Select Award Type:</label>
@@ -248,6 +261,14 @@ require_once("../Resources/Includes/menu.php");
                         <option value=""></option>
                         <?php while ($rowsaward = $resultaward->fetch_assoc()): { ?>
                             <option value="<?php echo $rowsaward['AWARD_TYPE']; ?>"> <?php echo $rowsaward['AWARD_TYPE']; ?> </option>
+                        <?php } endwhile; ?>
+                    </select>
+
+                    <label for="awardLoc">Select Award Location:</label>
+                    <select  name="awardLoc" class="form-control" id="awardLoc">
+                        <option value=""></option>
+                        <?php while ($rowsawardLoc = $resultawardLoc->fetch_assoc()): { ?>
+                            <option value="<?php echo $rowsawardLoc['ID_AWARD_LOCATION']; ?>"> <?php echo $rowsawardLoc['AWARD_LOCATION']; ?> </option>
                         <?php } endwhile; ?>
                     </select>
 
