@@ -84,7 +84,7 @@ if(isset($_POST['savedraft'])) {
 
 
 
-    $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_NOTES) 
+    $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_NOTES)
 VALUES ('$goal_id','$author','$time','$goalreportstatus','$goalstatus','$goalach','$resutilzed','$goalconti','$resneed','$goalnote')
 ON DUPLICATE KEY UPDATE `ID_UNIT_GOAL` = VALUES(`ID_UNIT_GOAL`), OUTCOMES_AUTHOR = VALUES(`OUTCOMES_AUTHOR`), MOD_TIMESTAMP = VALUES(`MOD_TIMESTAMP`),
 GOAL_REPORT_STATUS = VALUES(`GOAL_REPORT_STATUS`), GOAL_STATUS = VALUES(`GOAL_STATUS`), GOAL_ACHIEVEMENTS = VALUES(`GOAL_ACHIEVEMENTS`), GOAL_RSRCS_UTLZD = VALUES(`GOAL_RSRCS_UTLZD`),
@@ -168,7 +168,7 @@ require_once("../Resources/Includes/menu.php");
 
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
-        <h1 id="title">Blueprint Management</h1>
+        <h1 class="box-title" id="title">Blueprint Management</h1>
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
@@ -194,7 +194,7 @@ require_once("../Resources/Includes/menu.php");
             <form action="<?php echo "goaloutcome.php?goal_id=".$goal_id."&linkid=".$contentlink_id; ?>" method="POST">
 
                 <div class="form-group">
-                    <label for="goallink"><h1>Linked to University Goal(s)</h1></label>
+                    <label for="goallink"><h3>Linked to University Goal(s)</h3></label>
 
                     <?php
                     $sqlug = "Select * from BP_UnitGoals A   join UniversityGoals B where find_in_set(ID_UNIV_GOAL,LINK_UNIV_GOAL)>0 and A.ID_UNIT_GOAL = '$goal_id'; ";
@@ -208,19 +208,19 @@ require_once("../Resources/Includes/menu.php");
                     <?php } endwhile; ?>
 
                 </div>
-                <label for ="goalstate" ><h1>Goal Statement </h1></label>
-                <div id="goalstate" class="form-group">
-                    <textarea  rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']); ?></textarea>
+                <label for ="goalstate" ><h3>Goal Statement </h3></label>
+                <div id="goalstate" class="form-group form-indent">
+                    <textarea  rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']); ?></textarea>
                 </div>
 
-                <label for ="goalalign" ><h1>Goal Alignment</h1></label>
-                <div id="goalalign" class="form-group">
-                    <textarea   rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
+                <label for ="goalalign" ><h3>Goal Alignment</h3></label>
+                <div id="goalalign" class="form-group form-indent">
+                    <textarea   rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
-                <label for ="goalstatus" ><h1>Goal Status</h1></label>
-                <div id="goalstatus" class="form-group">
-                    <select id="goalstlist" name="goal_status" onchange="control(this);" class="form-control">
+                <label for ="goalstatus" ><h3>Goal Status</h3></label>
+                <div id="goalstatus" class="form-group form-indent">
+                    <select id="goalstlist" name="goal_status" onchange="control(this);" class="form-control" style="background-color: #fff !important;">
                     <?php $sqlgoalstatus ="select * from GoalStatus";
                     $resultgoalstatus = $mysqli->query($sqlgoalstatus);
                     while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :?>
@@ -230,31 +230,31 @@ require_once("../Resources/Includes/menu.php");
                         <?php  endwhile; ?>
                     </select>
                 </div>
-                <label for ="goalach" ><h1>Goal Achievement </h1></label>
-                <div id="goalach" class="form-group">
+                <label for ="goalach" ><h3>Goal Achievement </h3></label>
+                <div id="goalach" class="form-group form-indent">
                     <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
                 </div>
 
 
-                <div id="goalresutil" class="form-group hidden">
-                    <label for ="goalresutiltext" ><h1>Resources Utilized </h1></label>
+                <div id="goalresutil" class="form-group form-indent hidden">
+                    <label for ="goalresutiltext" ><h3>Resources Utilized </h3></label>
                     <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
                 </div>
 
 
-                <div id="goalconti" class="form-group hidden">
-                    <label for ="goalcontitext" ><h1>Goal Continuation </h1></label>
+                <div id="goalconti" class="form-group form-indent hidden">
+                    <label for ="goalcontitext" ><h3>Goal Continuation </h3></label>
                     <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
                 </div>
 
 
-                <div id="resoneed" class="form-group hidden">
-                    <label for ="resoneedtext" ><h1>Resource Needed </h1></label>
+                <div id="resoneed" class="form-group form-indent hidden">
+                    <label for ="resoneedtext" ><h3>Resource Needed </h3></label>
                     <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
                 </div>
 
-                <label for ="notes" ><h1>Notes </h1></label>
-                <div id="notes" class="form-group">
+                <label for ="notes" ><h3>Notes </h3></label>
+                <div id="notes" class="form-group form-indent">
                     <textarea name="goal_notes" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_NOTES']); ?></textarea>
                 </div>
 
@@ -306,4 +306,3 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/alert.js"></script>
 <script src="../Resources/Library/js/outcomecntrl.js"></script>
-

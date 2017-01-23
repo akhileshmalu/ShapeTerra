@@ -1,28 +1,23 @@
 <?php
 
-session_start();
-if (!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-require_once("../Resources/Includes/connect.php");
-$ouabbrev = $_SESSION['login_ouabbrev'];
-$sqluser = "select NETWORK_USERNAME,OU_NAME,SYS_USER_ROLE,FNAME,LNAME from PermittedUsers Inner Join Hierarchy ON PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.OU_ABBREV where OU_ABBREV = '$ouabbrev'";
-$resultuser = $mysqli->query($sqluser);
-$rowsuser = $resultuser->fetch_assoc();
+  session_start();
+  if(!$_SESSION['isLogged']) {
+      header("location:login.php");
+      die();
+  }
 
-require_once("../Resources/Includes/header.php");
-require_once("../Resources/Includes/menu.php");
+  require_once("../Resources/Includes/connect.php");
+  require_once("../Resources/Includes/header.php");
+  require_once("../Resources/Includes/menu.php");
+  require("../Resources/Includes/data.php");
+
+  $Data = new Data;
+  $Data->saveExecutiveSummaryDet();
+  $executiveSummaryData = $Data->getExecutiveSummary();
+
 ?>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
 <div class="overlay hidden"></div>
-<!--<div class="alert">
-  <a href="#" class="close end"><span class="icon">9</span></a>
-  <h1 class="title"></h1>
-  <p class="description"></p>
-  Save will redirect to same page so user can approve
-  <button type="button" redirect=" " class="end btn-primary">Close</button>
-</div>-->
 <div class="hr"></div>
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
@@ -37,28 +32,27 @@ require_once("../Resources/Includes/menu.php");
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Executive Summary</h1>
-        <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=" . $contentlink_id; ?>" method="POST"
-              enctype="multipart/form-data">
+        <form action="executiveSummaryDetails.php" method="POST" enctype="multipart/form-data">
             <h3>College/School Name</h3>
             <div id="college-school" class="form-group form-indent">
                 <p class="status">
                     <small>Provide the formal name of the College/School exactly as you want it to appear.</small>
                 </p>
-                <input id="college-school-input" name="college-school-input" type="text" class="form-control">
+                <input id="college-school-input" name="college-school-input" type="text" class="form-control" value="<?php echo $executiveSummaryData["UNIT_NAME"]; ?>">
             </div>
             <h3>Dean's Name</h3>
             <div id="deans-name" class="form-group form-indent">
                 <p class="status">
                     <small>Provide the formal name of the Dean exactly as you want it to appear.</small>
                 </p>
-                <input id="deans-name-input" name="deans-name-input" type="text" class="form-control">
+                <input id="deans-name-input" name="deans-name-input" type="text" class="form-control" value="<?php echo $executiveSummaryData["DEAN_NAME_PRINT"]; ?>">
             </div>
             <h3>Deans Title</h3>
             <div id="deans-title" class="form-group form-indent">
                 <p class="status">
                     <small>Provide the full, formal title of the Dean exactly as you would like it to appear.</small>
                 </p>
-                <input id="deans-title-input" name="deans-title-input" type="text" class="form-control">
+                <input id="deans-title-input" name="deans-title-input" type="text" class="form-control" value="<?php echo $executiveSummaryData["DEAN_TITLE"]; ?>">
             </div>
             <h3>Deans Portrait</h3>
             <div id="deans-portrait" class="form-group form-indent">
@@ -88,11 +82,9 @@ require_once("../Resources/Includes/menu.php");
                 </p>
                 <input id="deans-college-school-logo" name="deans-college-school-logo" type="file" class="form-control">
             </div>
-            <button id="save" type="submit" name="savedraft" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                Cancel & Discard
-            </button>
-            <input type="submit" id="approve" name="approve" value="Submit for Approval" class="btn-primary pull-right">
-            <input type="submit" id="reject" name="reject" value="Save" class="btn-primary pull-right">
+            <input id="save" type="submit" name="savedraft" value="Save" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+            <!--<input type="submit" id="approve" name="approve" value="Submit for Approval" class="btn-primary pull-right">-->
+            <!--<input type="submit" id="reject" name="reject" value="Save" class="btn-primary pull-right">-->
         </form>
     </div>
 </div>
