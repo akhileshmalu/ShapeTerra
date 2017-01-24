@@ -48,7 +48,7 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 /*
  * Values for placeholders
  */
-$sqlexvalue = "SELECT * FROM `AC_Programs` where ID_AC_PROGRAMS in (select max(ID_AC_PROGRAMS) from AC_Programs where OUTCOMES_AY = '$bpayname' group by OU_ABBREV)";
+$sqlexvalue = "SELECT * FROM `AC_Programs` where OU_ABBREV = '$ouabbrev' AND ID_AC_PROGRAMS in (select max(ID_AC_PROGRAMS) from AC_Programs where OUTCOMES_AY = '$bpayname' group by OU_ABBREV)";
 $resultexvalue = $mysqli->query($sqlexvalue);
 $rowsexvalue = $resultexvalue -> fetch_assoc();
 
@@ -112,10 +112,10 @@ if(isset($_POST['submit_approval'])) {
 
     if ($mysqli->query($sqlfacinfo)) {
 
-        $error[0] = "Faculty Information submitted Successfully";
+        $error[0] = "Academic Program Info submitted Successfully";
 
     } else {
-        $error[0] = "Faculty Information Could not be submitted. Please Retry.";
+        $error[0] = "Academic Program Info Could not be submitted. Please Retry.";
     }
 
 }
@@ -125,9 +125,9 @@ if(isset($_POST['approve'])) {
     $contentlink_id = $_GET['linkid'];
     $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
     if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Information Approved Successfully";
+        $error[0] = "Academic Program Info Approved Successfully";
     } else {
-        $error[0] = "Faculty Information Could not be Approved. Please Retry.";
+        $error[0] = "Academic Program Info Could not be Approved. Please Retry.";
     }
 }
 
@@ -136,9 +136,9 @@ if(isset($_POST['reject'])) {
     $contentlink_id = $_GET['linkid'];
     $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
     if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Information Rejected Successfully";
+        $error[0] = "Academic Program Info Rejected Successfully";
     } else {
-        $error[0] = "Faculty Information Could not be Rejected. Please Retry.";
+        $error[0] = "Academic Program Info Could not be Rejected. Please Retry.";
     }
 }
 

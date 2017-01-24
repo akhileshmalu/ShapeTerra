@@ -8,12 +8,12 @@
  */
 
 session_start();
-//if(!$_SESSION['isLogged']) {
-//    header("location:login.php");
-//    die();
-//}
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 $error = array();
-$errorflag =0;
+$errorflag = 0;
 $BackToDashboard = true;
 
 require_once ("../Resources/Includes/connect.php");
@@ -48,9 +48,9 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 /*
  * Values for placeholders
  */
-$sqlexvalue = "SELECT * FROM `AC_AlumDev` where ID_ALUMNI_DEV in (select max(ID_ALUMNI_DEV) from AC_AlumDev where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
+$sqlexvalue = "SELECT * FROM `AC_AlumDev` where OU_ABBREV = '$ouabbrev' AND ID_ALUMNI_DEV in (select max(ID_ALUMNI_DEV) from AC_AlumDev where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
 $resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue -> fetch_assoc();
+$rowsexvalue = $resultexvalue->fetch_assoc();
 
 /*
  * SQL check Status of Blueprint Content for Edit restrictions
@@ -60,20 +60,20 @@ $resultbpstatus = $mysqli->query($sqlbpstatus);
 $rowsbpstatus = $resultbpstatus->fetch_assoc();
 
 if (isset($_POST['savedraft'])) {
-    $programranking = mynl2br($_POST['programranking']);
-    $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
-    $launch = mynl2br($_POST['launch']);
-    $programterminators = mynl2br($_POST['programterminators']);
+    $alumni = mynl2br($_POST['alumni']);
+    $development = mynl2br($_POST['development']);
+    $fundraising = mynl2br($_POST['fundraising']);
+    $gifts = mynl2br($_POST['gifts']);
 
     if ($_FILES['supinfo']['tmp_name'] != "") {
-        $target_dir = "../uploads/ac_programs/";
+        $target_dir = "../uploads/alumni_dev/";
         $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
         $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
         $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
 
 
         if ($imageFileType != "pdf") {
-            $error[1] = "Sorry, only PDf files are allowed.";
+            $error[1] = "Sorry, only PDF files are allowed.";
             $errorflag = 1;
 
         } else {
@@ -87,18 +87,18 @@ if (isset($_POST['savedraft'])) {
     }
     if ($errorflag != 1) {
 
-        $sqlacprogramme = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) 
-VALUES ('$ouabbrev','$bpayname','$author','$time','$programranking','$instructionalmodalities','$launch','$programterminators','$supinfopath');";
+        $sqlalumnidev = "INSERT INTO `AC_AlumDev` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, AC_UNIT_ALUMNI, AC_UNIT_DEVELOPMENT, AC_UNIT_FUNDRAISING, AC_UNIT_GIFTS, AC_UNIT_SUPPL_ALUM_DEV)
+VALUES ('$ouabbrev','$bpayname','$author','$time','$alumni','$development','$fundraising','$gifts','$supinfopath');";
 
-        $sqlacprogramme .= "Update  `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlalumnidev .= "Update `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
-        $sqlacprogramme .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+        $sqlalumnidev .= "Update `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
-        if ($mysqli->multi_query($sqlacprogramme)) {
+        if ($mysqli->multi_query($sqlalumnidev)) {
 
-            $error[0] = "Academic Program Info Added Succesfully.";
+            $error[0] = "Alumni Development Info Added Succesfully.";
         } else {
-            $error[3] = "Academic Program Info could not be added.";
+            $error[3] = "Alumni Development Info could not be added.";
         }
     }
 
@@ -112,10 +112,10 @@ if(isset($_POST['submit_approval'])) {
 
     if ($mysqli->query($sqlfacinfo)) {
 
-        $error[0] = "Faculty Information submitted Successfully";
+        $error[0] = "Alumni Development Info submitted Successfully";
 
     } else {
-        $error[0] = "Faculty Information Could not be submitted. Please Retry.";
+        $error[0] = "Alumni Development Info Could not be submitted. Please Retry.";
     }
 
 }
@@ -125,9 +125,9 @@ if(isset($_POST['approve'])) {
     $contentlink_id = $_GET['linkid'];
     $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
     if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Information Approved Successfully";
+        $error[0] = "Alumni Development Info Approved Successfully";
     } else {
-        $error[0] = "Faculty Information Could not be Approved. Please Retry.";
+        $error[0] = "Alumni Development Info Could not be Approved. Please Retry.";
     }
 }
 
@@ -136,9 +136,9 @@ if(isset($_POST['reject'])) {
     $contentlink_id = $_GET['linkid'];
     $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
     if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Information Rejected Successfully";
+        $error[0] = "Alumni Development Info Rejected Successfully";
     } else {
-        $error[0] = "Faculty Information Could not be Rejected. Please Retry.";
+        $error[0] = "Alumni Development Info Could not be Rejected. Please Retry.";
     }
 }
 
@@ -175,72 +175,85 @@ require_once("../Resources/Includes/menu.php");
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Alumni &amp; Development</h1>
-        <form action="ACTION" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST"
+              enctype="multipart/form-data">
             <h3>Alumni</h3>
-                <div class="form-group form-indent">
-                    <p class="status">Describe your unit's substantial activities, engagements, and initiatives with alumni during the Academic Year.  Focus should be on relationships and activities with alumni; development with non-alumni and fundraising are collected separately.   </p>  
-                    <textarea name="alumni" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo $rowsexvalue['']; ?></textarea>
-                </div>
+            <div class="form-group form-indent">
+                <p class="status">Describe your unit's substantial activities, engagements, and initiatives with alumni
+                    during the Academic Year. Focus should be on relationships and activities with alumni; development
+                    with non-alumni and fundraising are collected separately. </p>
+                <textarea name="alumni" rows="6" cols="25" wrap="hard" class="form-control"
+                          required><?php echo mybr2nl($rowsexvalue['AC_UNIT_ALUMNI']); ?></textarea>
+            </div>
             <h3>Development</h3>
-                <div class="form-group form-indent">
-                    <p class="status">Describe your unit's substantial development initiatives and outcomes during the Academic Year, excluding alumni, fundraising, and gifts.</p> 
-                    <textarea name="development" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['']; ?></textarea>
-                </div>
+            <div class="form-group form-indent">
+                <p class="status">Describe your unit's substantial development initiatives and outcomes during the
+                    Academic Year, excluding alumni, fundraising, and gifts.</p>
+                <textarea name="development" rows="6" cols="25" wrap="hard"
+                          class="form-control"><?php echo mybr2nl($rowsexvalue['AC_UNIT_DEVELOPMENT']); ?></textarea>
+            </div>
             <h3>Fundraising</h3>
-                <div class="form-group form-indent">
-                    <p class="status"><small>Describe your unit's major fundraising goals, initiatives, and outcomes during the Academic Year.  Include a calculation of all monetary funds actually received, excluding all other forms of donations, gifts, and planning.   </small></p>
-                    <textarea  name="fundraising" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['']); ?></textarea>
-                </div>
+            <div class="form-group form-indent">
+                <p class="status">
+                    <small>Describe your unit's major fundraising goals, initiatives, and outcomes during the Academic
+                        Year. Include a calculation of all monetary funds actually received, excluding all other forms
+                        of donations, gifts, and planning.
+                    </small>
+                </p>
+                <textarea name="fundraising" rows="6" cols="25" wrap="hard"
+                          class="form-control"><?php echo mybr2nl($rowsexvalue['AC_UNIT_FUNDRAISING']); ?></textarea>
+            </div>
             <h3>Gifts</h3>
-                <div class="form-group form-indent">
-                    <p class="status"><small>Describe major gifts, campaigns, and planning activities, exclusive of actual monetary fundraising, during the Academic Year. </small></p>
-                    <textarea  name="gifts" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['']); ?></textarea>
-                </div>
+            <div class="form-group form-indent">
+                <p class="status">
+                    <small>Describe major gifts, campaigns, and planning activities, exclusive of actual monetary
+                        fundraising, during the Academic Year.
+                    </small>
+                </p>
+                <textarea name="gifts" rows="6" cols="25" wrap="hard"
+                          class="form-control"><?php echo mybr2nl($rowsexvalue['AC_UNIT_GIFTS']); ?></textarea>
+            </div>
             <h3>Supplemental Info</h3>
-                <div id="suppinfo" class="form-group form-indent">
-                    <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Alumni and Development for the Academic Year.  </small></p>
-                    <label for="supinfofile">Select File</label>
-                    <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
-                </div>
-                <!--                        Reviewer Edit Control
-                <?php //if ($_SESSION['login_right'] != 1): ?>
+            <div id="suppinfo" class="form-group form-indent">
+                <p class="status">
+                    <small>Optional. If available, you may attach a single PDF document formatted to 8.5 x 11
+                        dimensions, to provide additional detail on Alumni and Development for the Academic Year.
+                    </small>
+                </p>
+                <label for="supinfofile">Select File</label>
+                <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
+            </div>
 
+            <!--                      Edit Control-->
+
+            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
+                <button id="save" type="submit" name="savedraft"
+                        onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                    Save Draft
+                </button>
                 <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                <input type="submit" id="approve" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">
-                <input type="submit" id="savebtn" name="savedraft" value="Save Draft" class="btn-secondary pull-right">
+                <button type="submit" id="submit_approve" name="submit_approve"
+                        class="btn-primary pull-right">Submit For Approval
+                </button>
 
-                <?php //endif; ?>
-                -->
+            <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
-                <!--                      Edit Control-->
+                <button id="save" type="submit" name="savedraft"
+                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                    Save Draft
+                </button>
 
-                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
-                    <button id="save" type="submit" name="savedraft"
-                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                    <button type="submit" id="submit_approve" name="submit_approve"
-                            class="btn-primary pull-right">Submit For Approval</button>
+                <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
+                    <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
+                    <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
+                <?php endif;
+            } ?>
 
-                <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-
-                    <button id="save" type="submit" name="savedraft"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-
-                    <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                        <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                        <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                    <?php endif; } ?>
-
-            </form>
-        </div>
+        </form>
     </div>
-
 </div>
+
 
 
 <?php

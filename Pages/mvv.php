@@ -57,7 +57,7 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
  * Query to Select Previous Year Mission , Visoin, Value Statement for Specific Org Unit.
  */
 
-$sqlmission = "SELECT * FROM BP_MissionVisionValues where ID_UNIT_MVV in (select max(ID_UNIT_MVV) from BP_MissionVisionValues where UNIT_MVV_AY IN ('$bpayname','$prevbpayname') group by OU_ABBREV)";
+$sqlmission = "SELECT * FROM BP_MissionVisionValues where OU_ABBREV = '$ouabbrev' AND ID_UNIT_MVV in (select max(ID_UNIT_MVV) from BP_MissionVisionValues where UNIT_MVV_AY IN ('$bpayname','$prevbpayname') group by OU_ABBREV)";
 //$sqlmission = "select * from BP_MissionVisionValues where (UNIT_MVV_AY ='$prevbpayname' or UNIT_MVV_AY ='$bpayname') and OU_ABBREV ='$ouabbrev' ORDER BY UNIT_MVV_AY DESC;";
 $resultmission = $mysqli->query($sqlmission);
 $rowsmission = $resultmission->fetch_assoc();

@@ -173,10 +173,10 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
-                <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
-                <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1];  ?></p>
-                <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
-                <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
+            <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
+            <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
+            <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
 
     </div>
@@ -191,7 +191,8 @@ require_once("../Resources/Includes/menu.php");
                     style="color: grey">Goal : <?php echo $rowsunitgoal['UNIT_GOAL_TITLE']; ?></p></h4>
             <!--                </div>-->
 
-            <form action="<?php echo "goaloutcome.php?goal_id=".$goal_id."&linkid=".$contentlink_id; ?>" method="POST">
+            <form action="<?php echo "goaloutcome.php?goal_id=" . $goal_id . "&linkid=" . $contentlink_id; ?>"
+                  method="POST">
 
                 <div class="form-group">
                     <label for="goallink"><h3>Linked to University Goal(s)</h3></label>
@@ -208,6 +209,7 @@ require_once("../Resources/Includes/menu.php");
                     <?php } endwhile; ?>
 
                 </div>
+
                 <label for ="goalstate" ><h3>Goal Statement </h3></label>
                 <div id="goalstate" class="form-group form-indent">
                     <textarea  rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']); ?></textarea>
@@ -261,15 +263,17 @@ require_once("../Resources/Includes/menu.php");
 
                 <!--                      Edit Control-->
 
-                <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) { ?>
+                <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') { ?>
 
                     <button id="save" type="submit" name="savedraft"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
-                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
+                    <input type="button" id="cancelbtn" value="Cancel & Discard"
+                           class="btn-primary cancelbpbox pull-left">
                     <button type="submit" id="submit_approve" name="submit_approve"
-                            class="btn-primary pull-right">Submit For Approval</button>
+                            class="btn-primary pull-right">Submit For Approval
+                    </button>
 
                 <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
@@ -278,19 +282,17 @@ require_once("../Resources/Includes/menu.php");
                         Save Draft
                     </button>
 
-                    <?php if($rowsexgoalout['GOAL_REPORT_STATUS'] == 'Pending Approval'): ?>
+                    <?php if ($rowsexgoalout['GOAL_REPORT_STATUS'] == 'Pending Approval'): ?>
                         <input type="submit" id="approve" name="approve" value="Approve"
                                class="btn-primary pull-right">
 
                         <input type="submit" id="reject" name="reject" value="Reject"
                                class="btn-primary pull-right">
-
-                    <?php endif; } ?>
-
+                    <?php endif;
+                } ?>
             </form>
         </div>
     </div>
-
 </div>
 
 <?php

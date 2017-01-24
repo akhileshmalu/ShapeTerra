@@ -46,7 +46,7 @@ $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
 
-$sqlexvalue = "SELECT * from AC_FacultyInfo where OU_ABBREV='$ouabbrev' and OUTCOMES_AY='$bpayname' ";
+$sqlexvalue = "SELECT * FROM `AC_FacultyInfo` where OU_ABBREV = '$ouabbrev' AND ID_FACULTY_INFO in (select max(ID_FACULTY_INFO) from AC_FacultyInfo where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
 $resultexvalue = $mysqli->query($sqlexvalue);
 $rowsexvalue = $resultexvalue -> fetch_assoc();
 
@@ -61,9 +61,9 @@ $rowsbpstatus = $resultbpstatus->fetch_assoc();
 
 if (isset($_POST['savedraft'])) {
 
-    $facdev = nl2br($_POST['factextarea']);
+    $facdev = mynl2br($_POST['factextarea']);
 
-    $createact = nl2br($_POST['cractivity']);
+    $createact = mynl2br($_POST['cractivity']);
 
     $contentlink_id = $_GET['linkid'];
 
@@ -98,9 +98,7 @@ if (isset($_POST['savedraft'])) {
     if ($errorflag != 1) {
 
         $sqlfacinfo = "INSERT INTO `AC_FacultyInfo` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
- VALUES ('$ouabbrev','$bpayname','$author','$time','$facdev','$createact','$supinfopath') ON DUPLICATE KEY UPDATE
- `OU_ABBREV` = VALUES(`OU_ABBREV`),`OUTCOMES_AY` = VALUES(`OUTCOMES_AY`),`OUTCOMES_AUTHOR` = VALUES(`OUTCOMES_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),
- `FACULTY_DEVELOPMENT` = VALUES(`FACULTY_DEVELOPMENT`),`CREATIVE_ACTIVITY` = VALUES(`CREATIVE_ACTIVITY`),`AC_SUPPL_FACULTY` = VALUES(`AC_SUPPL_FACULTY`);";
+ VALUES ('$ouabbrev','$bpayname','$author','$time','$facdev','$createact','$supinfopath');";
 
         $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 

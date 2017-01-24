@@ -48,7 +48,7 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 /*
  * Values for placeholders
  */
-$sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV='$ouabbrev' and OUTCOMES_AY='$bpayname' ";
+$sqlexvalue = "SELECT * FROM `AC_Collaborations` where OU_ABBREV = '$ouabbrev' AND ID_COLLABORATIONS in (select max(ID_COLLABORATIONS) from AC_Collaborations where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
 $resultexvalue = $mysqli->query($sqlexvalue);
 $rowsexvalue = $resultexvalue -> fetch_assoc();
 
@@ -59,8 +59,64 @@ $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = '$con
 $resultbpstatus = $mysqli->query($sqlbpstatus);
 $rowsbpstatus = $resultbpstatus->fetch_assoc();
 
+if (isset($_POST['savedraft'])) {
+    $internalcollaborators = mynl2br($_POST['internalcollaborators']);
+    $externalcollaborators = mynl2br($_POST['externalcollaborators']);
+    $othercollaborators = mynl2br($_POST['othercollaborators']);
 
+    $sqlcollob = "INSERT INTO `AC_Collaborations` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, COLLAB_INTERNAL, COLLAB_EXTERNAL, COLLAB_OTHER)
+VALUES ('$ouabbrev','$bpayname','$author','$time','$internalcollaborators','$externalcollaborators','$othercollaborators');";
 
+    $sqlcollob .= "Update `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    $sqlcollob .= "Update `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+
+    if ($mysqli->multi_query($sqlcollob)) {
+
+        $error[0] = "Academic Collaborations Info Added Succesfully.";
+    } else {
+        $error[3] = "Academic Collaborations Info could not be added.";
+    }
+
+}
+
+if(isset($_POST['submit_approval'])) {
+
+    $contentlink_id = $_GET['linkid'];
+
+    $sqlcollob = "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    if ($mysqli->query($sqlcollob)) {
+
+        $error[0] = "Academic Collaborations Info submitted Successfully";
+
+    } else {
+        $error[0] = "Academic Collaborations Info Could not be submitted. Please Retry.";
+    }
+
+}
+
+if(isset($_POST['approve'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlcollob = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlcollob)) {
+        $error[0] = "Academic Collaborations Info Approved Successfully";
+    } else {
+        $error[0] = "Academic Collaborations Info Could not be Approved. Please Retry.";
+    }
+}
+
+if(isset($_POST['reject'])) {
+
+    $contentlink_id = $_GET['linkid'];
+    $sqlcollob = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
+    if ($mysqli->query($sqlcollob)) {
+        $error[0] = "Academic Collaborations Info Rejected Successfully";
+    } else {
+        $error[0] = "Academic Collaborations Info Could not be Rejected. Please Retry.";
+    }
+}
 
 require_once("../Resources/Includes/header.php");
 
@@ -71,20 +127,14 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit_approval'])) { ?>
+<?php if (isset($_POST['submit_approval']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
-    </div>
-<?php } ?>
-<?php if (isset($_POST['savedraft'])) { ?>
-    <div class="alert">
-        <a href="#" class="close end"><span class="icon">9</span></a>
-        <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="<?php echo "initiatives.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
+        <button type="button" redirect="<?php echo "bphome.php?ayname=" . $rowbroad[0] . "&id=" . $bpid; ?>"
+                class="end btn-primary">Close
+        </button>
     </div>
 <?php } ?>
 <div class="hr"></div>
@@ -96,67 +146,75 @@ require_once("../Resources/Includes/menu.php");
         <div class="col-xs-8">
             <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
-            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;  ?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Collaborations</h1>
-        <form action="ACTION" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST">
             <h3>Internal Collaborators</h3>
-                <div class="form-group form-indent">
-                    <p class="status">List up to five of your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are internal to the University.  Details should be omitted; list by name only. Please note that items written up under the topic Notable Engagements should preferably not be included here.</p>  
-                    <textarea name="internalcollaborators" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo $rowsexvalue['']; ?></textarea>
-                </div>
-            <h3>Internal Collaborators</h3>
-                <div class="form-group form-indent">
-                    <p class="status">List up to five of your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are external to the University.  Details should be omitted; list by name only. Please note that items written up under the topic Notable Engagements should preferably not be included here.</p> 
-                    <textarea name="enternalcollaborators" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['']; ?></textarea>
-                </div>
+            <div class="form-group form-indent">
+                <p class="status">List up to five of your Academic Unit's most significant academic collaborations and
+                    multidisciplinary efforts that are internal to the University. Details should be omitted; list by
+                    name only. Please note that items written up under the topic Notable Engagements should preferably
+                    not be included here.</p>
+                <textarea name="internalcollaborators" rows="6" cols="25" wrap="hard" class="form-control"
+                          required><?php echo mybr2nl($rowsexvalue['COLLAB_INTERNAL']); ?></textarea>
+            </div>
+            <h3>External Collaborators</h3>
+            <div class="form-group form-indent">
+                <p class="status">List up to five of your Academic Unit's most significant academic collaborations and
+                    multidisciplinary efforts that are external to the University. Details should be omitted; list by
+                    name only. Please note that items written up under the topic Notable Engagements should preferably
+                    not be included here.</p>
+                <textarea name="externalcollaborators" rows="6" cols="25" wrap="hard"
+                          class="form-control"><?php echo mybr2nl($rowsexvalue['COLLAB_EXTERNAL']); ?></textarea>
+            </div>
             <h3>Other Collaborators</h3>
-                <div class="form-group form-indent">
-                    <p class="status"><small>List up to five of your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are not otherwise accounted for as Internal or External Collaborations. Details should be omitted; list by name only.  Please note that items written up under the topic Notable Engagements should preferably not be included here.</small></p>
-                    <textarea  name="othercollaborators" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['']); ?></textarea>
-                </div>
-                <!--                        Reviewer Edit Control
-                <?php //if ($_SESSION['login_right'] != 1): ?>
+            <div class="form-group form-indent">
+                <p class="status">
+                    <small>List up to five of your Academic Unit's most significant academic collaborations and
+                        multidisciplinary efforts that are not otherwise accounted for as Internal or External
+                        Collaborations. Details should be omitted; list by name only. Please note that items written up
+                        under the topic Notable Engagements should preferably not be included here.
+                    </small>
+                </p>
+                <textarea name="othercollaborators" rows="6" cols="25" wrap="hard"
+                          class="form-control"><?php echo mybr2nl($rowsexvalue['COLLAB_OTHER']); ?></textarea>
+            </div>
 
+
+            <!--                      Edit Control-->
+
+            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
+                <button id="save" type="submit" name="savedraft"
+                        onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                    Save Draft
+                </button>
                 <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                <input type="submit" id="approve" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">
-                <input type="submit" id="savebtn" name="savedraft" value="Save Draft" class="btn-secondary pull-right">
+                <button type="submit" id="submit_approve" name="submit_approve"
+                        class="btn-primary pull-right">Submit For Approval
+                </button>
 
-                <?php //endif; ?>
-                -->
+            <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
-                <!--                      Edit Control-->
+                <button id="save" type="submit" name="savedraft"
+                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                    Save Draft
+                </button>
 
-                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
-                    <button id="save" type="submit" name="savedraft"
-                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                    <button type="submit" id="submit_approve" name="submit_approve"
-                            class="btn-primary pull-right">Submit For Approval</button>
+                <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
+                    <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
+                    <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
+                <?php endif;
+            } ?>
 
-                <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-
-                    <button id="save" type="submit" name="savedraft"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-
-                    <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                        <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                        <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                    <?php endif; } ?>
-
-            </form>
-        </div>
+        </form>
     </div>
-
 </div>
+
 
 
 <?php
