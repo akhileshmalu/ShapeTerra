@@ -222,7 +222,7 @@ require_once("../Resources/Includes/menu.php");
 
                 <label for ="goalstatus" ><h3>Goal Status</h3></label>
                 <div id="goalstatus" class="form-group form-indent">
-                    <select id="goalstlist" name="goal_status" onchange="control(this);" class="form-control" style="background-color: #fff !important;">
+                    <select id="goalstlist" name="goal_status" onchange="control(this);" class="form-control" style="padding: 0px; background-color: #fff !important;">
                     <?php $sqlgoalstatus ="select * from GoalStatus";
                     $resultgoalstatus = $mysqli->query($sqlgoalstatus);
                     while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :?>
