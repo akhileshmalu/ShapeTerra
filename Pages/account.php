@@ -65,6 +65,13 @@ below headers for task board design purpose
     div.gridWrapper .columns .cell.headerCell {
         background: -webkit-linear-gradient(top, #fff 0%, #e4e4e4 100%);
     }
+
+    #list ul.items li{
+        padding-top: 12px;
+        padding-bottom: 12px;
+        font-size: 14px;
+    }
+
 </style>
 
 <!--
@@ -92,17 +99,17 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
 
         <div id="" class="col-xs-10 col-xs-offset-1">
-            <h1 class="box-title col-xs-12">Select An Academic Year</h1>
 
+
+
+        </div>
+        <?php if ($outype == "Academic Unit") { ?>
+            <h1 class="box-title col-xs-12">Select An Academic Year</h1>
             <div class="input-group col-xs-4 card-search">
                 <span class="input-group-addon icon" id="basic-addon1">&#xe041;</span>
                 <input type="text" class="form-control" class="col-xs-4" id="search-box" placeholder="Search"
                        aria-describedby="basic-addon1">
             </div>
-
-        </div>
-        <?php if ($outype == "Academic Unit") { ?>
-
             <!--            <h1 class="box-title">Select an Academic Year</h1>-->
             <!--            <div id="taskboard" class="">-->
             <!--                <table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">-->
@@ -149,8 +156,14 @@ require_once("../Resources/Includes/menu.php");
                     </div>
                 </a>
             <?php endwhile;
-        } elseif ($outype == "Administration") {
-            while($rowsdistinctay = $resultdistinctay->fetch_assoc()) {?>
+        } elseif ($outype == "Administration") { ?>
+            <h1 class="box-title col-xs-12">Select An Academic Year</h1>
+            <div class="input-group col-xs-4 card-search">
+                <span class="input-group-addon icon" id="basic-addon1">&#xe041;</span>
+                <input type="text" class="form-control" class="col-xs-4" id="search-box" placeholder="Search"
+                       aria-describedby="basic-addon1">
+            </div>
+         <?php   while($rowsdistinctay = $resultdistinctay->fetch_assoc()) {?>
 
             <a href="#" onclick="return false;">
                 <div id="<?php echo $rowsdistinctay['BROADCAST_AY']; ?>" class="col-xs-11 col-xs-offset-0 card provost-card">

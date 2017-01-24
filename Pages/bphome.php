@@ -186,7 +186,7 @@ require_once("../Resources/Includes/menu.php");
                 $sqlbpcontent .= " and CONTENT_STATUS = 'Dean Approved' ;";
                 $resultcontent = $mysqli->query($sqlbpcontent);
                 $numrow = $resultcontent->num_rows;
-                if ($numrow < 6) { echo 'disabled'; } ?>
+                if ($numrow < 11) { echo 'disabled'; } ?>
                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
             </div>
             <?php } ?>

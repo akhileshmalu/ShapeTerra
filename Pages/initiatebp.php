@@ -28,7 +28,7 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Query to show Non terminated Organization Unit as on date.
  */
-$sqlou = "Select * from Hierarchy where OU_DATE_END IS NULL and OU_TYPE='Academic Unit';";
+$sqlou = "Select * from Hierarchy where OU_ABBREV != 'UNAFFIL' and OU_DATE_END IS NULL and OU_TYPE='Academic Unit';";
 $resultou = $mysqli->query($sqlou);
 
 /*
@@ -51,7 +51,6 @@ $bpcontent = array(
     array("Collaborations","collaborations.php"),
     array("Campus Climate","campusClimate.php"),
     array("Executive Summary","executivesum.php"),
-    array("Initiatives & Observations","initiatives.php"),
     array("Faculty Awards","facultyawards.php"),
     array("Faculty Info","facultyInfo.php"),
     array("Initiatives & Observations","initiatives.php"),
@@ -184,7 +183,7 @@ require_once("../Resources/Includes/menu.php");
                     <select  name="AY" class="col-xs-4 form-control" id="AYgoal">
                         <option value=""></option>
                         <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
-                            <option value="<?php echo $rowsay[1]; ?>"> <?php echo $rowsay[1]; ?> </option>
+                            <option value="<?php echo $rowsay[1]; ?>"><?php echo $rowsay[1]; ?></option>
                         <?php } endwhile; ?>
                     </select>
                 </div>

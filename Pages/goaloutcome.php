@@ -227,8 +227,7 @@ require_once("../Resources/Includes/menu.php");
                     $resultgoalstatus = $mysqli->query($sqlgoalstatus);
                     while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :?>
                         <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"
-                            <?php if($rowsgoalstatus['ID_STATUS'] == $rowsexgoalout['GOAL_STATUS']) echo " selected = selected"; ?>
-                        > <?php echo $rowsgoalstatus['STATUS']; ?> </option>
+                            <?php if($rowsgoalstatus['ID_STATUS'] == $rowsexgoalout['GOAL_STATUS']) echo " selected = selected"; ?>> <?php echo $rowsgoalstatus['STATUS']; ?> </option>
                         <?php  endwhile; ?>
                     </select>
                 </div>

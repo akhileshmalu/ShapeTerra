@@ -48,7 +48,7 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 /*
  * Values for placeholders
  */
-$sqlexvalue = "SELECT * FROM `AC_CampusClimateInclusion` where OU_ABBREV = '$ouabbrev' AND ID_CLIMATE_INCLUSION in (select max(ID_CLIMATE_INCLUSION) from AC_AlumDev where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
+$sqlexvalue = "SELECT * FROM `AC_CampusClimateInclusion` where OU_ABBREV = '$ouabbrev' AND ID_CLIMATE_INCLUSION in (select max(ID_CLIMATE_INCLUSION) from AC_CampusClimateInclusion where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
 $resultexvalue = $mysqli->query($sqlexvalue);
 $rowsexvalue = $resultexvalue -> fetch_assoc();
 

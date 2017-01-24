@@ -173,9 +173,7 @@ require_once("../Resources/Includes/menu.php");
                     <option value=""></option>
                     <?php while ($rowsawardLoc = $resultawardLoc->fetch_assoc()): { ?>
                         <option
-                            value="<?php echo $rowsawardLoc['ID_AWARD_LOCATION']; ?>"
-                            <?php if($rowsawardLoc['ID_AWARD_LOCATION'] == $rowsexvalue['AWARD_LOCATION']) echo " selected = selected"; ?>>
-                            <?php echo $rowsaward['AWARD_LOCATION']; ?> </option>
+                            value="<?php echo $rowsawardLoc['ID_AWARD_LOCATION'];?>"<?php if($rowsawardLoc['ID_AWARD_LOCATION'] == $rowsexvalue['AWARD_LOCATION']) { echo " selected = selected"; } ?>><?php echo $rowsawardLoc['AWARD_LOCATION']; ?></option>
                     <?php } endwhile; ?>
                 </select>
 
