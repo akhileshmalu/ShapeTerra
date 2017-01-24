@@ -162,15 +162,6 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php //if (isset($_POST['savedraft'])) { ?>
-<!--    <div class="alert">-->
-<!--        <a href="#" class="close end"><span class="icon">9</span></a>-->
-<!--        <h1 class="title"></h1>-->
-<!--        <p class="description">--><?php //foreach ($error as $value) echo $value; ?><!--</p>-->
-<!--<!--        Save will redirect to same page so user can approve -->-->
-<!--        <button type="button" redirect="--><?php //echo "facultyInfo.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?><!-- " class="end btn-primary">Close</button>-->
-<!--    </div>-->
-<?php //} ?>
 <?php if (isset($_POST['submit_approval']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
@@ -214,15 +205,6 @@ require_once("../Resources/Includes/menu.php");
                 <input id="supinfo" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
             </div>
 
-                <!--                        Reviewer Edit Control-->
-<!--                --><?php //if ($_SESSION['login_right'] != 1): ?>
-<!---->
-<!--            <input type="button" value="Cancel & Discard" class="btn-primary cancelbox pull-left">-->
-<!--            <input id="approve" type="submit" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">-->
-<!--            <input id="save" type="submit" name="savedraft" value="Save Draft" class="btn-secondary pull-right" onclick="$('#approve').removeAttr('disabled');$('#save').addClass('hidden');">-->
-<!--                    -->
-<!--                    -->
-<!--                --><?php //endif; ?>
 
                 <!--                      Edit Control-->
 

@@ -1,10 +1,10 @@
 <?php
 
   session_start();
-  if(!$_SESSION['isLogged']) {
-      header("location:login.php");
-      die();
-  }
+//  if(!$_SESSION['isLogged']) {
+//      header("location:login.php");
+//      die();
+//  }
 
   require_once("../Resources/Includes/connect.php");
   require_once("../Resources/Includes/header.php");
@@ -103,11 +103,4 @@
         var b = $(selected).val().substr(12);
         alert(b + " is selected.");
     }
-    $('.cancelbox').on("click", function () {
-        var choice = confirm("Are you sure you want to cancel");
-        if (choice == true) {
-            var ayname = <?php echo json_encode($bpayname); ?> , ouabbrev = <?php echo json_encode($ouabbrev); ?>;
-            $(window).attr('location', 'bphome.php?ayname=' + ayname + '&ou_abbrev=' + ouabbrev)
-        }
-    });
 </script>

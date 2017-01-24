@@ -1,10 +1,10 @@
 <?php
 
   session_start();
-  if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-  }
+//  if(!$_SESSION['isLogged']) {
+//    header("location:login.php");
+//    die();
+//  }
 
   require_once("../Resources/Includes/header.php");
   require_once("../Resources/Includes/menu.php");

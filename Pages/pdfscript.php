@@ -42,12 +42,14 @@ if ($ouid == 4) {
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
+//"SELECT * FROM `AC_CampusClimateInclusion` where OU_ABBREV = '$ouabbrev' AND ID_CLIMATE_INCLUSION in (select max(ID_CLIMATE_INCLUSION) from AC_AlumDev where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
 $sqlbroad = "SELECT * FROM broadcast inner join Hierarchy on BROADCAST_OU = Hierarchy.ID_HIERARCHY INNER join AcademicYears on BROADCAST_AY=AcademicYears.ACAD_YEAR_DESC where broadcast.BROADCAST_AY = '$bpayname' and Hierarchy.OU_ABBREV = '$ouabbrev'  ;";
 $resultbroad=$mysqli1->query($sqlbroad);
 $rowsbroad = $resultbroad->fetch_assoc();
 $aydesc = $rowsbroad['BROADCAST_AY'];
 
-$sqlmvv = "Select * from BP_MissionVisionValues where UNIT_MVV_AY ='$bpayname' and OU_ABBREV ='$ouabbrev';";
+$sqlmvv = "SELECT * FROM `BP_MissionVisionValues` where OU_ABBREV = '$ouabbrev' AND ID_UNIT_MVV in (select max(ID_UNIT_MVV) from BP_MissionVisionValues where UNIT_MVV_AY = '$bpayname' group by OU_ABBREV);";
+//$sqlmvv = "Select * from BP_MissionVisionValues where UNIT_MVV_AY ='$bpayname' and OU_ABBREV ='$ouabbrev';";
 $resultmvv = $mysqli->query($sqlmvv);
 $rowsmvv = $resultmvv->fetch_assoc();
 
@@ -56,7 +58,8 @@ INNER JOIN GoalStatus on BP_UnitGoalOutcomes.GOAL_STATUS=GoalStatus.ID_STATUS wh
 $resultunit = $mysqli->query($sqlunit);
 $countunit = $resultunit->num_rows;
 
-$sqlfacultyinfo = "select * from AC_FacultyInfo where  OUTCOMES_AY='$bpayname' and OU_ABBREV ='$ouabbrev';";
+$sqlfacultyinfo = "SELECT * FROM `AC_FacultyInfo` where OU_ABBREV = '$ouabbrev' AND ID_FACULTY_INFO in (select max(ID_FACULTY_INFO) from AC_FacultyInfo WHERE OUTCOMES_AY = '$bpayname' group by OU_ABBREV);";
+//$sqlfacultyinfo = "select * from AC_FacultyInfo where  OUTCOMES_AY='$bpayname' and OU_ABBREV ='$ouabbrev';";
 $resultfacInfo = $mysqli->query($sqlfacultyinfo);
 $rowsfacinfo = $resultfacInfo->fetch_assoc();
 
@@ -64,10 +67,13 @@ $sqlfacultyaward = "select * from AC_FacultyAwards where  OUTCOMES_AY='$bpayname
 $resultfacaward = $mysqli->query($sqlfacultyaward);
 
 
-$sqldean = "select * from PermittedUsers inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY where  OU_ABBREV= '$ouabbrev' and SYS_USER_ROLE ='dean'; ";
-$resultdean = $mysqli->query($sqldean);
-$rowsdean = $resultdean -> fetch_assoc();
+//$sqldean = "select * from PermittedUsers inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY where  OU_ABBREV= '$ouabbrev' and SYS_USER_ROLE ='dean'; ";
+//$resultdean = $mysqli->query($sqldean);
+//$rowsdean = $resultdean -> fetch_assoc();
 
+$sqlexecsum = "SELECT * FROM `AC_ExecSum` where OU_ABBREV = '$ouabbrev' AND ID_EXECUTIVE_SUMMARY in (select max(ID_EXECUTIVE_SUMMARY) from AC_ExecSum where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
+$resultexecsum = $mysqli->query($sqlexecsum);
+$rowsexecsum = $resultexecsum -> fetch_assoc();
 
 //Menu control for back to dashboard button
 //true: Dont show button
@@ -165,14 +171,17 @@ require_once("../Resources/Includes/menu.php");
 
             <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>">
                 <h2>Executive Summary</h2>
-                <p>&lt;Executive summary&gt;</p>
+                <p><?php echo $rowsexecsum['INTRODUCTION'] ?></p>
+                <?php if($rowsexecsum['HIGHLIGHTS_NARRATIVE'] == "") { ?>
+                    <p><?php echo $rowsexecsum['HIGHLIGHTS_NARRATIVE'] ?></p>
+                <?php } ?>
             </div>
             <?php $pageno++; ?>
 
             <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>">
                 <h2>Blueprint for Academic Excellence</h2>
-                <p><?php echo $rowbroad[1]; ?></p>
-                <p><?php echo $rowsdean['FNAME']." ".$rowsdean['LNAME'].", DEAN"; ?></p>
+                <p><?php echo $rowsexecsum['UNIT_NAME']; ?></p>
+                <p><?php echo $rowsexecsum['DEAN_NAME_PRINT'].', '.$rowsexecsum['DEAN_TITLE']; ?></p>
 
                 <br />
                 <p style="text-align:left;">Executive Summary <span style="float:right;">2</span></p>
@@ -362,7 +371,12 @@ require_once("../Resources/Includes/menu.php");
                 <p><b>Supplemental Info.</b> Additional information provided by the College for Faculty Development & Activities is provided in Appendix 1.</p>
 
 <!--                <p class="indent">&lt;link to Appendix 1, insert Appendix 1..99 at end of report, in numeric sequence&gt;</p>-->
+            </div>
+            <?php $pageno++; ?>
 
+
+            <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>">
+                <h2 style="margin-bottom: 20px;">Outcomes–2015-2016 Academic Year</h2>
                 <h3>Faculty Awards</h3>
                 <p><b>National Awards &amp; Recognition.</b> Among others, the Dean has selected to highlight the following awards and recognition received by the faculty during the <?php echo $bpayname; ?>.
 

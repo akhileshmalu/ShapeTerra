@@ -286,7 +286,7 @@ require_once("../Resources/Includes/menu.php");
         <ul class="tabs-nav">
             <li class="tab1 active">1. Identification & Meaning</li>
             <li class="tab2 disabled">2. Source & Values</li>
-<!--            <li class="tab3 disabled">3. Change Log</li>-->
+            <!--            <li class="tab3 disabled">3. Change Log</li>-->
         </ul>
     </div>
 
@@ -302,19 +302,24 @@ require_once("../Resources/Includes/menu.php");
                             <small>Assigned, unique name for the data element, as most users should call it
                             </small>
                         </p>
-                        <input id="fname" type="text" name="functionalname" <?php if($elemid == 0){ echo "onblur = 'check_availability_func()' "; } ?> maxlength="255" class="form-control"
+                        <input id="fname" type="text" name="functionalname" <?php if ($elemid == 0) {
+                            echo "onblur = 'check_availability_func()' ";
+                        } ?> maxlength="255" class="form-control"
                                value="<?php echo $rowsdataelem['DATA_ELMNT_FUNC_NAME']; ?>">
-<!--                        To display error if name is not unique-->
-                        <p id="funcname_status" ></p>
+                        <!--                        To display error if name is not unique-->
+                        <p id="funcname_status"></p>
                     </div>
 
                     <h3>Technical Name <span style="color: red"><sup>*</sup></span></h3>
                     <div id="techname" class="form-group form-indent">
                         <p class="status">
                             <small>The technical name for the data element, as established in the database, tables,
-                                    or system</small>
+                                or system
+                            </small>
                         </p>
-                        <input id="tecname" type="text" <?php if($elemid == 0){ echo "onblur = 'check_availability_tech()' "; } ?> name="technicalname" maxlength="255" class="form-control"
+                        <input id="tecname" type="text" <?php if ($elemid == 0) {
+                            echo "onblur = 'check_availability_tech()' ";
+                        } ?> name="technicalname" maxlength="255" class="form-control"
                                value="<?php echo $rowsdataelem['DATA_ELEMENT_TECH_NAME']; ?>">
                         <!--                        To display error if name is not unique-->
                         <p id="tecname_status"></p>
@@ -323,18 +328,21 @@ require_once("../Resources/Includes/menu.php");
                     <h3>Label in System</h3>
                     <div id="syslabel" class="form-group form-indent">
                         <p class="status">
-                            <small>The label that should appear alongside the data element in the system (on screen).</small>
+                            <small>The label that should appear alongside the data element in the system (on screen).
+                            </small>
                         </p>
-                        <input  type="text" name="syslabel" maxlength="125" class="form-control"
+                        <input type="text" name="syslabel" maxlength="125" class="form-control"
                                value="<?php echo $rowsdataelem['LABEL_SYSTEM']; ?>">
                     </div>
 
                     <h3>Label in Print</h3>
                     <div id="printlabel" class="form-group form-indent">
                         <p class="status">
-                            <small>The label that should appear alongside the data element in printed reports and other outputs.</small>
+                            <small>The label that should appear alongside the data element in printed reports and other
+                                outputs.
+                            </small>
                         </p>
-                        <input  type="text" name="printlabel" maxlength="125" class="form-control"
+                        <input type="text" name="printlabel" maxlength="125" class="form-control"
                                value="<?php echo $rowsdataelem['LABEL_PRINT']; ?>">
                     </div>
 
@@ -342,21 +350,22 @@ require_once("../Resources/Includes/menu.php");
                     <div id="dataclass" class="form-group form-indent">
                         <p class="status">
                             <small>The formal Classification of the Data Element based on sensitivity of the
-                                    intended
-                                    or actual contents; this setting is established by the System Administrator and it
-                                    is
-                                    the obligation of End Users to ensure that the content they submit is not more
-                                    sensitive
-                                    than permitted by the assigned Classification.</small>
+                                intended
+                                or actual contents; this setting is established by the System Administrator and it
+                                is
+                                the obligation of End Users to ensure that the content they submit is not more
+                                sensitive
+                                than permitted by the assigned Classification.
+                            </small>
                         </p>
                         <select type="text" name="dataclass" class="form-control">
-                            <option value="" ></option>
-                            <?php while($rowsdataclass = $resultdataclass -> fetch_assoc()){
-                                echo "<option value=".$rowsdataclass['ID_DATA_CLASS'];
-                                if($rowsdataelem['DATA_CLASSIFICATION'] == $rowsdataclass['ID_DATA_CLASS']) {
+                            <option value=""></option>
+                            <?php while ($rowsdataclass = $resultdataclass->fetch_assoc()) {
+                                echo "<option value=" . $rowsdataclass['ID_DATA_CLASS'];
+                                if ($rowsdataelem['DATA_CLASSIFICATION'] == $rowsdataclass['ID_DATA_CLASS']) {
                                     echo " selected = selected";
                                 }
-                                echo ">".$rowsdataclass['CLASSIFICATION']."</option>";
+                                echo ">" . $rowsdataclass['CLASSIFICATION'] . "</option>";
                             } ?>
                         </select>
                     </div>
@@ -365,7 +374,8 @@ require_once("../Resources/Includes/menu.php");
                     <div id="basicmean" class="form-group form-indent">
                         <p class="status">
                             <small>The basic definition or meaning of the data element; recommend no more than 2-3
-                                    sentences</small>
+                                sentences
+                            </small>
                         </p>
                         <textarea rows="4" name="basicmean" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
@@ -374,7 +384,9 @@ require_once("../Resources/Includes/menu.php");
                     <h3>User Instructions</h3>
                     <div id="userinstr" class="form-group form-indent">
                         <p class="status">
-                            <small>The instructions users should follow when responding to or completing the data element or item.</small>
+                            <small>The instructions users should follow when responding to or completing the data
+                                element or item.
+                            </small>
                         </p>
                         <textarea rows="3" name="userinstr" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['USER_INSTRCTN']); ?></textarea>
@@ -384,14 +396,15 @@ require_once("../Resources/Includes/menu.php");
                     <div id="timebasis" class="form-group form-indent">
                         <p class="status">
                             <small>Indicate the time basis for which outcomes will be composed and reported in each
-                                    Blueprint.</small>
+                                Blueprint.
+                            </small>
                         </p>
                         <?php foreach ($timebasisoutcome as $key) {
-                        echo "<div class='radio'><label><input type='radio' name='timebasis' value='". $key."'";
-                        if ($rowsdataelem['TIME_BASIS_OUTCOME'] == $key) {
-                            echo " checked";
-                        }
-                        echo ">" . $key . "</label></div>";
+                            echo "<div class='radio'><label><input type='radio' name='timebasis' value='" . $key . "'";
+                            if ($rowsdataelem['TIME_BASIS_OUTCOME'] == $key) {
+                                echo " checked";
+                            }
+                            echo ">" . $key . "</label></div>";
                         }
                         ?>
 
@@ -404,27 +417,27 @@ require_once("../Resources/Includes/menu.php");
                             <small>Topic the data element pertains to</small>
                         </p>
 
-                        <?php 
+                        <?php
 
-                            $i = 0;
-                            $columns = 3;
-                            while ($rowstopicareas = $resulttopicareas -> fetch_assoc()) {
-                                if($i % $column == 0){
-                                   echo "<div class='col-xs-6 chcekbox'><label>";
-                                }
-                                echo "<input type='checkbox' name='bptopic[]' value='". $rowstopicareas['ID_TOPIC']."'";
-                                $topicitem = explode(',',$rowsdataelem['BP_TOPIC']);
-                                foreach ($topicitem as $top) {
-                                    if ($top == $rowstopicareas['ID_TOPIC']) {
-                                        echo " checked";
-                                    }
-                                }
-                                echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'];
-                                $i++;
-                                if($i % $column == 0){
-                                    echo "</label></div>";
+                        $i = 0;
+                        $columns = 3;
+                        while ($rowstopicareas = $resulttopicareas->fetch_assoc()) {
+                            if ($i % $column == 0) {
+                                echo "<div class='col-xs-6 chcekbox'><label>";
+                            }
+                            echo "<input type='checkbox' name='bptopic[]' value='" . $rowstopicareas['ID_TOPIC'] . "'";
+                            $topicitem = explode(',', $rowsdataelem['BP_TOPIC']);
+                            foreach ($topicitem as $top) {
+                                if ($top == $rowstopicareas['ID_TOPIC']) {
+                                    echo " checked";
                                 }
                             }
+                            echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'];
+                            $i++;
+                            if ($i % $column == 0) {
+                                echo "</label></div>";
+                            }
+                        }
                         ?>
 
                     </div>
@@ -434,10 +447,11 @@ require_once("../Resources/Includes/menu.php");
                     <div id="usage" class="form-group form-indent">
                         <p class="status">
                             <small>In as much detail as necessary, describe the parameters under which this data
-                                    element can.
-                                    may, or should be used, and how its meaning should be interpreted. Do not list
-                                    permitted values here;
-                                    use the field designated for that purpose (below).</small>
+                                element can.
+                                may, or should be used, and how its meaning should be interpreted. Do not list
+                                permitted values here;
+                                use the field designated for that purpose (below).
+                            </small>
                         </p>
                         <textarea rows="4" name="usage" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['INTERP_USAGE']); ?></textarea>
@@ -456,29 +470,35 @@ require_once("../Resources/Includes/menu.php");
                 <h1>Source & Values</h1>
 
                 <div class="col-lg-8 col-sm-10 col-xs-12">
-                <h3>Data Source <span style="color: red"><sup>*</sup></span></h3>
+                    <h3>Data Source <span style="color: red"><sup>*</sup></span></h3>
                     <div id="datasource" class="form-group form-indent">
                         <p class="status">
                             <small>Describe the authoritative source of the information in as much detail as
-                                    possible (providing office, person/job title, information system, table, data
-                                    element).</small>
+                                possible (providing office, person/job title, information system, table, data
+                                element).
+                            </small>
                         </p>
                         <textarea rows="4" name="datasource" cols="25" wrap="hard"
-                                  class="form-control" required><?php echo mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
+                                  class="form-control"
+                                  required><?php echo mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
                     </div>
 
                     <h3>Responsible Party <span
-                                style="color: red"><sup>*</sup></span></h3>
+                            style="color: red"><sup>*</sup></span></h3>
 
                     <div id="resparty" class="form-group form-indent">
                         <p class="status">
                             <small>Name of the office or person responsible for producing and/or providing this data
-                                    element.</small>
+                                element.
+                            </small>
                         </p>
                         <select type="text" name="resparty" class="form-control" required>
                             <option value=""></option>
                             <?php foreach ($respartyset as $party) { ?>
-                            <option value="<?php echo $party ?>" <?php if($rowsdataelem['RESPONSIBLE_PARTY'] == $party){ echo " selected = selected"; } ?>><?php echo $party ?></option>
+                                <option
+                                    value="<?php echo $party ?>" <?php if ($rowsdataelem['RESPONSIBLE_PARTY'] == $party) {
+                                    echo " selected = selected";
+                                } ?>><?php echo $party ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -486,30 +506,33 @@ require_once("../Resources/Includes/menu.php");
                     <h3>Contact Person </h3>
 
                     <div id="contact" class="form-group form-indent">
-                        
+
                         <p class="status">
                             <small>Last Name, First Name of person to contact with questions related to this data
-                                    element, plus email address and area code+phone number.</small>
+                                element, plus email address and area code+phone number.
+                            </small>
                         </p>
                         <input type="text" name="contactperson" maxlength="255" style="height: 60px;"
                                class="form-control" value="<?php echo $rowsdataelem['CONTACT_PERSON']; ?>">
                     </div>
 
                     <h3>Data Type <span
-                                style="color: red"><sup>*</sup></span></h3>
+                            style="color: red"><sup>*</sup></span></h3>
 
                     <div id="datatype" class="form-group form-indent">
-                        
+
                         <p class="status">
                             <small>Describes the type of data for values stored in the data element; this
-                                    determination is made by the System Administator and it is the obligation of End
-                                    Users to ensure that the content they submit complies with the parameters.
+                                determination is made by the System Administator and it is the obligation of End
+                                Users to ensure that the content they submit complies with the parameters.
                             </small>
                         </p>
                         <select type="text" name="datatype" class="form-control" required>
                             <option value=""></option>
                             <?php foreach ($datatypeset as $data) { ?>
-                                <option value="<?php echo $data ?>" <?php if($rowsdataelem['DATA_TYPE'] == $data){ echo " selected = selected"; } ?>><?php echo $data ?></option>
+                                <option value="<?php echo $data ?>" <?php if ($rowsdataelem['DATA_TYPE'] == $data) {
+                                    echo " selected = selected";
+                                } ?>><?php echo $data ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -519,24 +542,28 @@ require_once("../Resources/Includes/menu.php");
                     <div id="datatrans" class="form-group form-indent">
                         <p class="status">
                             <small>Describe any transformations, groupings, logic, or mathematical procedures used
-                                    in producing the values for this data element</small>
+                                in producing the values for this data element
+                            </small>
                         </p>
                         <textarea rows="4" name="datatrans" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['DATA_TRANSFORM']); ?></textarea>
                     </div>
 
                     <h3>Values Mandatory <span
-                                style="color: red"><sup>*</sup></span></h3>
+                            style="color: red"><sup>*</sup></span></h3>
 
                     <div id="valuemand" class="form-group form-indent">
-                        
+
                         <p class="status">
                             <small>Describes whether a value must be provided for the data element.</small>
                         </p>
                         <select type="text" name="valuemand" class="form-control" required>
                             <option value=""></option>
                             <?php foreach ($valuemandset as $valmand) { ?>
-                                <option value="<?php echo $valmand ?>" <?php if($rowsdataelem['VALUES_MANDATORY'] == $valmand){ echo " selected = selected"; } ?>><?php echo $valmand ?></option>
+                                <option
+                                    value="<?php echo $valmand ?>" <?php if ($rowsdataelem['VALUES_MANDATORY'] == $valmand) {
+                                    echo " selected = selected";
+                                } ?>><?php echo $valmand ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -544,11 +571,12 @@ require_once("../Resources/Includes/menu.php");
                     <h3>Permitted Values </h3>
 
                     <div id="permitvalue" class="form-group form-indent">
-                        
+
                         <p class="status">
                             <small>Describes the values that are permitted in the data element, for example a
-                                    numeric range or number of decimals, or set of choices. If a pick-list item, please
-                                    provide all available choices.</small>
+                                numeric range or number of decimals, or set of choices. If a pick-list item, please
+                                provide all available choices.
+                            </small>
                         </p>
                         <textarea rows="4" name="permitvalue" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_PERMITTED']); ?></textarea>
@@ -557,14 +585,15 @@ require_once("../Resources/Includes/menu.php");
                     <h3>Constraints on Values </h3>
 
                     <div id="constraint" class="form-group form-indent">
-                        
+
                         <p class="status">
                             <small>Any constraints on permitted values for this data element, including limitations
-                                    or requirements for types of data such as: field length, unit of measure (days vs.
-                                    years), permitted languages, or specified sequence for keying in characters such as
-                                    MM-DD-YYYY, etc.
-                                    If data element is governed by a pick-list, enter those values in 'Permitted Values,
-                                    not here.</small>
+                                or requirements for types of data such as: field length, unit of measure (days vs.
+                                years), permitted languages, or specified sequence for keying in characters such as
+                                MM-DD-YYYY, etc.
+                                If data element is governed by a pick-list, enter those values in 'Permitted Values,
+                                not here.
+                            </small>
                         </p>
                         <textarea rows="4" name="constraint" cols="25" wrap="hard"
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_CONSTRAINTS']); ?></textarea>
@@ -573,7 +602,7 @@ require_once("../Resources/Includes/menu.php");
                     <h3>Notes / Misc </h3>
 
                     <div id="notes" class="form-group form-indent">
-                        
+
                         <p class="status">
                             <small>Any miscellaneous notes that do not fit elsewhere.</small>
                         </p>
@@ -581,31 +610,31 @@ require_once("../Resources/Includes/menu.php");
                                   class="form-control"><?php echo mybr2nl($rowsdataelem['NOTES_DATA_ELEMENT']); ?></textarea>
                     </div>
 
-<!--                    <button id="next-tab" type="button"-->
-<!--                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right changeTab2"> Save & Continue-->
-<!--                    </button>-->
-<!--                    <button id="cancel" type="button"-->
-<!--                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel & Discard-->
-<!--                    </button>-->
-<!--                </div>-->
-<!--            </div>-->
-<!---->
-<!--            <div class="form-group form-indent hidden tab3" id="actionlist">-->
-<!--                <h1>Change Log</h1>-->
-<!---->
-<!--                <div class="col-lg-8 col-sm-10 col-xs-12">-->
+                    <!--                    <button id="next-tab" type="button"-->
+                    <!--                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right changeTab2"> Save & Continue-->
+                    <!--                    </button>-->
+                    <!--                    <button id="cancel" type="button"-->
+                    <!--                            class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel & Discard-->
+                    <!--                    </button>-->
+                    <!--                </div>-->
+                    <!--            </div>-->
+                    <!---->
+                    <!--            <div class="form-group form-indent hidden tab3" id="actionlist">-->
+                    <!--                <h1>Change Log</h1>-->
+                    <!---->
+                    <!--                <div class="col-lg-8 col-sm-10 col-xs-12">-->
 
                     <h3>Definition Author Name </h3>
 
                     <div id="author" class="form-group form-indent">
-                        
+
                         <p class="status">
                             <small>Name of the individual who defined this data element initially.</small>
                         </p>
                         <div class="col-lg-6">
                             <label for="fname">First Name</label>
-                        <input id="fname" type="text" name="defauthorfname" maxlength="25" class="form-control"
-                               value="<?php echo $rowsdataelem['AUTHOR_FNAME']; ?>" required>
+                            <input id="fname" type="text" name="defauthorfname" maxlength="25" class="form-control"
+                                   value="<?php echo $rowsdataelem['AUTHOR_FNAME']; ?>" required>
                         </div>
                         <div class="col-lg-6">
                             <label for="lname">Last Name</label>
@@ -635,36 +664,35 @@ require_once("../Resources/Includes/menu.php");
                             <button name="update" type="submit"
                                     class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-right"> Save Changes
                             </button>
-                            <button  type="submit" name="discard" onclick="return confirm('Are you certain you want to delete the definition?');"
+                            <button type="submit" name="discard"
+                                    onclick="return confirm('Are you certain you want to delete the definition?');"
                                     class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-left"> Discard Def
                             </button>
 
-                        <?php } elseif($elemstatus == 'Approved') { ?>
+                        <?php } elseif ($elemstatus == 'Approved') { ?>
                             <button name="update" type="submit"
                                     class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right"> Update Element Def
                             </button>
-                            <button  type="submit" name="discard" onclick="return confirm('Are you certain you want to delete the definition?');"
-                                     class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-left"> Discard Def
+                            <button type="submit" name="discard"
+                                    onclick="return confirm('Are you certain you want to delete the definition?');"
+                                    class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-left"> Discard Def
                             </button>
                         <?php }
-                    } else{
-                    if ($elemid == 0) { ?>
-                        <button name="save" type="submit" class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right">
-                            Propose Element Def
-                        </button>
-                        <button id="cancel" type="button"
-                                class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel
-                        </button>
+                    } else {
+                        if ($elemid == 0) { ?>
+                            <button name="save" type="submit" class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-right">
+                                Propose Element Def
+                            </button>
+                            <button id="cancel" type="button"
+                                    class="btn-primary col-lg-5 col-md-7 col-sm-8 pull-left canceldatadictbox"> Cancel
+                            </button>
 
-                    <?php }} ?>
-
-
+                        <?php }
+                    } ?>
                 </div>
-
-
             </div>
+        </form>
     </div>
-    </form>
 </div>
 
 
