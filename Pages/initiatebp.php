@@ -177,10 +177,10 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <form action="" method="POST" >
-            <h2>1. Select Academic Year <span class="icon" data-toggle="tooltip" data-placement="top" 
+            <h2>1. Select Academic Year <span class="icon" data-toggle="tooltip" data-placement="top"
             title="Tooltip on top">&#xe009;</span></h2>
                 <div class="col-xs-3">
-                    <select  name="AY" class="col-xs-4 form-control" id="AYgoal">
+                    <select  name="AY" class="col-xs-4 form-control" id="AYgoal" style="padding: 0px !important; background-color: #fff !important;">
                         <option value=""></option>
                         <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
                             <option value="<?php echo $rowsay[1]; ?>"><?php echo $rowsay[1]; ?></option>
@@ -188,7 +188,7 @@ require_once("../Resources/Includes/menu.php");
                     </select>
                 </div>
                 <br />
-            <h2>2. Select Organization Unit <span class="icon" data-toggle="tooltip" data-placement="top" 
+            <h2>2. Select Organization Unit <span class="icon" data-toggle="tooltip" data-placement="top"
             title="Tooltip on top">&#xe009;</span></h2>
             <div class="checkbox" id="ouname">
                 <label><input type="checkbox" id="ckbCheckAll" >All Active Academic Units </label>

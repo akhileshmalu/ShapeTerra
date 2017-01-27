@@ -19,7 +19,11 @@
 
   switch ($function) {
     case 1:
-      $Data->getBluePrintsContent();
+      $Data->getUnitGoals();
+      break;
+    case 2:
+      $postData = $_POST["data"];
+      $Data->saveUnitGoalsOrder($postData);
       break;
     default:
       break;
@@ -37,7 +41,7 @@
 
       try{
 
-        $connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "root");
+        $connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "");
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $connection;
@@ -51,39 +55,7 @@
 
     }
 
-    public function getBluePrintsContent(){
-
-      $getBluePrintsContent = $this->connection->prepare("SELECT * FROM `BpContents`");
-      $getBluePrintsContent->execute();
-      $rowsGetBluePrintsContent = $getBluePrintsContent->rowCount();
-
-      if ($rowsGetBluePrintsContent > 0){
-
-        $counter = 0;
-
-        while($data = $getBluePrintsContent->fetch()){
-
-          if ($counter != 0){
-
-            echo ",".json_encode($data);
-
-          }else{
-
-            echo json_encode($data);
-
-          }
-
-          $counter++;
-
-        }
-
-      }else{
-
-        echo "<h6>No data was found!</h6>";
-
-      }
-
-    }
+    //executive summary
 
     public function saveExecutiveSummaryDet(){
 
@@ -202,14 +174,13 @@
         }
 
         $selectedYear = $_SESSION["bpayname"];
-        $unit = $_SESSION["bpouabbrev"];
         $lastUpdated = date('Y-m-d H:i:s');
         $ouid = $_SESSION['login_ouid'];
         $author = $_SESSION['login_userid'];
         if ($ouid == 4) {
-          $ouabbrev = $_SESSION['bpouabbrev'];
+          $unit = $_SESSION['bpouabbrev'];
         }else{
-          $ouabbrev = $_SESSION['login_ouabbrev'];
+          $unit = $_SESSION['login_ouabbrev'];
         }
 
         //until images are imped
@@ -286,14 +257,13 @@
         }
 
         $selectedYear = $_SESSION["bpayname"];
-        $unit = $_SESSION["bpouabbrev"];
         $lastUpdated = date('Y-m-d H:i:s');
         $ouid = $_SESSION['login_ouid'];
         $author = $_SESSION['login_userid'];
         if ($ouid == 4) {
-          $ouabbrev = $_SESSION['bpouabbrev'];
+          $unit = $_SESSION['bpouabbrev'];
         }else{
-          $ouabbrev = $_SESSION['login_ouabbrev'];
+          $unit = $_SESSION['login_ouabbrev'];
         }
 
         $findCurrentExecSum = $this->connection->prepare("SELECT * FROM `AC_ExecSum` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
@@ -344,6 +314,95 @@
     }
 
     public function checkImageExecSumInfo(){
+
+    }
+
+    public function getUnitGoals(){
+
+      $selectedYear = $_SESSION["bpayname"];
+      if ($ouid == 4) {
+        $ouAbbrev = $_SESSION['bpouabbrev'];
+      }else{
+        $ouAbbrev = $_SESSION['login_ouabbrev'];
+      }
+      $counter = 0;
+
+      $getUnitGoals = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ?");
+      $getUnitGoals->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
+      $getUnitGoals->bindParam(2,$selectedYear,PDO::PARAM_STR);
+      $getUnitGoals->execute();
+
+      while($data = $getUnitGoals->fetchAll()){
+
+        if ($counter != 0){
+
+          echo ",".json_encode($data);
+
+        }else{
+
+          echo json_encode($data);
+
+        }
+
+        $counter++;
+
+      }
+
+    }
+
+    public function saveUnitGoalsOrder($postData){
+
+      //var_dump($postData);
+      for ($i = 0; count($postData) > $i; ++$i){
+
+        echo $postData[$i][0];
+
+      }
+
+      $getUnitGoals = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ?");
+      $getUnitGoals->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
+      $getUnitGoals->bindParam(2,$selectedYear,PDO::PARAM_STR);
+      $getUnitGoals->execute();
+
+      while($data = $getUnitGoals->fetchAll()){
+
+        
+
+      }
+
+    }
+
+    public function getBluePrintsContent(){
+
+      $getBluePrintsContent = $this->connection->prepare("SELECT * FROM `BpContents`");
+      $getBluePrintsContent->execute();
+      $rowsGetBluePrintsContent = $getBluePrintsContent->rowCount();
+
+      if ($rowsGetBluePrintsContent > 0){
+
+        $counter = 0;
+
+        while($data = $getBluePrintsContent->fetchAll()){
+
+          if ($counter != 0){
+
+            echo ",".json_encode($data);
+
+          }else{
+
+            echo json_encode($data);
+
+          }
+
+          $counter++;
+
+        }
+
+      }else{
+
+        echo "<h6>No data was found!</h6>";
+
+      }
 
     }
 
