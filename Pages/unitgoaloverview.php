@@ -186,7 +186,7 @@ require_once("../Resources/Includes/menu.php");
 
             </div>
         <?php endif; ?>
-        <h1 class="box-title">Goals Overview & Management</h1>
+        <h1 class="box-title">Unit Goals</h1>
 
 
         <p>Below is a summary of your Unit Goals.</p>
@@ -204,6 +204,7 @@ require_once("../Resources/Includes/menu.php");
 
     </div>
 </div>
+
 
 
 

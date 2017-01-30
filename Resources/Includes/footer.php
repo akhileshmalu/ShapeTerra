@@ -5,6 +5,7 @@
 <script src="../Resources/Library/js/informationBox.js"></script>
 <script src="../Resources/Library/js/formajax.js"></script>
 <script src="../Resources/Library/js/cancelbox.js"></script>
+<script src="../Resources/Library/js/wordCount.js"></script>
 
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 <script type="text/javascript">

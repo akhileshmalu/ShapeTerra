@@ -44,8 +44,8 @@ $resultay = $mysqli->query($sqlay);
 
 $bpcontent = array(
     array("Mission, Vision & Values","mvv.php"),
-    array("Goal Overview & Management","unitgoaloverview.php"),
-    array("Goal Outcomes Summary","goaloutcomeshome.php"),
+    array("Unit Goals","unitgoaloverview.php"),
+    array("Goal Management & Outcomes","goaloutcomeshome.php"),
     array("Academic Programs","academicPrograms.php"),
     array("Alumni & Development","alumniDevelopment.php"),
     array("Collaborations","collaborations.php"),

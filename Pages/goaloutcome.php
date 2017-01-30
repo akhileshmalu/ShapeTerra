@@ -182,14 +182,10 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Goal Outcome Management</h1>
+        <h1 class="box-title">Goal : <?php echo $rowsunitgoal['UNIT_GOAL_TITLE']; ?></h1>
         <div id="" style="margin-top: 30px;">
 
 
-            <!--                <div class="form-group" style="border: solid">-->
-            <h4 style="border-top: 5px solid #862633; border-bottom: 5px solid #862633;padding:2% 0 2% 0;"><p
-                    style="color: grey">Goal : <?php echo $rowsunitgoal['UNIT_GOAL_TITLE']; ?></p></h4>
-            <!--                </div>-->
 
             <form action="<?php echo "goaloutcome.php?goal_id=" . $goal_id . "&linkid=" . $contentlink_id; ?>"
                 onsubmit="if($('#goalstlist').val() == 0) { alert('Please select Goal Status'); return false; }"  method="POST">

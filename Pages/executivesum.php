@@ -253,14 +253,14 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <input id="deans-name-input" name="deans-name-input" type="text" class="form-control" value="<?php echo $rowsexvalue["DEAN_NAME_PRINT"]; ?>" required>
                     </div>
-                    <h3>Deans Title</h3>
+                    <h3>Dean's Title</h3>
                     <div id="deans-title" class="form-group form-indent">
                         <p class="status">
                             <small>Provide the full, formal title of the Dean exactly as you would like it to appear.</small>
                         </p>
                         <input id="deans-title-input" name="deans-title-input" type="text" class="form-control" value="<?php echo $rowsexvalue["DEAN_TITLE"]; ?>" required>
                     </div>
-                    <h3>Deans Portrait</h3>
+                    <h3>Dean's Portrait</h3>
                     <div id="deans-portrait" class="form-group form-indent">
                         <p class="status">
                             <small>Optional. Upload a high resolution portrait photo of the Dean, exactly as you want it to
@@ -270,7 +270,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <input id="deans-portrait-logo" name="deans-portrait-logo" type="file" class="form-control">
                     </div>
-                    <h3>Deans Dean's Signature</h3>
+                    <h3>Dean's Signature</h3>
                     <div id="deans-signature" class="form-group form-indent">
                         <p class="status">
                             <small>Optional. Upload a high resolution image of the Dean's signature, exactly as you want it to
@@ -279,7 +279,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <input id="deans-signature-logo" name="deans-signature-logo" type="file" class="form-control">
                     </div>
-                    <h3>Deans College/School Companion Logo</h3>
+                    <h3>College/School Companion Logo</h3>
                     <div id="deans-college-school" class="form-group form-indent">
                         <p class="status">
                             <small>Upload the official Columbia Campus Colleges and Schools Companion Logo, congruent with
@@ -305,12 +305,12 @@ require_once("../Resources/Includes/menu.php");
                     <h3>Introduction</h3>
                     <div id="introduction" class="form-group form-indent">
                         <p class="status"><small>Provide a brief narrative introduction of no more than 1,000 characters. This text will form the narrative introduction to the annual Outcomes Report and you may choose to follow it with highlights using the feature provider below. In the Introduction, please use only plain text.</small></p>
-                        <textarea rows="5" cols="25" maxlength="1000" id="introduction-input" name="introduction-input" class="form-control" required><?php echo mybr2nl($rowsexvalue["INTRODUCTION"]); ?></textarea>
+                        <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input" class="form-control wordCount" required ><?php echo mybr2nl($rowsexvalue["INTRODUCTION"]); ?></textarea>
                     </div>
                     <h3>Highlights</h3>
                     <div id="highlights" class="form-group form-indent">
                         <p class="status"><small>Provide a narrative that highlights accomplishments, awards, or other outcomes. You should elaborate on these highlights elsewhere in your outcomes reporting. Content is restricted to 2,500 characters (including spaces).</small></p>
-                        <textarea rows="5" cols="25" maxlength="2500" id="highlights-input" name="highlights-input" type="textarea" class="form-control"><?php echo mybr2nl($rowsexvalue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
+                        <textarea rows="5" cols="25" maxlength="525" id="highlights-input" name="highlights-input" type="textarea" class="form-control wordCount"><?php echo mybr2nl($rowsexvalue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
                     </div>
 
                     <!--                      Edit Control-->

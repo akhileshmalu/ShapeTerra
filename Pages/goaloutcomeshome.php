@@ -100,8 +100,8 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Goals Outcomes & Management</h1>
-        <p>Below are listed all active & current goals for <?php echo $_SESSION['login_ouname']; ?> for the above Academic Year.Click a Goal to compose outcome.</p>
+        <h1 class="box-title">Goal Management &amp; Outcomes</h1>
+        <p>Below are listed all goals for your unit.  Click any item by its Goal Title in order to edit or compose outcomes.  The response options provided for each goal are determined by the Goal Viewpoint you selected when the goal was entered in the system.</p>
         <div id="taskboard" style="margin-top: 10px;">
             <table class="grid" action="taskboard/goaloutcomeajax.php" title="Unit Goals">
                 <tr>

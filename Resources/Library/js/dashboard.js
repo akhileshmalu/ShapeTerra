@@ -4,4 +4,7 @@ $(function() {
 		$(".provost-dropdown#" + $year).slideToggle();
 
 	})
+
+	
+
 })
