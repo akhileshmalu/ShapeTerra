@@ -63,12 +63,12 @@ $rowsbpstatus = $resultbpstatus->fetch_assoc();
 if (isset($_POST['savedraft'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $ugexplearn = nl2br($_POST['ugexplearning']);
-    $gradexplearn = nl2br($_POST['gradexplearning']);
-    $afford = nl2br($_POST['afford']);
-    $reputation = nl2br($_POST['reputation']);
-    $coolstuff = nl2br($_POST['coolstuff']);
-    $challenges = nl2br($_POST['challenges']);
+    $ugexplearn = mynl2br($_POST['ugexplearning']);
+    $gradexplearn = mynl2br($_POST['gradexplearning']);
+    $afford = mynl2br($_POST['afford']);
+    $reputation = mynl2br($_POST['reputation']);
+    $coolstuff = mynl2br($_POST['coolstuff']);
+    $challenges = mynl2br($_POST['challenges']);
 
 //    if ($_FILES["supinfo"]["error"] > 0) {
 //        $error[0] = "Return Code: No Input " . $_FILES["supinfo"]["error"] . "<br />";
@@ -202,11 +202,11 @@ require_once("../Resources/Includes/menu.php");
                     <p class="status"><small>Describe your unit's initiatives, improvements, challenges, and progress with Experiential Learning at each level during the Academic Year (as applicable).</small></p>
                     <h3>Undergraduate</h3>
                     <div class="form-group form-indent">
-                      <textarea id="undergrad" name="ugexplearning" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo $rowsexvalue['EXPERIENTIAL_LEARNING_UGRAD']; ?></textarea>
+                      <textarea id="undergrad" name="ugexplearning" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo mybr2nl($rowsexvalue['EXPERIENTIAL_LEARNING_UGRAD']); ?></textarea>
                     </div>
                     <h3>Graduate</h3>
                     <div class="form-group form-indent">
-                        <textarea id="graduate" name="gradexplearning" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['EXPERIENTIAL_LEARNING_GRAD']; ?></textarea>
+                        <textarea id="graduate" name="gradexplearning" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['EXPERIENTIAL_LEARNING_GRAD']); ?></textarea>
                     </div>
                 </div>
                 <h3>Affordability</h3>

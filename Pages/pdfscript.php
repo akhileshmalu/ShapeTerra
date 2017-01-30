@@ -151,7 +151,7 @@ require_once("../Resources/Includes/menu.php");
                                 style='font-size:38.0pt;color:#8C2633'>Academic Excellence</span></b></p>
 
                     <p class=MsoNormal align=center style='margin-top:48.0pt;text-align:center'><b><span
-                                style='font-size:30.0pt;font-family:Open Sans, sans-serif;'><?php echo $rowbroad[1]; ?></span></b>
+                                style='font-size:5vh;font-family:Open Sans, sans-serif;'><?php echo $rowbroad[1]; ?></span></b>
                     </p>
 
                     <p class=MsoNormal align=center style='margin-top:48.0pt;text-align:center'><span

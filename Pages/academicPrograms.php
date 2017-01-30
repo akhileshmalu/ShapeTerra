@@ -90,7 +90,7 @@ if (isset($_POST['savedraft'])) {
         $sqlacprogramme = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) 
 VALUES ('$ouabbrev','$bpayname','$author','$time','$programranking','$instructionalmodalities','$launch','$programterminators','$supinfopath');";
 
-        $sqlacprogramme .= "Update  `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlacprogramme .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
         $sqlacprogramme .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
@@ -198,7 +198,7 @@ require_once("../Resources/Includes/menu.php");
                     <p class="status"><small>List any Academic Programs that were newly launched during the Academic Year; those that have received required approvals but which have not yet enrolled students should not be included. For each, list the formal name of the academic program and the responsible department. </small></p>
                     <textarea  name="launch" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['PROGRAM_LAUNCHES']); ?></textarea>
                 </div>
-            <h3>Program Terminators</h3>
+            <h3>Program Terminations</h3>
                 <div class="form-group form-indent">
                     <p class="status"><small>List any Academic Programs that were newly terminated or discontinued during the Academic Year as follows: for each clearly indicate whether the decision to terminate was made during the Academic Year or whether the program ceased having any enrolled students during the Academic Year.  </small></p>
                     <textarea  name="programterminators" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['PROGRAM_TERMINATIONS']); ?></textarea>

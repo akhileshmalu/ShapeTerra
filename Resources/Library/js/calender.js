@@ -31,6 +31,7 @@ $('#datetimepicker2').datetimepicker({
 
 
 $('#datetimepicker3').datetimepicker({
+    viewMode: 'years',
     format: 'YYYY-MM-DD'
 });
 

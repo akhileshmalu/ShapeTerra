@@ -153,7 +153,7 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Collaborations</h1>
         <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST">
-            <h3>Internal Collaborators</h3>
+            <h3>Internal Collaborations</h3>
             <div class="form-group form-indent">
                 <p class="status">List up to five of your Academic Unit's most significant academic collaborations and
                     multidisciplinary efforts that are internal to the University. Details should be omitted; list by
@@ -162,7 +162,7 @@ require_once("../Resources/Includes/menu.php");
                 <textarea name="internalcollaborators" rows="6" cols="25" wrap="hard" class="form-control"
                           required><?php echo mybr2nl($rowsexvalue['COLLAB_INTERNAL']); ?></textarea>
             </div>
-            <h3>External Collaborators</h3>
+            <h3>External Collaborations</h3>
             <div class="form-group form-indent">
                 <p class="status">List up to five of your Academic Unit's most significant academic collaborations and
                     multidisciplinary efforts that are external to the University. Details should be omitted; list by
@@ -171,7 +171,7 @@ require_once("../Resources/Includes/menu.php");
                 <textarea name="externalcollaborators" rows="6" cols="25" wrap="hard"
                           class="form-control"><?php echo mybr2nl($rowsexvalue['COLLAB_EXTERNAL']); ?></textarea>
             </div>
-            <h3>Other Collaborators</h3>
+            <h3>Other Collaborations</h3>
             <div class="form-group form-indent">
                 <p class="status">
                     <small>List up to five of your Academic Unit's most significant academic collaborations and

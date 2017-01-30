@@ -340,7 +340,7 @@ require_once("../Resources/Includes/header.php");
                            required/>
                     <input id="confirm-password" type="password" placeholder="Confirm Password" name="confirmPassword"
                            class="col-xs-12 hidden"/>
-                    <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a>
+<!--                    <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a>-->
 
 
                     <input type="submit" name="login" class="col-xs-12" value="Login" id="login-button">

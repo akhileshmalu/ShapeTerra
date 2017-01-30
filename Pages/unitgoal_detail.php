@@ -25,6 +25,7 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Local & Session variable Initialization
  */
+$bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $goal_id = $_GET['goal_id'];
 $bpayname =$_SESSION['bpayname'];
@@ -57,7 +58,18 @@ $sqlexvalue = "SELECT * FROM `BP_UnitGoals` WHERE ID_UNIT_GOAL = '$goal_id' ;";
 $resultexvalue = $mysqli->query($sqlexvalue);
 $rowsexvalue = $resultexvalue->fetch_assoc();
 
+// SQL for Goal Status for Edit control
+$sqlgoalstatus = "SELECT GOAL_STATUS FROM BP_UnitGoals WHERE ID_UNIT_GOAL = '$goal_id';";
+$resultgoalstatus = $mysqli->query($sqlgoalstatus);
+$rowsgoalstatus = $resultgoalstatus->fetch_array(MYSQLI_NUM);
 
+//SQL to check goal level 'goal approval' by Dean to action content status 'Goal Approval'
+// Checks if given goal is last goal to approve ; if yes then create sql to change content status of Goal Overview module.
+$sqlgoalchk = "SELECT * FROM BP_UnitGoals WHERE OU_ABBREV = '$ouabbrev' AND UNIT_GOAL_AY='$bpayname' ";
+$resultgoalchk = $mysqli->query($sqlgoalchk);
+$numrow = $resultgoalchk->num_rows;
+
+//AND GOAL_STATUS = 'Dean Approved';
 /*
  * Add UNIT GOAL Modal
  */
@@ -74,9 +86,11 @@ if(isset($_POST['goal_submit'])) {
     $goalstatement = mynl2br($_POST['goalstatement']);
     $goalalignment = mynl2br($_POST['goalalignment']);
 
-    $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time',
- UNIT_GOAL_TITLE = '$goaltitle', LINK_UNIV_GOAL = $unigoallinkname, GOAL_STATEMENT = '$goalstatement',
-  GOAL_ALIGNMENT = '$goalalignment' WHERE ID_UNIT_GOAL = '$goal_id' ;";
+    $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time',GOAL_STATUS = 'In Progress', UNIT_GOAL_TITLE = '$goaltitle', LINK_UNIV_GOAL = '$unigoallinkname', GOAL_STATEMENT = '$goalstatement', GOAL_ALIGNMENT = '$goalalignment' WHERE ID_UNIT_GOAL = '$goal_id' ;";
+
+    $sqlunitgoal .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    $sqlunitgoal .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
     if($mysqli->multi_query($sqlunitgoal)) {
 
@@ -89,6 +103,77 @@ if(isset($_POST['goal_submit'])) {
 
 }
 
+if(isset($_POST['new_goal_submit'])) {
+    $contentlink_id = $_GET['linkid'];
+
+    $goaltitle = $_POST['goaltitle'];
+
+    $unigoallink = $_POST['goallink'];
+    foreach ($unigoallink as $value) {
+        $unigoallinkname .= $value . ",";
+    }
+    $goalstatement = mynl2br($_POST['goalstatement']);
+    $goalalignment = mynl2br($_POST['goalalignment']);
+
+    $sqlunitgoal = "INSERT INTO `BP_UnitGoals` (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) 
+VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
+
+    $sqlunitgoal .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+    $sqlunitgoal .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+
+
+    if($mysqli->multi_query($sqlunitgoal)) {
+
+        $error[0] = "Unit goals Updated Succesfully.";
+
+    } else {
+        $error[0] = "Unit goals could not be Updated.";
+    }
+
+}
+
+if(isset($_POST['submit_for_approval'])) {
+    $contentlink_id = $_GET['linkid'];
+    $goal_id = $_GET['goal_id'];
+    $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Pending Dean Approval', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
+    $sqlunitgoal .= "Update `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    if ($mysqli->multi_query($sqlunitgoal)) {
+        $error[0] = "Unit Goals Submitted for Approval Successfully";
+    } else {
+        $error[0] = "Unit Goals Could not be Submitted for Approval. Please Retry.";
+    }
+}
+if(isset($_POST['approve'])) {
+    $goal_id = $_GET['goal_id'];
+    $contentlink_id = $_GET['linkid'];
+    $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Approved', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
+
+    //check if goal is last goal to approve which should change status of goal overview module to "dean approved".
+    $sqlgoalchk .= "AND GOAL_STATUS = 'Dean Approved';";
+    $resultgoalchk = $mysqli->query($sqlgoalchk);
+    $numrowapprove = $resultgoalchk->num_rows;
+
+    if ($numrow-1 == $numrowapprove) {
+        $sqlunitgoal .= "Update `BpContents` set CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    }
+
+    if ($mysqli->multi_query($sqlunitgoal)) {
+        $error[0] = "Unit Goals Approved Successfully";
+    } else {
+        $error[0] = "Unit Goals Could not be Approved. Please Retry.";
+    }
+}
+
+if(isset($_POST['reject'])) {
+    $goal_id = $_GET['goal_id'];
+    $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Rejected', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
+    if ($mysqli->query($sqlunitgoal)) {
+        $error[0] = "Unit Goals Rejected Successfully";
+    } else {
+        $error[0] = "Unit Goals Could not be Rejected. Please Retry.";
+    }
+}
 
 require_once("../Resources/Includes/header.php");
 
@@ -108,7 +193,7 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['goal_submit'])) { ?>
+<?php if (isset($_POST['goal_submit']) or isset($_POST['new_goal_submit']) or isset($_POST['submit_for_approval']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
@@ -181,8 +266,29 @@ require_once("../Resources/Includes/menu.php");
                               required><?php echo mybr2nl($rowsexvalue['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
-                <input type="submit" id="goalbtn" name="goal_submit" value="Save" class="btn-primary">
+            <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') { ?>
+                <input type="submit" id="goalbtn" name="<?php if ($goal_id != 0) {
+                    echo 'goal_submit';
+                } else {
+                    echo 'new_goal_submit';
+                } ?>" value="Save" class="btn-primary">
+                <?php if ($rowsgoalstatus[0] <> 'Pending Dean Approval') { ?>
+                <input type="submit" name="submit_for_approval" value="Submit for Approval"
+                       class="btn-primary" <?php if ($goal_id == 0) echo 'disabled'; ?>>
+            <?php } } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
+                <input type="submit" id="goalbtn" name="<?php if ($goal_id != 0) {
+                    echo 'goal_submit';
+                } else {
+                    echo 'new_goal_submit';
+                } ?>" value="Save" class="btn-primary">
+                <?php if ($rowsgoalstatus[0] == 'Pending Dean Approval') { ?>
+                    <input type="submit" id="approve" name="approve" value="Approve"
+                           class="btn-primary pull-right">
+                    <input type="submit" id="reject" name="reject" value="Reject"
+                           class="btn-primary pull-right">
 
+                <?php }
+            } ?>
         </form>
 
 

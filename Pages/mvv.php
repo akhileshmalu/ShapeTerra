@@ -69,94 +69,20 @@ $rowsmission = $resultmission->fetch_assoc();
 $sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
 $resultbpstatus = $mysqli->query($sqlbpstatus);
 $rowsbpstatus = $resultbpstatus->fetch_assoc();
-//
-//$id = intval($rowslastmission[0]) + 1;
 
-//if (isset($_POST['mission_submit'])) {
-//
-//    $missionstatement = mynl2br($_POST['missionstatement']);
-//    $contentlink_id = $_GET['linkid'];
-//
-//
-//    $sqlmission = "INSERT INTO BP_MissionVisionValues (ID_UNIT_MVV,OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT)
-//VALUES ('$id','$ouabbrev','$author','$time','$bpayname','$missionstatement')
-//ON DUPLICATE KEY UPDATE `ID_UNIT_MVV` = VALUES(`ID_UNIT_MVV`),
-//`OU_ABBREV` = VALUES(`OU_ABBREV`),`MVV_AUTHOR` = VALUES(`MVV_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`UNIT_MVV_AY` = VALUES(`UNIT_MVV_AY`),
-//`MISSION_STATEMENT` =VALUES(`MISSION_STATEMENT`);";
-//
-//
-//    $sqlmission .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-//
-//    if ($mysqli->multi_query($sqlmission)) {
-//
-//        $error[0] =  "Mission Updated Successfully";
-//
-//    } else {
-//        $error[0] =   "Mission Could not be Updated. Please Retry.";
-//    }
-//
-//
-//}
-//
-//if (isset($_POST['vision_submit'])) {
-//
-//
-//    $visionstatement = mynl2br($_POST['visionstatement']);
-//$contentlink_id = $_GET['linkid'];
-//
-//    $sqlmission = "INSERT INTO BP_MissionVisionValues (ID_UNIT_MVV,OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY,VISION_STATEMENT )
-//VALUES ('$id','$ouabbrev','$author','$time','$bpayname','$visionstatement')
-//ON DUPLICATE KEY UPDATE `ID_UNIT_MVV` = VALUES(`ID_UNIT_MVV`),
-//`OU_ABBREV` = VALUES(`OU_ABBREV`),`MVV_AUTHOR` = VALUES(`MVV_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`UNIT_MVV_AY` = VALUES(`UNIT_MVV_AY`),
-//`VISION_STATEMENT` =VALUES(`VISION_STATEMENT`);";
-//
-//    $sqlmission .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-//
-//    if ($mysqli->multi_query($sqlmission)) {
-//
-//        $error[0] = "Vision Updated Successfully";
-//
-//
-//    } else {
-//        $error[0] = "Vision Could not be Updated. Please Retry.";
-//    }
-//
-//
-//}
-//if (isset($_POST['value_submit'])) {
-//
-//    $valuestatement = mynl2br($_POST['valuestatement']);
-//    $contentlink_id = $_GET['linkid'];
-//
-//    $sqlmission = "INSERT INTO BP_MissionVisionValues (ID_UNIT_MVV,OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, VALUES_STATEMENT)
-//VALUES ('$id','$ouabbrev','$author','$time','$bpayname','$valuestatement')
-//ON DUPLICATE KEY UPDATE `ID_UNIT_MVV` = VALUES(`ID_UNIT_MVV`),
-//`OU_ABBREV` = VALUES(`OU_ABBREV`),`MVV_AUTHOR` = VALUES(`MVV_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`UNIT_MVV_AY` = VALUES(`UNIT_MVV_AY`),
-//`VALUES_STATEMENT` =VALUES(`VALUES_STATEMENT`);";
-//
-//    $sqlmission .= "Update  BpContents set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-//
-//    if ($mysqli->multi_query($sqlmission)) {
-//
-//        $error[0] = "Values Updated Successfully";
-//
-//
-//    } else {
-//        $error[0] = "Values Could not be Updated. Please Retry.";
-//    }
-//
-//
-//}
 if (isset($_POST['submit'])) {
 
     $missionstatement = mynl2br($_POST['missionstatement']);
+    $missionupdatedate = $_POST['misupdate'];
     $visionstatement = mynl2br($_POST['visionstatement']);
+    $visionupdatedate = $_POST['visupdate'];
     $valuestatement = mynl2br($_POST['valuestatement']);
+    $valueupdatedate = $_POST['valupdate'];
     $contentlink_id = $_GET['linkid'];
 
 
-    $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT,VISION_STATEMENT,VALUES_STATEMENT)
-VALUES ('$ouabbrev','$author','$time','$bpayname','$missionstatement','$visionstatement','$valuestatement');";
+    $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT, MISSION_UPDATE_DATE, VISION_STATEMENT,VISION_UPDATE_DATE,VALUES_STATEMENT,VALUE_UPADTE_DATE)
+VALUES ('$ouabbrev','$author','$time','$bpayname','$missionstatement','$missionupdatedate','$visionstatement','$visionupdatedate','$valuestatement','$valueupdatedate');";
 
     $sqlmission .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
 
@@ -236,186 +162,93 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
         <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
-        <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
+        <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
         <p class="status"><span>Last Modified:</span> <?php echo date("F j, Y, g:i a", strtotime($rowbroad[3])); ?></p>
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <label for="headtitle"><h1>Mission, Vision & Values</h1></label>
+        <h1 class="box-title">Mission, Vision & Values</h1>
         <div id="headtitle">
-            <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=" . $contentlink_id ?>" method="POST" class="mission">
+            <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id ?>" method="POST"
+                  class="mission">
                 <div class="mission-status-alert hidden text-center">
                     <h1>Mission Updated Successfully</h1>
                     <a href="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="btn-secondary pull-left">Back To
                         Dashboard</a>
                     <a href="#" class="mission-next-tab btn-primary" onclick="return false;">Next Tab</a>
                 </div>
-                <p>
-                  <small><em>Instruction: Enter your BluePrint content for the Academic Year indicated above.The
-                          components below are highest level statements of
-                          what <?php echo $_SESSION['login_ouname']; ?> considers foundation to your goals &
-                          related outcomes.</em></small>
+                <p class="status">
+                    <small><em>Instruction: Enter your BluePrint content for the Academic Year indicated above.The
+                            components below are highest level statements of
+                            what <?php echo $_SESSION['login_ouname']; ?> considers foundation to your goals &
+                            related outcomes.</em></small>
                 </p>
                 <h3>Mission Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
-                  <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement" id="missiontitle" required><?php echo mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement"
+                              id="missiontitle"
+                              required><?php echo mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
+                    <div class="form-group col-xs-4">
+                        <p><h3>Last Updated:</h3></p>
+                        <div class='input-group date' id='datetimepicker1'>
+                            <input type='text' name="misupdate" value="<?php echo $rowsmission['MISSION_UPDATE_DATE']; ?>" class="form-control" required>
+                            <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                        </div>
+                    </div>
                 </div>
                 <h3>Vision Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
-                  <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement" id="visiontitle" required><?php echo mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement"
+                              id="visiontitle"><?php echo mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
+                    <div class="form-group col-xs-4">
+                        <p><h3>Last Updated:</h3></p>
+                        <div class='input-group date' id='datetimepicker2'>
+                            <input type='text' name="visupdate" value="<?php echo $rowsmission['VISION_UPDATE_DATE']; ?>" class="form-control">
+                            <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                        </div>
+                    </div>
                 </div>
-                <h3>Value Statement</h3>
+                <h3>Values Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
-                  <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"id="valuetitle" required><?php echo mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
-                  <!--Edit Control-->
-                  <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
-                  <button id="save" type="submit" name="submit"
-                          onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                          class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                      Save Draft
-                  </button>
-                  <button type="submit" id="submit_approve" name="submit_approve" class="btn-primary pull-right">Submit For Approval</button>
-                  <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-                  <button id="save" type="submit" name="submit"
-                          onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                          class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                      Save Draft
-                  </button>
-                  <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                  <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                  <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                <?php endif; } ?>
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"
+                              id="valuetitle"><?php echo mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
+
+                    <div class="form-group col-xs-4">
+                        <p><h3>Last Updated:</h3></p>
+                        <div class='input-group date' id='datetimepicker3'>
+                            <input type='text' name="valupdate" value="<?php echo $rowsmission['VALUE_UPADTE_DATE']; ?>" class="form-control">
+                            <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                        </div>
+                    </div>
                 </div>
+                <!--Edit Control-->
+                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
+                    <button id="save" type="submit" name="submit"
+                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                        Save Draft
+                    </button>
+                    <button type="submit" id="submit_approve" name="submit_approve" class="btn-primary pull-right">
+                        Submit For Approval
+                    </button>
+                <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
+                    <button id="save" type="submit" name="submit"
+                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                        Save Draft
+                    </button>
+                    <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
+                        <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
+                        <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
+                    <?php endif;
+                } ?>
             </form>
         </div>
-<!--        <!-- Nav tabs -->
-<!--        <ul class="nav nav-pills" role="tablist">-->
-<!--            <li role="presentation" class="active"><a href="#mission" aria-controls="mission" role="tab"-->
-<!--                                                      data-toggle="pill">Mission</a></li>-->
-<!--            <li role="presentation"><a href="#vision" aria-controls="vision" role="tab" data-toggle="pill">Vision</a>-->
-<!--            </li>-->
-<!--            <li role="presentation"><a href="#values" aria-controls="values" role="tab" data-toggle="pill">Values</a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!---->
-<!--         Tab panes-->
-<!---->
-<!--        <div class="tab-content">-->
-<!---->
-<!--            <form action="--><?php //echo "mvv.php?linkid=" . $contentlink_id ?><!--" method="POST" class="ajaxform mission">-->
-<!--                <div role="tabpanel" class="tab-pane active" id="mission">-->
-<!---->
-<!--                    <div class="mission-status-alert hidden text-center">-->
-<!--                        <h1>Mission Updated Successfully</h1>-->
-<!--                        <a href="bphome.php?ayname=--><?php //echo $rowbroad[0]; ?><!--" class="btn-secondary pull-left">Back To-->
-<!--                            Dashboard</a>-->
-<!--                        <a href="#" class="mission-next-tab btn-primary" onclick="return false;">Next Tab</a>-->
-<!--                    </div>-->
-<!---->
-<!---->
-<!--                    <p>-->
-<!--                        <small><em>Instruction: Enter your BluePrint content for the Academic Year indicated above.The-->
-<!--                                components below are highest level statements of-->
-<!--                                what --><?php //echo $_SESSION['login_ouname']; ?><!-- considers foundation to your goals &-->
-<!--                                related outcomes.</em></small>-->
-<!--                    </p>-->
-<!---->
-<!--                    <label class="col-xs-12" for="missiontitle">Mission Statement</label>-->
-<!---->
-<!--                    <div class="col-xs-12">-->
-<!---->
-<!--                        <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement"-->
-<!--                                  id="missiontitle"-->
-<!--                                  required>--><?php //echo $rowsmission['MISSION_STATEMENT']; ?><!--</textarea>-->
-<!---->
-<!--                        <!--                        Reviewer Edit Control-->
-<!--                        --><?php //if ($_SESSION['login_right'] != 1): ?>
-<!---->
-<!--                            <button type="submit" name="mission_submit" onclick="$('#approve').removeAttr('disabled');"-->
-<!--                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">-->
-<!--                                Save Draft-->
-<!--                            </button>-->
-<!---->
-<!--                        --><?php //endif; ?>
-<!---->
-<!--                    </div>-->
-<!---->
-<!--                </div>-->
-<!---->
-<!---->
-<!--                <div role="tabpanel" class="tab-pane" id="vision">-->
-<!---->
-<!--                    <div class="vision-status-alert hidden text-center">-->
-<!--                        <h1>Vision Updated Successfully</h1>-->
-<!--                        <a href="bphome.php?ayname=--><?php //echo $rowbroad[0]; ?><!--" class="btn-secondary pull-left">Back To-->
-<!--                            Dashboard</a>-->
-<!--                        <a href="#" class="vision-next-tab btn-primary" onclick="return false;">Next Tab</a>-->
-<!--                    </div>-->
-<!---->
-<!---->
-<!--                    <!--                <form action="-->
-<!--                    --><?php ////echo "mvv.php?linkid=" . $contentlink_id ?><!--<!--" method="POST" class="ajaxform vision">-->
-<!---->
-<!---->
-<!--                    <label class="col-xs-12" for="visiontitle">Vision Statement</label>-->
-<!---->
-<!--                    <div class="col-xs-12">-->
-<!--                            <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement"-->
-<!--                                      id="visiontitle"-->
-<!--                                      required>--><?php //echo $rowsmission['VISION_STATEMENT']; ?><!--</textarea>-->
-<!---->
-<!--                        <!--                        Reviewer Edit Control-->
-<!--                        --><?php //if ($_SESSION['login_right'] != 1): ?>
-<!---->
-<!--                            <button type="submit" name="vision_submit" onclick="$('#approve').removeAttr('disabled');"-->
-<!--                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">-->
-<!--                                Save Draft-->
-<!--                            </button>-->
-<!---->
-<!--                        --><?php //endif; ?>
-<!--                    </div>-->
-<!--                    <!--                </form>-->
-<!--                </div>-->
-<!---->
-<!---->
-<!--                <div role="tabpanel" class="tab-pane" id="values">-->
-<!---->
-<!--                    <div class="value-status-alert hidden text-center">-->
-<!--                        <h1>Values Updated Successfully</h1>-->
-<!--                        <a href="bphome.php?ayname=--><?php //echo $rowbroad[0]; ?><!--" class="btn-secondary">Back To-->
-<!--                            Dashboard</a>-->
-<!--                    </div>-->
-<!---->
-<!--                    <!--                <form id="mvvform" action="-->
-<!--                    --><?php ////echo "mvv.php?linkid=" . $contentlink_id ?><!--<!--" method="POST" class="ajaxform value">-->
-<!---->
-<!--                    <label class="col-xs-12" for="visiontitle">Value Statement</label>-->
-<!---->
-<!--                    <div class="col-xs-12">-->
-<!---->
-<!--                        <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"-->
-<!--                                  id="valuetitle"-->
-<!--                                  required>--><?php //echo $rowsmission['VALUES_STATEMENT']; ?><!--</textarea>-->
-<!---->
-<!--                        <!--                        Reviewer Edit Control-->
-<!--                        --><?php //if ($_SESSION['login_right'] != 1): ?>
-<!---->
-<!---->
-<!--                            <button id="save" type="submit" name="value_submit"-->
-<!--                                    onclick="$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"-->
-<!--                                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">-->
-<!--                                Save Draft-->
-<!--                            </button>-->
-<!--                            <input type="submit" id="approve" name="approve" value="Submit For Approval"-->
-<!--                                   onclick="$('#mvvform').removeClass('ajaxform');"-->
-<!--                                   class="btn-primary pull-right" disabled>-->
-<!---->
-<!--                        --><?php //endif; ?>
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </form>-->
-<!--        </div>-->
-<!---->
-<!--    </div>-->
+    </div>
 </div>
 <?php require_once("../Resources/Includes/footer.php"); //Include Footer ?>
 <!--Calender Bootstrap inclusion for date picker INPUT-->

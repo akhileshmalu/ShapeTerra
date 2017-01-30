@@ -38,6 +38,7 @@ if ($outype == "Academic Unit") {
     $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
  LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
     $resultbpcontent = $mysqli->query($sqlbpcontent);
+    $numbpcontent = $resultbpcontent->num_rows;
 } elseif ($outype == "Administration") {
     $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
  LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
@@ -56,11 +57,12 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
 
 
+
 if(isset($_POST['submit_bp'])) {
 
     $status = "Submitted Draft";
     $bpayname = $_GET['ayname'];
-    $ouid = $_GET['ouid'];
+    $bpid = $_GET['id'];
 
     $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='$status', BROADCAST_STATUS_OTHERS='$status' where BROADCAST_AY='$bpayname' AND BROADCAST_OU ='$ouid';  ";
 
@@ -72,6 +74,27 @@ if(isset($_POST['submit_bp'])) {
     }
 
 }
+
+
+
+if(isset($_POST['approve'])) {
+
+    $bpid = $_GET['id'];
+    $bpayname = $_GET['ayname'];
+    $status = "Final";
+
+
+    $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='$status', BROADCAST_STATUS_OTHERS='$status' where ID_BROADCAST = '$bpid';";
+
+    if($mysqli->query($sqlbroadupdate)){
+        $error[0] = "Academic BluePrint Draft Submitted Successfully.";
+
+    } else {
+        $error[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+    }
+
+}
+
 
 
 
@@ -178,7 +201,7 @@ require_once("../Resources/Includes/menu.php");
             </table>
         </div> -->
 
-        <form action="<?php echo "bphome.php?ayname=$bpayname&ouname=$ouid"; ?>" method="POST">
+        <form action="<?php echo "bphome.php?ayname=$bpayname&ou_abbrev=$ouabbrev&id=$bpid"; ?>" method="POST">
             <?php if ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
             <div>
             <input type="submit" name="submit_bp" value="Submit BluePrint"
@@ -186,9 +209,15 @@ require_once("../Resources/Includes/menu.php");
                 $sqlbpcontent .= " and CONTENT_STATUS = 'Dean Approved' ;";
                 $resultcontent = $mysqli->query($sqlbpcontent);
                 $numrow = $resultcontent->num_rows;
-                if ($numrow < 11) { echo 'disabled'; } ?>
+                if ($numrow < $numbpcontent) { echo 'disabled'; } ?>
                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
             </div>
+            <?php } elseif ($_SESSION['login_role'] == 'provost' && $rowbroad['BROADCAST_STATUS'] == 'Submitted Draft') { ?>
+<!--                Provost Controls-->
+                <div>
+                    <input type="submit" name="approve" value="Approve BluePrint" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-left">
+                    <input type="submit" name="reject" value="Reject BluePrint" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                </div>
             <?php } ?>
         </form>
     </div>

@@ -192,7 +192,7 @@ require_once("../Resources/Includes/menu.php");
             <!--                </div>-->
 
             <form action="<?php echo "goaloutcome.php?goal_id=" . $goal_id . "&linkid=" . $contentlink_id; ?>"
-                  method="POST">
+                onsubmit="if($('#goalstlist').val() == 0) { alert('Please select Goal Status'); return false; }"  method="POST">
 
                 <div class="form-group">
                     <label for="goallink"><h3>Linked to University Goal(s)</h3></label>
@@ -212,18 +212,19 @@ require_once("../Resources/Includes/menu.php");
 
                 <label for ="goalstate" ><h3>Goal Statement </h3></label>
                 <div id="goalstate" class="form-group form-indent">
-                    <textarea  rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']); ?></textarea>
+                    <textarea  rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']);?></textarea>
                 </div>
 
                 <label for ="goalalign" ><h3>Goal Alignment</h3></label>
                 <div id="goalalign" class="form-group form-indent">
-                    <textarea   rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
+                    <textarea   rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
                 <label for ="goalstatus" ><h3>Goal Status</h3></label>
                 <div id="goalstatus" class="form-group form-indent">
-                    <select id="goalstlist" name="goal_status" onchange="control(this);" class="form-control" style="padding: 0px; background-color: #fff !important;">
-                    <?php $sqlgoalstatus ="select * from GoalStatus";
+                    <select id="goalstlist" name="goal_status"  class="form-control" style="padding: 0px; background-color: #fff !important;">
+                        <option value="0"> -- select an option -- </option>
+                        <?php $sqlgoalstatus ="select * from GoalStatus";
                     $resultgoalstatus = $mysqli->query($sqlgoalstatus);
                     while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :?>
                         <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"
@@ -236,21 +237,18 @@ require_once("../Resources/Includes/menu.php");
                     <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
                 </div>
 
-
+                <label for ="goalresutil" ><h3>Resources Utilized </h3></label>
                 <div id="goalresutil" class="form-group form-indent hidden">
-                    <label for ="goalresutiltext" ><h3>Resources Utilized </h3></label>
                     <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
                 </div>
 
-
+                <label id ="goalcontilable" ><h3>Goal Continuation </h3></label>
                 <div id="goalconti" class="form-group form-indent hidden">
-                    <label for ="goalcontitext" ><h3>Goal Continuation </h3></label>
                     <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
                 </div>
 
-
+                <label id = "resoneedlable" ><h3>Resource Needed </h3></label>
                 <div id="resoneed" class="form-group form-indent hidden">
-                    <label for ="resoneedtext" ><h3>Resource Needed </h3></label>
                     <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
                 </div>
 
