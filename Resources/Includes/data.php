@@ -22,8 +22,12 @@
       $Data->getUnitGoals();
       break;
     case 2:
-      $postData = $_POST["data"];
-      $Data->saveUnitGoalsOrder($postData);
+      $itemData = $_POST["data"];
+      $indexes = $_POST["indexes"];
+      $Data->saveUnitGoalsOrder($itemData,$indexes);
+      break;
+    case 3:
+      $Data->getUnitGoalsStatus();
       break;
     default:
       break;
@@ -41,7 +45,7 @@
 
       try{
 
-        $connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "");
+        $connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "root");
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $connection;
@@ -266,7 +270,7 @@
           $unit = $_SESSION['login_ouabbrev'];
         }
 
-        $findCurrentExecSum = $this->connection->prepare("SELECT * FROM `AC_ExecSum` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $findCurrentExecSum = $this->connection->prepare("SELECT * FROM `AC_ExecSum` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ? ORDER BY ID_UNIT_GOAL DESC");
         $findCurrentExecSum->bindParam(1,$selectedYear,PDO::PARAM_STR);
         $findCurrentExecSum->bindParam(2,$unit,PDO::PARAM_STR);
         $findCurrentExecSum->execute();
@@ -274,7 +278,7 @@
 
         if ($rowsFindCurrentExecSum > 0){
 
-          $updateExecSumIntro = $this->connection->prepare("UPDATE `AC_ExecSum` SET INTRODUCTION = ? AND HIGHLIGHTS_NARRATIVE = ? AND MOD_TIMESTAMP = ? WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+          $updateExecSumIntro = $this->connection->prepare("UPDATE `AC_ExecSum` SET INTRODUCTION = ?, HIGHLIGHTS_NARRATIVE = ?, MOD_TIMESTAMP = ? WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
           $updateExecSumIntro->bindParam(1,$introductionInput,PDO::PARAM_STR);
           $updateExecSumIntro->bindParam(2,$highlightsNarrativeInput,PDO::PARAM_STR);
           $updateExecSumIntro->bindParam(3,$time,PDO::PARAM_STR);
@@ -319,6 +323,8 @@
 
     public function getUnitGoals(){
 
+      $this->initOrderGoals();
+
       $selectedYear = $_SESSION["bpayname"];
       if ($ouid == 4) {
         $ouAbbrev = $_SESSION['bpouabbrev'];
@@ -327,7 +333,7 @@
       }
       $counter = 0;
 
-      $getUnitGoals = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ?");
+      $getUnitGoals = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ? ORDER BY ID_SORT ASC");
       $getUnitGoals->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
       $getUnitGoals->bindParam(2,$selectedYear,PDO::PARAM_STR);
       $getUnitGoals->execute();
@@ -350,27 +356,100 @@
 
     }
 
-    public function saveUnitGoalsOrder($postData){
+    public function initOrderGoals(){
 
-      //var_dump($postData);
-      for ($i = 0; count($postData) > $i; ++$i){
-
-        echo $postData[$i][0];
-
+      $selectedYear = $_SESSION["bpayname"];
+      if ($ouid == 4) {
+        $ouAbbrev = $_SESSION['bpouabbrev'];
+      }else{
+        $ouAbbrev = $_SESSION['login_ouabbrev'];
       }
+      $zeroCheck = 0;
 
-      $getUnitGoals = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ?");
-      $getUnitGoals->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
-      $getUnitGoals->bindParam(2,$selectedYear,PDO::PARAM_STR);
-      $getUnitGoals->execute();
+      $getCurrentOrder = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ? AND ID_SORT != ? ORDER BY ID_SORT ASC");
+      $getCurrentOrder->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(2,$selectedYear,PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(3,$zeroCheck,PDO::PARAM_STR);
+      $getCurrentOrder->execute();
+      $rowsGetCurrentOrder = $getCurrentOrder->rowCount();
 
-      while($data = $getUnitGoals->fetchAll()){
+      $getNewOrder = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ? AND ID_SORT = ?");
+      $getNewOrder->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
+      $getNewOrder->bindParam(2,$selectedYear,PDO::PARAM_STR);
+      $getNewOrder->bindParam(3,$zeroCheck,PDO::PARAM_STR);
+      $getNewOrder->execute();
 
-        
+      while ($data = $getNewOrder->fetch()){
+
+        if ($data["ID_SORT"] == 0){
+
+          $rowsGetCurrentOrder++;
+
+          $updateItem = $this->connection->prepare("UPDATE `BP_UnitGoals` SET ID_SORT = ? WHERE ID_UNIT_GOAL = ?");
+          $updateItem->bindParam(1,$rowsGetCurrentOrder,PDO::PARAM_INT);
+          $updateItem->bindParam(2,$data["ID_UNIT_GOAL"],PDO::PARAM_INT);
+          $updateItem->execute();
+
+        }
 
       }
 
     }
+
+    public function getUnitGoalsStatus(){
+
+      $counter = 0;
+
+      $getGoalStatus = $this->connection->prepare("SELECT * FROM `BP_UnitGoalOutcomes`");
+      $getGoalStatus->execute();
+
+      while($data = $getGoalStatus->fetchAll()){
+
+        if ($counter != 0){
+
+          echo ",".json_encode($data);
+
+        }else{
+
+          echo json_encode($data);
+
+        }
+
+        $counter++;
+
+      }
+
+    }
+
+    public function saveUnitGoalsOrder($itemData,$indexes){
+
+      $selectedYear = $_SESSION["bpayname"];
+
+      if ($ouid == 4) {
+
+        $ouAbbrev = $_SESSION['bpouabbrev'];
+
+      }else{
+
+        $ouAbbrev = $_SESSION['login_ouabbrev'];
+
+      }
+
+      for ($i = 0; count($itemData) > $i; $i++){
+
+        echo $itemData[$i][7]."=".$i."<br />";
+        $counter = $i + 1;
+
+        $updateList = $this->connection->prepare("UPDATE `BP_UnitGoals` SET ID_SORT = ? WHERE ID_UNIT_GOAL = ?");
+        $updateList->bindParam(1,$counter,PDO::PARAM_INT);
+        $updateList->bindParam(2,$itemData[$i][0],PDO::PARAM_INT);
+        $updateList->execute();
+
+      }
+
+    }
+
+    ///////////////////////////////////////////////
 
     public function getBluePrintsContent(){
 
@@ -401,6 +480,33 @@
       }else{
 
         echo "<h6>No data was found!</h6>";
+
+      }
+
+    }
+
+    public function getUnitGoalsOutcome(){
+
+      $contentLinkId = $_GET['linkid'];
+      $counter = 0;
+
+      $getUnitGoals = $this->connection->prepare("SELECT * FROM `BpContents` WHERE Linked_BP_ID = ?");
+      $getUnitGoals->bindParam(1,$contentLinkId,PDO::PARAM_STR);
+      $getUnitGoals->execute();
+
+      while($data = $getUnitGoals->fetchAll()){
+
+        if ($counter != 0){
+
+          echo ",".json_encode($data);
+
+        }else{
+
+          echo json_encode($data);
+
+        }
+
+        $counter++;
 
       }
 

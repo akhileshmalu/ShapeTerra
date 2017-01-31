@@ -70,24 +70,7 @@
             });
           }
         });
-        /*$("tbody").sortable({
-            stop: function(){
-              var items = $.map($gridData.find("tr"), function(row) {
-                return $(row).data("JSGridItem");
-              });
-              console.log(items);
-            },
-            items: "> tr",
-            appendTo: "parent",
-            helper: "clone"
-        }).disableSelection();*/
       });
-
-      function saveSort(){
-
-        console.log(event);
-
-      }
 
     </script>
   </body>
