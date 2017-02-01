@@ -10,7 +10,7 @@ $('#goalstlist').change(function (){
 function control(select) {
     var k = select;
 
-    if (k != 7) {
+    if (k != 3 && k != 7 && k != 8) {
         $('#goalachtext').attr('required');
         $('#goalresutil').removeClass('hidden');
         $('#goalresutiltext').attr('required');
@@ -39,11 +39,18 @@ function control(select) {
     } else {
         $('#goalachtext').removeAttr('required');
 
-        var m = $('#goalresutil');
-        m.addClass('hidden');
+        $('#goalresutil').addClass('hidden');
         $('#goalresutiltext').removeAttr('required');
 
     }
+
+    // if (k == 3 || k == 7 || k == 8) {
+    //
+    // } else {
+    //
+    // }
+
+
 
 }
 
