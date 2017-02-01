@@ -155,7 +155,14 @@ require_once("../Resources/Includes/menu.php");
 <script src="../Resources/Library/js/root.js"></script>
 <script src="../Resources/Library/js/grid.js"></script>
 
-
+<!--Temp-->
+<script
+    src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"
+    integrity="sha256-oTyWrNiP6Qftu4vs2g0RPCKr3g1a6QTlITNgoebxRc4="
+    crossorigin="anonymous"></script>
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
@@ -192,7 +199,7 @@ require_once("../Resources/Includes/menu.php");
             <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
-        
+
 <!--        <div class="col-xs-4">-->
 <!--            <a href="#" class="btn-primary">Preview</a>-->
 <!--        </div>-->
@@ -212,14 +219,86 @@ require_once("../Resources/Includes/menu.php");
         <?php endif; ?>
         <h1 class="box-title">Faculty Awards</h1>
         <div id="taskboard" style="margin-top: 10px;">
-            <table class="grid" action="taskboard/facultyajax.php" title="Faculty Awards">
+            <!--<table class="grid" action="taskboard/facultyajax.php" title="Faculty Awards">
                 <tr>
                     <th col="AWARD_TYPE" width="100" type="text">Type</th>
                     <th col="AWARD_TITLE" href="<?php echo "facultyawards_detail.php?linkid=".$contentlink_id."&award_id="?>{{columns.ID_FACULTY_AWARDS}}" width="300" type="text">Award</th>
                     <th col="RECIPIENT_NAME" width="200" type="text">Recipient(s)</th>
-<!--                                        <th col="" type="text">Actions</th>-->
+<!--                                        <th col="" type="text">Actions</th>
                 </tr>
-            </table>
+            </table>-->
+            <div id="jsGrid"></div>
+            <div id="table-status"></div>
+            <script>
+
+              var status;
+
+              $.extend({
+                getUrlVars: function(){
+                  var vars = [], hash;
+                  var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                  for(var i = 0; i < hashes.length; i++)
+                  {
+                    hash = hashes[i].split('=');
+                    vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                  }
+                  return vars;
+                },
+                getUrlVar: function(name){
+                  return $.getUrlVars()[name];
+                }
+              });
+
+              $.post("../Resources/Includes/data.php?functionNum=3", function(data) {
+                data = $.parseJSON(data);
+                $("#jsGrid").jsGrid({
+                  width: "100%",
+                  height: "400px",
+                  sorting: true,
+                  paging: true,
+                  data: data,
+                  rowClass: function(item, itemIndex) {
+                    return "client-" + itemIndex;
+                  },
+                  controller: {
+                    loadData: function() {
+                      return db.clients.slice(0, 15);
+                    }
+                  },
+                  fields: [
+                    { name: "ID_SORT", title: "#", type: "text", width: "20px" },
+                    { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
+                    { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
+                      return $("<a>").attr("href", "../Pages/goaloutcome.php?award_id="+item.ID_FACULTY_AWARDS+"linkid="+$.getUrlVar("linkid")).text(value);
+                    }, width: "auto" },
+                    { name: "RECIPIENT_NAME",  title: "Recipent Name", itemTemplate: function(value,item){
+                      return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
+                    }, width: "auto"},
+                    { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
+                  ],
+                  onRefreshed: function() {
+                    var $gridData = $("#jsGrid .jsgrid-grid-body tbody");
+                    $gridData.sortable({
+                      update: function(e, ui) {
+                        var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                        var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
+                            return clientIndexRegExp.exec(classes)[1];
+                        });
+                        var items = $.map($gridData.find("tr"), function(row) {
+                            return $(row).data("JSGridItem");
+                        });
+                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                          console.log(indexes);
+                          $("#table-status").html("Table Saved.");
+                        })
+                      }
+                    });
+                  }
+                });
+              });
+
+            </script>
         </div>
         <form action="<?php echo "facultyawards.php?linkid=".$contentlink_id ?>" method="POST" >
 
@@ -292,7 +371,7 @@ require_once("../Resources/Includes/menu.php");
                         </span>
                     </div>
                     <input type="submit" id="awardbtn" name="award_submit" value="Save" class="btn-primary">
-                </div> 
+                </div>
 
             </form>
         </div>

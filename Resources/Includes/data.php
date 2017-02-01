@@ -27,8 +27,12 @@
       $Data->saveUnitGoalsOrder($itemData,$indexes);
       break;
     case 3:
-      $Data->getUnitGoalsStatus();
+      $Data->getFacultyAwards();
       break;
+    case 4:
+      $itemData = $_POST["data"];
+      $indexes = $_POST["indexes"];
+      $Data->saveFacultyAwardsOrder($itemData,$indexes);
     default:
       break;
   }
@@ -45,7 +49,7 @@
 
       try{
 
-        $connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "root");
+        $connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "");
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $connection;
@@ -321,6 +325,8 @@
 
     }
 
+    ////////////////////Unit Goals Grid//////////////////////////
+
     public function getUnitGoals(){
 
       $this->initOrderGoals();
@@ -360,9 +366,13 @@
 
       $selectedYear = $_SESSION["bpayname"];
       if ($ouid == 4) {
+
         $ouAbbrev = $_SESSION['bpouabbrev'];
+
       }else{
+
         $ouAbbrev = $_SESSION['login_ouabbrev'];
+
       }
       $zeroCheck = 0;
 
@@ -441,6 +451,119 @@
         $counter = $i + 1;
 
         $updateList = $this->connection->prepare("UPDATE `BP_UnitGoals` SET ID_SORT = ? WHERE ID_UNIT_GOAL = ?");
+        $updateList->bindParam(1,$counter,PDO::PARAM_INT);
+        $updateList->bindParam(2,$itemData[$i][0],PDO::PARAM_INT);
+        $updateList->execute();
+
+      }
+
+    }
+
+    ////////////////////Faculty Awards Grid///////////////////////////
+
+    public function getFacultyAwards(){
+
+      $this->initOrderFacultyAwards();
+
+      $selectedYear = $_SESSION["bpayname"];
+
+      if ($ouid == 4) {
+
+        $ouAbbrev = $_SESSION['bpouabbrev'];
+
+      }else{
+
+        $ouAbbrev = $_SESSION['login_ouabbrev'];
+
+      }
+      $counter = 0;
+
+      $getUnitGoals = $this->connection->prepare("SELECT * FROM `AC_FacultyAwards` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ? ORDER BY ID_SORT ASC");
+      $getUnitGoals->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
+      $getUnitGoals->bindParam(2,$selectedYear,PDO::PARAM_STR);
+      $getUnitGoals->execute();
+
+      while($data = $getUnitGoals->fetchAll()){
+
+        if ($counter != 0){
+
+          echo ",".json_encode($data);
+
+        }else{
+
+          echo json_encode($data);
+
+        }
+
+        $counter++;
+
+      }
+
+    }
+
+    public function initOrderFacultyAwards(){
+
+      $selectedYear = $_SESSION["bpayname"];
+      if ($ouid == 4) {
+
+        $ouAbbrev = $_SESSION['bpouabbrev'];
+
+      }else{
+
+        $ouAbbrev = $_SESSION['login_ouabbrev'];
+
+      }
+      $zeroCheck = 0;
+
+      $getCurrentOrder = $this->connection->prepare("SELECT * FROM `AC_FacultyAwards` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ? AND ID_SORT != ? ORDER BY ID_SORT ASC");
+      $getCurrentOrder->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(2,$selectedYear,PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(3,$zeroCheck,PDO::PARAM_INT);
+      $getCurrentOrder->execute();
+      $rowsGetCurrentOrder = $getCurrentOrder->rowCount();
+
+      $getNewOrder = $this->connection->prepare("SELECT * FROM `AC_FacultyAwards` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ? AND ID_SORT = ?");
+      $getNewOrder->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
+      $getNewOrder->bindParam(2,$selectedYear,PDO::PARAM_STR);
+      $getNewOrder->bindParam(3,$zeroCheck,PDO::PARAM_INT);
+      $getNewOrder->execute();
+
+      while ($data = $getNewOrder->fetch()){
+
+        if ($data["ID_SORT"] == 0){
+
+          $rowsGetCurrentOrder++;
+
+          $updateItem = $this->connection->prepare("UPDATE `AC_FacultyAwards` SET ID_SORT = ? WHERE ID_FACULTY_AWARDS = ?");
+          $updateItem->bindParam(1,$rowsGetCurrentOrder,PDO::PARAM_INT);
+          $updateItem->bindParam(2,$data["ID_FACULTY_AWARDS"],PDO::PARAM_INT);
+          $updateItem->execute();
+
+        }
+
+      }
+
+    }
+
+    public function saveFacultyAwardsOrder($itemData,$indexes){
+
+      $selectedYear = $_SESSION["bpayname"];
+
+      if ($ouid == 4) {
+
+        $ouAbbrev = $_SESSION['bpouabbrev'];
+
+      }else{
+
+        $ouAbbrev = $_SESSION['login_ouabbrev'];
+
+      }
+
+      for ($i = 0; count($itemData) > $i; $i++){
+
+        $counter = $i + 1;
+
+        $updateList = $this->connection->prepare("UPDATE `AC_FacultyAwards` SET ID_SORT = ? WHERE ID_FACULTY_AWARDS = ?");
         $updateList->bindParam(1,$counter,PDO::PARAM_INT);
         $updateList->bindParam(2,$itemData[$i][0],PDO::PARAM_INT);
         $updateList->execute();
