@@ -54,7 +54,7 @@ $resultmvv = $mysqli->query($sqlmvv);
 $rowsmvv = $resultmvv->fetch_assoc();
 
 $sqlunit = "select * from BP_UnitGoals RIGHT join BP_UnitGoalOutcomes on BP_UnitGoals.ID_UNIT_GOAL = BP_UnitGoalOutcomes.ID_UNIT_GOAL 
-INNER JOIN GoalStatus on BP_UnitGoalOutcomes.GOAL_STATUS=GoalStatus.ID_STATUS where find_in_set ('$bpayname',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
+INNER JOIN GoalStatus on BP_UnitGoalOutcomes.GOAL_STATUS=GoalStatus.ID_STATUS where find_in_set ('$bpayname',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev' order by ID_SORT ASC;";
 $resultunit = $mysqli->query($sqlunit);
 $countunit = $resultunit->num_rows;
 
@@ -172,9 +172,9 @@ require_once("../Resources/Includes/menu.php");
             <div id="pf<?php echo $pageno; ?>" class="pf w0 h0" data-page-no="<?php echo $pageno; ?>">
                 <h2>Executive Summary</h2>
                 <p><?php echo $rowsexecsum['INTRODUCTION'] ?></p>
-                <?php if($rowsexecsum['HIGHLIGHTS_NARRATIVE'] == "") { ?>
-                    <p><?php echo $rowsexecsum['HIGHLIGHTS_NARRATIVE'] ?></p>
-                <?php } ?>
+                <?php if($rowsexecsum['HIGHLIGHTS_NARRATIVE'] <> "") {
+                    echo '<p>'.mynl2br($rowsexecsum['HIGHLIGHTS_NARRATIVE']).'</p>';
+                } ?>
             </div>
             <?php $pageno++; ?>
 
@@ -202,11 +202,11 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Mission</h3>
                 <p><?php echo $rowsmvv['MISSION_STATEMENT']; ?></p>
 
-                <h3>Vision</h3>
-                <p><?php echo $rowsmvv['VISION_STATEMENT']; ?></p>
+                <?php if($rowsmvv['VISION_STATEMENT'] <> "")
+                    echo '<h3>Vision</h3><p>'.$rowsmvv['VISION_STATEMENT'].'</p>'; ?>
 
-                <h3>Values</h3>
-                <p><?php echo $rowsmvv['VALUES_STATEMENT']; ?></p>
+                <?php if($rowsmvv['VALUES_STATEMENT'] <> "")
+                    echo '<h3>Values</h3><p>'.$rowsmvv['VALUES_STATEMENT'].'</p>'; ?>
 
                 <h3>Goals</h3>
                 <?php  while ($rowsunit = $resultunit->fetch_assoc()): ?>

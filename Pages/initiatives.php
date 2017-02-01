@@ -197,7 +197,7 @@ require_once("../Resources/Includes/menu.php");
         <h1 class="box-title">Initiatives & Observations</h1>
         <div id="" style="margin-top: 10px;">
             <form action="initiatives.php?linkid=<?php echo $contentlink_id;?>" method="POST" enctype="multipart/form-data">
-                <label for ="explearning" ><h1>Experiential Learning: </h1></label>
+                <label for ="explearning" ><h1 class="box-title">Experiential Learning: </h1></label>
                 <div id="explearning" class="form-group">
                     <p class="status"><small>Describe your unit's initiatives, improvements, challenges, and progress with Experiential Learning at each level during the Academic Year (as applicable).</small></p>
                     <h3>Undergraduate</h3>

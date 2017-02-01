@@ -13,7 +13,7 @@ if(!$_SESSION['isLogged']) {
     die();
 }
 $error = array();
-$errorflag =0;
+$errorflag = 0;
 $BackToDashboard = true;
 
 require_once ("../Resources/Includes/connect.php");
@@ -64,22 +64,44 @@ if (isset($_POST['savedraft'])) {
     $externalcollaborators = mynl2br($_POST['externalcollaborators']);
     $othercollaborators = mynl2br($_POST['othercollaborators']);
 
-    $sqlcollob = "INSERT INTO `AC_Collaborations` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, COLLAB_INTERNAL, COLLAB_EXTERNAL, COLLAB_OTHER)
-VALUES ('$ouabbrev','$bpayname','$author','$time','$internalcollaborators','$externalcollaborators','$othercollaborators');";
+    if ($_FILES['supinfo']['tmp_name'] != "") {
+        $target_dir = "../uploads/collaborations";
+        $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 
-    $sqlcollob .= "Update `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
-    $sqlcollob .= "Update `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+        if ($imageFileType != "pdf") {
+            $error[1] = "Sorry, only PDf files are allowed.";
+            $errorflag = 1;
 
-    if ($mysqli->multi_query($sqlcollob)) {
-
-        $error[0] = "Academic Collaborations Info Added Succesfully.";
-    } else {
-        $error[3] = "Academic Collaborations Info could not be added.";
+        } else {
+            if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+                // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
+                $supinfopath = $target_file;
+            } else {
+                $error[2] = "Sorry, there was an error uploading your file.";
+            }
+        }
     }
 
-}
+    if ($errorflag != 1) {
 
+        $sqlcollob = "INSERT INTO `AC_Collaborations` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, COLLAB_INTERNAL, COLLAB_EXTERNAL, COLLAB_OTHER, SUPPL_COLLABORATIONS)
+VALUES ('$ouabbrev','$bpayname','$author','$time','$internalcollaborators','$externalcollaborators','$othercollaborators','$supinfopath');";
+
+        $sqlcollob .= "Update `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+
+        $sqlcollob .= "Update `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+
+        if ($mysqli->multi_query($sqlcollob)) {
+
+            $error[0] = "Academic Collaborations Info Added Succesfully.";
+        } else {
+            $error[3] = "Academic Collaborations Info could not be added.";
+        }
+
+    }
+}
 if(isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
@@ -152,7 +174,7 @@ require_once("../Resources/Includes/menu.php");
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Collaborations</h1>
-        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST">
+        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST" enctype="multipart/form-data">
             <h3>Internal Collaborations </h3>
             <div class="form-group form-indent">
                 <p class="status">List your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are internal to the University.  Details should be omitted; list by name only. </p>
@@ -175,6 +197,11 @@ require_once("../Resources/Includes/menu.php");
                           class="form-control"><?php echo mybr2nl($rowsexvalue['COLLAB_OTHER']); ?></textarea>
             </div>
 
+            <h3>Supplemental Info</h3>
+            <div id="suppfacinfo" class="form-group form-indent">
+                <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Collaborations for the Academic Year.</small></p>
+                <input id="supinfo" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
+            </div>
 
             <!--                      Edit Control-->
 

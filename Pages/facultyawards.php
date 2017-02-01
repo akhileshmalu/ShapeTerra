@@ -270,7 +270,7 @@ require_once("../Resources/Includes/menu.php");
                     { name: "ID_SORT", title: "#", type: "text", width: "20px" },
                     { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
                     { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
-                      return $("<a>").attr("href", "../Pages/goaloutcome.php?award_id="+item.ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
+                      return $("<a>").attr("href", "../Pages/facultyawards_detail.php?award_id="+item.ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
                     }, width: "auto" },
                     { name: "RECIPIENT_NAME",  title: "Recipent Name", itemTemplate: function(value,item){
                       return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
