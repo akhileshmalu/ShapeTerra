@@ -166,7 +166,7 @@ require_once("../Resources/Includes/menu.php");
                     fields: [
                       { name: "ID_SORT", title: "#", type: "text", width: "20px" },
                       { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
-                        return $("<a>").attr("href", "../Pages/goaloutcome.php?goal_id="+item.ID_UNIT_GOAL+"linkid="+$.getUrlVar("linkid")).text(value);
+                        return $("<a>").attr("href", "../Pages/goaloutcome.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
                       }, width: "auto" },
                       { title: "Goal Status", itemTemplate: function(value,item){
                         var status;
@@ -178,10 +178,17 @@ require_once("../Resources/Includes/menu.php");
                         return status;
                       }, width: "auto"},
                       { name: "GOAL_STATEMENT",  title: "Goal", type: "text", width: "auto"},
-                      { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
+                      { name: "MOD_TIMESTAMP", title: "Last Updated", itemTemplate: function(value,item){
+                        var timestamp;
+                        for (var i = 0; i < statusArray.length; i++){
+                          if (statusArray[i][0] == item.ID_UNIT_GOAL){
+                            timestamp = statusArray[i][2];
+                          }
+                        }
+                        return timestamp;
+                      }, width: "auto" }
                     ],
                     onRefreshed: function() {
-                      $("#table-status").html("Table is being saved.");
                       var $gridData = $("#jsGrid .jsgrid-grid-body tbody");
                       $gridData.sortable({
                         update: function(e, ui) {
