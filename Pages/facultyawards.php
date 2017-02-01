@@ -250,7 +250,7 @@ require_once("../Resources/Includes/menu.php");
                 }
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=3", function(data) {
+              $.post("../Resources/Includes/data.php?functionNum=6", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGrid").jsGrid({
                   width: "100%",

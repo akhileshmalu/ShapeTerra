@@ -27,12 +27,19 @@
       $Data->saveUnitGoalsOrder($itemData,$indexes);
       break;
     case 3:
-      $Data->getFacultyAwards();
+      $Data->getUnitGoalsStatus();
       break;
     case 4:
       $itemData = $_POST["data"];
       $indexes = $_POST["indexes"];
       $Data->saveFacultyAwardsOrder($itemData,$indexes);
+      break;
+    case 5:
+      $Data->getGoalAuthors();
+      break;
+    case 6:
+      $Data->getFacultyAwards();
+      break;
     default:
       break;
   }
@@ -454,6 +461,31 @@
         $updateList->bindParam(1,$counter,PDO::PARAM_INT);
         $updateList->bindParam(2,$itemData[$i][0],PDO::PARAM_INT);
         $updateList->execute();
+
+      }
+
+    }
+
+    public function getGoalAuthors(){
+
+      $counter = 0;
+
+      $getGoalStatus = $this->connection->prepare("SELECT * FROM `PermittedUsers`");
+      $getGoalStatus->execute();
+
+      while($data = $getGoalStatus->fetchAll()){
+
+        if ($counter != 0){
+
+          echo ",".json_encode($data);
+
+        }else{
+
+          echo json_encode($data);
+
+        }
+
+        $counter++;
 
       }
 
