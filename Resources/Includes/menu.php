@@ -188,7 +188,7 @@ Generate PDF button currently disabled.
         <?php } ?>
 		<?php if($BackToGoalOutHome){ ?>
 			<li class="" id="header"><a class="" href="<?php echo 'goaloutcomeshome.php?linkid='.$contentlink_id; ?>" >
-					<span id="" class="icon">l</span>Back To OutComes</a></li>
+					<span id="" class="icon">l</span>Back To Outcomes</a></li>
 		<?php } ?>
 		<?php if($BackToGoal){ ?>
 			<li class="" id="header"><a class="" onclick="window.history.back();" >

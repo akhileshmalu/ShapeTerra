@@ -166,6 +166,7 @@ require_once("../Resources/Includes/menu.php");
                         loadData: function() {
                           return db.clients.slice(0, 15);
                         }
+
                       },
                       fields: [
                         { name: "ID_SORT", title: "#", type: "text", width: "20px" },
@@ -178,6 +179,7 @@ require_once("../Resources/Includes/menu.php");
                             if (statusArray[i][0] == item.ID_UNIT_GOAL){
                               status = statusArray[i][3];
                             }
+
                           }
                           return status;
                         }, width: "auto"},

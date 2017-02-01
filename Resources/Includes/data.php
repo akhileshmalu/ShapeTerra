@@ -13,7 +13,7 @@
 
   if (!empty($function)){
 
-    $Data = new Data;
+    $Data = new Data();
 
   }
 
@@ -51,7 +51,6 @@
     function __construct(){
       $this->connection = $this->connection();
     }
-
     private function connection(){
 
       try{

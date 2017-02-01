@@ -57,6 +57,19 @@ $bpcontent = array(
 );
 
 
+/*
+ * File Upload Section
+ */
+$uploaddatafiles = array(
+    array("IR_AC_DiversityPersonnel","ac_diversitypersonnel.php"),
+    array("IR_AC_DiversityStudent","ac_diversitystudent.php"),
+    array("IR_AC_Enrollments","uploadfile.php"),
+//    array("IR_AC_Facilities","uploadfile.php"),
+    array("IR_AC_FacultyPop","ac_facultypop.php"),
+//    array("IR_AC_Transfers","uploadfile.php"),
+//    array("IR_AC_AdmTestScores","uploadfile.php"),
+);
+
 
 if (isset($_POST['submit'])) {
     if (empty($_POST['AY'])) {
@@ -131,6 +144,11 @@ if (isset($_POST['submit'])) {
                     $srno = $j+1;
                     $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','$srno');";
 
+                }
+                foreach ($uploaddatafiles as $file) {
+                    $filename = $file[0];
+                    $filelink = $file[1];
+                    $sqlbroad .= "INSERT INTO IR_SU_UploadStatus(NAME_UPLOADFILE,LINK_UPLOADFILE ,OUTCOME_AY,LAST_MODIFIED_BY) VALUES ('$filename','$filelink','$desc','$author');";
                 }
             }
         }

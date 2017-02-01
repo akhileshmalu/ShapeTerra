@@ -257,7 +257,8 @@ require_once("../Resources/Includes/menu.php");
                       { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
                         return $("<a>").attr("href", "../Pages/unitgoal_detail.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
                       }, width: "auto" },
-                      { name: "GOAL_STATEMENT",  title: "Goal", type: "text", width: "auto"},
+                        { name: "GOAL_STATUS", title: "Status", type: "text", width: "auto" },
+//                      { name: "GOAL_STATEMENT",  title: "Goal", type: "text", width: "auto"},
                       { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" },
                       { name: "AUTHOR", title: "Author", itemTemplate: function(value,item){
                         var status;
