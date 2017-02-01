@@ -54,7 +54,7 @@ $resultmvv = $mysqli->query($sqlmvv);
 $rowsmvv = $resultmvv->fetch_assoc();
 
 $sqlunit = "select * from BP_UnitGoals RIGHT join BP_UnitGoalOutcomes on BP_UnitGoals.ID_UNIT_GOAL = BP_UnitGoalOutcomes.ID_UNIT_GOAL 
-INNER JOIN GoalStatus on BP_UnitGoalOutcomes.GOAL_STATUS=GoalStatus.ID_STATUS where find_in_set ('$bpayname',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev';";
+INNER JOIN GoalStatus on BP_UnitGoalOutcomes.GOAL_STATUS=GoalStatus.ID_STATUS where find_in_set ('$bpayname',UNIT_GOAL_AY)>0 and OU_ABBREV ='$ouabbrev' order by ID_SORT ASC;";
 $resultunit = $mysqli->query($sqlunit);
 $countunit = $resultunit->num_rows;
 

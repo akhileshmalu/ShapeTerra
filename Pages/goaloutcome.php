@@ -213,34 +213,39 @@ require_once("../Resources/Includes/menu.php");
 
                 </div>
 
-                <label for ="goalstate" ><h3>Goal Statement </h3></label>
-                <div id="goalstate" class="form-group form-indent">
-                    <textarea  rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']);?></textarea>
+
+                <div id="goalstate" class="form-group col-xs-12">
+                    <h3>Goal Statement </h3>
+                    <textarea  rows="5" cols="25" wrap="hard" class="form-control form-indent" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']);?></textarea>
                 </div>
 
-                <label for ="goalalign" ><h3>Goal Alignment</h3></label>
-                <div id="goalalign" class="form-group form-indent">
-                    <textarea   rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
+
+                <div id="goalalign" class="form-group col-xs-12">
+                    <h3>Goal Alignment</h3>
+                    <textarea   rows="5" cols="25" wrap="hard" class="form-control form-indent" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
-                <label for ="goalview" ><h3>Goal Viewpoint in Report</h3></label>
-                <div id="goalview" class="form-group">
+<!--                <label for ="goalview" ></label>-->
+                <div id="goalview" class="form-group col-xs-12">
+                    <h3>Goal Viewpoint in Report</h3>
                     <select id="viewpoint" type="text" class="form-control form-indent" readonly>
                         <option value="0">-- select an option --</option>
-                        <?php foreach ($goalviewpoint as $item) { ?>
+                        <?php $selectedViewPoint = $rowsunitgoal['GOAL_VIEWPOINT'];
+                        foreach ($goalviewpoint as $item) { ?>
                             <option
-                                value="<?php echo $item ?>" <?php if ($rowsunitgoal['GOAL_VIEWPOINT'] == $item) {
+                                value="<?php echo $item ?>" <?php if ($selectedViewPoint == $item) {
                                 echo " selected = selected";
                             } ?>><?php echo $item ?></option>
                         <?php } ?>
                     </select>
                 </div>
 
-                <label for ="goalstatus" ><h3>Goal Status</h3></label>
-                <div id="goalstatus" class="form-group form-indent">
-                    <select id="goalstlist" name="goal_status"  class="form-control" style="padding: 0px; background-color: #fff !important;">
+<!--                <label for ="goalstatus" ></label>-->
+                <div id="goalstatus" class="form-group col-xs-12">
+                    <h3>Goal Status</h3>
+                    <select id="goalstlist" name="goal_status"  class="form-control form-indent" style="padding: 0px; background-color: #fff !important;">
                         <option value="0"> -- select an option -- </option>
-                        <?php $sqlgoalstatus ="select * from GoalStatus";
+                        <?php $sqlgoalstatus ="select * from GoalStatus where STATUS_VIEWPOINT = '$selectedViewPoint'; ";
                     $resultgoalstatus = $mysqli->query($sqlgoalstatus);
                     while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :?>
                         <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"
@@ -248,34 +253,40 @@ require_once("../Resources/Includes/menu.php");
                         <?php  endwhile; ?>
                     </select>
                 </div>
-                <label for ="goalach" ><h3>Goal Achievement </h3></label>
-                <div id="goalach" class="form-group form-indent">
-                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
+<!--                <label for ="goalach" ></label>-->
+                <div id="goalachcont" class="form-group col-xs-12 hidden">
+                    <h3>Goal Achievement </h3>
+                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
                 </div>
 
-                <label for ="goalresutil" ><h3>Resources Utilized </h3></label>
-                <div id="goalresutil" class="form-group form-indent hidden">
-                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
+<!--                <label for ="goalresutil" ></label>-->
+                <div id="goalresutilcont" class="form-group col-xs-12 hidden">
+                    <h3>Resources Utilized </h3>
+                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
                 </div>
 
-                <label id ="goalcontilable" ><h3>Goal Continuation </h3></label>
-                <div id="goalconti" class="form-group form-indent hidden">
-                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
+<!--                <label id ="goalcontilable" ></label>-->
+                <div id="goalconticont" class="form-group col-xs-12 hidden">
+                    <h3>Goal Continuation </h3>
+                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
                 </div>
 
-                <label for ="goalplanincomp" ><h3>Goal Plans for Incomplete Goal</h3></label>
-                <div id="goalplanincomp" class="form-group form-indent">
-                    <textarea name="goal_plan_incomp" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_PLAN_INCOMPLT']); ?></textarea>
+<!--                <label for ="goalplanincomp" ></label>-->
+                <div id="goalincompcont" class="form-group col-xs-12 hidden">
+                    <h3>Goal Plans for Incomplete Goal</h3>
+                    <textarea id="goalincomptext" name="goal_plan_incomp" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_PLAN_INCOMPLT']); ?></textarea>
                 </div>
 
-                <label for ="goalplanupcom" ><h3>Goal Upcoming Plans </h3></label>
-                <div id="notes" class="form-group form-indent">
-                    <textarea name="goal_plan_upcoming" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_UPCOMING_PLAN']); ?></textarea>
+<!--                <label for ="goalplanupcom" ></label>-->
+                <div id="goalupcomincont" class="form-group col-xs-12 hidden">
+                    <h3>Goal Upcoming Plans </h3>
+                    <textarea id="goalupcomintext" name="goal_plan_upcoming" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_UPCOMING_PLAN']); ?></textarea>
                 </div>
 
-                <label id = "resoneedlable" ><h3>Resource Needed </h3></label>
-                <div id="resoneed" class="form-group form-indent hidden">
-                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
+<!--                <label id = "resoneedlable" ></label>-->
+                <div id="resoneedcont" class="form-group col-xs-12 hidden">
+                    <h3>Resource Needed </h3>
+                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
                 </div>
 
 

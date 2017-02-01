@@ -229,7 +229,8 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
 
         <h1 class="box-title">Unit Goal</h1>
-        <form action="<?php echo $_SERVER['PHP_SELF'].'?linkid='.$contentlink_id.'&goal_id='.$goal_id; ?>" method="POST" >
+        <form action="<?php echo $_SERVER['PHP_SELF'].'?linkid='.$contentlink_id.'&goal_id='.$goal_id; ?>"
+              onsubmit="if($('#viewpoint').val() == 0) { alert('Please select Goal view point.'); return false; }" method="POST" >
 
             <div class="form-group">
                 <h3>Goal Title<span
@@ -266,11 +267,12 @@ require_once("../Resources/Includes/menu.php");
                 <?php } ?>
             </div>
             <div id="goalview" class="form-group">
-                <h3>Goal Viewpoint in Report</h3>
+                <h3>Goal Viewpoint in Report<span
+                        style="color: red"><sup>*</sup></span></h3>
                 <p class="status">
                     <small>Select how this goal should be presented in the Outcomes Report for this Academic Year.  'Looking Back' will guide you through reporting goal outcomes.  'Real time' will guide you through reporting progress and status of goals for the current Academic Year. 'Looking Ahead' will guide you to provide details on new goals for the upcoming Academic Year.</small>
                 </p>
-                <select type="text" name="goal_viewpoint" class="form-control form-indent" required>
+                <select id="viewpoint"  name="goal_viewpoint" class="form-control form-indent" required>
                     <option value="0">-- select an option --</option>
                     <?php foreach ($goalviewpoint as $item) { ?>
                         <option
