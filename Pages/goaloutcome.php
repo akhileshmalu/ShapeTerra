@@ -64,6 +64,12 @@ $sqlunitgoal = "select * from BP_UnitGoals where ID_UNIT_GOAL = '$goal_id' ";
 $resultunitgoal = $mysqli->query($sqlunitgoal);
 $rowsunitgoal = $resultunitgoal -> fetch_assoc();
 
+// Value Set for Goal ViewPoints;
+$goalviewpoint = array(
+    'Looking Back',
+    'Real Time',
+    'Looking Ahead'
+);
 
 
 /*
@@ -73,22 +79,23 @@ $rowsunitgoal = $resultunitgoal -> fetch_assoc();
 if(isset($_POST['savedraft'])) {
 
     $goalstatus = $_POST['goal_status'];
-    $goalach = nl2br($_POST['goal_ach']);
-    $resutilzed = nl2br($_POST['goal_resutil']);
-    $goalconti = nl2br($_POST['goal_conti']);
-    $resneed = nl2br($_POST['resoneed']);
-    $goalnote = nl2br($_POST['goal_notes']);
-    $goalreportstatus = "In progress";
+    $goalach = mynl2br($_POST['goal_ach']);
+    $resutilzed = mynl2br($_POST['goal_resutil']);
+    $goalconti = mynl2br($_POST['goal_conti']);
+    $resneed = mynl2br($_POST['resoneed']);
+    $goalincomplan = mynl2br($_POST['goal_plan_incomp']);
+    $goalupcominplan = mynl2br($_POST['goal_plan_upcoming']);
+    $goalreportstatus = "In Progress";
     $contentlink_id = $_GET['linkid'];
     $goal_id = $_GET['goal_id'];
 
 
 
-    $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_NOTES)
-VALUES ('$goal_id','$author','$time','$goalreportstatus','$goalstatus','$goalach','$resutilzed','$goalconti','$resneed','$goalnote')
+    $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_PLAN_INCOMPLT, GOAL_UPCOMING_PLAN )
+VALUES ('$goal_id','$author','$time','$goalreportstatus','$goalstatus','$goalach','$resutilzed','$goalconti','$resneed','$goalincomplan','$goalupcominplan')
 ON DUPLICATE KEY UPDATE `ID_UNIT_GOAL` = VALUES(`ID_UNIT_GOAL`), OUTCOMES_AUTHOR = VALUES(`OUTCOMES_AUTHOR`), MOD_TIMESTAMP = VALUES(`MOD_TIMESTAMP`),
 GOAL_REPORT_STATUS = VALUES(`GOAL_REPORT_STATUS`), GOAL_STATUS = VALUES(`GOAL_STATUS`), GOAL_ACHIEVEMENTS = VALUES(`GOAL_ACHIEVEMENTS`), GOAL_RSRCS_UTLZD = VALUES(`GOAL_RSRCS_UTLZD`),
-GOAL_CONTINUATION = VALUES(`GOAL_CONTINUATION`), GOAL_RSRCS_NEEDED = VALUES(`GOAL_RSRCS_NEEDED`),GOAL_NOTES = VALUES(`GOAL_NOTES`); ";
+GOAL_CONTINUATION = VALUES(`GOAL_CONTINUATION`), GOAL_RSRCS_NEEDED = VALUES(`GOAL_RSRCS_NEEDED`); ";
 
     $sqlgoalout .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
 
@@ -216,6 +223,19 @@ require_once("../Resources/Includes/menu.php");
                     <textarea   rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
+                <label for ="goalview" ><h3>Goal Viewpoint in Report</h3></label>
+                <div id="goalview" class="form-group">
+                    <select id="viewpoint" type="text" class="form-control form-indent" readonly>
+                        <option value="0">-- select an option --</option>
+                        <?php foreach ($goalviewpoint as $item) { ?>
+                            <option
+                                value="<?php echo $item ?>" <?php if ($rowsunitgoal['GOAL_VIEWPOINT'] == $item) {
+                                echo " selected = selected";
+                            } ?>><?php echo $item ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+
                 <label for ="goalstatus" ><h3>Goal Status</h3></label>
                 <div id="goalstatus" class="form-group form-indent">
                     <select id="goalstlist" name="goal_status"  class="form-control" style="padding: 0px; background-color: #fff !important;">
@@ -243,14 +263,19 @@ require_once("../Resources/Includes/menu.php");
                     <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
                 </div>
 
+                <label for ="goalplanincomp" ><h3>Goal Plans for Incomplete Goal</h3></label>
+                <div id="goalplanincomp" class="form-group form-indent">
+                    <textarea name="goal_plan_incomp" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_PLAN_INCOMPLT']); ?></textarea>
+                </div>
+
+                <label for ="goalplanupcom" ><h3>Goal Upcoming Plans </h3></label>
+                <div id="notes" class="form-group form-indent">
+                    <textarea name="goal_plan_upcoming" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_UPCOMING_PLAN']); ?></textarea>
+                </div>
+
                 <label id = "resoneedlable" ><h3>Resource Needed </h3></label>
                 <div id="resoneed" class="form-group form-indent hidden">
                     <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
-                </div>
-
-                <label for ="notes" ><h3>Notes </h3></label>
-                <div id="notes" class="form-group form-indent">
-                    <textarea name="goal_notes" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_NOTES']); ?></textarea>
                 </div>
 
 
@@ -295,6 +320,9 @@ require_once("../Resources/Includes/footer.php");
 
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 <!--<script src="../Resources/Library/js/tabchange.js"></script>-->
+<script>
+    $('#viewpoint option:not(:selected)').prop('disabled', true);
+</script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
