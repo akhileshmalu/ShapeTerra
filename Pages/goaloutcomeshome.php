@@ -204,7 +204,6 @@ require_once("../Resources/Includes/menu.php");
               });
 
             </script>
-=======
 <!--            </table>-->
 <!--            <div id="jsGrid"></div>-->
 <!--            <div id="table-status"></div>-->
@@ -284,7 +283,6 @@ require_once("../Resources/Includes/menu.php");
 <!--              });-->
 <!---->
 <!--            </script>-->
->>>>>>> goaloutcome controll js collab file upload
         </div>
 
         <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=".$contentlink_id ?>" method="POST" >

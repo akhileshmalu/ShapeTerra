@@ -182,7 +182,8 @@ require_once("../Resources/Includes/menu.php");
                             what <?php echo $_SESSION['login_ouname']; ?> considers foundation to your goals &
                             related outcomes.</em></small>
                 </p>
-                <h3>Mission Statement</h3>
+                <h3>Mission Statement<span
+                        style="color: red"><sup>*</sup></span></h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement"
                               id="missiontitle"

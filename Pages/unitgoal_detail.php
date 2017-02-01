@@ -238,7 +238,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Provide a succinct title for the goal, max 150 characters.</small>
                 </p>
-                <input type="text" class="form-control form-indent" name="goaltitle" id="goaltitle"
+                <input type="text" class="form-control form-indent " name="goaltitle" id="goaltitle"
                        value="<?php echo $rowsexvalue['UNIT_GOAL_TITLE'] ?>" required>
             </div>
             <div class="form-group">

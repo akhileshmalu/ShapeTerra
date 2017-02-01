@@ -255,7 +255,7 @@ require_once("../Resources/Includes/menu.php");
                     fields: [
                       { name: "ID_SORT", title: "#", type: "text", width: "20px" },
                       { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
-                        return $("<a>").attr("href", "../Pages/goaloutcome.php?goal_id="+item.ID_UNIT_GOAL+"linkid="+$.getUrlVar("linkid")).text(value);
+                        return $("<a>").attr("href", "../Pages/unitgoal_detail.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
                       }, width: "auto" },
                       { name: "GOAL_STATEMENT",  title: "Goal", type: "text", width: "auto"},
                       { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" },
