@@ -83,7 +83,7 @@ $goalviewpoint = array(
 if(isset($_POST['goal_submit'])) {
     $contentlink_id = $_GET['linkid'];
     $goal_id = $_GET['goal_id'];
-    $goaltitle = $_POST['goaltitle'];
+    $goaltitle = mynl2br($_POST['goaltitle']);
 
     $unigoallink = $_POST['goallink'];
     foreach ($unigoallink as $value) {
@@ -116,7 +116,7 @@ GOAL_VIEWPOINT = '$goalview', GOAL_STATEMENT = '$goalstatement', GOAL_ALIGNMENT 
 if(isset($_POST['new_goal_submit'])) {
     $contentlink_id = $_GET['linkid'];
 
-    $goaltitle = $_POST['goaltitle'];
+    $goaltitle = mynl2br($_POST['goaltitle']);
 
     $unigoallink = $_POST['goallink'];
     foreach ($unigoallink as $value) {
@@ -208,7 +208,8 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id ?>" class="end btn-primary">Close</button>
+        <button type="button" onclick="$redirect = $('.alert button').attr('redirect');
+		$(window).attr('location',$redirect)" redirect="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 
@@ -238,8 +239,9 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Provide a succinct title for the goal, max 150 characters.</small>
                 </p>
-                <input type="text" class="form-control form-indent " name="goaltitle" id="goaltitle"
-                       value="<?php echo $rowsexvalue['UNIT_GOAL_TITLE'] ?>" required>
+<!--                <input type="text" class="form-control form-indent wordCount" style="width: 90%" name="goaltitle" id="goaltitle" maxlength="150"-->
+<!--                       value="--><?php //echo $rowsexvalue['UNIT_GOAL_TITLE'] ?><!--" required>-->
+                <textarea  class="form-control form-indent wordCount" rows="2" col="50" style="width: 95%" name="goaltitle" id="goaltitle" maxlength="150" required><?php echo mybr2nl($rowsexvalue['UNIT_GOAL_TITLE']); ?></textarea>
             </div>
             <div class="form-group">
                 <h3>Linked to University Goals (select all that apply)</h3>
@@ -272,7 +274,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Select how this goal should be presented in the Outcomes Report for this Academic Year.  'Looking Back' will guide you through reporting goal outcomes.  'Real time' will guide you through reporting progress and status of goals for the current Academic Year. 'Looking Ahead' will guide you to provide details on new goals for the upcoming Academic Year.</small>
                 </p>
-                <select id="viewpoint"  name="goal_viewpoint" class="form-control form-indent" required>
+                <select id="viewpoint"  name="goal_viewpoint" style="width: 30%" class="form-control form-indent" required>
                     <option value="0">-- select an option --</option>
                     <?php foreach ($goalviewpoint as $item) { ?>
                         <option
@@ -289,7 +291,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Provide a full statement of the Goal. </small>
                 </p>
-                <textarea rows="5" class="form-control form-indent" name="goalstatement" id="goalstatement"
+                <textarea rows="5" class="form-control form-indent" style="width: 95%" name="goalstatement" id="goalstatement"
                           required><?php echo mybr2nl($rowsexvalue['GOAL_STATEMENT']); ?></textarea>
             </div>
 
@@ -299,7 +301,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Explain how this Goal aligns to your unit's Mission, Vision, and Values.</small>
                 </p>
-                <textarea rows="5" class="form-control form-indent" name="goalalignment" id="goalalignment"
+                <textarea rows="5" class="form-control form-indent" style="width: 95%" name="goalalignment" id="goalalignment"
                           required><?php echo mybr2nl($rowsexvalue['GOAL_ALIGNMENT']); ?></textarea>
             </div>
 
@@ -308,7 +310,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Describe your general plan to achieve this goal over the life of the goal.</small>
                 </p>
-                <textarea name="goal_action" rows="5" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexvalue['GOAL_ACTION_PLAN']); ?></textarea>
+                <textarea name="goal_action" rows="5" cols="25" wrap="hard" style="width: 95%" class="form-control form-indent" ><?php echo mybr2nl($rowsexvalue['GOAL_ACTION_PLAN']); ?></textarea>
             </div>
 
             <div id="notes" class="form-group">
@@ -316,7 +318,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Provide any relevant notes about this forward-looking goal.</small>
                 </p>
-                <textarea name="goal_notes" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexvalue['GOAL_NOTES']); ?></textarea>
+                <textarea name="goal_notes" rows="3" cols="25" wrap="hard" style="width: 95%" class="form-control form-indent" ><?php echo mybr2nl($rowsexvalue['GOAL_NOTES']); ?></textarea>
             </div>
 
             <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') { ?>
@@ -351,7 +353,7 @@ require_once("../Resources/Includes/menu.php");
 
 <?php
 //Include Footer
-//require_once("../Resources/Includes/footer.php");
+require_once("../Resources/Includes/footer.php");
 ?>
 <script src="../Resources/Library/js/alert.js"></script>
 <!--Calender Bootstrap inclusion for date picker INPUT-->

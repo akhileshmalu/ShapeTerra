@@ -167,7 +167,8 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="<?php echo "goaloutcomeshome.php?linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
+        <button type="button" onclick="$redirect = $('.alert button').attr('redirect');
+		$(window).attr('location',$redirect)" redirect="<?php echo "goaloutcomeshome.php?linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 

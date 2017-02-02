@@ -198,7 +198,7 @@ require_once("../Resources/Includes/menu.php");
 
 
         <p>Below is a summary of your Unit Goals.</p>
-        <div id="taskboard" style="margin-top: 10px;">
+<!--        <div id="taskboard" style="margin-top: 10px;">-->
             <!--<table class="grid" action="taskboard/unitgoalajax.php" title="Unit Goals">
                 <tr>
                     <th col="UNIT_GOAL_TITLE" width="200" href="<?php echo "unitgoal_detail.php?linkid=".$contentlink_id."&goal_id="?>{{columns.ID_UNIT_GOAL}}" type="text">Goal Title</th>
@@ -208,6 +208,7 @@ require_once("../Resources/Includes/menu.php");
 
                 </tr>
             </table>-->
+            <p class="status"><em><small>To change the order in which the goals are displayed, clicking and hold the goal you wish to move, and drag it up or down, releasing in the appropriate location.  The item will move as intended.  To update the number of the goal accordingly, please Refresh the page.</small></em></p>
             <div id="jsGrid"></div>
             <div id="table-status"></div>
             <script>
@@ -293,7 +294,7 @@ require_once("../Resources/Includes/menu.php");
               });
 
             </script>
-        </div>
+<!--        </div>-->
 
     </div>
 </div>

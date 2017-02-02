@@ -185,8 +185,8 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Mission Statement<span
                         style="color: red"><sup>*</sup></span></h3>
                 <div class="col-xs-12 form-group form-indent">
-                    <textarea rows="5" cols="25" wrap="hard" class="form-control" name="missionstatement"
-                              id="missiontitle"
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="missionstatement"
+                              id="missiontitle" maxlength="1000"
                               required><?php echo mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
                     <div class="form-group col-xs-4">
                         <p><h3>Last Updated:</h3></p>
@@ -200,7 +200,7 @@ require_once("../Resources/Includes/menu.php");
                 </div>
                 <h3>Vision Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
-                    <textarea rows="5" cols="25" wrap="hard" class="form-control" name="visionstatement"
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="visionstatement" maxlength="1000"
                               id="visiontitle"><?php echo mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
                     <div class="form-group col-xs-4">
                         <p><h3>Last Updated:</h3></p>
@@ -214,7 +214,7 @@ require_once("../Resources/Includes/menu.php");
                 </div>
                 <h3>Values Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
-                    <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement"
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="valuestatement" maxlength="1000"
                               id="valuetitle"><?php echo mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
 
                     <div class="form-group col-xs-4">
@@ -233,7 +233,7 @@ require_once("../Resources/Includes/menu.php");
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
-                    <button type="submit" id="submit_approve" name="submit_approve" class="btn-primary pull-right">
+                    <button type="submit" id="submit_approve" name="submit_approve" <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Not Started') echo 'disabled'; ?> class="btn-primary pull-right">
                         Submit For Approval
                     </button>
                 <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
