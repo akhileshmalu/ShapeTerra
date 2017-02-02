@@ -102,6 +102,7 @@
 
   error_reporting(1);
   @ini_set('display_errors', 1);
+  require_once ("connect.php");
 
   session_start();
   $ouabbrev= $_SESSION['login_ouabbrev'];
@@ -115,18 +116,6 @@
   }else{
 
     $ouAbbrev = $_SESSION['login_ouabbrev'];
-
-  }
-
-  try{
-
-    $connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "");
-    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-  }catch(PDOException $e){
-
-    return $e->getMessage();
-    exit();
 
   }
 
@@ -166,7 +155,6 @@
   //image
   $pdf->Ln(50);
   $pdf->Image('fpdfimages/logo.png',60,250,100);
-
 
   //page 2
   $pdf->AddPage();
@@ -239,9 +227,9 @@
   $pdf->SetDrawColor(0, 0, 255);
   $pdf->SetFont('Arial','B',12);
   $pdf->Ln(15);
-  $pdf->Line(195, 62, 11, 62);
+  $pdf->Line(195, 52, 11, 52);
   $pdf->Cell(10,0,"Vision");
-  $pdf->Line(195, 72, 11, 72);
+  $pdf->Line(195, 62, 11, 62);
   $pdf->Ln(7);
   $pdf->SetFont('Arial','',11);
   $pdf->Write(5,$data["VISION_STATEMENT"]);
@@ -252,12 +240,14 @@
   $pdf->SetDrawColor(0, 0, 255);
   $pdf->SetFont('Arial','B',12);
   $pdf->Ln(15);
-  $pdf->Line(195, 99, 11, 99);
+  $pdf->Line(195, 84, 11, 84);
   $pdf->Cell(10,0,"Values");
-  $pdf->Line(195, 109, 11, 109);
+  $pdf->Line(195, 94, 11, 94);
   $pdf->Ln(7);
   $pdf->SetFont('Arial','',11);
   $pdf->Write(5,$data["VALUES_STATEMENT"]);
+
+  //$pdf->AddPage();
 
   //Goals
   $pdf->Ln(5);
@@ -265,9 +255,9 @@
   $pdf->SetDrawColor(0, 0, 255);
   $pdf->SetFont('Arial','B',12);
   $pdf->Ln(15);
-  $pdf->Line(195, 131, 11, 131);
+  $pdf->Line(195, 111, 11, 111);
   $pdf->Cell(10,0,"Goals");
-  $pdf->Line(195, 141, 11, 141);
+  $pdf->Line(195, 121, 11, 121);
   $pdf->Ln(7);
 
   //goal sub section
@@ -280,6 +270,9 @@
 
   while ($data = $getGoals->fetch()){
 
+    $universityGoals = getUnivLinkedGoal($connection,$data["LINK_UNIV_GOAL"]);
+    $goalOutcomes = getGoalOutcomes($connection,$data["ID_UNIT_GOAL"]);
+
     $pdf->Ln(10);
     $pdf->setTextColor(115,0,10);
     $pdf->SetFont('Arial','',11);
@@ -288,18 +281,78 @@
     $pdf->SetDrawColor(0, 0, 0);
     $pdf->setTextColor(0,0,0);
 
-    $pdf->Row(array("Linkage to University Goal",getUnivLinkedGoal($data["LINK_UNIV_GOAL"])));
-    $pdf->Row(array("Goal",getUnivLinkedGoal($data["GOAL_STATEMENT"])));
-    $pdf->Row(array("Alignment with Mission, Vision, and Values",getUnivLinkedGoal($data["GOAL_ALIGNMENT"])));
+    $pdf->Row(array("Goal Statement",$data["GOAL_STATEMENT"]));
+    $pdf->Row(array("Linkage to University Goal",$universityGoals));
+    $pdf->Row(array("Alignment with Mission, Vision, and Values",$data["GOAL_ALIGNMENT"]));
+    $pdf->Row(array("Status",$goalOutcomes["GOAL_REPORT_STATUS"]));
+    $pdf->Row(array("Achievements",$goalOutcomes["GOAL_ACHIEVEMENTS"]));
+    $pdf->Row(array("Resources Utilized",$goalOutcomes["GOAL_RSRCS_UTLZD"]));
+    $pdf->Row(array("Continuation",$goalOutcomes["GOAL_CONTINUATION"]));
+    $pdf->Row(array("Resources Needed",$goalOutcomes["GOAL_RSRCS_NEEDED"]));
+    $pdf->Row(array("Plans for upcoming year (if not completed)",$goalOutcomes["GOAL_PLAN_INCOMPLT"]));
+
+  }
+
+  $pdf->AddPage();
+  $pdf->setTextColor(0,0,0);
+  $pdf->SetFont('Arial','',18);
+  $pdf->Cell(10,0,"Faculty Awards Received");
+  $pdf->Ln();
+  $pdf->SetDrawColor(115,0,10);
+  $pdf->Line(195, 15, 11, 15);
+  $pdf->Ln(7);
+  $pdf->SetFont('Arial','',11);
+  $pdf->Write(5,"During $selectedYear faculty of $ouAbbrev were recognized for their professional accomplishments in the categories of Research, Service, and Teaching.");
+  $pdf->Ln(10);
+  $pdf->SetFont('Arial','B',18);
+  $pdf->Ln(5);
+  $pdf->Write(5,"Research Awards");
+  $pdf->setTextColor(115,0,10);
+  $pdf->SetFont('Arial','',11);
+  $pdf->Ln(5);
+  $pdf->SetDrawColor(0, 0, 0);
+  $pdf->setTextColor(0,0,0);
+  $pdf->SetWidths(array(50,50,80,60));
+  $pdf->Row(array("Recipient(s)","Award","Organization"));
+
+  $getAwards = $connection->prepare("SELECT * FROM `AC_FacultyAwards` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+  $getAwards->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
+  $getAwards->bindParam(2,$selectedYear,PDO::PARAM_STR);
+  $getAwards->execute();
+
+  while($data = $getAwards->fetch()){
+
+    $pdf->Row(array($data["RECIPIENT_NAME_LAST"].", ".$data["RECIPIENT_NAME_FIRST"],$data["AWARD_TITLE"],$data["AWARDING_ORG"]));
 
   }
 
   //writing pdf
   $pdf->Output("report_final.pdf","I");
 
-  function getUnivLinkedGoal($goal){
+  function getUnivLinkedGoal($connection,$goals){
 
-    return "test";
+    $uniGoalsArray = explode(',',$goals);
+    $finalString = "";
+
+    for ($i = 0; count($uniGoalsArray) > $i; $i++){
+
+      $getUniversityGoal = $connection->prepare("SELECT * FROM `UniversityGoals` WHERE ID_UNIV_GOAL = ?");
+      $getUniversityGoal->bindParam(1,$uniGoalsArray[$i],PDO::PARAM_INT);
+      $getUniversityGoal->execute();
+      $data = $getUniversityGoal->fetch();
+
+      return $data["GOAL_TITLE"];
+
+    }
+
+  }
+
+  function getGoalOutcomes($connection,$unitID){
+
+    $getGoalOutcomes = $connection->prepare("SELECT * FROM `BP_UnitGoalOutcomes` WHERE ID_UNIT_GOAL = ?");
+    $getGoalOutcomes->bindParam(1,$unitID,PDO::PARAM_INT);
+    $getGoalOutcomes->execute();
+    return $getGoalOutcomes->fetch();
 
   }
 

@@ -15,7 +15,7 @@ $mysqli2 = new mysqli("localhost","root","root",$db);
  * PDO Object for SQL
  */
 
-//$connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "root");
+$connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "root");
 
 
 $site = "localhost:8888/shapeterra";

@@ -209,11 +209,12 @@ require_once("../Resources/Includes/menu.php");
                 </tr>
             </table>-->
             <p class="status"><em><small>To change the order in which the goals are displayed, clicking and hold the goal you wish to move, and drag it up or down, releasing in the appropriate location.  The item will move as intended.  To update the number of the goal accordingly, please Refresh the page.</small></em></p>
-            <div id="jsGrid"></div>
-
-            <h3>Looking Back</h3> 
-            <h3>Real Time</h3> 
-            <h3>Looking Ahead</h3> 
+            <h3>Looking Back</h3>
+            <div id="jsGridBack"></div>
+            <h3>Real Time</h3>
+            <div id="jsGridReal"></div>
+            <h3>Looking Ahead</h3>
+            <div id="jsGridAhead"></div>
 
             <div id="table-status"></div>
             <script>
@@ -242,9 +243,129 @@ require_once("../Resources/Includes/menu.php");
                   peopleArray = $.parseJSON(peopleArray);
                 }
 
-                $.post("../Resources/Includes/data.php?functionNum=1", function(data) {
+                $.post("../Resources/Includes/data.php?functionNum=1&viewpoint=back", function(data) {
                   data = $.parseJSON(data);
-                  $("#jsGrid").jsGrid({
+                  $("#jsGridBack").jsGrid({
+                    width: "100%",
+                    height: "400px",
+                    sorting: true,
+                    paging: true,
+                    data: data,
+                    rowClass: function(item, itemIndex) {
+                      return "client-" + itemIndex;
+                    },
+                    controller: {
+                      loadData: function() {
+                        return db.clients.slice(0, 15);
+                      }
+                    },
+                    fields: [
+                      { name: "ID_SORT", title: "#", type: "text", width: "20px" },
+                      { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
+                        return $("<a>").attr("href", "../Pages/unitgoal_detail.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
+                      }, width: "auto" },
+                      { name: "GOAL_STATUS", title: "Status", type: "text", width: "auto" },
+                      { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" },
+                      { name: "AUTHOR", title: "Author", itemTemplate: function(value,item){
+                        var status;
+                        for (var i = 0; i < peopleArray.length; i++){
+                          if (peopleArray[i][0] == item.GOAL_AUTHOR){
+                            person = peopleArray[i][11] + ", " +  peopleArray[i][10];
+                          }
+                        }
+                        return person;
+                      }, width: "auto" }
+                    ],
+                    onRefreshed: function() {
+                      var $gridData = $("#jsGridBack .jsgrid-grid-body tbody");
+                      $gridData.sortable({
+                        update: function(e, ui) {
+                          var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                          var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
+                              return clientIndexRegExp.exec(classes)[1];
+                          });
+                          var items = $.map($gridData.find("tr"), function(row) {
+                              return $(row).data("JSGridItem");
+                          });
+                          $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
+                            console.log(indexes);
+                            $("#table-status").html("Table Saved.");
+                          })
+                        }
+                      });
+                    }
+                  });
+                });
+              });
+
+              $.post("../Resources/Includes/data.php?functionNum=5", function(peopleArray) {
+                if (peopleArray != ""){
+                  peopleArray = $.parseJSON(peopleArray);
+                }
+
+                $.post("../Resources/Includes/data.php?functionNum=1&viewpoint=real", function(data) {
+                  data = $.parseJSON(data);
+                  $("#jsGridReal").jsGrid({
+                    width: "100%",
+                    height: "400px",
+                    sorting: true,
+                    paging: true,
+                    data: data,
+                    rowClass: function(item, itemIndex) {
+                      return "client-" + itemIndex;
+                    },
+                    controller: {
+                      loadData: function() {
+                        return db.clients.slice(0, 15);
+                      }
+                    },
+                    fields: [
+                      { name: "ID_SORT", title: "#", type: "text", width: "20px" },
+                      { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
+                        return $("<a>").attr("href", "../Pages/unitgoal_detail.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
+                      }, width: "auto" },
+                      { name: "GOAL_STATUS", title: "Status", type: "text", width: "auto" },
+                      { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" },
+                      { name: "AUTHOR", title: "Author", itemTemplate: function(value,item){
+                        var status;
+                        for (var i = 0; i < peopleArray.length; i++){
+                          if (peopleArray[i][0] == item.GOAL_AUTHOR){
+                            person = peopleArray[i][11] + ", " +  peopleArray[i][10];
+                          }
+                        }
+                        return person;
+                      }, width: "auto" }
+                    ],
+                    onRefreshed: function() {
+                      var $gridData = $("#jsGridReal .jsgrid-grid-body tbody");
+                      $gridData.sortable({
+                        update: function(e, ui) {
+                          var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                          var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
+                              return clientIndexRegExp.exec(classes)[1];
+                          });
+                          var items = $.map($gridData.find("tr"), function(row) {
+                              return $(row).data("JSGridItem");
+                          });
+                          $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
+                            console.log(indexes);
+                            $("#table-status").html("Table Saved.");
+                          })
+                        }
+                      });
+                    }
+                  });
+                });
+              });
+
+              $.post("../Resources/Includes/data.php?functionNum=5", function(peopleArray) {
+                if (peopleArray != ""){
+                  peopleArray = $.parseJSON(peopleArray);
+                }
+
+                $.post("../Resources/Includes/data.php?functionNum=1&viewpoint=ahead", function(data) {
+                  data = $.parseJSON(data);
+                  $("#jsGridAhead").jsGrid({
                     width: "100%",
                     height: "400px",
                     sorting: true,
@@ -264,7 +385,6 @@ require_once("../Resources/Includes/menu.php");
                         return $("<a>").attr("href", "../Pages/unitgoal_detail.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
                       }, width: "auto" },
                         { name: "GOAL_STATUS", title: "Status", type: "text", width: "auto" },
-//                      { name: "GOAL_STATEMENT",  title: "Goal", type: "text", width: "auto"},
                       { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" },
                       { name: "AUTHOR", title: "Author", itemTemplate: function(value,item){
                         var status;
@@ -277,7 +397,7 @@ require_once("../Resources/Includes/menu.php");
                       }, width: "auto" }
                     ],
                     onRefreshed: function() {
-                      var $gridData = $("#jsGrid .jsgrid-grid-body tbody");
+                      var $gridData = $("#jsGridAhead .jsgrid-grid-body tbody");
                       $gridData.sortable({
                         update: function(e, ui) {
                           var clientIndexRegExp = /\s*client-(\d+)\s*/;

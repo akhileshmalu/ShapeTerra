@@ -139,7 +139,7 @@ require_once("../Resources/Includes/menu.php");
         </div>
 
         <div class="col-xs-4">
-            <a href="pdfscript.php?ayname=<?php echo $bpayname; ?>" class="btn-primary">Preview</a>
+            <a href="../Resources/Includes/fpdf_extended.php" target="_Blank" class="btn-primary">View PDF</a>
         </div>
     </div>
 
@@ -238,5 +238,3 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
-
-

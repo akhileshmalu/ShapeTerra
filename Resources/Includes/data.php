@@ -19,7 +19,7 @@
 
   switch ($function) {
     case 1:
-      $Data->getUnitGoals();
+      $Data->getUnitGoals($_GET["viewpoint"]);
       break;
     case 2:
       $itemData = $_POST["data"];
@@ -333,7 +333,7 @@
 
     ////////////////////Unit Goals Grid//////////////////////////
 
-    public function getUnitGoals(){
+    public function getUnitGoals($viewpoint){
 
       $this->initOrderGoals();
 
@@ -345,9 +345,24 @@
       }
       $counter = 0;
 
-      $getUnitGoals = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ? ORDER BY ID_SORT ASC");
+      if ($viewpoint == "back"){
+
+        $viewpoint = "Looking Back";
+
+      }else if ($viewpoint == "real"){
+
+        $viewpoint = "Real Time";
+
+      }else{
+
+        $viewpoint = "Looking Ahead";
+
+      }
+
+      $getUnitGoals = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ? AND GOAL_VIEWPOINT = ? ORDER BY ID_SORT ASC");
       $getUnitGoals->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
       $getUnitGoals->bindParam(2,$selectedYear,PDO::PARAM_STR);
+      $getUnitGoals->bindParam(3,$viewpoint,PDO::PARAM_STR);
       $getUnitGoals->execute();
 
       while($data = $getUnitGoals->fetchAll()){
