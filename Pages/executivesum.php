@@ -143,7 +143,7 @@ if (isset($_POST['savedraft'])) {
         $sqlexecsum = "INSERT INTO `AC_ExecSum` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, UNIT_NAME, DEAN_NAME_PRINT, DEAN_TITLE, DEAN_PORTRAIT, DEAN_SIGNATURE, COMPANION_LOGO, INTRODUCTION, HIGHLIGHTS_NARRATIVE)
 VALUES ('$ouabbrev','$bpayname','$author','$time','$collname','$deanname','$deantitle','$deansPortraitLogopath','$deansPortraitSignpath','$deansSchLogopath','$introduction','$highlights');";
 
-        $sqlexecsum .= "Update  `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlexecsum .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
         $sqlexecsum .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
@@ -317,7 +317,7 @@ require_once("../Resources/Includes/menu.php");
 
                     <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
                         <button id="save" type="submit" name="savedraft"
-                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                                class="btn-primary  pull-right">
                             Save Draft
                         </button>
                         <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
@@ -327,7 +327,7 @@ require_once("../Resources/Includes/menu.php");
                     <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
                         <button id="save" type="submit" name="savedraft"
-                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                                class="btn-primary  pull-right">
                             Save Draft
                         </button>
                         <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
