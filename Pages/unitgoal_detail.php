@@ -351,13 +351,13 @@ require_once("../Resources/Includes/menu.php");
 
 <?php
 //Include Footer
-require_once("../Resources/Includes/footer.php");
+//require_once("../Resources/Includes/footer.php");
 ?>
-
+<script src="../Resources/Library/js/alert.js"></script>
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 <script type="text/javascript">
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
 </script>
 

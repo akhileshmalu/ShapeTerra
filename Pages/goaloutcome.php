@@ -216,28 +216,19 @@ require_once("../Resources/Includes/menu.php");
 
                 <div id="goalstate" class="form-group col-xs-12">
                     <h3>Goal Statement </h3>
-                    <textarea  rows="5" cols="25" wrap="hard" class="form-control form-indent" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']);?></textarea>
+                    <textarea  rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled readonly><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']);?></textarea>
                 </div>
 
 
                 <div id="goalalign" class="form-group col-xs-12">
                     <h3>Goal Alignment</h3>
-                    <textarea   rows="5" cols="25" wrap="hard" class="form-control form-indent" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
+                    <textarea   rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
 <!--                <label for ="goalview" ></label>-->
                 <div id="goalview" class="form-group col-xs-12">
                     <h3>Goal Viewpoint in Report</h3>
-                    <select id="viewpoint" type="text" class="form-control form-indent" readonly>
-                        <option value="0">-- select an option --</option>
-                        <?php $selectedViewPoint = $rowsunitgoal['GOAL_VIEWPOINT'];
-                        foreach ($goalviewpoint as $item) { ?>
-                            <option
-                                value="<?php echo $item ?>" <?php if ($selectedViewPoint == $item) {
-                                echo " selected = selected";
-                            } ?>><?php echo $item ?></option>
-                        <?php } ?>
-                    </select>
+                    <input type="text" class="form-control form-indent" value="<?php echo $rowsunitgoal['GOAL_VIEWPOINT']; ?>" readonly disabled>
                 </div>
 
 <!--                <label for ="goalstatus" ></label>-->
@@ -245,7 +236,8 @@ require_once("../Resources/Includes/menu.php");
                     <h3>Goal Status</h3>
                     <select id="goalstlist" name="goal_status"  class="form-control form-indent" style="padding: 0px; background-color: #fff !important;">
                         <option value="0"> -- select an option -- </option>
-                        <?php $sqlgoalstatus ="select * from GoalStatus where STATUS_VIEWPOINT = '$selectedViewPoint'; ";
+                        <?php $selectedViewPoint = $rowsunitgoal['GOAL_VIEWPOINT'];
+                        $sqlgoalstatus ="select * from GoalStatus where STATUS_VIEWPOINT = '$selectedViewPoint'; ";
                     $resultgoalstatus = $mysqli->query($sqlgoalstatus);
                     while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :?>
                         <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"
