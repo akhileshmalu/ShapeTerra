@@ -119,11 +119,11 @@ require_once("../Resources/Includes/menu.php");
 <!--                    <th col="AUTHOR" width="150" type="text">Last Modified By</th>-->
 <!--                </tr>-->
 <!--            </table>-->
-            <h3>Looking Back</h3>
+            <h3 style="padding: 5px;">Looking Back</h3>
             <div id="jsGridBack"></div>
-            <h3>Real Time</h3>
+            <h3 style="padding: 5px;">Real Time</h3>
             <div id="jsGridReal"></div>
-            <h3>Looking Ahead</h3>
+            <h3 style="padding: 5px;">Looking Ahead</h3>
             <div id="jsGridAhead"></div>
             <script>
 
@@ -159,7 +159,7 @@ require_once("../Resources/Includes/menu.php");
                     data = $.parseJSON(data);
                     $("#jsGridBack").jsGrid({
                       width: "100%",
-                      height: "400px",
+                      height: "300px",
                       sorting: true,
                       paging: true,
                       data: data,
@@ -241,7 +241,7 @@ require_once("../Resources/Includes/menu.php");
                     data = $.parseJSON(data);
                     $("#jsGridReal").jsGrid({
                       width: "100%",
-                      height: "400px",
+                      height: "300px",
                       sorting: true,
                       paging: true,
                       data: data,
@@ -323,7 +323,7 @@ require_once("../Resources/Includes/menu.php");
                     data = $.parseJSON(data);
                     $("#jsGridAhead").jsGrid({
                       width: "100%",
-                      height: "400px",
+                      height: "300px",
                       sorting: true,
                       paging: true,
                       data: data,

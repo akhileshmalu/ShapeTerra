@@ -209,11 +209,11 @@ require_once("../Resources/Includes/menu.php");
                 </tr>
             </table>-->
             <p class="status"><em><small>To change the order in which the goals are displayed, clicking and hold the goal you wish to move, and drag it up or down, releasing in the appropriate location.  The item will move as intended.  To update the number of the goal accordingly, please Refresh the page.</small></em></p>
-            <h3>Looking Back</h3>
+            <h3 style="padding: 5px;">Looking Back</h3>
             <div id="jsGridBack"></div>
-            <h3>Real Time</h3>
+            <h3 style="padding: 5px;">Real Time</h3>
             <div id="jsGridReal"></div>
-            <h3>Looking Ahead</h3>
+            <h3 style="padding: 5px;">Looking Ahead</h3>
             <div id="jsGridAhead"></div>
             <script>
 
@@ -245,7 +245,7 @@ require_once("../Resources/Includes/menu.php");
                   data = $.parseJSON(data);
                   $("#jsGridBack").jsGrid({
                     width: "100%",
-                    height: "400px",
+                    height: "300px",
                     sorting: true,
                     paging: true,
                     data: data,
@@ -286,7 +286,7 @@ require_once("../Resources/Includes/menu.php");
                               return $(row).data("JSGridItem");
                           });
                           $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
-                            
+
                           })
                         }
                       });
@@ -304,7 +304,7 @@ require_once("../Resources/Includes/menu.php");
                   data = $.parseJSON(data);
                   $("#jsGridReal").jsGrid({
                     width: "100%",
-                    height: "400px",
+                    height: "300px",
                     sorting: true,
                     paging: true,
                     data: data,
@@ -363,7 +363,7 @@ require_once("../Resources/Includes/menu.php");
                   data = $.parseJSON(data);
                   $("#jsGridAhead").jsGrid({
                     width: "100%",
-                    height: "400px",
+                    height: "300px",
                     sorting: true,
                     paging: true,
                     data: data,
