@@ -215,8 +215,6 @@ require_once("../Resources/Includes/menu.php");
             <div id="jsGridReal"></div>
             <h3>Looking Ahead</h3>
             <div id="jsGridAhead"></div>
-
-            <div id="table-status"></div>
             <script>
 
               var status;
@@ -288,8 +286,7 @@ require_once("../Resources/Includes/menu.php");
                               return $(row).data("JSGridItem");
                           });
                           $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
-                            console.log(indexes);
-                            $("#table-status").html("Table Saved.");
+                            
                           })
                         }
                       });
@@ -348,8 +345,7 @@ require_once("../Resources/Includes/menu.php");
                               return $(row).data("JSGridItem");
                           });
                           $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
-                            console.log(indexes);
-                            $("#table-status").html("Table Saved.");
+
                           })
                         }
                       });
@@ -408,8 +404,7 @@ require_once("../Resources/Includes/menu.php");
                               return $(row).data("JSGridItem");
                           });
                           $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
-                            console.log(indexes);
-                            $("#table-status").html("Table Saved.");
+
                           })
                         }
                       });

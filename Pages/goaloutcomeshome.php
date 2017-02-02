@@ -119,8 +119,12 @@ require_once("../Resources/Includes/menu.php");
 <!--                    <th col="AUTHOR" width="150" type="text">Last Modified By</th>-->
 <!--                </tr>-->
 <!--            </table>-->
-            <div id="jsGrid"></div>
-            <div id="table-status"></div>
+            <h3>Looking Back</h3>
+            <div id="jsGridBack"></div>
+            <h3>Real Time</h3>
+            <div id="jsGridReal"></div>
+            <h3>Looking Ahead</h3>
+            <div id="jsGridAhead"></div>
             <script>
 
               var status;
@@ -151,9 +155,9 @@ require_once("../Resources/Includes/menu.php");
                     statusArray = $.parseJSON(statusArray);
                   }
 
-                  $.post("../Resources/Includes/data.php?functionNum=1", function(data) {
+                  $.post("../Resources/Includes/data.php?functionNum=1&viewpoint=back", function(data) {
                     data = $.parseJSON(data);
-                    $("#jsGrid").jsGrid({
+                    $("#jsGridBack").jsGrid({
                       width: "100%",
                       height: "400px",
                       sorting: true,
@@ -203,7 +207,7 @@ require_once("../Resources/Includes/menu.php");
                         }, width: "auto" }
                       ],
                       onRefreshed: function() {
-                        var $gridData = $("#jsGrid .jsgrid-grid-body tbody");
+                        var $gridData = $("#jsGridBack .jsgrid-grid-body tbody");
                         $gridData.sortable({
                           update: function(e, ui) {
                             var clientIndexRegExp = /\s*client-(\d+)\s*/;
@@ -214,8 +218,171 @@ require_once("../Resources/Includes/menu.php");
                                 return $(row).data("JSGridItem");
                             });
                             $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
-                              console.log(indexes);
-                              $("#table-status").html("Table Saved.");
+
+                            })
+                          }
+                        });
+                      }
+                    });
+                  });
+                });
+              });
+
+              $.post("../Resources/Includes/data.php?functionNum=5", function(peopleArray) {
+                if (peopleArray != ""){
+                  peopleArray = $.parseJSON(peopleArray);
+                }
+                $.post("../Resources/Includes/data.php?functionNum=3", function(statusArray) {
+                  if (statusArray != ""){
+                    statusArray = $.parseJSON(statusArray);
+                  }
+
+                  $.post("../Resources/Includes/data.php?functionNum=1&viewpoint=real", function(data) {
+                    data = $.parseJSON(data);
+                    $("#jsGridReal").jsGrid({
+                      width: "100%",
+                      height: "400px",
+                      sorting: true,
+                      paging: true,
+                      data: data,
+                      rowClass: function(item, itemIndex) {
+                        return "client-" + itemIndex;
+                      },
+                      controller: {
+                        loadData: function() {
+                          return db.clients.slice(0, 15);
+                        }
+
+                      },
+                      fields: [
+                        { name: "ID_SORT", title: "#", type: "text", width: "20px" },
+                        { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
+                          return $("<a>").attr("href", "../Pages/goaloutcome.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
+                        }, width: "auto" },
+                        { title: "Goal Status", itemTemplate: function(value,item){
+                          var status;
+                          for (var i = 0; i < statusArray.length; i++){
+                            if (statusArray[i][0] == item.ID_UNIT_GOAL){
+                              status = statusArray[i][3];
+                            }
+
+                          }
+                          return status;
+                        }, width: "auto"},
+                        { name: "MOD_TIMESTAMP", title: "Last Updated", itemTemplate: function(value,item){
+                          var timestamp;
+                          for (var i = 0; i < statusArray.length; i++){
+                            if (statusArray[i][0] == item.ID_UNIT_GOAL){
+                              timestamp = statusArray[i][2];
+                            }
+                          }
+                          return timestamp;
+                        }, width: "auto" },
+                        { name: "AUTHOR", title: "Author", itemTemplate: function(value,item){
+                          var status;
+                          for (var i = 0; i < peopleArray.length; i++){
+                            if (peopleArray[i][0] == item.GOAL_AUTHOR){
+                              person = peopleArray[i][11] + ", " +  peopleArray[i][10];
+                            }
+                          }
+                          return person;
+                        }, width: "auto" }
+                      ],
+                      onRefreshed: function() {
+                        var $gridData = $("#jsGridReal .jsgrid-grid-body tbody");
+                        $gridData.sortable({
+                          update: function(e, ui) {
+                            var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                            var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
+                                return clientIndexRegExp.exec(classes)[1];
+                            });
+                            var items = $.map($gridData.find("tr"), function(row) {
+                                return $(row).data("JSGridItem");
+                            });
+                            $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
+
+                            })
+                          }
+                        });
+                      }
+                    });
+                  });
+                });
+              });
+
+              $.post("../Resources/Includes/data.php?functionNum=5", function(peopleArray) {
+                if (peopleArray != ""){
+                  peopleArray = $.parseJSON(peopleArray);
+                }
+                $.post("../Resources/Includes/data.php?functionNum=3", function(statusArray) {
+                  if (statusArray != ""){
+                    statusArray = $.parseJSON(statusArray);
+                  }
+
+                  $.post("../Resources/Includes/data.php?functionNum=1&viewpoint=ahead", function(data) {
+                    data = $.parseJSON(data);
+                    $("#jsGridAhead").jsGrid({
+                      width: "100%",
+                      height: "400px",
+                      sorting: true,
+                      paging: true,
+                      data: data,
+                      rowClass: function(item, itemIndex) {
+                        return "client-" + itemIndex;
+                      },
+                      controller: {
+                        loadData: function() {
+                          return db.clients.slice(0, 15);
+                        }
+
+                      },
+                      fields: [
+                        { name: "ID_SORT", title: "#", type: "text", width: "20px" },
+                        { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
+                          return $("<a>").attr("href", "../Pages/goaloutcome.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
+                        }, width: "auto" },
+                        { title: "Goal Status", itemTemplate: function(value,item){
+                          var status;
+                          for (var i = 0; i < statusArray.length; i++){
+                            if (statusArray[i][0] == item.ID_UNIT_GOAL){
+                              status = statusArray[i][3];
+                            }
+
+                          }
+                          return status;
+                        }, width: "auto"},
+                        { name: "MOD_TIMESTAMP", title: "Last Updated", itemTemplate: function(value,item){
+                          var timestamp;
+                          for (var i = 0; i < statusArray.length; i++){
+                            if (statusArray[i][0] == item.ID_UNIT_GOAL){
+                              timestamp = statusArray[i][2];
+                            }
+                          }
+                          return timestamp;
+                        }, width: "auto" },
+                        { name: "AUTHOR", title: "Author", itemTemplate: function(value,item){
+                          var status;
+                          for (var i = 0; i < peopleArray.length; i++){
+                            if (peopleArray[i][0] == item.GOAL_AUTHOR){
+                              person = peopleArray[i][11] + ", " +  peopleArray[i][10];
+                            }
+                          }
+                          return person;
+                        }, width: "auto" }
+                      ],
+                      onRefreshed: function() {
+                        var $gridData = $("#jsGridAhead .jsgrid-grid-body tbody");
+                        $gridData.sortable({
+                          update: function(e, ui) {
+                            var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                            var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
+                                return clientIndexRegExp.exec(classes)[1];
+                            });
+                            var items = $.map($gridData.find("tr"), function(row) {
+                                return $(row).data("JSGridItem");
+                            });
+                            $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
+
                             })
                           }
                         });

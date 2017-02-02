@@ -289,8 +289,7 @@ require_once("../Resources/Includes/menu.php");
                             return $(row).data("JSGridItem");
                         });
                         $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
-                          console.log(indexes);
-                          $("#table-status").html("Table Saved.");
+                        
                         })
                       }
                     });
