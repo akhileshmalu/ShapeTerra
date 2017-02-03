@@ -76,12 +76,7 @@ require_once("../Resources/Includes/menu.php");
 
     </div>
 
-    <div id="main-box" class="information col-xs-10 col-xs-offset-1">
-        <div class="col-xs-8">
-            <h1 class="box-title"><span class="plus">+</span><span class="minus hidden">-</span> Information</h1>
-            <p class="hidden">Information here</p>
-        </div>
-    </div>
+
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
 

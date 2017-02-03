@@ -48,6 +48,7 @@ $sqldatadisplay = "SELECT * FROM IR_AC_DiversityStudent where OU_ABBREV='USCAAU'
 $resultdatadisplay = $mysqli -> query($sqldatadisplay);
 
 
+
 $dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
 $fieldcnt = $resultdatadisplay->field_count;
 
@@ -322,6 +323,7 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
+    <?php echo $rowsdatadisplay['ENROLL_HC_FRESH']; ?>
 
         <?php if ($rowsfucontent['STATUS_UPLOADFILE'] == 'No File Provided') { ?>
             <form action="<?php echo "ac_diversitystudent.php?linkid=" . $content_id ?>" method="post" class=""

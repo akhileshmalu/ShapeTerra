@@ -43,15 +43,15 @@ $resultay = $mysqli->query($sqlay);
  */
 
 $bpcontent = array(
+    array("Executive Summary","executivesum.php"),
     array("Mission, Vision & Values","mvv.php"),
     array("Unit Goals","unitgoaloverview.php"),
     array("Goal Management & Outcomes","goaloutcomeshome.php"),
+    array("Collaborations","collaborations.php"),
+    array("Faculty Awards","facultyawards.php"),
     array("Academic Programs","academicPrograms.php"),
     array("Alumni & Development","alumniDevelopment.php"),
-    array("Collaborations","collaborations.php"),
     array("Campus Climate","campusClimate.php"),
-    array("Executive Summary","executivesum.php"),
-    array("Faculty Awards","facultyawards.php"),
     array("Faculty Info","facultyInfo.php"),
     array("Initiatives & Observations","initiatives.php"),
 );

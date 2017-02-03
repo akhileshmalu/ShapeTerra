@@ -188,45 +188,50 @@ require_once("../Resources/Includes/menu.php");
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="missionstatement"
                               id="missiontitle" maxlength="1000"
                               required><?php echo mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
-                    <div class="form-group col-xs-4">
-                        <p><h3>Last Updated:</h3></p>
-                        <div class='input-group date' id='datetimepicker1'>
-                            <input type='text' name="misupdate" value="<?php echo $rowsmission['MISSION_UPDATE_DATE']; ?>" class="form-control" required>
-                            <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                        </div>
+                </div>
+
+                <h3>Last Updated:<span
+                        style="color: red"><sup>*</sup></span></h3>
+                <div class="form-group col-xs-12 form-indent">    
+                    <div class='input-group date col-xs-4' id='datetimepicker1'>
+                        <input type='text' name="misupdate" value="<?php echo $rowsmission['MISSION_UPDATE_DATE']; ?>" class="form-control" required>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
                     </div>
                 </div>
                 <h3>Vision Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="visionstatement" maxlength="1000"
                               id="visiontitle"><?php echo mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
-                    <div class="form-group col-xs-4">
-                        <p><h3>Last Updated:</h3></p>
-                        <div class='input-group date' id='datetimepicker2'>
-                            <input type='text' name="visupdate" value="<?php echo $rowsmission['VISION_UPDATE_DATE']; ?>" class="form-control">
-                            <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                        </div>
+                </div>
+
+                <h3>Last Updated:</h3>
+                <div class="form-group col-xs-12 form-indent">
+                    <div class='input-group date col-xs-4' id='datetimepicker2'>
+                        <input type='text' name="visupdate" value="<?php echo $rowsmission['VISION_UPDATE_DATE']; ?>" class="form-control">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
                     </div>
                 </div>
                 <h3>Values Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="valuestatement" maxlength="1000"
                               id="valuetitle"><?php echo mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
+                </div>
 
-                    <div class="form-group col-xs-4">
-                        <p><h3>Last Updated:</h3></p>
-                        <div class='input-group date' id='datetimepicker3'>
-                            <input type='text' name="valupdate" value="<?php echo $rowsmission['VALUE_UPADTE_DATE']; ?>" class="form-control">
-                            <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                        </div>
+                <h3>Last Updated:</h3>
+                <div class="col-xs-12 form-indent">
+                    <div class='input-group date col-xs-4' id='datetimepicker3'>
+                        <input type='text' name="valupdate" value="<?php echo $rowsmission['VALUE_UPADTE_DATE']; ?>" class="form-control">
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
                     </div>
                 </div>
+
+
                 <!--Edit Control-->
                 <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
                     <button id="save" type="submit" name="submit"
