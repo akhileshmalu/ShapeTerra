@@ -304,12 +304,12 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-lg-12 col-sm-10 col-xs-12">
                     <h3>Introduction</h3>
                     <div id="introduction" class="form-group form-indent">
-                        <p class="status"><small>Provide a brief narrative introduction of no more than 1,000 characters. This text will form the narrative introduction to the annual Outcomes Report and you may choose to follow it with highlights using the feature provider below. In the Introduction, please use only plain text.</small></p>
+                        <p class="status"><small>Provide a brief narrative introduction of no more than 725 characters (including spaces). This text will form the narrative introduction to the annual Outcomes Report and you may choose to follow it with highlights using the feature provider below. In the Introduction, please use only plain text.</small></p>
                         <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input" class="form-control wordCount" required ><?php echo mybr2nl($rowsexvalue["INTRODUCTION"]); ?></textarea>
                     </div>
                     <h3>Highlights</h3>
                     <div id="highlights" class="form-group form-indent">
-                        <p class="status"><small>Provide a narrative that highlights accomplishments, awards, or other outcomes. You should elaborate on these highlights elsewhere in your outcomes reporting. Content is restricted to 2,500 characters (including spaces).</small></p>
+                        <p class="status"><small>Provide a narrative that highlights accomplishments, awards, or other outcomes. You should elaborate on these highlights elsewhere in your outcomes reporting. Content is restricted to 525 characters (including spaces).</small></p>
                         <textarea rows="5" cols="25" maxlength="525" id="highlights-input" name="highlights-input" type="textarea" class="form-control wordCount"><?php echo mybr2nl($rowsexvalue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
                     </div>
 

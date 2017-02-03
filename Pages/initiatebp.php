@@ -198,7 +198,7 @@ require_once("../Resources/Includes/menu.php");
             <h2>1. Select Academic Year <span class="icon" data-toggle="tooltip" data-placement="top"
             title="Tooltip on top">&#xe009;</span></h2>
                 <div class="col-xs-3">
-                    <select  name="AY" class="col-xs-4 form-control" id="AYgoal" style="padding: 0px !important; background-color: #fff !important;">
+                    <select  name="AY" class="col-xs-4 form-control" id="AYname" style="padding: 0px !important; background-color: #fff !important;">
                         <option value=""></option>
                         <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
                             <option value="<?php echo $rowsay[1]; ?>"><?php echo $rowsay[1]; ?></option>

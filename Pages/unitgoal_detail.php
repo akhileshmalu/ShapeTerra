@@ -249,7 +249,7 @@ require_once("../Resources/Includes/menu.php");
                     <small>Linking to one University Goal is preferred; however, linking is not madatory and you may choose to link to more than one University Goal.</small>
                 </p>
                 <?php
-                $sqlug = "SELECT * FROM UniversityGoals;";
+                $sqlug = "SELECT * FROM UniversityGoals ORDER BY ID_UNIV_GOAL ASC;";
                 $resultug = $mysqli->query($sqlug);
                 while ($rowsug = $resultug->fetch_assoc()) { ?>
                     <div class="checkbox form-indent" id="goallink">
