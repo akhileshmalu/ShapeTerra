@@ -52,8 +52,6 @@
 nav{
 	padding-top: 20px;
 	background-color: #591B21;
-	/*Arbitrary height until content is added to match*/
-	height: 2000px;
 	min-width: 200px;
 }
 

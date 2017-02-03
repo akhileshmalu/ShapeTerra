@@ -377,65 +377,125 @@ require_once("../Resources/Includes/menu.php");
 
 
                             <h2 class="data-display">Tenure-track Faculty (FTE Positions)</h2>
+                            <table >
+                                <tr class="indent">
+                                    <td><b class="garnet">Professor, with tenure:</b></td>
+                                    <td><?php echo $rowsdatadisplay['TTF_FTE_PROF_TNR']; ?></td>
+                                </tr>
+                                <tr class="indent">
+                                    <td><b class="garnet">Associate Professor, with tenure:</b></td>
+                                    <td><?php echo $rowsdatadisplay['TTF_FTE_ASSOC_PROF_TNR']; ?></td>
+                                </tr>
+                                <tr class="indent">
+                                    <td><b class="garnet">Professor:</b></td>
+                                    <td><?php echo $rowsdatadisplay['TTF_FTE_PROF']; ?></td>
+                                </tr>
+                                <tr class="indent">
+                                    <td><b class="garnet">Associate Professor:</b></td>
+                                    <td><?php echo $rowsdatadisplay['TTF_FTE_ASSOC_PROF']; ?></td>
+                                </tr>
+                                <tr class="indent">
+                                    <td><b class="garnet">Assistant Professor:</b></td>
+                                    <td><?php echo $rowsdatadisplay['TTF_FTE_ASSIST_PROF']; ?></td>
+                                </tr>
+                                <tr class="indent"><td><br /></td></tr>
+                                <tr class="indent">
+                                    <td><b class="garnet">Total - Tenure-track Faculty (FTE positions):</b></td>
+                                    <td><?php echo $rowsdatadisplay['TTF_FTE_ALL']; ?></td>
+                                </tr>                                
+                            
 
                             
-                            <p class="indent"><b class="garnet">Professor, with tenure:</b>
-                            <?php echo $rowsdatadisplay['TTF_FTE_PROF_TNR']; ?> </p>                             
-                            <p class="indent"><b class="garnet">Associate Professor, with tenure:</b> <?php echo $rowsdatadisplay['TTF_FTE_ASSOC_PROF_TNR']; ?> </p> 
-
-                            <p class="indent"><b class="garnet">Professor:</b> <?php echo $rowsdatadisplay['TTF_FTE_PROF']; ?>  </p> 
-
-                            <p class="indent"><b class="garnet">Associate Professor:</b> <?php echo $rowsdatadisplay['TTF_FTE_ASSOC_PROF']; ?> </p> 
-
-                            <p class="indent"><b class="garnet">Assistant Professor:</b> <?php echo $rowsdatadisplay['TTF_FTE_ASSIST_PROF']; ?> </p> 
-
-                            <br />
-
-                            <p class="indent"><b class="garnet">Total - Tenure-track Faculty (FTE positions):</b> <?php echo $rowsdatadisplay['TTF_FTE_ALL']; ?> </p> 
+          
 
 
-                            <h2 class="data-display">Research Faculty (FTE Positions)</h2>
+                            <tr><td><h2 class="data-display">Research Faculty (FTE Positions)</h2></td></tr>
 
                             
-                            <p class="indent"><b class="garnet">Research Professor:</b> <?php echo $rowsdatadisplay['RSRCH_FTE_PROF']; ?> </p>                             
-                            <p class="indent"><b class="garnet">Research Associate Professor:</b> <?php echo $rowsdatadisplay['RSRCH_FTE_ASSOC_PROF']; ?> </p> 
+                            <tr class="indent">
+                                <td><b class="garnet">Research Professor:</b></td>
+                                <td> <?php echo $rowsdatadisplay['RSRCH_FTE_PROF']; ?> </td>
+                            </tr>                            
+                            <tr class="indent">
+                                <td><b class="garnet">Research Associate Professor:</b></td>
+                                <td> <?php echo $rowsdatadisplay['RSRCH_FTE_ASSOC_PROF']; ?> </td>
+                            </tr>
 
-                            <p class="indent"><b class="garnet">Research Assistant Professor:</b> <?php echo $rowsdatadisplay['RSRCH_FTE_ASSIST_PROF']; ?>  </p> 
+                            <tr class="indent">
+                                <td><b class="garnet">Research Assistant Professor:</b></td>
+                                <td> <?php echo $rowsdatadisplay['RSRCH_FTE_ASSIST_PROF']; ?>  </td>
+                            </tr>
 
-                            <br />
+                            <tr class="indent"><td><br /></td></tr>
 
-                            <p class="indent"><b class="garnet">Total - Research Faculty (FTE Positions):</b> <?php echo $rowsdatadisplay['RSRCH_FTE_ALL']; ?> </p> 
+                            <tr class="indent">
+                                <td><b class="garnet">Total - Research Faculty (FTE Positions):</b></td>
+                                <td> <?php echo $rowsdatadisplay['RSRCH_FTE_ALL']; ?> </td>
+                            </tr>
+                            
 
-                            <h2 class="data-display">Clinical/Instructional Faculty (FTE Positions)</h2>
+
+                           <tr><td ><h2 class="data-display">Clinical/Instructional Faculty (FTE Positions)</h2></td></tr>
 
                             
-                            <p class="indent"><b class="garnet">Clinical  Professor:</b> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_PROF']; ?> </p>                             
-                            <p class="indent"><b class="garnet">Clinical  Associate Professor:</b> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_ASSOC_PROF']; ?> </p> 
+                            <tr class="indent">
+                                <td><b class="garnet">Clinical  Professor:</b></td>
+                                <td> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_PROF']; ?> </td>
+                            </tr>                            
+                            <tr class="indent">
+                                <td><b class="garnet">Clinical  Associate Professor:</b></td>
+                                <td> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_ASSOC_PROF']; ?> </td>
+                            </tr>
 
-                            <p class="indent"><b class="garnet">Clinical  Assistant Professor:</b> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_ASSIST_PRO']; ?>  </p> 
+                            <tr class="indent">
+                                <td><b class="garnet">Clinical  Assistant Professor:</b></td>
+                                <td> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_ASSIST_PRO']; ?>  </td>
+                            </tr>
 
-                            <p class="indent"><b class="garnet">Instructor/Lecturer:</b> <?php echo $rowsdatadisplay['CIF_FTE_INSTR_LCTR']; ?>  </p> 
+                            <tr class="indent">
+                                <td><b class="garnet">Instructor/Lecturer:</b></td>
+                                <td> <?php echo $rowsdatadisplay['CIF_FTE_INSTR_LCTR']; ?>  </td>
+                            </tr>
 
-                            <br />
+                            <tr class="indent"><td><br /></td></tr>
 
-                            <p class="indent"><b class="garnet">Total - Clinical/Instructional Faculty (FTE positions):</b> <?php echo $rowsdatadisplay['CIF_FTE_ALL']; ?> </p> 
-
-                            <h2 class="data-display">Other Faculty</h2>
+                            <tr class="indent">
+                                <td><b class="garnet">Total - Clinical/Instructional Faculty (FTE positions):</b></td>
+                                <td> <?php echo $rowsdatadisplay['CIF_FTE_ALL']; ?> </td>
+                            </tr>
 
                             
-                            <p class="indent"><b class="garnet">Adjunct Faculty</b> <?php echo $rowsdatadisplay['OTHRFAC_PT_ADJUNCT']; ?> </p>                             
-                            <p class="indent"><b class="garnet">Other Faculty:</b> <?php echo $rowsdatadisplay['OTHRFAC_PT_OTHER']; ?> </p>
 
-                            <br /> 
-
-                            <p class="indent"><b class="garnet">Total - Other Faculty:</b> <?php echo $rowsdatadisplay['OTHRFAC_ALL']; ?>  </p> 
-
-                            <h2 class="data-display">Student Faculty Ratio</h2>
+                            <tr><td><h2 class="data-display">Other Faculty</h2></td></tr>
 
                             
-                            <p class="indent"><b class="garnet">Student Faculty Ratio</b> <?php echo $rowsdatadisplay['STUDENT_FACULTY_RATIO']; ?> </p>
+                            <tr class="indent">
+                                <td><b class="garnet">Adjunct Faculty</b></td>
+                                <td><?php echo $rowsdatadisplay['OTHRFAC_PT_ADJUNCT']; ?> </td>
+                            </tr>                             
+                            <tr class="indent">
+                                <td><b class="garnet">Other Faculty:</b></td>
+                                <td><?php echo $rowsdatadisplay['OTHRFAC_PT_OTHER']; ?> </td>
+                            </tr>
+
+                            <tr class="indent"><td><br /></td></tr> 
+
+                            <tr class="indent">
+                                <td><b class="garnet">Total - Other Faculty:</b></td>
+                                <td><?php echo $rowsdatadisplay['OTHRFAC_ALL']; ?>  </td>
+                            </tr> 
+
+                            <tr><td><h2 class="data-display">Student Faculty Ratio</h2></td></tr>
+
+                            
+                            <tr class="indent">
+                                <td><b class="garnet">Student Faculty Ratio</b></td>
+                                <td><?php echo $rowsdatadisplay['STUDENT_FACULTY_RATIO']; ?> </td>
+                            </tr>
 
                             <p>Please Select <strong>Validation Confirmed</strong> to Confirm Uploading If Below Data is Correct.</p>
+
+                            </table>
                         </div>
 
 

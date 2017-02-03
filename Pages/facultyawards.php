@@ -334,7 +334,8 @@ require_once("../Resources/Includes/menu.php");
             <form method="POST" action="<?php echo "facultyawards.php?linkid=".$contentlink_id; ?>">
                 <div class="form-group">
 
-                    <label for="awardtype">Select Award Type:</label>
+                    <label for="awardtype">Select Award Type:<span
+                        style="color: red"><sup>*</sup></span></label>
                     <select  name="awardType" class="form-control" id="awardtype">
                         <option value=""></option>
                         <?php while ($rowsaward = $resultaward->fetch_assoc()): { ?>
@@ -342,7 +343,8 @@ require_once("../Resources/Includes/menu.php");
                         <?php } endwhile; ?>
                     </select>
 
-                    <label for="awardLoc">Select Award Location:</label>
+                    <label for="awardLoc">Select Award Location:<span
+                        style="color: red"><sup>*</sup></span></label>
                     <select  name="awardLoc" class="form-control" id="awardLoc">
                         <option value=""></option>
                         <?php while ($rowsawardLoc = $resultawardLoc->fetch_assoc()): { ?>
@@ -350,19 +352,24 @@ require_once("../Resources/Includes/menu.php");
                         <?php } endwhile; ?>
                     </select>
 
-                    <label for="recipLname">Recipient Last Name:</label>
+                    <label for="recipLname">Recipient Last Name:<span
+                        style="color: red"><sup>*</sup></span></label>
                     <input type="text" class="form-control" name="recipLname" id="recipLname" required>
 
-                    <label for="recipFname">Recipient First Name:</label>
+                    <label for="recipFname">Recipient First Name:<span
+                        style="color: red"><sup>*</sup></span></label>
                     <input type="text" class="form-control" name="recipFname" id="recipFname" required>
 
-                    <label for="awardtitle">Award Title / Name:</label>
+                    <label for="awardtitle">Award Title / Name:<span
+                        style="color: red"><sup>*</sup></span></label>
                     <input type="text" class="form-control" name="awardTitle" id="awardtitle" required>
 
-                    <label for="awardOrg">Awarding Organization:</label>
+                    <label for="awardOrg">Awarding Organization:<span
+                        style="color: red"><sup>*</sup></span></label>
                     <input type="text" class="form-control" name="awardOrg" id="awardOrg" required>
 
-                     <label for="datetimepicker3">Date Awarded:</label>
+                     <label for="datetimepicker3">Date Awarded:<span
+                        style="color: red"><sup>*</sup></span></label>
                     <div class='input-group date' id='datetimepicker3'>
                         <input type='text' name="dateAward" class="form-control" required>
                         <span class="input-group-addon">
