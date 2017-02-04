@@ -70,11 +70,12 @@ require_once("../Resources/Includes/menu.php");
         <h1 class="box-title">Select File Type for Action</h1>
         <label for ="fileupload">The overview below indicates the current status of each file type expected for the above Academic Year. Click any file type to  upload new or view content of previously uploaded files.</label>
         <div id="fileupload" style="margin-top: 10px; padding-left: 40px;">
-            <table class="grid" action="taskboard/fileuploadstatusajax.php" title="File Upload Contents">
+            <table class="fileupload" action="taskboard/fileuploadstatusajax.php" title="File Upload Contents">
                 <tr>
 
                     <th col="NAME_UPLOADFILE" href="{{columns.LINK_UPLOADFILE}}?linkid={{columns.ID_UPLOADFILE}}"  width="225" type="text">Section</th>
                     <th col="STATUS_UPLOADFILE" width="125" type="text">Status</th>
+                    <th col="OU_ABBREV" width="125" type="text">Unit</th>
                     <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
                     <th col="FILE_AUTHOR"  width="130" type="text">Last Modified By</th>
 

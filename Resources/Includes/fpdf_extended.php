@@ -1,5 +1,6 @@
 <?php
 
+require_once ("../Includes/connect.php");
   require "../Library/FPDF/fpdf.php";
 
   class PDF_MC_Table extends FPDF{
@@ -205,7 +206,7 @@
   $pdf->Write(5,"Introduction");
   $pdf->Ln(7);
   $pdf->setFont("Arial","",12);
-  $pdf->Write(5,$data["INTRODUCTION"]);
+  $pdf->Write(5,mybr2nl($data["INTRODUCTION"]));
 
   $pdf->Ln(15);
   $pdf->setFont("Arial","B",16);
@@ -219,7 +220,7 @@
   for ($i = 0; count($highlightsArray) > $i; $i++){
 
     $pdf->Ln(5);
-    $pdf->Write(5,chr(127).$highlightsArray[$i]);
+    $pdf->Write(5,chr(127).mybr2nl($highlightsArray[$i]));
 
   }
 
@@ -402,15 +403,15 @@ $pdf->Write(5,$ouName);
     $pdf->SetDrawColor(0, 0, 0);
     $pdf->setTextColor(0,0,0);
 
-    $pdf->Row(array("Goal Statement",$data["GOAL_STATEMENT"]));
+    $pdf->Row(array("Goal Statement",mybr2nl($data["GOAL_STATEMENT"])));
     $pdf->Row(array("Linkage to University Goal",$universityGoals));
     $pdf->Row(array("Alignment with Mission, Vision, and Values",$data["GOAL_ALIGNMENT"]));
-    $pdf->Row(array("Status",$goalOutcomes["GOAL_REPORT_STATUS"]));
-    $pdf->Row(array("Achievements",$goalOutcomes["GOAL_ACHIEVEMENTS"]));
-    $pdf->Row(array("Resources Utilized",$goalOutcomes["GOAL_RSRCS_UTLZD"]));
-    $pdf->Row(array("Continuation",$goalOutcomes["GOAL_CONTINUATION"]));
-    $pdf->Row(array("Resources Needed",$goalOutcomes["GOAL_RSRCS_NEEDED"]));
-    $pdf->Row(array("Plans for upcoming year (if not completed)",$goalOutcomes["GOAL_PLAN_INCOMPLT"]));
+    $pdf->Row(array("Status",mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
+    $pdf->Row(array("Achievements",mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
+    $pdf->Row(array("Resources Utilized",mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
+    $pdf->Row(array("Continuation",mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
+    $pdf->Row(array("Resources Needed",mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
+    $pdf->Row(array("Plans for upcoming year (if not completed)",mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
 
   }
 
@@ -450,15 +451,15 @@ $pdf->Write(5,$ouName);
     $pdf->SetDrawColor(0, 0, 0);
     $pdf->setTextColor(0,0,0);
 
-    $pdf->Row(array("Goal Statement",$data["GOAL_STATEMENT"]));
+    $pdf->Row(array("Goal Statement",mybr2nl($data["GOAL_STATEMENT"])));
     $pdf->Row(array("Linkage to University Goal",$universityGoals));
-    $pdf->Row(array("Alignment with Mission, Vision, and Values",$data["GOAL_ALIGNMENT"]));
-    $pdf->Row(array("Status",$goalOutcomes["GOAL_REPORT_STATUS"]));
-    $pdf->Row(array("Achievements",$goalOutcomes["GOAL_ACHIEVEMENTS"]));
-    $pdf->Row(array("Resources Utilized",$goalOutcomes["GOAL_RSRCS_UTLZD"]));
-    $pdf->Row(array("Continuation",$goalOutcomes["GOAL_CONTINUATION"]));
-    $pdf->Row(array("Resources Needed",$goalOutcomes["GOAL_RSRCS_NEEDED"]));
-    $pdf->Row(array("Plans for upcoming year (if not completed)",$goalOutcomes["GOAL_PLAN_INCOMPLT"]));
+    $pdf->Row(array("Alignment with Mission, Vision, and Values",mybr2nl($data["GOAL_ALIGNMENT"])));
+    $pdf->Row(array("Status",mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
+    $pdf->Row(array("Achievements",mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
+    $pdf->Row(array("Resources Utilized",mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
+    $pdf->Row(array("Continuation",mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
+    $pdf->Row(array("Resources Needed",mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
+    $pdf->Row(array("Plans for upcoming year (if not completed)",mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
 
   }
 
@@ -498,15 +499,15 @@ $pdf->Write(5,$ouName);
     $pdf->SetDrawColor(0, 0, 0);
     $pdf->setTextColor(0,0,0);
 
-    $pdf->Row(array("Goal Statement",$data["GOAL_STATEMENT"]));
+    $pdf->Row(array("Goal Statement",mybr2nl($data["GOAL_STATEMENT"])));
     $pdf->Row(array("Linkage to University Goal",$universityGoals));
-    $pdf->Row(array("Alignment with Mission, Vision, and Values",$data["GOAL_ALIGNMENT"]));
-    $pdf->Row(array("Status",$goalOutcomes["GOAL_REPORT_STATUS"]));
-    $pdf->Row(array("Achievements",$goalOutcomes["GOAL_ACHIEVEMENTS"]));
-    $pdf->Row(array("Resources Utilized",$goalOutcomes["GOAL_RSRCS_UTLZD"]));
-    $pdf->Row(array("Continuation",$goalOutcomes["GOAL_CONTINUATION"]));
-    $pdf->Row(array("Resources Needed",$goalOutcomes["GOAL_RSRCS_NEEDED"]));
-    $pdf->Row(array("Plans for upcoming year (if not completed)",$goalOutcomes["GOAL_PLAN_INCOMPLT"]));
+    $pdf->Row(array("Alignment with Mission, Vision, and Values",mybr2nl($data["GOAL_ALIGNMENT"])));
+    $pdf->Row(array("Status",mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
+    $pdf->Row(array("Achievements",mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
+    $pdf->Row(array("Resources Utilized",mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
+    $pdf->Row(array("Continuation",mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
+    $pdf->Row(array("Resources Needed",mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
+    $pdf->Row(array("Plans for upcoming year (if not completed)",mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
 
   }
 
@@ -624,7 +625,7 @@ $pdf->Write(5,$ouName);
   while($data = $getCollaborations->fetch()){
 
     $pdf->Ln(5);
-    $pdf->Write(5,chr(127)." ".$data["COLLAB_INTERNAL"]);
+    $pdf->Write(5,chr(127)." ".mybr2nl($data["COLLAB_INTERNAL"]));
 
   }
 
@@ -644,7 +645,7 @@ $pdf->Write(5,$ouName);
   while($data = $getCollaborations->fetch()){
 
     $pdf->Ln(5);
-    $pdf->Write(5,chr(127)." ".$data["COLLAB_EXTERNAL"]);
+    $pdf->Write(5,chr(127)." ".mybr2nl($data["COLLAB_EXTERNAL"]));
 
   }
 
@@ -664,7 +665,7 @@ $pdf->Write(5,$ouName);
   while($data = $getCollaborations->fetch()){
 
     $pdf->Ln(5);
-    $pdf->Write(5,chr(127)." ".$data["COLLAB_OTHER"]);
+    $pdf->Write(5,chr(127)." ".mybr2nl($data["COLLAB_OTHER"]));
 
   }
 
@@ -696,19 +697,20 @@ $pdf->Write(5,$ouName);
   $pdf->Write(5, "During $selectedYear, $ouName enrolled students as shown below, according to USC’s Office of Institutional Research, Assessment, and Analytic");
   $pdf->Ln(5);
 
-  $getEnrollmentData = $connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+
+  $getEnrollmentData = $connection->prepare("SELECT * FROM `IR_AC_Enrollments` where OU_ABBREV=? AND ID_AC_ENROLLMENTS in (select max(ID_AC_ENROLLMENTS) from `IR_AC_Enrollments` where OUTCOMES_AY = ? group by OU_ABBREV )");
   $getEnrollmentData->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
   $getEnrollmentData->bindParam(2,$selectedYear,PDO::PARAM_STR);
   $getEnrollmentData->execute();
 
   $oldYear = "AY2015-2016";
-  $getEnrollmentDataOld1 = $connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+  $getEnrollmentDataOld1 = $connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OU_ABBREV=? AND ID_AC_ENROLLMENTS IN (SELECT max(ID_AC_ENROLLMENTS) FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? GROUP BY OU_ABBREV )");
   $getEnrollmentDataOld1->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
   $getEnrollmentDataOld1->bindParam(2,$oldYear,PDO::PARAM_STR);
   $getEnrollmentDataOld1->execute();
 
   $oldYear = "AY2014-2015";
-  $getEnrollmentDataOld2 = $connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+  $getEnrollmentDataOld2 = $connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OU_ABBREV=? AND ID_AC_ENROLLMENTS IN (SELECT max(ID_AC_ENROLLMENTS) FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? GROUP BY OU_ABBREV )");
   $getEnrollmentDataOld2->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
   $getEnrollmentDataOld2->bindParam(2,$oldYear,PDO::PARAM_STR);
   $getEnrollmentDataOld2->execute();

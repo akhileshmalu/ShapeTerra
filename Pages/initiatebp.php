@@ -35,7 +35,7 @@ $resultou = $mysqli->query($sqlou);
  * Query to show Academic years for Initiating Blue Print.
  */
 
-$sqlay = "Select * from AcademicYears;";
+$sqlay = "Select * from AcademicYears ORDER BY ID_ACAD_YEAR ASC;";
 $resultay = $mysqli->query($sqlay);
 
 /*
@@ -145,10 +145,11 @@ if (isset($_POST['submit'])) {
                     $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','$srno');";
 
                 }
+
                 foreach ($uploaddatafiles as $file) {
                     $filename = $file[0];
                     $filelink = $file[1];
-                    $sqlbroad .= "INSERT INTO IR_SU_UploadStatus(NAME_UPLOADFILE,LINK_UPLOADFILE ,OUTCOME_AY,LAST_MODIFIED_BY) VALUES ('$filename','$filelink','$desc','$author');";
+                    $sqlbroad .= "INSERT INTO IR_SU_UploadStatus(NAME_UPLOADFILE,LINK_UPLOADFILE ,OUTCOME_AY,LAST_MODIFIED_BY,OU_ABBREV) VALUES ('$filename','$filelink','$ay','$author',$ouabbrev);";
                 }
             }
         }
