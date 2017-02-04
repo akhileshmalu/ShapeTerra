@@ -151,8 +151,14 @@
   $pdf->Ln(50);
   $pdf->setTextColor(0,0,0);
   $pdf->SetFont('Arial','B',36);
-  $pdf->Cell(80);
-  $pdf->Cell(20,10,$ouName,0,0,'C');
+  //$pdf->Cell(80);
+  //$pdf->Cell(20,10,$ouName,0,0,'C');
+
+  $pdf->SetWidths(array(250));
+  $pdf->SetDrawColor(255,255,255);
+  $pdf->setX(15);
+  $pdf->Row(array($pdf->Write(15,$ouName)));
+
 
   //year
   $pdf->Ln(20);
@@ -275,7 +281,7 @@
   $pdf->Cell(10,0,"Service Awards".getProperDots("Service Awards",2,true)."3");
   $pdf->Ln(5);
   $pdf->setX(15);
-  $pdf->Cell(10,0,"Teaching Awards".getProperDots("Teaching Awards",2,true)."");
+  $pdf->Cell(10,0,"Teaching Awards".getProperDots("Teaching Awards",2,true)."5");
   $pdf->Ln(5);
   $pdf->Cell(10,0,"Collaborations".getProperDots("collaborations",2,false)."9");
   $pdf->Ln(5);
@@ -283,15 +289,15 @@
   $pdf->Cell(10,0,"Internal Collaborations".getProperDots("internal collaborations",2,true)."9");
   $pdf->Ln(5);
   $pdf->setX(15);
-  $pdf->Cell(10,0,"External Collaborations".getProperDots("external collaborations",2,true)."");
+  $pdf->Cell(10,0,"External Collaborations".getProperDots("external collaborations",2,true)."9");
   $pdf->Ln(5);
   $pdf->setX(15);
   $pdf->Cell(10,0,"Other Collaborations".getProperDots("other collaborations",2,true)."9");
   $pdf->Ln(5);
   $pdf->setX(15);
-  $pdf->Cell(10,0,"Supplemental Info - Collaborations".getProperDots("supplemental ifno - collaborations",9,true)."");
+  $pdf->Cell(10,0,"Supplemental Info - Collaborations".getProperDots("supplemental ifno - collaborations",9,true)."9");
   $pdf->Ln(5);
-  $pdf->Cell(10,0,"Student Enrollement & Outcomes".getProperDots("student enrollement & outcomes",10,false)."");
+  $pdf->Cell(10,0,"Student Enrollement & Outcomes".getProperDots("student enrollement & outcomes",10,false)."10");
   $pdf->Ln(5);
   $pdf->setX(15);
   $pdf->Cell(10,0,"Student Enrollments".getProperDots("studnet enrollments",10,true)."10");
