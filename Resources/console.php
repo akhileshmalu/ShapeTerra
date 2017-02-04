@@ -72,7 +72,11 @@ require_once("../Resources/Includes/header.php");
  //Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
-
+<style>
+    html {
+        background-color: transparent;
+    }
+</style>
 
 <h1>Console for Shapeterra DB <a href="../Pages/login.php" class="btn-primary">Login</a></h1>
 

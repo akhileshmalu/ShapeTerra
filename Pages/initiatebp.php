@@ -28,7 +28,7 @@ require_once ("../Resources/Includes/connect.php");
 /*
  * Query to show Non terminated Organization Unit as on date.
  */
-$sqlou = "Select * from Hierarchy where OU_ABBREV != 'UNAFFIL' and OU_DATE_END IS NULL and OU_TYPE='Academic Unit';";
+$sqlou = "Select * from Hierarchy where OU_ABBREV != 'UNAFFIL' and OU_DATE_END IS NULL and OU_TYPE ='Academic Unit';";
 $resultou = $mysqli->query($sqlou);
 
 /*
@@ -145,16 +145,16 @@ if (isset($_POST['submit'])) {
                     $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','$srno');";
 
                 }
-
                 foreach ($uploaddatafiles as $file) {
                     $filename = $file[0];
                     $filelink = $file[1];
-                    $sqlbroad .= "INSERT INTO IR_SU_UploadStatus(NAME_UPLOADFILE,LINK_UPLOADFILE ,OUTCOME_AY,LAST_MODIFIED_BY,OU_ABBREV) VALUES ('$filename','$filelink','$ay','$author',$ouabbrev);";
+                    $sqlbroad .= "INSERT INTO IR_SU_UploadStatus(NAME_UPLOADFILE,LINK_UPLOADFILE ,OUTCOME_AY,LAST_MODIFIED_BY,OU_ABBREV ) VALUES ('$filename','$filelink','$ay','$author','$ouabbrev');";
                 }
             }
         }
         if ($errorflag != 1) {
 
+//            echo $sqlbroad;
             if ($mysqli->multi_query($sqlbroad)) {
 
                 $error[0] = "Academic BluePrint Successfully Initiated.";
