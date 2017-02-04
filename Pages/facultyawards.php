@@ -14,6 +14,7 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
+require("../Resources/Includes/data.php");
 $error = array();
 $errorflag = 0;
 $BackToDashboard = true;
@@ -86,8 +87,8 @@ if(isset($_POST['award_submit'])){
     $contentlink_id = $_GET['linkid'];
 
     $sqlAcFacAward = "INSERT INTO `AC_FacultyAwards`
-(OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST,RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED)
-VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$awardLoc','$recipLname','$recipFname','$awardTitle','$awardOrg','$dateAward');";
+(OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST,RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED,ID_SORT)
+VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$awardLoc','$recipLname','$recipFname','$awardTitle','$awardOrg','$dateAward','0');";
 
     $sqlAcFacAward .= "Update `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
@@ -95,6 +96,8 @@ VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$awardLoc','$reci
 
     if($mysqli->multi_query($sqlAcFacAward)){
 
+        $Data = new Data();
+        $Data->initOrderFacultyAwards();
         $error[0] = "Award Added Succesfully.";
 
     } else {
@@ -289,7 +292,7 @@ require_once("../Resources/Includes/menu.php");
                             return $(row).data("JSGridItem");
                         });
                         $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
-                        
+
                         })
                       }
                     });
