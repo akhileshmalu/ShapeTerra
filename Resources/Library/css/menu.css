@@ -58,7 +58,7 @@ nav{
 nav ul{
 	list-style: none;
 	padding-left: 0;
-	margin-left:0; 
+	margin-left:0;
 }
 
 nav ul li#header{
@@ -87,8 +87,8 @@ nav ul li#header a:hover, nav ul li#header a:visited, nav ul li#header a:active,
 }
 
 .icon.add {
-    border-top-width: 0;
-    border-bottom: 4px solid #fff;
+	border-top-width: 0;
+	border-bottom: 4px solid #fff;
 }
 
 nav ul li{

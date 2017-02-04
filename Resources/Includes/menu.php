@@ -234,4 +234,3 @@ Generate PDF button currently disabled.
 	<!-- Blueprint Home Menu -->
 
 </nav>
-

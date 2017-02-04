@@ -1,12 +1,9 @@
 <?php
-
 //error_reporting(E_ALL);
 //ini_set('display_errors', '1');
-
 /*
  * This Page controls Academic BluePrint Home.
  */
-
 session_start();
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
@@ -14,29 +11,19 @@ if(!$_SESSION['isLogged']) {
 }
 $error = array();
 $errorflag =0;
-
 require_once ("../Resources/Includes/connect.php");
-
 $FUayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 $_SESSION['FUayname'] = $FUayname;
 $notBackToDashboard = true;
-
-
 $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
-
 $resultbroad = $mysqli->query($sqlbroad);
 $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
-
 //Menu control for back to dashboard button
 //true: Dont show button
 //false: show button
-
-
-
 require_once("../Resources/Includes/header.php");
-
 // Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
@@ -71,7 +58,7 @@ require_once("../Resources/Includes/menu.php");
         <div class="col-xs-8">
             <h1 class="box-title"><?php echo $FUayname; ?> </h1>
             <p class="status"><span>Org Unit Name: </span> <?php echo $_SESSION['login_ouname']; ?></p>
-<!--            <p class="status"><span>User role: </span> --><?php //echo $rowsmenu['USER_RIGHT']; ?><!--</p>-->
+            <!--            <p class="status"><span>User role: </span> --><?php //echo $rowsmenu['USER_RIGHT']; ?><!--</p>-->
         </div>
 
     </div>
@@ -112,4 +99,3 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
-
