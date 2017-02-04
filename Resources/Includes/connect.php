@@ -86,9 +86,9 @@ function stringtoid ($string){
  * Function for preserving HTML line breaks in Text area
  */
 function mynl2br($text) {
-    return strtr($text, array("\r\n" => '<br />', "\r" => '<br />', "\n" => '<br />'));
+    return strtr($text, array("\r\n" => '<br />', "\r" => '<br />', "\n" => '<br />', ";" => '&#59;', "'" => '&#39;'));
 }
 
 function mybr2nl($text) {
-    return strtr($text, array("<br />" => "\r\n"));
+    return strtr($text, array("<br />" => "\r\n", "&#39;" => "'", "&#59;" => ";"));
 }

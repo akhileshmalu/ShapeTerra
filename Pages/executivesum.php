@@ -143,7 +143,7 @@ if (isset($_POST['savedraft'])) {
         $sqlexecsum = "INSERT INTO `AC_ExecSum` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, UNIT_NAME, DEAN_NAME_PRINT, DEAN_TITLE, DEAN_PORTRAIT, DEAN_SIGNATURE, COMPANION_LOGO, INTRODUCTION, HIGHLIGHTS_NARRATIVE)
 VALUES ('$ouabbrev','$bpayname','$author','$time','$collname','$deanname','$deantitle','$deansPortraitLogopath','$deansPortraitSignpath','$deansSchLogopath','$introduction','$highlights');";
 
-        $sqlexecsum .= "Update  `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlexecsum .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
 
         $sqlexecsum .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
@@ -304,12 +304,12 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-lg-12 col-sm-10 col-xs-12">
                     <h3>Introduction</h3>
                     <div id="introduction" class="form-group form-indent">
-                        <p class="status"><small>Provide a brief narrative introduction of no more than 1,000 characters. This text will form the narrative introduction to the annual Outcomes Report and you may choose to follow it with highlights using the feature provider below. In the Introduction, please use only plain text.</small></p>
+                        <p class="status"><small>Provide a brief narrative introduction of no more than 725 characters (including spaces). This text will form the narrative introduction to the annual Outcomes Report and you may choose to follow it with highlights using the feature provider below. In the Introduction, please use only plain text.</small></p>
                         <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input" class="form-control wordCount" required ><?php echo mybr2nl($rowsexvalue["INTRODUCTION"]); ?></textarea>
                     </div>
                     <h3>Highlights</h3>
                     <div id="highlights" class="form-group form-indent">
-                        <p class="status"><small>Provide a narrative that highlights accomplishments, awards, or other outcomes. You should elaborate on these highlights elsewhere in your outcomes reporting. Content is restricted to 2,500 characters (including spaces).</small></p>
+                        <p class="status"><small>Provide a narrative that highlights accomplishments, awards, or other outcomes. You should elaborate on these highlights elsewhere in your outcomes reporting. Content is restricted to 525 characters (including spaces).</small></p>
                         <textarea rows="5" cols="25" maxlength="525" id="highlights-input" name="highlights-input" type="textarea" class="form-control wordCount"><?php echo mybr2nl($rowsexvalue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
                     </div>
 
@@ -317,7 +317,7 @@ require_once("../Resources/Includes/menu.php");
 
                     <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
                         <button id="save" type="submit" name="savedraft"
-                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                                class="btn-primary  pull-right">
                             Save Draft
                         </button>
                         <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
@@ -327,7 +327,7 @@ require_once("../Resources/Includes/menu.php");
                     <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
                         <button id="save" type="submit" name="savedraft"
-                                class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                                class="btn-primary  pull-right">
                             Save Draft
                         </button>
                         <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">

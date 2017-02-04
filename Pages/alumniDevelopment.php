@@ -177,7 +177,8 @@ require_once("../Resources/Includes/menu.php");
         <h1 class="box-title">Alumni &amp; Development</h1>
         <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST"
               enctype="multipart/form-data">
-            <h3>Alumni</h3>
+            <h3>Alumni<span
+                        style="color: red"><sup>*</sup></span></h3>
             <div class="form-group form-indent">
                 <p class="status">Describe your unit's substantial activities, engagements, and initiatives with alumni
                     during the Academic Year. Focus should be on relationships and activities with alumni; development
@@ -185,14 +186,16 @@ require_once("../Resources/Includes/menu.php");
                 <textarea name="alumni" rows="6" cols="25" wrap="hard" class="form-control"
                           required><?php echo mybr2nl($rowsexvalue['AC_UNIT_ALUMNI']); ?></textarea>
             </div>
-            <h3>Development</h3>
+            <h3>Development<span
+                        style="color: red"><sup>*</sup></span></h3>
             <div class="form-group form-indent">
                 <p class="status">Describe your unit's substantial development initiatives and outcomes during the
                     Academic Year, excluding alumni, fundraising, and gifts.</p>
                 <textarea name="development" rows="6" cols="25" wrap="hard"
                           class="form-control"><?php echo mybr2nl($rowsexvalue['AC_UNIT_DEVELOPMENT']); ?></textarea>
             </div>
-            <h3>Fundraising</h3>
+            <h3>Fundraising<span
+                        style="color: red"><sup>*</sup></span></h3>
             <div class="form-group form-indent">
                 <p class="status">
                     <small>Describe your unit's major fundraising goals, initiatives, and outcomes during the Academic
@@ -203,7 +206,8 @@ require_once("../Resources/Includes/menu.php");
                 <textarea name="fundraising" rows="6" cols="25" wrap="hard"
                           class="form-control"><?php echo mybr2nl($rowsexvalue['AC_UNIT_FUNDRAISING']); ?></textarea>
             </div>
-            <h3>Gifts</h3>
+            <h3>Gifts<span
+                        style="color: red"><sup>*</sup></span></h3>
             <div class="form-group form-indent">
                 <p class="status">
                     <small>Describe major gifts, campaigns, and planning activities, exclusive of actual monetary

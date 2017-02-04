@@ -161,9 +161,9 @@ require_once("../Resources/Includes/menu.php");
             </ul>
             <!-- Start the loop to pull from database here -->
             <?php while($rowsbpcontent = $resultbpcontent->fetch_assoc()) :
-                if ($rowsbpcontent['Sr_No'] == '3') { ?>
+                if ($rowsbpcontent['Sr_No'] == '4') { ?>
             </div>
-        <h1 class="box-title">Outcomes</h1>
+        <h1 class="box-title" style="margin-top: 50px;">Outcomes</h1>
             <div id="list">
                 <ul class="list-nav">
                     <li class="col-xs-4">Section</li>

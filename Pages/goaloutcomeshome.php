@@ -394,22 +394,6 @@ require_once("../Resources/Includes/menu.php");
               </script>
         </div>
 
-<!--        <form action="--><?php //echo $_SERVER['PHP_SELF']."?linkid=".$contentlink_id ?><!--" method="POST" >-->
-<!---->
-<!--            <!--                        Edit Control-->-->
-<!--            --><?php //if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
-<!---->
-<!--                <input type="submit" id="approve" name="submit_approve" value="Submit For Approval" class="btn-primary pull-right" >-->
-<!---->
-<!--            --><?php //} elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') {
-//                if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval') { ?>
-<!--                    <input type="submit" id="approve" name="approve" value="Approve"-->
-<!--                           class="btn-primary pull-right">-->
-<!--                    <input type="submit" id="reject" name="reject" value="Reject"-->
-<!--                           class="btn-primary pull-right">-->
-<!--                --><?php //}
-//            } ?>
-<!--        </form>-->
     </div>
 </div>
 

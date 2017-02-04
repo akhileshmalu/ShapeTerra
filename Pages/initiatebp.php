@@ -43,15 +43,15 @@ $resultay = $mysqli->query($sqlay);
  */
 
 $bpcontent = array(
+    array("Executive Summary","executivesum.php"),
     array("Mission, Vision & Values","mvv.php"),
     array("Unit Goals","unitgoaloverview.php"),
     array("Goal Management & Outcomes","goaloutcomeshome.php"),
+    array("Collaborations","collaborations.php"),
+    array("Faculty Awards","facultyawards.php"),
     array("Academic Programs","academicPrograms.php"),
     array("Alumni & Development","alumniDevelopment.php"),
-    array("Collaborations","collaborations.php"),
     array("Campus Climate","campusClimate.php"),
-    array("Executive Summary","executivesum.php"),
-    array("Faculty Awards","facultyawards.php"),
     array("Faculty Info","facultyInfo.php"),
     array("Initiatives & Observations","initiatives.php"),
 );
@@ -198,7 +198,7 @@ require_once("../Resources/Includes/menu.php");
             <h2>1. Select Academic Year <span class="icon" data-toggle="tooltip" data-placement="top"
             title="Tooltip on top">&#xe009;</span></h2>
                 <div class="col-xs-3">
-                    <select  name="AY" class="col-xs-4 form-control" id="AYgoal" style="padding: 0px !important; background-color: #fff !important;">
+                    <select  name="AY" class="col-xs-4 form-control" id="AYname" style="padding: 0px !important; background-color: #fff !important;">
                         <option value=""></option>
                         <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
                             <option value="<?php echo $rowsay[1]; ?>"><?php echo $rowsay[1]; ?></option>
