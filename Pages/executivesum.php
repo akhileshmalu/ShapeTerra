@@ -268,7 +268,7 @@ require_once("../Resources/Includes/menu.php");
                                 not include a portrait, the official Univerisity Seal will be printed in its place.
                                 <small>
                         </p>
-                        <input id="deans-portrait-logo" name="deans-portrait-logo" type="file" class="form-control">
+                        <input id="deans-portrait-logo" name="deans-portrait-logo" type="file" onchange="selectorfile(this)" class="form-control">
                     </div>
                     <h3>Dean's Signature</h3>
                     <div id="deans-signature" class="form-group form-indent">
@@ -277,7 +277,7 @@ require_once("../Resources/Includes/menu.php");
                                 appear. Image should be sized to 250 x 75 pixels in JPG, GIF, or PNG format.
                             </small>
                         </p>
-                        <input id="deans-signature-logo" name="deans-signature-logo" type="file" class="form-control">
+                        <input id="deans-signature-logo" name="deans-signature-logo" type="file" onchange="selectorfile(this)" class="form-control">
                     </div>
                     <h3>College/School Companion Logo</h3>
                     <div id="deans-college-school" class="form-group form-indent">
@@ -286,7 +286,7 @@ require_once("../Resources/Includes/menu.php");
                                 instructions provided at http://sc.edu/toolbox/companion_Logos.php.
                             </small>
                         </p>
-                        <input id="deans-college-school-logo" name="deans-college-school-logo" type="file" class="form-control">
+                        <input id="deans-college-school-logo" name="deans-college-school-logo" type="file" onchange="selectorfile(this)" class="form-control">
                     </div>
 
                     <button id="next-tab" type="button"
@@ -356,5 +356,21 @@ require_once("../Resources/Includes/footer.php");
             $(window).attr('location', 'bphome.php?ayname=' + ayname + '&ou_abbrev=' + ouabbrev)
         }
     });
+    function selectorfile(selected) {
+
+        var doc, image;
+        var filename = $(selected).val();
+        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
+        var allowedext = ['gif','jpeg','png'];
+
+        if (filename.length > 0) {
+            if (allowedext.indexOf(extention) !== -1) {
+                alert(filename.substr(12) + " is selected.");
+            } else {
+                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
+                $(selected).val('');
+            }
+        }
+    }
 </script>
 

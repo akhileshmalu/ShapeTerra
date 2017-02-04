@@ -260,7 +260,6 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     });
 
-    var _URL = window.URL || window.webkitURL;
 
     function selectorfile(selected) {
 
@@ -271,17 +270,8 @@ require_once("../Resources/Includes/footer.php");
 
         if (filename.length > 0) {
             if (allowedext.indexOf(extention) !== -1) {
-                if ((doc = selected.file[0])) {
-                    image = new Image();
-                    image.onload = function () {
-                        alert(this.width + " "+ this.height);
-                    };
-                    image.src = _URL.createObjectURL(doc);
-                }
-                    alert(filename.substr(12) + " is selected.");
-
-
-            } else{
+                alert(filename.substr(12) + " is selected.");
+            } else {
                 alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
                 $(selected).val('');
             }

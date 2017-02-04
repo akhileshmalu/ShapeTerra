@@ -90,7 +90,7 @@ function download($filename){
 	-->
 	<div id="user-name" class="dropdown">
 	  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	    <span class='icon'>&#xe056;</span><?php echo substr($_SESSION['login_fname'],0,1).", ".$_SESSION['login_lname']; ?>
+	    <span class='icon'>&#xe056;</span><?php echo substr($_SESSION['login_fname'],0,1)." ".$_SESSION['login_lname']; ?>
 	    <span class="caret"></span>
 	  </button>
 	

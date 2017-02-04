@@ -341,7 +341,7 @@ require_once("../Resources/Includes/menu.php");
                         { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
                           return $("<a>").attr("href", "../Pages/goaloutcome.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
                         }, width: "auto" },
-                        { title: "Goal Status", itemTemplate: function(value,item){
+                        { title: "Goal Reporting Status", itemTemplate: function(value,item){
                           var status;
                           for (var i = 0; i < statusArray.length; i++){
                             if (statusArray[i][0] == item.ID_UNIT_GOAL){

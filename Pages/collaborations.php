@@ -246,8 +246,20 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     });
     function selectorfile(selected) {
-        var b = $(selected).val().substr(12);
-        alert(b + " is selected.");
+
+        var doc, image;
+        var filename = $(selected).val();
+        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
+        var allowedext = ['pdf'];
+
+        if (filename.length > 0) {
+            if (allowedext.indexOf(extention) !== -1) {
+                alert(filename.substr(12) + " is selected.");
+            } else {
+                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
+                $(selected).val('');
+            }
+        }
     }
 </script>
 <script src="../Resources/Library/js/tabAlert.js"></script>

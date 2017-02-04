@@ -236,7 +236,8 @@
   $pdf->setFont('Arial','',16);
   $pdf->Write(5,"Blueprint for Academic Excellence");
   $pdf->Ln(7);
-  $pdf->Write(5,$ouName);
+
+$pdf->Write(5,$ouName);
   $pdf->Ln(7);
   $pdf->Write(5,$selectedYear);
 
@@ -319,7 +320,8 @@
   $pdf->Line(195, 15, 11, 15);
 
   //body
-  $getMissionStatement = $connection->prepare("SELECT * FROM `BP_MissionVisionValues` WHERE OU_ABBREV = ? AND UNIT_MVV_AY = ?");
+//
+  $getMissionStatement = $connection->prepare("SELECT * FROM BP_MissionVisionValues where OU_ABBREV = ? AND ID_UNIT_MVV in (select max(ID_UNIT_MVV) from BP_MissionVisionValues where UNIT_MVV_AY = ? group by OU_ABBREV)");
   $getMissionStatement->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
   $getMissionStatement->bindParam(2,$selectedYear,PDO::PARAM_STR);
   $getMissionStatement->execute();
@@ -333,7 +335,7 @@
   $pdf->setX(15);
   $pdf->SetFont('Arial','',11);
   $pdf->Ln(5);
-  $pdf->Write(5,$data["MISSION_STATEMENT"]);
+  $pdf->Write(5,mybr2nl($data["MISSION_STATEMENT"]));
   $pdf->setX(30);
   $pdf->Ln(5);
   $pdf->Write(5,$data["MISSION_DATE_UPDATED"]);
@@ -346,7 +348,7 @@
   $pdf->setX(15);
   $pdf->SetFont('Arial','',11);
   $pdf->Ln(5);
-  $pdf->Write(5,$data["VISION_STATEMENT"]);
+  $pdf->Write(5,mybr2nl($data["VISION_STATEMENT"]));
   $pdf->setX(30);
   $pdf->Ln(5);
   $pdf->Write(5,$data["VISION_DATE_UPDATED"]);
@@ -359,7 +361,7 @@
   $pdf->setX(15);
   $pdf->SetFont('Arial','',11);
   $pdf->Ln(5);
-  $pdf->Write(5,$data["VALUES_STATEMENT"]);
+  $pdf->Write(5,mybr2nl($data["VALUES_STATEMENT"]));
 
   $pdf->AddPage();
 
