@@ -102,28 +102,28 @@ $resulttopicareas = $mysqli -> query($sqltopicareas);
 
 if(isset($_POST['save'])) {
 
-    $funcname = $_POST['functionalname'];
-    $techname = $_POST['technicalname'];
-    $syslabel = $_POST['syslabel'];
+    $funcname = mynl2br($_POST['functionalname']);
+    $techname = mynl2br($_POST['technicalname']);
+    $syslabel = mynl2br($_POST['syslabel']);
     $printlabel = $_POST['printlabel'];
     $dataclass = $_POST['dataclass'];
-    $basicmean = nl2br($_POST['basicmean']);
-    $userinst = nl2br($_POST['userinstr']);
+    $basicmean = mynl2br($_POST['basicmean']);
+    $userinst = mynl2br($_POST['userinstr']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
     foreach ($bptopic as $item){
         $bptopicstring .=$item.',';
     }
-    $usage = nl2br($_POST['usage']);
-    $datasource = nl2br($_POST['datasource']);
+    $usage = mynl2br($_POST['usage']);
+    $datasource = mynl2br($_POST['datasource']);
     $resparty = $_POST['resparty'];
     $contact = $_POST['contactperson'];
     $datatype = $_POST['datatype'];
-    $datatrans = nl2br($_POST['datatrans']);
-    $valuemand = nl2br($_POST['valuemand']);
-    $permitvalue = nl2br($_POST['permitvalue']);
-    $constraint = nl2br($_POST['constraint']);
-    $notes = nl2br($_POST['notes']);
+    $datatrans = mynl2br($_POST['datatrans']);
+    $valuemand = mynl2br($_POST['valuemand']);
+    $permitvalue = mynl2br($_POST['permitvalue']);
+    $constraint = mynl2br($_POST['constraint']);
+    $notes = mynl2br($_POST['notes']);
     $defauthorfname = $_POST['defauthorfname'];
     $defauthorlname = $_POST['defauthorlname'];
 
@@ -144,30 +144,31 @@ VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTH
 
 if(isset($_POST['directsave'])) {
 
-    $funcname = $_POST['functionalname'];
-    $techname = $_POST['technicalname'];
-    $syslabel = $_POST['syslabel'];
+    $funcname = mynl2br($_POST['functionalname']);
+    $techname = mynl2br($_POST['technicalname']);
+    $syslabel = mynl2br($_POST['syslabel']);
     $printlabel = $_POST['printlabel'];
     $dataclass = $_POST['dataclass'];
-    $basicmean = nl2br($_POST['basicmean']);
-    $userinst = nl2br($_POST['userinstr']);
+    $basicmean = mynl2br($_POST['basicmean']);
+    $userinst = mynl2br($_POST['userinstr']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
     foreach ($bptopic as $item){
         $bptopicstring .=$item.',';
     }
-    $usage = nl2br($_POST['usage']);
-    $datasource = nl2br($_POST['datasource']);
+    $usage = mynl2br($_POST['usage']);
+    $datasource = mynl2br($_POST['datasource']);
     $resparty = $_POST['resparty'];
     $contact = $_POST['contactperson'];
     $datatype = $_POST['datatype'];
-    $datatrans = nl2br($_POST['datatrans']);
-    $valuemand = nl2br($_POST['valuemand']);
-    $permitvalue = nl2br($_POST['permitvalue']);
-    $constraint = nl2br($_POST['constraint']);
-    $notes = nl2br($_POST['notes']);
+    $datatrans = mynl2br($_POST['datatrans']);
+    $valuemand = mynl2br($_POST['valuemand']);
+    $permitvalue = mynl2br($_POST['permitvalue']);
+    $constraint = mynl2br($_POST['constraint']);
+    $notes = mynl2br($_POST['notes']);
     $defauthorfname = $_POST['defauthorfname'];
     $defauthorlname = $_POST['defauthorlname'];
+
 
     $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,LABEL_SYSTEM,LABEL_PRINT,STATUS, BASIC_MEANING,USER_INSTRCTN, TIME_BASIS_OUTCOME, 
 INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON, 
@@ -186,30 +187,31 @@ VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTH
 
 if(isset($_POST['update'])) {
 
-    $funcname = $_POST['functionalname'];
-    $techname = $_POST['technicalname'];
-    $syslabel = $_POST['syslabel'];
+    $funcname = mynl2br($_POST['functionalname']);
+    $techname = mynl2br($_POST['technicalname']);
+    $syslabel = mynl2br($_POST['syslabel']);
     $printlabel = $_POST['printlabel'];
     $dataclass = $_POST['dataclass'];
-    $basicmean = nl2br($_POST['basicmean']);
-    $userinst = nl2br($_POST['userinstr']);
+    $basicmean = mynl2br($_POST['basicmean']);
+    $userinst = mynl2br($_POST['userinstr']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
     foreach ($bptopic as $item){
         $bptopicstring .=$item.',';
     }
-    $usage = nl2br($_POST['usage']);
-    $datasource = nl2br($_POST['datasource']);
+    $usage = mynl2br($_POST['usage']);
+    $datasource = mynl2br($_POST['datasource']);
     $resparty = $_POST['resparty'];
     $contact = $_POST['contactperson'];
     $datatype = $_POST['datatype'];
-    $datatrans = nl2br($_POST['datatrans']);
-    $valuemand = nl2br($_POST['valuemand']);
-    $permitvalue = nl2br($_POST['permitvalue']);
-    $constraint = nl2br($_POST['constraint']);
-    $notes = nl2br($_POST['notes']);
+    $datatrans = mynl2br($_POST['datatrans']);
+    $valuemand = mynl2br($_POST['valuemand']);
+    $permitvalue = mynl2br($_POST['permitvalue']);
+    $constraint = mynl2br($_POST['constraint']);
+    $notes = mynl2br($_POST['notes']);
     $defauthorfname = $_POST['defauthorfname'];
     $defauthorlname = $_POST['defauthorlname'];
+
 
     $sqladdelem = "Update DataDictionary  SET DATA_ELMNT_FUNC_NAME = '$funcname', DATA_ELEMENT_TECH_NAME= '$techname',LABEL_SYSTEM = '$syslabel', LABEL_PRINT = '$printlabel', BASIC_MEANING = '$basicmean',
  USER_INSTRCTN = '$userinst',TIME_BASIS_OUTCOME = '$timebasis', INTERP_USAGE = '$usage', DATA_CLASSIFICATION = '$dataclass', DATA_SOURCE = '$datasource',

@@ -21,7 +21,6 @@ require_once("grid.php");
             "MOD_TIMESTAMP" => "DATE_FORMAT(IR_SU_UploadStatus.LAST_MODIFIED_ON,'%Y-%m-%d %H:%i')",
             "STATUS_UPLOADFILE" => "IR_SU_UploadStatus.STATUS_UPLOADFILE",
             "ID_UPLOADFILE" => "IR_SU_UploadStatus.ID_UPLOADFILE",
-            "OU_ABBREV" => "IR_SU_UploadStatus.OU_ABBREV",
             "LINK_UPLOADFILE" => "IR_SU_UploadStatus.LINK_UPLOADFILE",
             "FILE_AUTHOR" => "CONCAT(PermittedUsers.LNAME,', ',PermittedUsers.FNAME)",
 

@@ -194,7 +194,7 @@ require_once ("../Includes/connect.php");
   $pdf->Write(5,$selectedYear);
 
   //introduction
-  $getExecutiveInformation = $connection->prepare("SELECT * FROM `AC_ExecSum` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+  $getExecutiveInformation = $connection->prepare("SELECT * FROM `AC_ExecSum` where OU_ABBREV = ? AND ID_EXECUTIVE_SUMMARY in (select max(ID_EXECUTIVE_SUMMARY) from AC_ExecSum where OUTCOMES_AY = ? group by OU_ABBREV); ");
   $getExecutiveInformation->bindParam(1,$ouAbbrev,PDO::PARAM_STR);
   $getExecutiveInformation->bindParam(2,$selectedYear,PDO::PARAM_STR);
   $getExecutiveInformation->execute();

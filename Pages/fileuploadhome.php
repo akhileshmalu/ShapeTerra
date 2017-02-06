@@ -75,7 +75,6 @@ require_once("../Resources/Includes/menu.php");
 
                     <th col="NAME_UPLOADFILE" href="{{columns.LINK_UPLOADFILE}}?linkid={{columns.ID_UPLOADFILE}}"  width="225" type="text">Section</th>
                     <th col="STATUS_UPLOADFILE" width="125" type="text">Status</th>
-                    <th col="OU_ABBREV" width="125" type="text">Unit</th>
                     <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
                     <th col="FILE_AUTHOR"  width="130" type="text">Last Modified By</th>
 
