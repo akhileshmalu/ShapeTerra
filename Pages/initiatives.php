@@ -219,11 +219,6 @@ require_once("../Resources/Includes/menu.php");
                     <p class="status"><small>Describe innovations, happy accidents, good news, etc. that occurred within your unit during the Academic Year, not noted elsewhere in your reporting.</small></p>
                     <textarea  name="reputation" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['REPUTATION_ENHANCE']); ?></textarea>
                 </div>
-                <h3>Cool Stuff</h3>
-                <div id="coolstuff" class="form-group form-indent">
-                    <p class="status"><small>Describe your unit's assessment of affordability and efforts to address affordability during the Academic Year.</small></p>
-                    <textarea  name="coolstuff" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['COOL_STUFF']); ?></textarea>
-                </div>
                 <h3>Challenges</h3>
                 <div id="challenge" class="form-group form-indent">
                     <p class="status"><small>Describe challenges and resource needs you anticipate for the current and upcoming Academic Years, not noted elsewhere in your reporting - or which merit additional attention.</small></p>

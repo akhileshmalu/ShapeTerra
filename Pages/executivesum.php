@@ -349,6 +349,7 @@ require_once("../Resources/Includes/footer.php");
 ?>
 <script src="../Resources/Library/js/tabChange.js"></script>
 <script>
+
     $('.cancelbox').on("click", function () {
         var choice = confirm("Are you sure you want to cancel");
         if (choice == true) {

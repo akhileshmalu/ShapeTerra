@@ -32,6 +32,7 @@ $bpayname =$_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
+$unigoallinkname = null;
 
 if ($ouid == 4) {
     $ouabbrev = $_SESSION['bpouabbrev'];

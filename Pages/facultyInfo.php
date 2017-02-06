@@ -192,13 +192,16 @@ require_once("../Resources/Includes/menu.php");
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac)</small></p>
                 <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']); ?></textarea>
             </div>
-            <h3>Creative Activity</h3>
+            <h3>Other Activity</h3>
             <div id="createact" class="form-group form-indent">
                 <p class="status"><small>Optional.  List and describe significant artistic, creative, and performance activities of faculty in your unit during the Academic Year.  List by each individual's last name, first name, name of activity, and date (month and year are sufficient).
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac).</small></p>
 
                 <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']); ?></textarea>
             </div>
+
+            
+            
             <h3>Supplemental Faculty Info</h3>
             <div id="suppfacinfo" class="form-group form-indent">
                 <p class="status"><small>Optional.  You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide additional detail on Faculty for the Academic Year.  This document will appear as an Appendix in the Draft Report and Final Report.</small></p>
