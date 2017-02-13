@@ -13,6 +13,8 @@ if(isset($_POST['ok'])) {
 
     echo htmlspecialchars_decode($data);
 }
+
+//echo phpinfo();
 ?>
 
 <!DOCTYPE html>

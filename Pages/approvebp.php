@@ -7,14 +7,14 @@ if(!$_SESSION['isLogged']) {
 require_once("../Resources/Includes/connect.php");
 $aysubmit = array();
 $ayname = "";
-$error = array();
+$message = array();
 
 //SQL query variables
 global $sqlcreatebp;
-$sqlcreatebp = "";
-$visionstatement = "";
-$missionstatement = "";
-$valuestatement = "";
+$sqlcreatebp = null;
+$visionstatement = null;
+$missionstatement = null;
+$valuestatement = null;
 
 
 // Variable for selecting Org Unit in Broadcast table.
@@ -110,7 +110,7 @@ if (isset($_POST['approve'])) {
 
     if(!isset($_POST['goaltitlelist'])) {
 
-        $error[1]="Please select a Goal to submit";
+        $message[1]="Please select a Goal to submit";
         $errorflag = 1;
     }
 
@@ -146,9 +146,9 @@ if (isset($_POST['approve'])) {
 
         if ($mysqli->multi_query($sqlcreatebp)) {
 
-            $error[0] = "BluePrint has been successfully approved.";
+            $message[0] = "BluePrint has been successfully approved.";
         } else {
-            $error[0] = "BluePrint could not be  approved.";
+            $message[0] = "BluePrint could not be  approved.";
 
         }
 
@@ -185,7 +185,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" class="end btn-primary">Close</button>
     </div>
 <?php } ?>

@@ -1,20 +1,37 @@
 <?php
 session_start();
+
+require_once ("../Resources/Includes/connect.php");
+
+// Restrict direct access to Page without Login
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
-}										  	//session Started
+}
 
-require_once ("../Resources/Includes/connect.php");          	//Instance of Object class-connection Created
-$email = $_SESSION['login_email'];					  			//Session Variable store
-$sqlac = " SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP,OU_TYPE FROM PermittedUsers 
- INNER JOIN Hierarchy ON ID_HIERARCHY = PermittedUsers.USER_OU_MEMBERSHIP where NETWORK_USERNAME ='$email' ";														//Query to Database
-$resultac = $mysqli->query($sqlac);                             	// Query Execution
-$rowsac = $resultac -> fetch_assoc();								//Fetching to Show on Account page
+$email = $_SESSION['login_email'];
+
+try
+{
+    $sqlac = "SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP,OU_TYPE FROM PermittedUsers 
+ INNER JOIN Hierarchy ON ID_HIERARCHY = PermittedUsers.USER_OU_MEMBERSHIP WHERE NETWORK_USERNAME = :email";
+
+    $resultac = $connection->prepare($sqlac);
+    $resultac->bindParam(':email', $email, PDO::PARAM_STR);
+    $resultac->execute();
+}
+catch (PDOException $e)
+{
+//    SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
+
+$rowsac = $resultac->fetch(PDO::FETCH_ASSOC);
 $ouid = $rowsac['USER_OU_MEMBERSHIP'];
 $outype = $rowsac['OU_TYPE'];
+
 /*
- * Sessoin variables.
+ * Session variable Assignment.
  */
 $_SESSION['login_fname'] = $rowsac['FNAME'];
 $_SESSION['login_lname'] = $rowsac['LNAME'];
@@ -32,56 +49,54 @@ $notBackToDashboard = true;
  * SQL TO DISPLAY BLUEPRINTS ON PAGE
  */
 if ($outype == "Academic Unit") {
-    $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE BROADCAST_OU ='$ouid' ORDER BY BROADCAST_AY ASC ; ";
-    $resultbpunit = $mysqli->query($sqlbpunit);
+
+    try
+    {
+        $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR 
+WHERE BROADCAST_OU = :ouid ORDER BY BROADCAST_AY ASC;";
+        $resultbpunit = $connection->prepare($sqlbpunit);
+        $resultbpunit->bindParam(':ouid', $ouid, PDO::PARAM_INT);
+        $resultbpunit->execute();
+    }
+    catch (PDOException $e)
+    {
+//        SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
+    }
+
+
 } elseif ($outype == "Administration") {
-    $sqldistinctay = "SELECT DISTINCT(BROADCAST_AY) FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR ORDER BY BROADCAST_AY ASC ; ";
-    $resultdistinctay = $mysqli->query($sqldistinctay);
+
+    try
+    {
+        $sqldistinctay = "SELECT DISTINCT(BROADCAST_AY) FROM `broadcast` INNER JOIN PermittedUsers 
+ON PermittedUsers.ID_STATUS = broadcast.AUTHOR ORDER BY BROADCAST_AY ASC;";
+        $resultdistinctay = $connection->prepare($sqldistinctay);
+        $resultdistinctay->execute();
+    }
+    catch (PDOException $e)
+    {
+//        SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
+    }
+
 }
-
-
-
-// Time Setting Check -
-// $script_tz = date_default_timezone_get();
-
-// if (strcmp($script_tz, ini_get('date.timezone'))){
-//     echo 'Script timezone differs from ini-set timezone.'.ini_get('date.timezone');
-// } else {
-//     echo 'Script timezone and ini-set timezone match.';
-// }
 
 require_once("../Resources/Includes/header.php");
 ?>
 
 <!--
-below headers for task board design purpose
+below headers for task board OpenJsGrid
 -->
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrapTable.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
 <link rel="stylesheet" href="Css/grid.css" title="openJsGrid"/>
 
-<style>
-    div.gridWrapper .columns .cell.headerCell {
-        background: -webkit-linear-gradient(top, #fff 0%, #e4e4e4 100%);
-    }
-
-    #list ul.items li{
-        padding-top: 12px;
-        padding-bottom: 12px;
-        font-size: 14px;
-    }
-
-</style>
-
-<!--
-  Above Headers are for Task Board design
--->
 
 <?php
 require_once("../Resources/Includes/menu.php");
 ?>
-
 
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
@@ -109,31 +124,10 @@ require_once("../Resources/Includes/menu.php");
                 <input type="text" class="form-control" class="col-xs-4" id="search-box" placeholder="Search"
                        aria-describedby="basic-addon1">
             </div>
-            <!--            <h1 class="box-title">Select an Academic Year</h1>-->
-            <!--            <div id="taskboard" class="">-->
-            <!--                <table class="taskboard" action="taskboard/accountajax.php" title="TaskBoard">-->
-            <!--                    <tr>-->
-            <!--                        <th col="BROADCAST_AY" width="125" type="text"-->
-            <!--                            href="--><?php //echo '../Pages/bphome.php?ayname={{value}}&ou_abbrev={{columns.OU_ABBREV}}&id={{columns.ID}}'; ?><!--">-->
-            <!--                            Academic Year-->
-            <!--                        </th>-->
-            <!--                        <th col="BROADCAST_DESC" type="text">Description</th>-->
-            <!--                        --><?php //if ($outype == "Administration") { ?>
-            <!--                            <th col="BROADCAST_STATUS" type="text">Status</th>-->
-            <!--                        --><?php //} else { ?>
-            <!--                            <th col="BROADCAST_STATUS_OTHERS" type="text">Status</th>-->
-            <!--                        --><?php //} ?>
-            <!--                        <th col="AUTHOR" type="text">Last Edited On</th>-->
-            <!--                        <th col="LastModified" type="text">Last Modified By</th>-->
-            <!--                    </tr>-->
-            <!--                </table>-->
-            <!--            </div>-->
 
-            <!-- Possible new list card style -->
-
-
-            <?php while ($rowsbpunit = $resultbpunit->fetch_assoc()) : ?>
-                <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] . '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>">
+            <?php while ($rowsbpunit = $resultbpunit->fetch(PDO::FETCH_ASSOC)) : ?>
+                <a href="<?php echo 'bphome.php?ayname='.$rowsbpunit['BROADCAST_AY'].'&ou_abbrev='.
+                    $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>">
                     <div id="" class="col-xs-10 col-xs-offset-1 card">
                         <div id="ay-year" class="col-xs-3">
                             <h1><?php echo $rowsbpunit['BROADCAST_AY']; ?></h1>
@@ -162,15 +156,14 @@ require_once("../Resources/Includes/menu.php");
                 <input type="text" class="form-control" class="col-xs-4" id="search-box" placeholder="Search"
                        aria-describedby="basic-addon1">
             </div>
-            <?php while ($rowsdistinctay = $resultdistinctay->fetch_assoc()) { ?>
+            <?php while ($rowsdistinctay = $resultdistinctay->fetch(PDO::FETCH_ASSOC)) { ?>
 
                 <a href="#" onclick="return false;">
                     <div id="<?php echo $rowsdistinctay['BROADCAST_AY']; ?>"
                          class="col-xs-11 col-xs-offset-0 card provost-card">
                         <div class="col-xs-4">
-                            <h1><?php echo $rowsdistinctay['BROADCAST_AY']; ?><span id="open" class="icon">T</span><span
-                                    id="close" class="icon hidden">W</span></h1>
-
+                            <h1><?php echo $rowsdistinctay['BROADCAST_AY']; ?><span id="open" class="icon">T</span>
+                                <span id="close" class="icon hidden">W</span></h1>
                         </div>
                     </div>
                 </a>
@@ -184,15 +177,30 @@ require_once("../Resources/Includes/menu.php");
                             <li class="col-xs-3">Status</li>
                         </ul>
                         <?php
-                        $ay = $rowsdistinctay['BROADCAST_AY'];
-                        $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE BROADCAST_AY = '$ay' ORDER BY BROADCAST_AY ASC ; ";
-                        $resultbpunit = $mysqli->query($sqlbpunit);
-                        while ($rowsbpunit = $resultbpunit->fetch_assoc()) { ?>
-                            <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] . '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>">
+                        try
+                        {
+                            $ay = $rowsdistinctay['BROADCAST_AY'];
+
+                            $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON  PermittedUsers
+                            .ID_STATUS = broadcast.AUTHOR WHERE BROADCAST_AY = :ay ORDER BY BROADCAST_AY ASC;";
+                            $resultbpunit = $connection->prepare($sqlbpunit);
+                            $resultbpunit->bindParam(':ay', $ay, PDO::PARAM_STR);
+                            $resultbpunit->execute();
+                        }
+                        catch (PDOException $e)
+                        {
+//                            SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+                            error_log($e->getMessage());
+                        }
+                        while ($rowsbpunit = $resultbpunit->fetch(PDO::FETCH_ASSOC)) { ?>
+                            <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] .
+                                '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>">
                                 <ul class="items">
                                     <li class="col-xs-4"><?php echo $rowsbpunit['BROADCAST_DESC']; ?></li>
-                                    <li class="col-xs-3"><?php echo $rowsbpunit['LNAME'] . ", " . $rowsbpunit['FNAME']; ?></li>
-                                    <li class="col-xs-2"><?php echo date("m/d/Y", strtotime($rowsbpunit['LastModified'])); ?></li>
+                                    <li class="col-xs-3">
+                                        <?php echo $rowsbpunit['LNAME'].", ".$rowsbpunit['FNAME']; ?></li>
+                                    <li class="col-xs-2">
+                                        <?php echo date("m/d/Y", strtotime($rowsbpunit['LastModified']));?></li>
                                     <li class="col-xs-3"><?php echo $rowsbpunit['BROADCAST_STATUS']; ?></li>
                                 </ul>
                             </a>
@@ -220,6 +228,7 @@ require_once("../Resources/Includes/menu.php");
 <?php
 require_once("../Resources/Includes/footer.php");
 ?>
+
 <script src="../Resources/Library/js/search.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
 <script src="../Resources/Library/js/root.js"></script>

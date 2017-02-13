@@ -13,7 +13,7 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 $errorflag =0;
 $notBackToDashboard = true;
 

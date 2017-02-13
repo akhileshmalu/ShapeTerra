@@ -4,7 +4,7 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 $errorflag =0;
 
 require_once("../Resources/Includes/connect.php");
@@ -19,11 +19,11 @@ $resultay = $mysqli->query($sqlay);
 if (isset($_POST['submit'])) {
 
     if (!isset($_POST['startdate'])) {
-        $error[0] = "Please select a Start date for Academic Year";
+        $message[0] = "Please select a Start date for Academic Year";
         $errorflag = 1;
     }
     if ($_POST['startdate'] >= $_POST['enddate']) {
-        $error[0] = "End date should be older than Start date.";
+        $message[0] = "End date should be older than Start date.";
         $errorflag = 1;
     }
 
@@ -36,9 +36,9 @@ if (isset($_POST['submit'])) {
 
         $sql = "update AcademicYears set ACAD_YEAR_DATE_BEGIN ='$startdate', ACAD_YEAR_DATE_END ='$enddate',DATE_CENSUS ='$censusdate' where ID_ACAD_YEAR = '$ayid' ";
         if ($mysqli->query($sql)) {
-            $error[0] = "Academic Year Updated Successfully.";
+            $message[0] = "Academic Year Updated Successfully.";
         } else {
-            $error [0] = "Academic Year Could not be updated.";
+            $message [0] = "Academic Year Could not be updated.";
         }
     }
 
@@ -64,7 +64,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="account.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>

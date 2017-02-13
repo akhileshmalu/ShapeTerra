@@ -5,25 +5,14 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+
+require_once ("../Resources/Includes/connect.php");
+
+$message = array();
 $errorflag = 0;
 $i = 0;
 $index = 0;
 $count = 1;
-
-
-$content_id = $_GET['linkid'];
-$outype = $_SESSION['login_outype'];
-$FUayname = $_SESSION['FUayname'];
-$ouid = $_SESSION['login_ouid'];
-$time = date('Y-m-d H:i:s');
-$author = $_SESSION['login_userid'];
-$BackToFileUploadHome = true;
-$discardid = array();
-
-require_once ("../Resources/Includes/connect.php");
-
-
 $csv = array();
 $tablefileds = array();
 $tablevalue = array();
@@ -35,22 +24,44 @@ $sumclinicfac = array();
 $sumotherfac = array();
 $datavalues = array();
 
+$content_id = $_GET['linkid'];
+$outype = $_SESSION['login_outype'];
+$FUayname = $_SESSION['FUayname'];
+$ouid = $_SESSION['login_ouid'];
+$time = date('Y-m-d H:i:s');
+$author = $_SESSION['login_userid'];
+$BackToFileUploadHome = true;
+$discardid = array();
 
-/*
- * File Upload Status & Details.
- */
-$sqlfucontent = "select * from IR_SU_UploadStatus 
-LEFT JOIN PermittedUsers ON  PermittedUsers.ID_STATUS= IR_SU_UploadStatus.LAST_MODIFIED_BY where  IR_SU_UploadStatus.ID_UPLOADFILE= '$content_id' ; ";
-$resultfucontent = $mysqli->query($sqlfucontent);
-$rowsfucontent = $resultfucontent ->fetch_assoc();
+// File Upload Status & Details.
+try
+{
+    $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON 
+PermittedUsers.ID_STATUS =IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id ;";
+    $resultfucontent = $connection->prepare($sqlfucontent)->execute(['content_id'=> $content_id]);
+}
+catch (PDOException $e)
+{
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
+$rowsfucontent = $resultfucontent ->fetch(4);
 $tablename = $rowsfucontent['NAME_UPLOADFILE'];
 
-/*
- * Display Of Values in validation from IR_AC_DiversityStudent Table of Database
- */
-$sqldatadisplay = "SELECT * FROM IR_AC_FacultyPop where ID_AC_FACULTY_POPULATION in (select max(ID_AC_FACULTY_POPULATION) from IR_AC_FacultyPop where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
-$resultdatadisplay = $mysqli->query($sqldatadisplay);
-$rowsdatadisplay = $resultdatadisplay ->fetch_assoc();
+// Display Of Values in validation from IR_AC_DiversityStudent Table of Database
+try
+{
+    $sqldatadisplay = "SELECT * FROM IR_AC_FacultyPop WHERE ID_AC_FACULTY_POPULATION IN
+ (SELECT MAX(ID_AC_FACULTY_POPULATION) FROM IR_AC_FacultyPop WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
+    $resultdatadisplay = $connection->prepare($sqldatadisplay);
+    $resultdatadisplay->execute(['FUayname' => $FUayname]);
+}
+catch (PDOException $e)
+{
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
+$rowsdatadisplay = $resultdatadisplay->fetch(4);
 
 
 //$dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
@@ -215,40 +226,49 @@ SELECT 'USCAAU' AS OU,'$FUayname' AS AY,'$author' AS AUTHOR,'$time' AS MOD_Time,
                         $mysqli->query($sqlupload);
 
 
-                        $error[0] = "Data Uploaded Successfully.";
+                        $message[0] = "Data Uploaded Successfully.";
 
                     } else {
 
-                        $error[0] = "Error in Data. Upload Failed.";
+                        $message[0] = "Error in Data. Upload Failed.";
 
                     }
 
                 } else {
 
-                    $error[0] = "Faculty Data Composition does not match. Please check data & reload.";
+                    $message[0] = "Faculty Data Composition does not match. Please check data & reload.";
 
                 }
 
                 fclose($handle);
             }
         } else {
-            $error[0] = "Please select only csv format File";
+            $message[0] = "Please select only csv format File";
         }
     } else {
-        $error[0] = "Error in Uploading File. ";
+        $message[0] = "Error in Uploading File. ";
     }
 
 }
 
 if(isset($_POST['save'])) {
 
-    $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='Complete',LAST_MODIFIED_BY ='$author',LAST_MODIFIED_ON ='$time'  where  IR_SU_UploadStatus.ID_UPLOADFILE = '$content_id'; ";
+    try
+    {
+        $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='Complete',LAST_MODIFIED_BY =:author,
+        LAST_MODIFIED_ON =:timeCurrent WHERE IR_SU_UploadStatus.ID_UPLOADFILE = :content_id;";
 
-
-    if ($mysqli->query($sqlupload)) {
-        $error[0] = "Data Validated Successfully.";
-    } else {
-        $error[0] = "Error in Data validation.Process Failed.";
+        if ($connection->prepare($sqlupload)->execute(['author'=> $author, 'timeCurrent' => $time, 'content_id' =>
+            $content_id])) {
+            $message[0] = "Data Validated Successfully.";
+        } else {
+            $message[0] = "Error in Data validation.Process Failed.";
+        }
+    }
+    catch (PDOException $e)
+    {
+//        SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
     }
 
 }
@@ -270,13 +290,13 @@ if(isset($_POST['error'])) {
         }
 
         if ($mysqli->multi_query($sqldel)) {
-            $error[0] = "Data Deprecated.Please Reload the File";
+            $message[0] = "Data Deprecated.Please Reload the File";
         } else {
-            $error[0] = "Error in Data Deprecation.Process Failed.";
+            $message[0] = "Error in Data Deprecation.Process Failed.";
         }
 
     } else {
-        $error[0] = "Action Failed. Please Retry.";
+        $message[0] = "Action Failed. Please Retry.";
     }
 
 }
@@ -294,7 +314,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="<?php echo '../Pages/fileuploadhome.php?ayname='.$FUayname; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
@@ -318,7 +338,6 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-
         <?php if ($rowsfucontent['STATUS_UPLOADFILE'] == 'No File Provided') { ?>
             <form action="<?php echo "ac_facultypop.php?linkid=" . $content_id ?>" method="post" class=""
                   enctype="multipart/form-data">
@@ -330,17 +349,13 @@ require_once("../Resources/Includes/menu.php");
                         <input id="supinfo" type="file" name="csv" onchange="selectorfile(this)" class="form-control"
                                required>
                     </div>
-                    <!--                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelFUbox pull-left">-->
                     <input type="submit" name="upload" id="upload" class="btn-primary pull-right" value="Upload">
                 </div>
             </form>
         <?php } else{ ?>
-
             <form action="<?php echo "ac_facultypop.php?linkid=" . $content_id ?>" method="post"
                   enctype="multipart/form-data">
-
                 <div id="" style="margin-top: 10px;">
-
                     <label for="validitychk">
                         <small><em>Please review the data table below to confirm values appear as intended.
                                 If you observe any errors you may choose to depricate the file from system.If everything
@@ -351,7 +366,8 @@ require_once("../Resources/Includes/menu.php");
                         <h2 class="data-display">Select Academic Unit to View</h2>
                             <div class="col-xs-3">
                                 <select  name="AY" class="col-xs-4 form-control" id="AYgoal">
-                                    <option value="USC Columbia All Academic Units">USC Columbia All Academic Units</option>
+                                    <option value="USC Columbia All Academic Units">USC Columbia All Academic Units
+                                    </option>
                                     <option value="Other Units">Other Units</option>
                                     <option value="Other Units">Other Units</option>
                                     <option value="Other Units">Other Units</option>
@@ -359,20 +375,11 @@ require_once("../Resources/Includes/menu.php");
                                 </select>
                             </div>
                         </form>
-
-
-
                         <div id="display" class="col-xs-12">
-
-                            
                             <h2 class="data-display">Display Data - Table Name: <?php echo $tablename; ?></h2>
-
                             <p><b class="garnet">Academic Year:</b>2001</p>
-
                             <p><b class="garnet">College/School:</b>CEC</p>
-
                             <p><b class="garnet">Outcomes Author:</b>Blake Finn</p>
-
                             <p><b class="garnet">Last Modified:</b> <?php echo $rowsdatadisplay['TTF_FTE_PROF_TNR']; ?> </p> 
 
 
@@ -403,15 +410,9 @@ require_once("../Resources/Includes/menu.php");
                                     <td><b class="garnet">Total - Tenure-track Faculty (FTE positions):</b></td>
                                     <td><?php echo $rowsdatadisplay['TTF_FTE_ALL']; ?></td>
                                 </tr>                                
-                            
-
-                            
-          
-
 
                             <tr><td><h2 class="data-display">Research Faculty (FTE Positions)</h2></td></tr>
 
-                            
                             <tr class="indent">
                                 <td><b class="garnet">Research Professor:</b></td>
                                 <td> <?php echo $rowsdatadisplay['RSRCH_FTE_PROF']; ?> </td>
@@ -432,12 +433,9 @@ require_once("../Resources/Includes/menu.php");
                                 <td><b class="garnet">Total - Research Faculty (FTE Positions):</b></td>
                                 <td> <?php echo $rowsdatadisplay['RSRCH_FTE_ALL']; ?> </td>
                             </tr>
-                            
-
 
                            <tr><td ><h2 class="data-display">Clinical/Instructional Faculty (FTE Positions)</h2></td></tr>
 
-                            
                             <tr class="indent">
                                 <td><b class="garnet">Clinical  Professor:</b></td>
                                 <td> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_PROF']; ?> </td>
@@ -446,29 +444,22 @@ require_once("../Resources/Includes/menu.php");
                                 <td><b class="garnet">Clinical  Associate Professor:</b></td>
                                 <td> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_ASSOC_PROF']; ?> </td>
                             </tr>
-
                             <tr class="indent">
                                 <td><b class="garnet">Clinical  Assistant Professor:</b></td>
                                 <td> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_ASSIST_PRO']; ?>  </td>
                             </tr>
-
                             <tr class="indent">
                                 <td><b class="garnet">Instructor/Lecturer:</b></td>
                                 <td> <?php echo $rowsdatadisplay['CIF_FTE_INSTR_LCTR']; ?>  </td>
                             </tr>
-
                             <tr class="indent"><td><br /></td></tr>
-
                             <tr class="indent">
                                 <td><b class="garnet">Total - Clinical/Instructional Faculty (FTE positions):</b></td>
                                 <td> <?php echo $rowsdatadisplay['CIF_FTE_ALL']; ?> </td>
                             </tr>
 
-                            
-
                             <tr><td><h2 class="data-display">Other Faculty</h2></td></tr>
 
-                            
                             <tr class="indent">
                                 <td><b class="garnet">Adjunct Faculty</b></td>
                                 <td><?php echo $rowsdatadisplay['OTHRFAC_PT_ADJUNCT']; ?> </td>
@@ -477,58 +468,42 @@ require_once("../Resources/Includes/menu.php");
                                 <td><b class="garnet">Other Faculty:</b></td>
                                 <td><?php echo $rowsdatadisplay['OTHRFAC_PT_OTHER']; ?> </td>
                             </tr>
-
-                            <tr class="indent"><td><br /></td></tr> 
-
+                            <tr class="indent"><td><br /></td></tr>
                             <tr class="indent">
                                 <td><b class="garnet">Total - Other Faculty:</b></td>
                                 <td><?php echo $rowsdatadisplay['OTHRFAC_ALL']; ?>  </td>
-                            </tr> 
-
+                            </tr>
                             <tr><td><h2 class="data-display">Student Faculty Ratio</h2></td></tr>
 
-                            
                             <tr class="indent">
                                 <td><b class="garnet">Student Faculty Ratio</b></td>
                                 <td><?php echo $rowsdatadisplay['STUDENT_FACULTY_RATIO']; ?> </td>
                             </tr>
-
                             <p>Please Select <strong>Validation Confirmed</strong> to Confirm Uploading If Below Data is Correct.</p>
-
                             </table>
                         </div>
-
 
                         <input type="submit" name="save" id="save" class="btn-primary pull-right"
                                value="Validation Confirmed">
                         <input type="submit" name="error" id="error" class="btn-primary pull-right"
                                value="Error Detected">
-
-
-                        <!--            <input type="submit" name="save" id="save" class="btn-primary pull-right" value="Save">-->
-
                     </div>
-
-
                 </div>
-
             </form>
         <?php } ?>
     </div>
+</div>
+<?php
+//Include Footer
+require_once("../Resources/Includes/footer.php");
+?>
 
-    <?php
-    //Include Footer
-    require_once("../Resources/Includes/footer.php");
-    ?>
+<script src="../Resources/Library/js/cancelbox.js"></script>
 
-    <script src="../Resources/Library/js/cancelbox.js"></script>
-
-    <script type="text/javascript">
-        function selectorfile(selected) {
-            var b = $(selected).val().substr(12);
-            alert(b + " is selected.");
-        }
-
-
-    </script>
+<script type="text/javascript">
+    function selectorfile(selected) {
+        var b = $(selected).val().substr(12);
+        alert(b + " is selected.");
+    }
+</script>
 

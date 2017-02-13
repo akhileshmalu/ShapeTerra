@@ -4,7 +4,7 @@ if(!$_SESSION['isLogged']) {
 	header("location:login.php");
 	die();
 }
-	$error = array();
+	$message = array();
 	$errorflag = 0;
 	$goalstatement="";
 	$goaltitle="";
@@ -19,11 +19,11 @@ if(!$_SESSION['isLogged']) {
 	//        $errorflag = 1;
 	//    }
 	    if (empty($_POST['goaltitle'])) {
-	        $error[0] = " Please enter goal title.";
+	        $message[0] = " Please enter goal title.";
 	        $errorflag = 1;
 	    }
 	    if (empty($_POST['goalstatement'])) {
-	        $error[2] = " Please enter goal statement.";
+	        $message[2] = " Please enter goal statement.";
 	        $errorflag = 1;
 	    }
 
@@ -43,7 +43,7 @@ if(!$_SESSION['isLogged']) {
 	        $sql = "INSERT INTO UniversityGoals(ID_UNIV_GOAL,GOAL_ACAD_YEARS,GOAL_TITLE,GOAL_STATEMENT) VALUES ('$nextid','$ay','$goaltitle','$goalstatement');";
 
 	        if ($mysqli->query($sql)) {
-	            $error[0] = "Goal has been successfully added.";
+	            $message[0] = "Goal has been successfully added.";
 
 
 	        $id= stringtoid($_POST['AY']);
@@ -53,7 +53,7 @@ if(!$_SESSION['isLogged']) {
 	            $mysqli->query($sql);
 
 	        } else {
-	            $error[0] = "Goal could not be added.";
+	            $message[0] = "Goal could not be added.";
 	        }
 
 	    }
@@ -79,7 +79,7 @@ if(!$_SESSION['isLogged']) {
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="bphome.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>

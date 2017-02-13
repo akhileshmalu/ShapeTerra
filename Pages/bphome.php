@@ -1,22 +1,15 @@
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
-
-/*
- * This Page controls Academic BluePrint Home.
- */
-
 session_start();
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
-$errorflag =0;
 
 require_once ("../Resources/Includes/connect.php");
 
+$message = array();
+$errorflag =0;
 $bpid = $_GET['id'];
 $bpayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
@@ -31,20 +24,24 @@ if ($outype == "Administration") {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-/*
- * SQL to display Blueprint Content
- */
-if ($outype == "Academic Unit") {
-    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
+// SQL to display Blueprint Content
+try {
+    if ($outype == "Academic Unit") {
+        $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
  LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
-    $resultbpcontent = $mysqli->query($sqlbpcontent);
-    $numbpcontent = $resultbpcontent->num_rows;
-} elseif ($outype == "Administration") {
-    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
+        $resultbpcontent = $mysqli->query($sqlbpcontent);
+        $numbpcontent = $resultbpcontent->num_rows;
+    } elseif ($outype == "Administration") {
+        $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
  LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
-    $resultbpcontent = $mysqli->query($sqlbpcontent);
+        $resultbpcontent = $mysqli->query($sqlbpcontent);
+    }
 }
-
+catch (PDOException $e)
+{
+//SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
 
 
 if ($outype == "Administration" || $outype == "Service Unit" ) {
@@ -67,10 +64,10 @@ if(isset($_POST['submit_bp'])) {
     $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='$status', BROADCAST_STATUS_OTHERS='$status' where BROADCAST_AY='$bpayname' AND BROADCAST_OU ='$ouid';  ";
 
     if($mysqli->query($sqlbroadupdate)){
-        $error[0] = "Academic BluePrint Draft Submitted Successfully.";
+        $message[0] = "Academic BluePrint Draft Submitted Successfully.";
 
     } else {
-        $error[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+        $message[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
     }
 
 }
@@ -87,10 +84,10 @@ if(isset($_POST['approve'])) {
     $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='$status', BROADCAST_STATUS_OTHERS='$status' where ID_BROADCAST = '$bpid';";
 
     if($mysqli->query($sqlbroadupdate)){
-        $error[0] = "Academic BluePrint Draft Submitted Successfully.";
+        $message[0] = "Academic BluePrint Draft Submitted Successfully.";
 
     } else {
-        $error[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+        $message[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
     }
 
 }
@@ -119,7 +116,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="account.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>

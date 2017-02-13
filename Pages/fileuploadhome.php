@@ -9,7 +9,7 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 $errorflag =0;
 require_once ("../Resources/Includes/connect.php");
 $FUayname = $_GET['ayname'];
@@ -62,8 +62,6 @@ require_once("../Resources/Includes/menu.php");
         </div>
 
     </div>
-
-
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
 

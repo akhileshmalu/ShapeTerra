@@ -14,7 +14,7 @@ if(!$_SESSION['isLogged']) {
     die();
 }
 
-$error = array();
+$message = array();
 $errorflag =0;
 $notBackToDashboard = true;
 $elemid = $_GET['elem_id'];
@@ -134,9 +134,9 @@ VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTH
 '$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
 
     if($mysqli->query($sqladdelem)) {
-        $error[0] = "Your Data Element has been submitted for review.This will be accepted in data dictionary post approval.";
+        $message[0] = "Your Data Element has been submitted for review.This will be accepted in data dictionary post approval.";
     } else {
-        $error[0] = "Data Element could not be submitted.";
+        $message[0] = "Data Element could not be submitted.";
     }
 
 
@@ -177,9 +177,9 @@ VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTH
 '$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
 
     if($mysqli->query($sqladdelem)) {
-        $error[0] = "Your Data Element has been added in Data Dictionary.";
+        $message[0] = "Your Data Element has been added in Data Dictionary.";
     } else {
-        $error[0] = "Data Element could not be added.";
+        $message[0] = "Data Element could not be added.";
     }
 
 
@@ -220,9 +220,9 @@ if(isset($_POST['update'])) {
   NOTES_DATA_ELEMENT = '$notes', AUTHOR_FNAME = '$defauthorfname',AUTHOR_LNAME = '$defauthorlname', MOD_BY = '$author', MOD_TIMESTAMP = '$time' where ID_DATA_ELEMENT = $elemid;";
 
     if($mysqli->query($sqladdelem)) {
-        $error[0] = "Your Data Element has been updated in Data Dictionary.";
+        $message[0] = "Your Data Element has been updated in Data Dictionary.";
     } else {
-        $error[0] = "Data Element could not be updated.";
+        $message[0] = "Data Element could not be updated.";
     }
 
 
@@ -235,9 +235,9 @@ if(isset($_POST['approve'])) {
     $sqladdelem = "update DataDictionary SET STATUS = 'Approved' where ID_DATA_ELEMENT = '$elemid';";
 
     if($mysqli->query($sqladdelem)) {
-        $error[0] = "Data Element has been approved & included in Data Dictionary.";
+        $message[0] = "Data Element has been approved & included in Data Dictionary.";
     } else {
-        $error[0] = "Data Element could not be approved.";
+        $message[0] = "Data Element could not be approved.";
     }
 
 }
@@ -248,9 +248,9 @@ if(isset($_POST['discard'])) {
     $sqladdelem = "update DataDictionary SET STATUS = 'Archived' where ID_DATA_ELEMENT = '$elemid';";
 
     if($mysqli->query($sqladdelem)) {
-        $error[0] = "Data Element has been Archived & excluded from Data Dictionary.";
+        $message[0] = "Data Element has been Archived & excluded from Data Dictionary.";
     } else {
-        $error[0] = "Data Element could not be Archived.";
+        $message[0] = "Data Element could not be Archived.";
     }
 
 }
@@ -273,7 +273,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="<?php echo "datadicthome.php";?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>

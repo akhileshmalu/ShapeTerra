@@ -1,17 +1,17 @@
 <?php
 
-$error=array();
+$message = array();
 $errorflag = 0;
 
 if(isset($_POST['forgot'])){
 
     // Email Validity Check
     if (empty($_POST['email'])) {
-        $error[0] = " Please enter email address.";
+        $message[0] = " Please enter email address.";
         $errorflag = 1;
     } else{
         if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)){
-            $error[1] = "Invalid Email Address.";
+            $message[1] = "Invalid Email Address.";
             $errorflag = 1;
         }
     }
@@ -48,14 +48,14 @@ if(isset($_POST['forgot'])){
                 $msg .= "http://".$site."/Pages/verify.php?email=$email&hash=$hash&type=$type";
 
                 mail($email, $sub, $msg, $headers);
-                $error[0] = "Your Password has been sent to registered email id";
+                $message[0] = "Your Password has been sent to registered email id";
             }
             unset($record);
             unset($rows);
             unset($result);
 
         }else{
-            $error[0] = "No Record found.Please use your registered email address.";
+            $message[0] = "No Record found.Please use your registered email address.";
         }
     }
     $mysqli->close();
@@ -273,7 +273,7 @@ require_once("../Resources/Includes/header.php");
     <h1 class="col-xs-12">Forgot your password?</h1>   
     <div id="login-form" class="col-xs-6 col-xs-offset-3 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
     <form action="" id="forgotpassword" name="forgotpasswordform" method="POST">
-        <label id="error" class="text-center"> <?php foreach ($error as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
+        <label id="error" class="text-center"> <?php foreach ($message as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
         <input class="col-xs-12" name="email" type="email" placeholder="Enter your Email" required>
         <input type="submit" name="forgot" class ="col-xs-12" value="Retrieve Password" >
         <a href="login.php" id="login-link" class="pull-right">Return to Login ? </a>

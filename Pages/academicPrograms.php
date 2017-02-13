@@ -1,29 +1,28 @@
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
-
 /*
- * This Page controls Initiatives & Observations.
+ * This Page controls Academic Program Module
  */
+require_once ("../Resources/Includes/connect.php");
 
 session_start();
+
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+
+$message = array();
 $errorflag =0;
-$BackToDashboard = true;
-
-require_once ("../Resources/Includes/connect.php");
-
 $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
 $bpayname= $_SESSION['bpayname'];
+$time = date('Y-m-d H:i:s');
 
+//Menu control Back button
+$BackToDashboard = true;
 
 if ($ouid == 4) {
     $ouabbrev = $_SESSION['bpouabbrev'];
@@ -32,32 +31,63 @@ if ($ouid == 4) {
 }
 
 
-$time = date('Y-m-d H:i:s');
-
-/*
- *  Main Title Box  ; conditional for provost & other users
- */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+//  Main Title Box  ; conditional for provost & other users
+try
+{
+    if ($ouid == 4) {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified FROM `broadcast` INNER JOIN Hierarchy ON 
+    `broadcast`.BROADCAST_OU = `Hierarchy`.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND Hierarchy.OU_ABBREV =:ouabbrev";
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(':bpayname', $bpayname, 2);
+        $resultbroad->bindParam(':ouabbrev', $ouabbrev, 2);
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN 
+    Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND BROADCAST_OU =:ouid;";
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(':bpayname', $bpayname, 2);
+        $resultbroad->bindParam(':ouid', $ouid, 1);
+    }
+    $resultbroad->execute();
 }
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+catch (PDOException $e)
+{
+    //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
 
-/*
- * Values for placeholders
- */
-$sqlexvalue = "SELECT * FROM `AC_Programs` where OU_ABBREV = '$ouabbrev' AND ID_AC_PROGRAMS in (select max(ID_AC_PROGRAMS) from AC_Programs where OUTCOMES_AY = '$bpayname' group by OU_ABBREV)";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue -> fetch_assoc();
+$rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
 
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+// Values for placeholders
+try
+{
+    $sqlexvalue = "SELECT * FROM `AC_Programs` WHERE OU_ABBREV = :ouabbrev AND ID_AC_PROGRAMS IN (SELECT MAX(ID_AC_PROGRAMS) 
+FROM `AC_Programs` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
+    $resultexvalue = $connection->prepare($sqlexvalue);
+    $resultexvalue->bindParam(':ouabbrev', $ouabbrev, 2);
+    $resultexvalue->bindParam(':bpayname', $bpayname, 2);
+    $resultexvalue->execute();
+}
+catch (PDOException $e)
+{
+    //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
+$rowsexvalue = $resultexvalue->fetch(2);
+
+//  SQL check Status of Blueprint Content for Edit restrictions
+try
+{
+    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :contentlink_id ;";
+    $resultbpstatus = $connection->prepare($sqlbpstatus);
+    $resultbpstatus->bindParam(':contentlink_id', $contentlink_id, 2);
+    $resultbpstatus->execute();
+}
+catch (PDOException $e)
+{
+    //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
+$rowsbpstatus = $resultbpstatus->fetch(2);
 
 if (isset($_POST['savedraft'])) {
     $programranking = mynl2br($_POST['programranking']);
@@ -71,9 +101,8 @@ if (isset($_POST['savedraft'])) {
         $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
         $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
 
-
         if ($imageFileType != "pdf") {
-            $error[1] = "Sorry, only PDf files are allowed.";
+            $message[1] = "Sorry, only PDf files are allowed.";
             $errorflag = 1;
 
         } else {
@@ -81,65 +110,104 @@ if (isset($_POST['savedraft'])) {
                 // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
                 $supinfopath = $target_file;
             } else {
-                $error[2] = "Sorry, there was an error uploading your file.";
+                $message[2] = "Sorry, there was an error uploading your file.";
             }
         }
     }
     if ($errorflag != 1) {
+        $sqlacprogram = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, 
+        PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) VALUES 
+        ('$ouabbrev','$bpayname','$author','$time','$programranking','$instructionalmodalities','$launch', 
+'$programterminators','$supinfopath');";
 
-        $sqlacprogramme = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) 
-VALUES ('$ouabbrev','$bpayname','$author','$time','$programranking','$instructionalmodalities','$launch','$programterminators','$supinfopath');";
+        $sqlacprogram .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author', MOD_TIMESTAMP 
+        ='$time' WHERE ID_CONTENT ='$contentlink_id';";
 
-        $sqlacprogramme .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlacprogram .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In 
+        Progress', AUTHOR= '$author', LastModified ='$time' WHERE ID_BROADCAST = '$bpid'; ";
 
-        $sqlacprogramme .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+        if ($mysqli->multi_query($sqlacprogram)) {
 
-        if ($mysqli->multi_query($sqlacprogramme)) {
-
-            $error[0] = "Academic Program Info Added Succesfully.";
+            $message[0] = "Academic Program Info Added Succesfully.";
         } else {
-            $error[3] = "Academic Program Info could not be added.";
+            $message[3] = "Academic Program Info could not be added.";
         }
     }
-
 }
 
-if(isset($_POST['submit_approval'])) {
+if(isset($_POST['submit_approve'])) {
+    try {
+        $contentlink_id = $_GET['linkid'];
 
-    $contentlink_id = $_GET['linkid'];
+        $sqlacprogram = "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR = :author,
+    MOD_TIMESTAMP = :timeCurrent WHERE ID_CONTENT = :contentLinkId ;";
+        $resultacprogram = $connection->prepare($sqlacprogram);
+        $resultacprogram->bindParam(':author', $author, 1);
+        $resultacprogram->bindParam(':timeCurrent', $time, 2);
+        $resultacprogram->bindParam(':contentLinkId', $contentlink_id, 1);
 
-    $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-
-    if ($mysqli->query($sqlfacinfo)) {
-
-        $error[0] = "Academic Program Info submitted Successfully";
-
-    } else {
-        $error[0] = "Academic Program Info Could not be submitted. Please Retry.";
+        if ($resultacprogram->execute()) {
+            $message[0] = "Academic Program Info submitted Successfully";
+        } else {
+            $message[0] = "Academic Program Info Could not be submitted. Please Retry.";
+        }
+    } catch (PDOException $e) {
+        //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
     }
-
+    $resultacprogram = null;
 }
 
 if(isset($_POST['approve'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Academic Program Info Approved Successfully";
-    } else {
-        $error[0] = "Academic Program Info Could not be Approved. Please Retry.";
+
+    try
+    {
+        $sqlacprogram = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = :author, MOD_TIMESTAMP 
+    = :timeCurrent WHERE ID_CONTENT =:contentLinkId ;";
+        $resultacprogram = $connection->prepare($sqlacprogram);
+        $resultacprogram->bindParam(':author', $author, 2);
+        $resultacprogram->bindParam(':timeCurrent', $time, 2);
+        $resultacprogram->bindParam(':contentLinkId', $contentlink_id, 2);
+
+        if ($resultacprogram->execute()) {
+            $message[0] = "Academic Program Info Approved Successfully";
+        } else {
+            $message[0] = "Academic Program Info Could not be Approved. Please Retry.";
+        }
     }
+    catch (PDOException $e)
+    {
+        //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
+    }
+    $resultacprogram = null;
 }
 
-if(isset($_POST['reject'])) {
-
+if (isset($_POST['reject'])) {
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Academic Program Info Rejected Successfully";
-    } else {
-        $error[0] = "Academic Program Info Could not be Rejected. Please Retry.";
+    try
+    {
+        $sqlacprogram = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = :author, MOD_TIMESTAMP 
+    = :timeCurrent  WHERE ID_CONTENT =:contentLinkId ;";
+        $resultacprogram = $connection->prepare($sqlacprogram);
+        $resultacprogram->bindParam(':author', $author, 2);
+        $resultacprogram->bindParam(':timeCurrent', $time, 2);
+        $resultacprogram->bindParam(':contentLinkId', $contentlink_id, 2);
+
+        if ($resultacprogram->execute()) {
+            $message[0] = "Academic Program Info Rejected Successfully";
+        } else {
+            $message[0] = "Academic Program Info Could not be Rejected. Please Retry.";
+        }
     }
+    catch (PDOException $e)
+    {
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
+    }
+    $resultacprogram = null;
 }
 
 require_once("../Resources/Includes/header.php");
@@ -151,20 +219,14 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php //if (isset($_POST['submit_approval'])) { ?>
-<!--    <div class="alert">-->
-<!--        <a href="#" class="close end"><span class="icon">9</span></a>-->
-<!--        <h1 class="title"></h1>-->
-<!--        <p class="description">--><?php //foreach ($error as $value) echo $value; ?><!--</p>-->
-<!--        <button type="button" redirect="bphome.php?ayname=--><?php //echo $rowbroad[0]; ?><!--" class="end btn-primary">Close</button>-->
-<!--    </div>-->
-<?php //} ?>
-<?php if (isset($_POST['savedraft']) or isset($_POST['submit_approval']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
+<?php if (isset($_POST['savedraft']) or isset($_POST['submit_approve']) or isset($_POST['approve']) or isset
+    ($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]."&id=".$bpid; ?>" class="end btn-primary">Close</button>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
+        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]."&id=".$bpid; ?>" class="end
+        btn-primary">Close</button>
     </div>
 <?php } ?>
 <div class="hr"></div>
@@ -182,61 +244,80 @@ require_once("../Resources/Includes/menu.php");
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Academic Programs</h1>
-        <form action="<?php echo $_SERVER['PHP_SELF'].'?linkid='.$contentlink_id; ?>" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF'].'?linkid='.$contentlink_id; ?>" method="POST"
+              enctype="multipart/form-data">
             <h3>Program Rankings</h3>
                 <div class="form-group form-indent">
-                    <p class="status">List any academic programs that were nationally ranked during the Academic Year.  For each, provide the formal name of the academic program followed by the name of the organization that issued the ranking, the date of notification, effective date range, and notes. </p>  
-                    <textarea name="programranking" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo mybr2nl($rowsexvalue['PROGRAM_RANKINGS']); ?></textarea>
+                    <p class="status">List any academic programs that were nationally ranked during the Academic Year
+                        . For each, provide the formal name of the academic program followed by the name of the
+                        organization that issued the ranking, the date of notification, effective date range, and
+                        notes. </p>
+                    <textarea name="programranking" rows="6" cols="25" wrap="hard" class="form-control"
+                              required><?php echo mybr2nl($rowsexvalue['PROGRAM_RANKINGS']); ?></textarea>
                 </div>
             <h3>Instructional Modalities</h3>
                 <div class="form-group form-indent">
-                    <p class="status">List and describe innovations and changes to Instructional Modalities in your unit's programmatic and course offerings that were enacted during the Academic Year.  </p> 
-                    <textarea name="instructionalmodalities" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['INSTRUCT_MODALITIES']); ?></textarea>
+                    <p class="status">List and describe innovations and changes to Instructional Modalities in your
+                        unit's programmatic and course offerings that were enacted during the Academic Year.  </p>
+                    <textarea name="instructionalmodalities" rows="6" cols="25" wrap="hard" class="form-control"
+                    ><?php echo mybr2nl($rowsexvalue['INSTRUCT_MODALITIES']); ?></textarea>
                 </div>
             <h3>Program Launches</h3>
                 <div class="form-group form-indent">
-                    <p class="status"><small>List any Academic Programs that were newly launched during the Academic Year; those that have received required approvals but which have not yet enrolled students should not be included. For each, list the formal name of the academic program and the responsible department. </small></p>
-                    <textarea  name="launch" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['PROGRAM_LAUNCHES']); ?></textarea>
+                    <p class="status"><small>List any Academic Programs that were newly launched during the Academic
+                            Year; those that have received required approvals but which have not yet enrolled
+                            students should not be included. For each, list the formal name of the academic program
+                            and the responsible department. </small></p>
+                    <textarea  name="launch" rows="6" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl
+                        ($rowsexvalue['PROGRAM_LAUNCHES']); ?></textarea>
                 </div>
             <h3>Program Terminations</h3>
                 <div class="form-group form-indent">
-                    <p class="status"><small>List any Academic Programs that were newly terminated or discontinued during the Academic Year as follows: for each clearly indicate whether the decision to terminate was made during the Academic Year or whether the program ceased having any enrolled students during the Academic Year.  </small></p>
-                    <textarea  name="programterminators" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['PROGRAM_TERMINATIONS']); ?></textarea>
+                    <p class="status"><small>List any Academic Programs that were newly terminated or discontinued
+                            during the Academic Year as follows: for each clearly indicate whether the decision to
+                            terminate was made during the Academic Year or whether the program ceased having any
+                            enrolled students during the Academic Year.  </small></p>
+                    <textarea  name="programterminators" rows="6" cols="25" wrap="hard" class="form-control" ><?php
+                        echo mybr2nl($rowsexvalue['PROGRAM_TERMINATIONS']); ?></textarea>
                 </div>
             <h3>Supplemental Info</h3>
                 <div id="suppinfo" class="form-group form-indent">
-                    <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Academic Programs for the Academic Year. </small></p>
+                    <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted
+                            to 8.5 x 11 dimensions, to provide additional detail on Academic Programs for the
+                            Academic Year. </small></p>
                     <label for="supinfofile">Select File</label>
-                    <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
+                    <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)"
+                           class="form-control">
                 </div>
 
                 <!--                      Edit Control-->
 
-                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND
+                    ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean 
+                    Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
                     <button id="save" type="submit" name="savedraft"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
-                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
+                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox
+                    pull-left">
                     <button type="submit" id="submit_approve" name="submit_approve"
                             class="btn-primary pull-right">Submit For Approval</button>
 
                 <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
-                    <button id="save" type="submit" name="savedraft"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
+                    <input id="save" type="submit" name="savedraft"
+                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right" value="Save Draft">
+
+                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox
+                    pull-left">
                     <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
                         <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
                         <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
                     <?php endif; } ?>
-
             </form>
         </div>
     </div>
-
 </div>
 
 
@@ -251,7 +332,6 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     });
     function selectorfile(selected) {
-
         var doc, image;
         var filename = $(selected).val();
         var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();

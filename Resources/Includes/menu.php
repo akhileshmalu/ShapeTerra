@@ -1,8 +1,7 @@
 
 <?php
-error_reporting(0);
 
-date_default_timezone_set('America/New_York');
+
 
 /*
 *
@@ -40,6 +39,15 @@ $menu = array(
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "" ,"admin","basic", false),
 //	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
 	);
+
+//variable Initialization back to button
+//$BackToDashboard = null;
+//$BackToFileUploadHome = null;
+//$BackToDataDictHome = null;
+//$BackTofootnoteHome = null;
+//$BackToGoalOutHome = null;
+//$BackToGoal = null;
+
 
 // Function to download templates for csv formats
 function download($filename){
@@ -161,7 +169,6 @@ Generate PDF button currently disabled.
 	</button>
 -->
 </div>
-
 	<!-- 
 	Menu
 	-->
@@ -170,27 +177,27 @@ Generate PDF button currently disabled.
 	<!-- Main menu -->
 
 	<ul class="col-xs-12">
-		<?php if($BackToDashboard){ ?>
+		<?php if(@$BackToDashboard){ ?>
 			<li class="" id="header"><a class="" href="<?php echo 'bphome.php?ayname='.$rowbroad[0].'&ou_abbrev='.$_SESSION['bpouabbrev']; ?>" >
 			<span id="" class="icon">l</span>Back To Contents</a></li>
 		<?php } ?>
-		<?php if($BackToFileUploadHome){ ?>
+		<?php if(@$BackToFileUploadHome){ ?>
 			<li class="" id="header"><a class="" href="<?php echo 'fileuploadhome.php?ayname='.$_SESSION['FUayname']; ?>" >
 					<span id="" class="icon">l</span>Back To Upload</a></li>
 		<?php } ?>
-		<?php if($BackToDataDictHome){ ?>
+		<?php if(@$BackToDataDictHome){ ?>
 			<li class="" id="header"><a class="" href="<?php echo 'datadicthome.php' ?>" >
 					<span id="" class="icon">l</span>Back To Dictionary</a></li>
 		<?php } ?>
-        <?php if($BackTofootnoteHome){ ?>
+        <?php if(@$BackTofootnoteHome){ ?>
             <li class="" id="header"><a class="" href="<?php echo 'footnotehome.php' ?>" >
                     <span id="" class="icon">l</span>Back To Footnotes</a></li>
         <?php } ?>
-		<?php if($BackToGoalOutHome){ ?>
+		<?php if(@$BackToGoalOutHome){ ?>
 			<li class="" id="header"><a class="" href="<?php echo 'goaloutcomeshome.php?linkid='.$contentlink_id; ?>" >
 					<span id="" class="icon">l</span>Back To Outcomes</a></li>
 		<?php } ?>
-		<?php if($BackToGoal){ ?>
+		<?php if(@$BackToGoal){ ?>
 			<li class="" id="header"><a class="" onclick="window.history.back();" >
 					<span id="" class="icon">l</span>Back To Previous</a></li>
 		<?php } ?>

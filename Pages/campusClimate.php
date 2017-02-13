@@ -12,7 +12,7 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 $errorflag =0;
 $BackToDashboard = true;
 
@@ -71,7 +71,7 @@ if (isset($_POST['savedraft'])) {
 
 
         if ($imageFileType != "pdf") {
-            $error[1] = "Sorry, only PDF files are allowed.";
+            $message[1] = "Sorry, only PDF files are allowed.";
             $errorflag = 1;
 
         } else {
@@ -79,7 +79,7 @@ if (isset($_POST['savedraft'])) {
                 // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
                 $supinfopath = $target_file;
             } else {
-                $error[2] = "Sorry, there was an error uploading your file.";
+                $message[2] = "Sorry, there was an error uploading your file.";
             }
         }
     }
@@ -94,9 +94,9 @@ VALUES ('$ouabbrev','$bpayname','$author','$time','$climate','$supinfopath');";
 
         if ($mysqli->multi_query($sqlclimate)) {
 
-            $error[0] = "Campus & Climate Info Added Succesfully.";
+            $message[0] = "Campus & Climate Info Added Succesfully.";
         } else {
-            $error[3] = "Campus & Climate Info could not be added.";
+            $message[3] = "Campus & Climate Info could not be added.";
         }
     }
 
@@ -110,10 +110,10 @@ if(isset($_POST['submit_approval'])) {
 
     if ($mysqli->query($sqlfacinfo)) {
 
-        $error[0] = "Campus & Climate Info submitted Successfully";
+        $message[0] = "Campus & Climate Info submitted Successfully";
 
     } else {
-        $error[0] = "Campus & Climate Info Could not be submitted. Please Retry.";
+        $message[0] = "Campus & Climate Info Could not be submitted. Please Retry.";
     }
 
 }
@@ -123,9 +123,9 @@ if(isset($_POST['approve'])) {
     $contentlink_id = $_GET['linkid'];
     $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
     if ($mysqli->query($sqlmission)) {
-        $error[0] = "Campus & Climate Info Approved Successfully";
+        $message[0] = "Campus & Climate Info Approved Successfully";
     } else {
-        $error[0] = "Campus & Climate Info Could not be Approved. Please Retry.";
+        $message[0] = "Campus & Climate Info Could not be Approved. Please Retry.";
     }
 }
 
@@ -134,9 +134,9 @@ if(isset($_POST['reject'])) {
     $contentlink_id = $_GET['linkid'];
     $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
     if ($mysqli->query($sqlmission)) {
-        $error[0] = "Campus & Climate Info Rejected Successfully";
+        $message[0] = "Campus & Climate Info Rejected Successfully";
     } else {
-        $error[0] = "Campus & Climate Info Could not be Rejected. Please Retry.";
+        $message[0] = "Campus & Climate Info Could not be Rejected. Please Retry.";
     }
 }
 
@@ -154,7 +154,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0] . "&id=" . $bpid; ?>"
                 class="end btn-primary">Close
         </button>

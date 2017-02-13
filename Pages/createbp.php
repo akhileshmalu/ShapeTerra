@@ -11,7 +11,7 @@ $count=0;
 $outcome = "";
 $aydesc ="";
 
-$error = array();
+$message = array();
 
 $ouabbrev = $_SESSION['login_ouabbrev'];
 $author = $_SESSION['login_email'];
@@ -57,9 +57,9 @@ if(isset($_POST['save'])) {
 
     $mysqli->multi_query($sqlgoalout);
     if($mysqli->multi_query($sqlgoalout)) {
-        $error[0] = "Academic BluePrint created Successfully";
+        $message[0] = "Academic BluePrint created Successfully";
     } else {
-        $error[0] = "Academic BluePrint could not be craeted";
+        $message[0] = "Academic BluePrint could not be craeted";
     }
 
 }

@@ -13,7 +13,7 @@ if(!$_SESSION['isLogged']) {
     die();
 }
 $time  = date('Y-m-d H:i:s');
-$error = array();
+$message = array();
 $errorflag =0;
 
 $sqlbroad ="";
@@ -76,12 +76,12 @@ $uploaddatafiles = array(
 
 if (isset($_POST['submit'])) {
     if (empty($_POST['AY'])) {
-        $error[0] = "Please select Academic Year.";
+        $message[0] = "Please select Academic Year.";
         $errorflag = 1;
     }
 
     if (!isset($_POST['ou_name'])) {
-        $error[1] = "Please select Organizational Unit.";
+        $message[1] = "Please select Organizational Unit.";
         $errorflag = 1;
     }
 
@@ -113,7 +113,7 @@ if (isset($_POST['submit'])) {
             $resultbroadcheck -> execute();
             $rowbroadcheck = $resultbroadcheck->rowCount();
             if ($rowbroadcheck >= 1) {
-                $error[1] = "You have already Initiated BluePrint for Org Unit: " . $ouabbrev . " for year : " . $ay;
+                $message[1] = "You have already Initiated BluePrint for Org Unit: " . $ouabbrev . " for year : " . $ay;
                 $errorflag = 1;
             } else {
 
@@ -164,11 +164,11 @@ if (isset($_POST['submit'])) {
 //            echo $sqlbroad;
             if ($mysqli->multi_query($sqlbroad)) {
 
-                $error[0] = "Academic BluePrint Successfully Initiated.";
+                $message[0] = "Academic BluePrint Successfully Initiated.";
 
 
             } else {
-                $error [0] = "Academic BluePrint Could not be initiated.";
+                $message [0] = "Academic BluePrint Could not be initiated.";
             }
         }
     }
@@ -189,7 +189,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="<?php echo "account.php";?>"  class="end btn-primary">Close</button>
     </div>
 <?php } ?>

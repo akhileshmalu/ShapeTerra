@@ -4,22 +4,20 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+require_once ("../Resources/Includes/connect.php");
+
+$message = array();
 $errorflag =0;
 $author = $_SESSION['login_userid'];
 
-require_once ("../Resources/Includes/connect.php");
-
-
-
-
 if(isset($_POST['submit'])) {
     if(!isset($_POST['startdate'])){
-        $error[0]= "Please select a Start date for Academic Year";
+        $message[0]= "Please select a Start date for Academic Year";
         $errorflag = 1;
     }
+
     if($_POST['startdate'] >= $_POST['enddate']){
-        $error[0]= "End date should be older than Start date.";
+        $message[0]= "End date should be older than Start date.";
         $errorflag = 1;
     }
 
@@ -31,20 +29,45 @@ if(isset($_POST['submit'])) {
         $id = stringdatestoid($startdate,$enddate);
         $desc = idtostring($id);
 
-        $sqlaycheck = "select * from AcademicYears where ACAD_YEAR_DESC = '$desc'";
-        $resultaycheck = $mysqli->query($sqlaycheck);
-        $rowsaycheck = $resultaycheck->num_rows;
+        try
+        {
+            $sqlaycheck = "select * from AcademicYears where ACAD_YEAR_DESC = :description ;";
+            $resultaycheck = $connection->prepare($sqlaycheck);
+            $resultaycheck->execute(['description'=> $desc]);
+        }
+        catch (PDOException $e)
+        {
+            //        SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+            error_log($e->getMessage());
+        }
+        $rowsaycheck = $resultaycheck->rowCount();
+
         if($rowsaycheck >=1) {
-            $error[1] = "Academic Year already Exist";
+            $message[1] = "Academic Year already Exist";
             $errorflag = 1;
         }
         if ($errorflag != 1) {
+            try
+            {
+                $sqladday = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,
+                ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES (:id, :descrip,:startdate, :enddate, :censusdate );";
+                $resultadday = $connection->prepare($sqladday);
+                $resultaycheck->bindParam(':id', $id, 1);
+                $resultaycheck->bindParam(':descrip', $desc, 2);
+                $resultaycheck->bindParam(':startdate', $startdate, 2);
+                $resultaycheck->bindParam(':enddate', $enddate, 2);
+                $resultaycheck->bindParam(':censusdate', $censusdate, 2);
 
-            $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES ('$id','$desc','$startdate','$enddate','$censusdate');";
-            if ($mysqli->query($sql)) {
-                $error[0] = "Academic Year Added Successfully.";
-            } else {
-                $error [0] = "Academic Year Could not be added.";
+                if ($resultaycheck->execute()) {
+                    $message[0] = "Academic Year Added Successfully.";
+                } else {
+                    $message [0] = "Academic Year Could not be added.";
+                }
+            }
+            catch (PDOException $e)
+            {
+                //        SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+                error_log($e->getMessage());
             }
         }
     }
@@ -63,12 +86,11 @@ require_once("../Resources/Includes/menu.php");
 ?>
 
 <div class="overlay hidden"></div>
-
 <?php if (isset($_POST['submit'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="account.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
@@ -78,7 +100,6 @@ require_once("../Resources/Includes/menu.php");
     <div id="title-header">
         <h1 id="title">Add Academic Year</h1> 
     </div>
-
     <div class="content-general">
         <form action="" method="POST">
         <div class="col-xs-4" id="table-container">
@@ -108,7 +129,6 @@ require_once("../Resources/Includes/menu.php");
                     </span>
                 </div>
             </div>
-
             <input type="submit" name="submit" value="Submit" class="btn-primary pull-left">
         </div>
         </form>

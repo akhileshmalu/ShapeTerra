@@ -11,7 +11,7 @@
   require_once("../Resources/Includes/menu.php");
   require("../Resources/Includes/data.php");
 
-  $Data = new Data;
+  $Data = new Data($connection);
   $Data->saveExecutiveSummaryDet();
   $executiveSummaryData = $Data->getExecutiveSummary();
 

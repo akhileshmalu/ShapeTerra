@@ -14,7 +14,7 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 $errorflag = 0;
 $BackToDashboard = true;
 
@@ -135,10 +135,10 @@ if(isset($_POST['award_submit'])){
 
     if($mysqli->query($sqlAcFacAward)){
 
-        $error[0] = "Award Updated Succesfully.";
+        $message[0] = "Award Updated Succesfully.";
 
     } else {
-        $error[0] = "Award Could not be Updated.";
+        $message[0] = "Award Could not be Updated.";
     }
 
 }
@@ -166,7 +166,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
