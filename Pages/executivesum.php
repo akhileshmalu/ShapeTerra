@@ -1,135 +1,134 @@
 <?php
 
-  /*
-   * This Page controls Initiatives & Observations.
-   */
+/*
+ * This Page controls Initiatives & Observations.
+ */
 
-  session_start();
-  if (!$_SESSION['isLogged']) {
-      header("location:login.php");
-      die();
-  }
+session_start();
+if (!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
 
-  require_once ("../Resources/Includes/connect.php");
+require_once("../Resources/Includes/connect.php");
 
-  $error = array();
-  $errorflag =0;
-  $BackToDashboard = true;
-
-
-  $bpid = $_SESSION ['bpid'];
-  $contentlink_id = $_GET['linkid'];
-  $author = $_SESSION['login_userid'];
-  $ouid = $_SESSION['login_ouid'];
-  $bpayname= $_SESSION['bpayname'];
+$error = array();
+$errorflag = 0;
+$BackToDashboard = true;
 
 
-  if ($ouid == 4) {
-      $ouabbrev = $_SESSION['bpouabbrev'];
-  } else {
-      $ouabbrev = $_SESSION['login_ouabbrev'];
-  }
+$bpid = $_SESSION ['bpid'];
+$contentlink_id = $_GET['linkid'];
+$author = $_SESSION['login_userid'];
+$ouid = $_SESSION['login_ouid'];
+$bpayname = $_SESSION['bpayname'];
 
 
-  $time = date('Y-m-d H:i:s');
-
-  /*
-   * faculty Award Grid ; conditional for provost & other users
-   */
-  try{
-      if ($ouid == 4) {
-          $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
-
-          $resultbroad = $connection->prepare($sqlbroad);
-          $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-          $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+if ($ouid == 4) {
+    $ouabbrev = $_SESSION['bpouabbrev'];
+} else {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
+}
 
 
+$time = date('Y-m-d H:i:s');
 
-      } else {
-          $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+/*
+ * faculty Award Grid ; conditional for provost & other users
+ */
+try {
+    if ($ouid == 4) {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified FROM broadcast INNER JOIN Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY= :bpayname AND Hierarchy.OU_ABBREV = :ouabbrev;";
 
-          $resultbroad = $connection->prepare($sqlbroad);
-          $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-          $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
-      }
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
 
-      $resultbroad->execute();
-      $rowbroad = $resultbroad->fetchAll(PDO::FETCH_BOTH);
-  }catch(PDOException $e){
-      error_log($e->getMessage());
-      //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-  }
 
-  /*
-   * Values for placeholders
-   */
-  try{
-      $sqlexvalue = "SELECT * FROM `AC_ExecSum` where OU_ABBREV = :ouabbrev AND ID_EXECUTIVE_SUMMARY in (select max(ID_EXECUTIVE_SUMMARY) from AC_ExecSum where OUTCOMES_AY = :bpayname group by OU_ABBREV);";
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY = :bpayname AND BROADCAST_OU = :ouid;";
 
-      $resultexvalue = $connection->prepare($sqlexvalue);
-      $resultexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-      $resultexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
+    }
 
-      $resultexvalue->execute();
+    $resultbroad->execute();
+    $rowbroad = $resultbroad->fetchAll(PDO::FETCH_BOTH);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
-      $rowsexvalue = $resultexvalue -> fetch(4);
+/*
+ * Values for placeholders
+ */
+try {
+    $sqlexvalue = "SELECT * FROM `AC_ExecSum` WHERE OU_ABBREV = :ouabbrev AND ID_EXECUTIVE_SUMMARY IN (SELECT max(ID_EXECUTIVE_SUMMARY) FROM AC_ExecSum WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV);";
 
-  }catch(PDOException $e){
-      error_log($e->getMessage());
-      //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-  }
+    $resultexvalue = $connection->prepare($sqlexvalue);
+    $resultexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+    $resultexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
 
-  /*
-   * SQL check Status of Blueprint Content for Edit restrictions
-   */
-  try{
-      $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
+    $resultexvalue->execute();
 
-      $resultbpstatus = $connection->prepare($sqlbpstatus);
-      $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
-      $resultbpstatus->execute();
+    $rowsexvalue = $resultexvalue->fetch(4);
 
-      $rowsbpstatus = $resultbpstatus->fetch(4);
-  }catch(PDOException $e){
-      error_log($e->getMessage());
-      //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-  }
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
-  require "../Includes/ExecutiveSumClass.php";
-  $ExecutiveSummary = new ExecutiveSumClass();
+/*
+ * SQL check Status of Blueprint Content for Edit restrictions
+ */
+try {
+    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
 
-  if (isset($_POST['savedraft'])) {
+    $resultbpstatus = $connection->prepare($sqlbpstatus);
+    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
+    $resultbpstatus->execute();
+
+    $rowsbpstatus = $resultbpstatus->fetch(4);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
+
+require "../Resources/Includes/EXECUTIVESUMCLASS.php";
+$ExecutiveSummary = new EXECUTIVESUMCLASS();
+
+if (isset($_POST['savedraft'])) {
 
     $ExecutiveSummary->saveDraft();
 
-  }
+}
 
-  if (isset($_POST['submit_approval'])) {
+if (isset($_POST['submit_approval'])) {
 
     $ExecutiveSummary->submitApproval();
 
-  }
+}
 
-  if (isset($_POST['approve'])) {
+if (isset($_POST['approve'])) {
 
     $ExecutiveSummary->appove();
 
-  }
+}
 
-  if (isset($_POST['reject'])) {
+if (isset($_POST['reject'])) {
 
     $ExecutiveSummary->reject();
 
-  }
+}
 
-  require_once("../Resources/Includes/header.php");
+require_once("../Resources/Includes/header.php");
 
-  // Include Menu and Top Bar
-  require_once("../Resources/Includes/menu.php");
-  
+// Include Menu and Top Bar
+require_once("../Resources/Includes/menu.php");
+
 ?>
-<script src="/ckeditor/ckeditor.js" type="text/javascript"></script>
+
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
@@ -141,7 +140,7 @@
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]."&id=".$bpid; ?>" class="end btn-primary">Close</button>
+        <button type="button" redirect="bphome.php?ayname=<?php echo $bpayname."&id=".$bpid; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 <div class="hr"></div>
@@ -157,7 +156,8 @@
         </ul>
     </div>
     <div id="main-box" class="col-lg-8 col-xs-offset-1 col-md-8 col-xs-8">
-        <form action="<?php echo $_SERVER['PHP_SELF'].'?linkid='.$contentlink_id; ?>" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF'] . '?linkid=' . $contentlink_id; ?>" method="POST"
+              enctype="multipart/form-data">
             <div class="form-group tab1 active" id="actionlist">
                 <h1>Details</h1>
                 <div class="col-xs-12">
@@ -165,9 +165,11 @@
                     <h3>College/School Name</h3>
                     <div id="college-school" class="form-group form-indent">
                         <p class="status">
-                            <small>Provide the formal name of the College/School exactly as you want it to appear.</small>
+                            <small>Provide the formal name of the College/School exactly as you want it to appear.
+                            </small>
                         </p>
-                        <input id="college-school-input" name="college-school-input" type="text" class="form-control" value="<?php echo $rowsexvalue["UNIT_NAME"]; ?>" required>
+                        <input id="college-school-input" name="college-school-input" type="text" class="form-control"
+                               value="<?php echo $rowsexvalue["UNIT_NAME"]; ?>" required>
                     </div>
 
                     <h3>Dean's Name</h3>
@@ -175,42 +177,52 @@
                         <p class="status">
                             <small>Provide the formal name of the Dean exactly as you want it to appear.</small>
                         </p>
-                        <input id="deans-name-input" name="deans-name-input" type="text" class="form-control" value="<?php echo $rowsexvalue["DEAN_NAME_PRINT"]; ?>" required>
+                        <input id="deans-name-input" name="deans-name-input" type="text" class="form-control"
+                               value="<?php echo $rowsexvalue["DEAN_NAME_PRINT"]; ?>" required>
                     </div>
                     <h3>Dean's Title</h3>
                     <div id="deans-title" class="form-group form-indent">
                         <p class="status">
-                            <small>Provide the full, formal title of the Dean exactly as you would like it to appear.</small>
+                            <small>Provide the full, formal title of the Dean exactly as you would like it to appear.
+                            </small>
                         </p>
-                        <input id="deans-title-input" name="deans-title-input" type="text" class="form-control" value="<?php echo $rowsexvalue["DEAN_TITLE"]; ?>" required>
+                        <input id="deans-title-input" name="deans-title-input" type="text" class="form-control"
+                               value="<?php echo $rowsexvalue["DEAN_TITLE"]; ?>" required>
                     </div>
                     <h3>Dean's Portrait</h3>
                     <div id="deans-portrait" class="form-group form-indent">
                         <p class="status">
-                            <small>Optional. Upload a high resolution portrait photo of the Dean, exactly as you want it to
-                                appear. Image should be sized to 250 x 250 pixels in JPG, GIF, or PNG format. Note: if you do
+                            <small>Optional. Upload a high resolution portrait photo of the Dean, exactly as you want it
+                                to
+                                appear. Image should be sized to 250 x 250 pixels in JPG, GIF, or PNG format. Note: if
+                                you do
                                 not include a portrait, the official Univerisity Seal will be printed in its place.
                                 <small>
                         </p>
-                        <input id="deans-portrait-logo" name="deans-portrait-logo" type="file" onchange="selectorfile(this)" class="form-control">
+                        <input id="deans-portrait-logo" name="deans-portrait-logo" type="file"
+                               onchange="selectorfile(this)" class="form-control">
                     </div>
                     <h3>Dean's Signature</h3>
                     <div id="deans-signature" class="form-group form-indent">
                         <p class="status">
-                            <small>Optional. Upload a high resolution image of the Dean's signature, exactly as you want it to
+                            <small>Optional. Upload a high resolution image of the Dean's signature, exactly as you want
+                                it to
                                 appear. Image should be sized to 250 x 75 pixels in JPG, GIF, or PNG format.
                             </small>
                         </p>
-                        <input id="deans-signature-logo" name="deans-signature-logo" type="file" onchange="selectorfile(this)" class="form-control">
+                        <input id="deans-signature-logo" name="deans-signature-logo" type="file"
+                               onchange="selectorfile(this)" class="form-control">
                     </div>
                     <h3>College/School Companion Logo</h3>
                     <div id="deans-college-school" class="form-group form-indent">
                         <p class="status">
-                            <small>Upload the official Columbia Campus Colleges and Schools Companion Logo, congruent with
+                            <small>Upload the official Columbia Campus Colleges and Schools Companion Logo, congruent
+                                with
                                 instructions provided at http://sc.edu/toolbox/companion_Logos.php.
                             </small>
                         </p>
-                        <input id="deans-college-school-logo" name="deans-college-school-logo" type="file" onchange="selectorfile(this)" class="form-control">
+                        <input id="deans-college-school-logo" name="deans-college-school-logo" type="file"
+                               onchange="selectorfile(this)" class="form-control">
                     </div>
 
                     <button id="next-tab" type="button"
@@ -228,40 +240,58 @@
                 <div class="col-lg-12 col-sm-10 col-xs-12">
                     <h3>Introduction</h3>
                     <div id="introduction" class="form-group form-indent">
-                        <p class="status"><small>Provide a brief narrative introduction of no more than 725 characters (including spaces). This text will form the narrative introduction to the annual Outcomes Report and you may choose to follow it with highlights using the feature provider below. In the Introduction, please use only plain text.</small></p>
-                        <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input" class="form-control wordCount" required ><?php echo mybr2nl($rowsexvalue["INTRODUCTION"]); ?></textarea>
+                        <p class="status">
+                            <small>Provide a brief narrative introduction of no more than 725 characters (including
+                                spaces). This text will form the narrative introduction to the annual Outcomes Report
+                                and you may choose to follow it with highlights using the feature provider below. In the
+                                Introduction, please use only plain text.
+                            </small>
+                        </p>
+                        <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input"
+                                  class="form-control wordCount"
+                                  required><?php echo mybr2nl($rowsexvalue["INTRODUCTION"]); ?></textarea>
                     </div>
                     <h3>Highlights</h3>
                     <div id="highlights" class="form-group form-indent">
-                        <p class="status"><small>Provide a narrative that highlights accomplishments, awards, or other outcomes. You should elaborate on these highlights elsewhere in your outcomes reporting. Content is restricted to 525 characters (including spaces).</small></p>
-                        <textarea rows="5" cols="25" maxlength="525" id="highlights-input" name="highlights-input" type="textarea" class="form-control wordCount"><?php echo mybr2nl($rowsexvalue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
+                        <p class="status">
+                            <small>Provide a narrative that highlights accomplishments, awards, or other outcomes. You
+                                should elaborate on these highlights elsewhere in your outcomes reporting. Content is
+                                restricted to 525 characters (including spaces).
+                            </small>
+                        </p>
+                        <textarea rows="5" cols="25" maxlength="525" id="highlights-input" name="highlights-input"
+                                  type="textarea"
+                                  class="form-control wordCount"><?php echo mybr2nl($rowsexvalue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
                     </div>
 
                     <!--                      Edit Control-->
 
                     <?php
 
-                    if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
-                        <button id="save" type="submit" name="savedraft"
-                                class="btn-primary  pull-right">
+                    if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
+                        <button id="save" type="submit" name="savedraft" class="btn-primary  pull-right">
                             Save Draft
                         </button>
-                        <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
-                        <button type="submit" id="submit_approve" name="submit_approve"
-                                class="btn-primary pull-right">Submit For Approval</button>
+                        <input type="button" id="cancelbtn" value="Cancel & Discard"
+                               class="btn-primary cancelbox pull-left">
+                        <button type="submit" id="submit_approve" name="submit_approve" class="btn-primary pull-right">
+                            Submit For Approval
+                        </button>
 
                     <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
-                        <button id="save" type="submit" name="savedraft"
-                                class="btn-primary  pull-right">
+                        <button id="save" type="submit" name="savedraft" class="btn-primary  pull-right">
                             Save Draft
                         </button>
-                        <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbox pull-left">
-                        <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                            <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                            <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                        <?php endif; } ?>
-
+                        <input type="button" id="cancelbtn" value="Cancel & Discard"
+                               class="btn-primary cancelbox pull-left">
+                        <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
+                            <input type="submit" id="approve" name="approve" value="Approve"
+                                   class="btn-primary pull-right">
+                            <input type="submit" id="reject" name="reject" value="Reject"
+                                   class="btn-primary pull-right">
+                        <?php endif;
+                    } ?>
                 </div>
             </div>
         </form>
@@ -273,9 +303,9 @@
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
+<!--<script src="../Resources/Library/js/ckeditor.js" type="text/javascript"></script>-->
 <script src="../Resources/Library/js/tabChange.js"></script>
 <script>
-
     $('.cancelbox').on("click", function () {
         var choice = confirm("Are you sure you want to cancel");
         if (choice == true) {
@@ -284,11 +314,10 @@ require_once("../Resources/Includes/footer.php");
         }
     });
     function selectorfile(selected) {
-
         var doc, image;
         var filename = $(selected).val();
         var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
-        var allowedext = ['gif','jpeg','png'];
+        var allowedext = ['gif', 'jpeg', 'png'];
 
         if (filename.length > 0) {
             if (allowedext.indexOf(extention) !== -1) {
