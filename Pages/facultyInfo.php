@@ -36,27 +36,63 @@ $fcdev=null;
 $createact=null;
 $time = date('Y-m-d H:i:s');
 
+try {
+    if ($ouid == 4) {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
 
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY, OU_NAME, BROADCAST_STATUS, LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY, OU_NAME, BROADCAST_STATUS_OTHERS, LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+        
+        
+
+    } else{
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
+    }
+
+    $resultbroad->execute();
+    $rowbroad = $resultbroad->fetch(4);
+
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
 }
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
+try {
+    $sqlexvalue = "SELECT * FROM `AC_FacultyInfo` where OU_ABBREV = :ouabbrev AND ID_FACULTY_INFO in (select max(ID_FACULTY_INFO) from AC_FacultyInfo where OUTCOMES_AY = :bpayname group by OU_ABBREV); ";
 
-$sqlexvalue = "SELECT * FROM `AC_FacultyInfo` where OU_ABBREV = '$ouabbrev' AND ID_FACULTY_INFO in (select max(ID_FACULTY_INFO) from AC_FacultyInfo where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue -> fetch_assoc();
+    $resultsexvalue = $connection->prepare($sqlexvalue);
+    $resultsexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+    $resultsexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+    $resultsexvalue->execute();
 
+    $rowsexvalue = $resultsexvalue->fetch(4); 
+
+} catch(PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 /*
  * SQL check Status of Blueprint Content for Edit restrictions
  */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+try {
+    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
+
+    $resultbpstatus = $connection->prepare($sqlbpstatus);
+    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
+    $resultbpstatus->execute();
+
+    $rowsbpstatus = $resultbpstatus->fetch(4); 
+
+} catch(PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 
 if (isset($_POST['savedraft'])) {
@@ -97,6 +133,13 @@ if (isset($_POST['savedraft'])) {
 
     if ($errorflag != 1) {
 
+    //  *************************** \\
+    //  ********** ERROR ********** \\
+    //  ** Can't execute multiple * \\
+    //  ** queries in single PDO ** \\
+    //  ******** statement ******** \\
+    //  *************************** \\
+
         $sqlfacinfo = "INSERT INTO `AC_FacultyInfo` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
  VALUES ('$ouabbrev','$bpayname','$author','$time','$facdev','$createact','$supinfopath');";
 
@@ -119,37 +162,67 @@ if(isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    try {
+        $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= :author ,MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id;";
 
-    if ($mysqli->query($sqlfacinfo)) {
+        $sqlfacinforesult = $connection->prepare($sqlfacinfo);
+        $sqlfacinforesult->bindParam(":author", $author, PDO::PARAM_INT);
+        $sqlfacinforesult->bindParam(":time", $time, PDO::PARAM_INT);
+        $sqlfacinforesult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
 
-        $error[0] = "Faculty Information submitted Successfully";
+        if ($sqlfacinforesult->execute()) {
+            $error[0] = "Faculty Information submitted Successfully";
+        } else {
+            $error[0] = "Faculty Information Could not be submitted. Please Retry.";
+        }
 
-    } else {
-        $error[0] = "Faculty Information Could not be submitted. Please Retry.";
+    } catch (PDOException $e){
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
-
 }
 
 if(isset($_POST['approve'])) {
 
-    $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Information Approved Successfully";
-    } else {
-        $error[0] = "Faculty Information Could not be Approved. Please Retry.";
+    try {
+        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= :author ,MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id;";
+
+        $sqlmissionresult = $connection->prepare($sqlmission);
+        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_INT);
+        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_INT);
+        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
+
+        if ($sqlmissionresult->execute()) {
+            $error[0] = "Faculty Information Approved Successfully";
+        } else {
+            $error[0] = "Faculty Information Could not be Approved. Please Retry.";
+        }
+
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 
 if(isset($_POST['reject'])) {
 
-    $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Information Rejected Successfully";
-    } else {
-        $error[0] = "Faculty Information Could not be Rejected. Please Retry.";
+    try {
+        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= :author ,MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id;";
+
+        $sqlmissionresult = $connection->prepare($sqlmission);
+        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_INT);
+        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_INT);
+        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
+
+        if ($sqlmissionresult->execute()) {
+            $error[0] = "Faculty Information Rejected Successfully";
+        } else {
+            $error[0] = "Faculty Information Could not be Rejected. Please Retry.";
+        }
+
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 
@@ -179,7 +252,7 @@ require_once("../Resources/Includes/menu.php");
         <div class="col-xs-8">
             <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
-            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
     </div>
@@ -190,14 +263,23 @@ require_once("../Resources/Includes/menu.php");
             <div id="facdev" class="form-group form-indent">
                 <p class="status"><small>Optional. List and describe your unit's efforts at faculty development during the Academic Year, including investments, activities, incentives, objectives, and outcomes.
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac)</small></p>
-                <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']); ?></textarea>
+                <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" >
+                <?php 
+                    echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']); 
+                ?>
+                    
+                </textarea>
             </div>
             <h3>Other Activity</h3>
             <div id="createact" class="form-group form-indent">
                 <p class="status"><small>Optional.  List and describe significant artistic, creative, and performance activities of faculty in your unit during the Academic Year.  List by each individual's last name, first name, name of activity, and date (month and year are sufficient).
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac).</small></p>
 
-                <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']); ?></textarea>
+                <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control">
+                <?php 
+                    echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']); 
+                ?>        
+                </textarea>
             </div>
 
             
@@ -211,7 +293,9 @@ require_once("../Resources/Includes/menu.php");
 
                 <!--                      Edit Control-->
 
-                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+                <?php 
+
+                if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
 
                     <button id="save" type="submit" name="savedraft"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">

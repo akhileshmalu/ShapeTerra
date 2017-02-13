@@ -7,15 +7,17 @@
  */
 
 session_start();
-if(!$_SESSION['isLogged']) {
+if (!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
+
+require_once ("../Resources/Includes/connect.php");
+
 $error = array();
 $errorflag =0;
 $BackToDashboard = true;
 
-require_once ("../Resources/Includes/connect.php");
 
 $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
@@ -36,27 +38,65 @@ $time = date('Y-m-d H:i:s');
 /*
  * faculty Award Grid ; conditional for provost & other users
  */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+try{
+    if ($ouid == 4) {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+        
+        
+
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
+    }
+
+    $resultbroad->execute();
+    $rowbroad = $resultbroad->fetchAll(PDO::FETCH_BOTH);
+}catch(PDOException $e){
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
 }
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
 /*
  * Values for placeholders
  */
-$sqlexvalue = "SELECT * FROM `AC_ExecSum` where OU_ABBREV = '$ouabbrev' AND ID_EXECUTIVE_SUMMARY in (select max(ID_EXECUTIVE_SUMMARY) from AC_ExecSum where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue -> fetch_assoc();
+try{
+    $sqlexvalue = "SELECT * FROM `AC_ExecSum` where OU_ABBREV = :ouabbrev AND ID_EXECUTIVE_SUMMARY in (select max(ID_EXECUTIVE_SUMMARY) from AC_ExecSum where OUTCOMES_AY = :bpayname group by OU_ABBREV);";
+
+    $resultexvalue = $connection->prepare($sqlexvalue);
+    $resultexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+    $resultexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+
+    $resultexvalue->execute();
+
+    $rowsexvalue = $resultexvalue -> fetch(4);
+
+}catch(PDOException $e){
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 /*
  * SQL check Status of Blueprint Content for Edit restrictions
  */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+try{
+    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
+
+    $resultbpstatus = $connection->prepare($sqlbpstatus);
+    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
+    $resultbpstatus->execute();
+
+    $rowsbpstatus = $resultbpstatus->fetch(4); 
+}catch(PDOException $e){
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 if (isset($_POST['savedraft'])) {
 
@@ -139,59 +179,127 @@ if (isset($_POST['savedraft'])) {
 
 
     if ($errorflag != 1) {
+        try {
+            //  *************************** \\
+            //  ********** ERROR ********** \\
+            //  ** Can't execute multiple * \\
+            //  ** queries in single PDO ** \\
+            //  ******** statement ******** \\
+            //  *************************** \\
 
-        $sqlexecsum = "INSERT INTO `AC_ExecSum` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, UNIT_NAME, DEAN_NAME_PRINT, DEAN_TITLE, DEAN_PORTRAIT, DEAN_SIGNATURE, COMPANION_LOGO, INTRODUCTION, HIGHLIGHTS_NARRATIVE)
-VALUES ('$ouabbrev','$bpayname','$author','$time','$collname','$deanname','$deantitle','$deansPortraitLogopath','$deansPortraitSignpath','$deansSchLogopath','$introduction','$highlights');";
+            $sqlexecsum = "INSERT INTO `AC_ExecSum` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, UNIT_NAME, 
+                DEAN_NAME_PRINT, DEAN_TITLE, DEAN_PORTRAIT, DEAN_SIGNATURE, COMPANION_LOGO, INTRODUCTION, HIGHLIGHTS_NARRATIVE)
+                VALUES (:ouabbrev,:bpayname,:author,:time,:collname,:deanname,:deantitle,:deansPortraitLogopath,
+                :deansPortraitSignpath,:deansSchLogopath,:introduction,:highlights);";
 
-        $sqlexecsum .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+            $sqlexecsum .= "UPDATE  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author',MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id;";
 
-        $sqlexecsum .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+            $sqlexecsum .= "UPDATE  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:time where ID_BROADCAST = :bpid; ";
 
-        if ($mysqli->multi_query($sqlexecsum)) {
+            $execsum = $connection->prepare($sqlexecsum);
+            $execsum->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+            $execsum->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+            $execsum->bindParam(":author", $author, PDO::PARAM_STR);
+            $execsum->bindParam(":time", $time, PDO::PARAM_STR);
+            $execsum->bindParam(":collname", $collname, PDO::PARAM_STR);
+            $execsum->bindParam(":deanname", $deanname, PDO::PARAM_STR);
+            $execsum->bindParam(":deantitle", $deantitle, PDO::PARAM_STR);
+            $execsum->bindParam(":deansPortraitLogopath", $deansPortraitLogopath, PDO::PARAM_STR);
+            $execsum->bindParam(":deansPortraitSignpath", $deansPortraitSignpath, PDO::PARAM_STR);
+            $execsum->bindParam(":deansSchLogopath", $deansSchLogopath, PDO::PARAM_STR);
+            $execsum->bindParam(":introduction", $introduction, PDO::PARAM_STR);
+            $execsum->bindParam(":highlights", $highlights, PDO::PARAM_STR);
+            $execsum->bindParam(":author", $author, PDO::PARAM_STR);
+            $execsum->bindParam(":time", $time, PDO::PARAM_STR);
+            $execsum->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
+            $execsum->bindParam(":author", $author, PDO::PARAM_STR);
+            $execsum->bindParam(":time", $time, PDO::PARAM_STR);
+            $execsum->bindParam(":bpid", $bpid, PDO::PARAM_STR);
 
-            $error[0] = "Executive Summary Info Added Succesfully.";
-        } else {
-            $error[3] = "Executive Summary Info could not be added.";
+            if ($execsum->execute()) {
+
+                $error[0] = "Executive Summary Info Added Succesfully.";
+            } else {
+                $error[3] = "Executive Summary Info could not be added.";
+            }
+        } catch (PDOException $e){
+            error_log($e->getMessage());
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
         }
     }
 
 }
 
-if(isset($_POST['submit_approval'])) {
+if (isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    try {
+        $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= :author ,MOD_TIMESTAMP =:time  where ID_CONTENT = :contentlink_id;";
 
-    if ($mysqli->query($sqlfacinfo)) {
+        $sqlfacinforesult = $connection->prepare($sqlfacinfo);
+        $sqlfacinforesult->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqlfacinforesult->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqlfacinforesult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
 
-        $error[0] = "Executive Summary Info submitted Successfully";
+        if ($sqlfacinforesult->execute()) {
 
-    } else {
-        $error[0] = "Executive Summary Info Could not be submitted. Please Retry.";
+            $error[0] = "Executive Summary Info submitted Successfully";
+
+        } else {
+            $error[0] = "Executive Summary Info Could not be submitted. Please Retry.";
+        }
+    } catch (PDOException $e){
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 
 }
 
-if(isset($_POST['approve'])) {
+if (isset($_POST['approve'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Executive Summary Info Approved Successfully";
-    } else {
-        $error[0] = "Executive Summary Info Could not be Approved. Please Retry.";
+
+    try {
+        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = :author, MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id; ";
+
+        $sqlmissionresult = $connection->prepare($sqlmission);
+        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
+
+        if ($sqlmissionresult->execute()) {
+            $error[0] = "Executive Summary Info Approved Successfully";
+        } else {
+            $error[0] = "Executive Summary Info Could not be Approved. Please Retry.";
+        }
+    } catch (PDOException $e){
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 
-if(isset($_POST['reject'])) {
+if (isset($_POST['reject'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Executive Summary Info Rejected Successfully";
-    } else {
-        $error[0] = "Executive Summary Info Could not be Rejected. Please Retry.";
+
+    try {
+        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = :author, MOD_TIMESTAMP =:time  
+        where ID_CONTENT = :contentlink_id; ";
+
+        $sqlmissionresult = $connection->prepare($sqlmission);
+        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
+
+        if ($sqlmissionresult->execute()) {
+            $error[0] = "Executive Summary Info Rejected Successfully";
+        } else {
+            $error[0] = "Executive Summary Info Could not be Rejected. Please Retry.";
+        }
+    } catch (PDOException $e){
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 
@@ -203,6 +311,8 @@ require_once("../Resources/Includes/header.php");
 // Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
+
+<script src="/ckeditor/ckeditor.js" type="text/javascript"></script>
 
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
@@ -315,7 +425,9 @@ require_once("../Resources/Includes/menu.php");
 
                     <!--                      Edit Control-->
 
-                    <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+                    <?php 
+
+                    if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
                         <button id="save" type="submit" name="savedraft"
                                 class="btn-primary  pull-right">
                             Save Draft

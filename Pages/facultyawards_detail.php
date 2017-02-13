@@ -45,43 +45,79 @@ $author = $_SESSION['login_userid'];
 /*
  * faculty Award Grid ; conditional for provost & other users
  */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+try {
+    if ($ouid == 4) {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+        
+        
+
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
+    }
+
+    $resultbroad->execute();
+    $rowbroad = $resultbroad->fetch(4);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
 }
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
 /*
  * SQL check Status of Blueprint Content for Edit restrictions
  */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+try {
+    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
+
+    $resultbpstatus = $connection->prepare($sqlbpstatus);
+    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
+    $resultbpstatus->execute();
+
+    $rowsbpstatus = $resultbpstatus->fetch(4); 
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 /*
  * New award modal Input values
  */
 $sqlaward = "select * from AwardType;";
-$resultaward = $mysqli->query($sqlaward);
+$awardresult = $connection->prepare($sqlaward)->execute();
+
 
 $sqlawardLoc = "select * from AwardLocation;";
-$resultawardLoc = $mysqli->query($sqlawardLoc);
+$awardlocresult = $connection->prepare($sqlawardLoc)->execute();
+
 
 
 /*
  * SQL for pre-existing Awards Value
  */
-$sqlexvalue = "SELECT * FROM AC_FacultyAwards WHERE ID_FACULTY_AWARDS = '$award_id' ;";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue->fetch_assoc();
+$sqlexvalue = "SELECT * FROM AC_FacultyAwards WHERE ID_FACULTY_AWARDS = :id ;";
+$rowsexvalue = $connection->prepare($sqlexvalue);
+$rowsexvalue->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
+$rowsexvalue->execute();
 
 /*
  * Add Modal Record Addition
  */
 
 if(isset($_POST['award_submit'])){
+
+    //  *************************** \\
+    //  ********** ERROR ********** \\
+    //  ** Can't execute multiple * \\
+    //  ** queries in single PDO ** \\
+    //  ******** statement ******** \\
+    //  *************************** \\
 
     $awardType = $_POST['awardType'];
     $awardLoc = $_POST['awardLoc'];
@@ -92,9 +128,10 @@ if(isset($_POST['award_submit'])){
     $dateAward = $_POST['dateAward'];
     $contentlink_id = $_GET['linkid'];
 
-    $sqlAcFacAward = "UPDATE `AC_FacultyAwards`
-SET OUTCOMES_AUTHOR = '$author',MOD_TIMESTAMP = '$time',AWARD_TYPE = '$awardType', AWARD_LOCATION = '$awardLoc', RECIPIENT_NAME_LAST = '$recipLname',
-RECIPIENT_NAME_FIRST = '$recipFname', AWARD_TITLE = '$awardTitle', AWARDING_ORG = '$awardOrg',DATE_AWARDED ='$dateAward' WHERE ID_FACULTY_AWARDS = '$award_id' ;";
+    $sqlAcFacAward = "UPDATE `AC_FacultyAwards` SET OUTCOMES_AUTHOR = '$author',MOD_TIMESTAMP =
+                '$time',AWARD_TYPE = '$awardType', AWARD_LOCATION = '$awardLoc', RECIPIENT_NAME_LAST = '$recipLname',
+                RECIPIENT_NAME_FIRST = '$recipFname', AWARD_TITLE = '$awardTitle', AWARDING_ORG = '$awardOrg',DATE_AWARDED ='$dateAwar'
+                WHERE ID_FACULTY_AWARDS = '$award_id' ;";
 
     if($mysqli->query($sqlAcFacAward)){
 
@@ -145,7 +182,7 @@ require_once("../Resources/Includes/menu.php");
         <div class="col-xs-8">
             <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
-            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
 

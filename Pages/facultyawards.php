@@ -45,30 +45,66 @@ $author = $_SESSION['login_userid'];
 /*
  * faculty Award Grid ; conditional for provost & other users
  */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+
+try {
+    if ($ouid == 4) {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+        
+        
+
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
+    }
+
+    $resultbroad->execute();
+    $rowbroad = $resultbroad->fetch(4);
+
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
 }
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
 /*
  * SQL check Status of Blueprint Content for Edit restrictions
  */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+try {
+    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
+
+    $resultbpstatus = $connection->prepare($sqlbpstatus);
+    $resultbpstatus->execute(['id'=>$contentlink_id]);
+    $rowsbpstatus = $resultbpstatus->fetch(4); 
+
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 /*
  * New award modal Input values : Award type
  */
-$sqlaward = "select * from AwardType;";
-$resultaward = $mysqli->query($sqlaward);
+try {
+    $sqlaward = "select * from AwardType;";
+    $awardresult = $connection->prepare($sqlaward)->execute();
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
-$sqlawardLoc = "select * from AwardLocation;";
-$resultawardLoc = $mysqli->query($sqlawardLoc);
-
+try {
+    $sqlawardLoc = "select * from AwardLocation;";
+    $awardlocresult = $connection->prepare($sqlawardLoc)->execute();;
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 
 /*
@@ -76,6 +112,13 @@ $resultawardLoc = $mysqli->query($sqlawardLoc);
  */
 
 if(isset($_POST['award_submit'])){
+
+    //  *************************** \\
+    //  ********** ERROR ********** \\
+    //  ** Can't execute multiple * \\
+    //  ** queries in single PDO ** \\
+    //  ******** statement ******** \\
+    //  *************************** \\
 
     $awardType = $_POST['awardType'];
     $awardLoc = $_POST['awardLoc'];
@@ -87,12 +130,16 @@ if(isset($_POST['award_submit'])){
     $contentlink_id = $_GET['linkid'];
 
     $sqlAcFacAward = "INSERT INTO `AC_FacultyAwards`
-(OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST,RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED,ID_SORT)
-VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$awardLoc','$recipLname','$recipFname','$awardTitle','$awardOrg','$dateAward','0');";
+                        (OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST,
+                        RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED,ID_SORT)
+                        VALUES('$ouabbrev','$bpayname','$author','$time','$awardType','$awardLoc','$recipLname','$recipFname',
+                        '$awardTitle','$awardOrg','$dateAward','0');";
 
-    $sqlAcFacAward .= "Update `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    $sqlAcFacAward .= "UPDATE `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = '$author',MOD_TIMESTAMP ='$time'  
+                        where ID_CONTENT ='$contentlink_id';";
 
-    $sqlAcFacAward .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+    $sqlAcFacAward .= "UPDATE  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', 
+                        AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
 
     if($mysqli->multi_query($sqlAcFacAward)){
 
@@ -110,14 +157,24 @@ if(isset($_POST['submit_approve'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlcreatebp .= "Update  `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+    try {
+        $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= :author ,MOD_TIMESTAMP =:time  where ID_CONTENT = :contentlink_id;";
 
-    if ($mysqli->query($sqlcreatebp)) {
+        $sqlfacinforesult = $connection->prepare($sqlfacinfo);
+        $sqlfacinforesult->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqlfacinforesult->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqlfacinforesult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
 
-        $error[0] = "Faculty Awards submitted Successfully";
+        if ($sqlfacinforesult->execute()) {
 
-    } else {
-        $error[0] = "Faculty Awards Could not be submitted. Please Retry.";
+            $error[0] = "Faculty Awards submitted Successfully";
+
+        } else {
+            $error[0] = "Faculty Awards Could not be submitted. Please Retry.";
+        }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 
 
@@ -126,22 +183,47 @@ if(isset($_POST['submit_approve'])) {
 if(isset($_POST['approve'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Awards Approved Successfully";
-    } else {
-        $error[0] = "Faculty Awards Could not be Approved. Please Retry.";
+
+     try {
+        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = :author, MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id; ";
+
+        $sqlmissionresult = $connection->prepare($sqlmission);
+        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
+
+        if ($sqlmissionresult->execute()) {
+            $error[0] = "Faculty Awards Approved Successfully";
+        } else {
+            $error[0] = "Faculty Awards Could not be Approved. Please Retry.";
+        }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 
 if(isset($_POST['reject'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Awards Rejected Successfully";
-    } else {
-        $error[0] = "Faculty Awards Could not be Rejected. Please Retry.";
+
+    try {
+        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = :author, MOD_TIMESTAMP =:time  
+        where ID_CONTENT = :contentlink_id; ";
+
+        $sqlmissionresult = $connection->prepare($sqlmission);
+        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
+
+        if ($sqlmissionresult->execute()) {
+            $error[0] = "Faculty Awards Rejected Successfully";
+        } else {
+            $error[0] = "Faculty Awards Could not be Rejected. Please Retry.";
+        }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 
@@ -186,6 +268,7 @@ require_once("../Resources/Includes/menu.php");
         <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
         <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]."&id=".$bpid; ?>" class="end btn-primary">Close</button>
     </div>
+
 <?php } ?>
 
 <div class="hr"></div>
@@ -199,7 +282,7 @@ require_once("../Resources/Includes/menu.php");
         <div class="col-xs-8">
             <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
-            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
 
@@ -227,7 +310,7 @@ require_once("../Resources/Includes/menu.php");
                     <th col="AWARD_TYPE" width="100" type="text">Type</th>
                     <th col="AWARD_TITLE" href="<?php echo "facultyawards_detail.php?linkid=".$contentlink_id."&award_id="?>{{columns.ID_FACULTY_AWARDS}}" width="300" type="text">Award</th>
                     <th col="RECIPIENT_NAME" width="200" type="text">Recipient(s)</th>
-<!--                                        <th col="" type="text">Actions</th>
+                                       <th col="" type="text">Actions</th>
                 </tr>
             </table>-->
             <div id="jsGrid"></div>
