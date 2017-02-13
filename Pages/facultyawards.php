@@ -100,7 +100,7 @@ try {
 
 try {
     $sqlawardLoc = "select * from AwardLocation;";
-    $awardlocresult = $connection->prepare($sqlawardLoc)->execute();;
+    $awardlocresult = $connection->prepare($sqlawardLoc)->execute();
 } catch (PDOException $e) {
     error_log($e->getMessage());
     //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);

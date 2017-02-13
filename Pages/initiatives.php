@@ -37,27 +37,62 @@ $time = date('Y-m-d H:i:s');
 /*
  * faculty Award Grid ; conditional for provost & other users
  */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+try {
+    if ($ouid == 4) {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+        
+        
+
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
+    }
+
+    $resultbroad->execute();
+    $rowbroad = $resultbroad->fetch(4);
+} catch(PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
 }
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
 /*
  * Values for placeholders
  */
-$sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV='$ouabbrev' and OUTCOMES_AY='$bpayname' ";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue -> fetch_assoc();
+try {
+    $sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV=:ouabbrev and OUTCOMES_AY=:bpayname ";
+    $resultexvalue = $connection->prepare($sqlexvalue);
+    $resultexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+    $resultexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+    $resultexvalue->execute();
+
+    $rowsexvalue = $resultexvalue->fetch(4);
+} catch(PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 /*
  * SQL check Status of Blueprint Content for Edit restrictions
  */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+try {
+    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
+
+    $resultbpstatus = $connection->prepare($sqlbpstatus);
+    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
+    $resultbpstatus->execute();
+
+    $rowsbpstatus = $resultbpstatus->fetch(4); 
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 
 if (isset($_POST['savedraft'])) {
@@ -120,14 +155,24 @@ if(isset($_POST['submit_approval'])) {
 
     $contentlink_id = $_GET['linkid'];
 
-    $sqlinitiatives .= " Update BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR = '$author', MOD_TIMESTAMP = '$time' where ID_CONTENT ='$contentlink_id';";
+    try {
+        $sqlinitiatives .= " UPDATE BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR = :author, MOD_TIMESTAMP = :time where ID_CONTENT = :contentlink_id;";
 
-    if ($mysqli->query($sqlinitiatives)) {
+        $sqlinitiativesresults = $connection->prepare($sqlinitiatives);
+        $sqlinitiativesresults->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqlinitiativesresults->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqlinitiativesresults->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
 
-        $error[0] = "Initiatives & Observation submitted Successfully";
+        if ($sqlinitiativesresults->execute()) {
 
-    } else {
-        $error[0] = "Initiatives & Observation Could not be submitted. Please Retry.";
+            $error[0] = "Initiatives & Observation submitted Successfully";
+
+        } else {
+            $error[0] = "Initiatives & Observation Could not be submitted. Please Retry.";
+        }
+    } catch(PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 
 }
@@ -135,22 +180,43 @@ if(isset($_POST['submit_approval'])) {
 if(isset($_POST['approve'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Initiatives Approved Successfully";
-    } else {
-        $error[0] = "Initiatives Could not be Approved. Please Retry.";
+    try {
+        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= :author, MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id; ";
+        $sqlmissionresults = $connection->prepare($sqlmission);
+        $sqlmissionresults->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqlmissionresults->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqlmissionresults->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
+
+        if ($sqlmissionresults->execute()) {
+            $error[0] = "Initiatives Approved Successfully";
+        } else {
+            $error[0] = "Initiatives Could not be Approved. Please Retry.";
+        }
+    } catch(PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 
 if(isset($_POST['reject'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Initiatives Rejected Successfully";
-    } else {
-        $error[0] = "Initiatives Could not be Rejected. Please Retry.";
+    try {
+        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= :author, MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id; ";
+
+        $sqlmissionresults = $connection->prepare($sqlmission);
+        $sqlmissionresults->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqlmissionresults->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqlmissionresults->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
+
+        if ($sqlmissionresults->execute()) {
+            $error[0] = "Initiatives Rejected Successfully";
+        } else {
+            $error[0] = "Initiatives Could not be Rejected. Please Retry.";
+        }
+    } catch(PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 

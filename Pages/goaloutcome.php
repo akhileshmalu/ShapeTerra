@@ -42,7 +42,7 @@ $author = $_SESSION['login_userid'];
 /*
  * faculty Award Grid ; conditional for provost & other users
  */
-try{
+try {
     if ($ouid == 4) {
         $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
 
@@ -61,8 +61,8 @@ try{
     }
 
     $resultbroad->execute();
-    $rowbroad = $resultbroad->fetchAll(PDO::FETCH_BOTH);
-}catch(PDOException $e){
+    $rowbroad = $resultbroad->fetch(4);
+} catch(PDOException $e) {
     error_log($e->getMessage());
     //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
 }
@@ -70,16 +70,31 @@ try{
 /*
  * Existing values to show for goal outcomes, If exist.
  */
-$sqlexgoalout = "select * from BP_UnitGoalOutcomes where ID_UNIT_GOAL = '$goal_id' ";
-$resultexgoalout = $mysqli->query($sqlexgoalout);
-$rowsexgoalout = $resultexgoalout -> fetch_assoc();
+try {
+    $sqlexgoalout = "select * from BP_UnitGoalOutcomes where ID_UNIT_GOAL = :goal_id ";
+    $resultexgoalout = $connection -> prepare($sqlexgoalout);
+    $resultexgoalout -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+    $resultexgoalout -> execute();
 
+    $rowsexgoalout = $resultexgoalout->fetch(4);
+} catch(PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 /*
  * values to show for goals, If exist.
  */
-$sqlunitgoal = "select * from BP_UnitGoals where ID_UNIT_GOAL = '$goal_id' ";
-$resultunitgoal = $mysqli->query($sqlunitgoal);
-$rowsunitgoal = $resultunitgoal -> fetch_assoc();
+try {
+    $sqlunitgoal = "select * from BP_UnitGoals where ID_UNIT_GOAL = :goal_id ";
+    $resultunitgoal = $connection -> prepare($sqlunitgoal);
+    $resultunitgoal -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+    $resultunitgoal -> execute();
+
+    $rowsunitgoal = $resultunitgoal->fetch(4);
+} catch(PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 // Value Set for Goal ViewPoints;
 $goalviewpoint = array(
@@ -148,22 +163,42 @@ if(isset($_POST['submit_approve'])) {
 if(isset($_POST['approve'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Approved' where ID_UNIT_GOAL = '$goal_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Goal Outcome Approved Successfully";
-    } else {
-        $error[0] = "Goal Outcome Could not be Approved. Please Retry.";
+
+    try {
+        $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Approved' where ID_UNIT_GOAL = :goal_id; ";
+
+        $sqlmissionresult = $connection->prepare($sqlmission);
+        $sqlmissionresult -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+
+        if ($sqlmissionresult->execute()) {
+            $error[0] = "Goal Outcome Approved Successfully";
+        } else {
+            $error[0] = "Goal Outcome Could not be Approved. Please Retry.";
+        }
+    } catch(PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 
 if(isset($_POST['reject'])) {
 
     $contentlink_id = $_GET['linkid'];
-    $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Rejected' where ID_UNIT_GOAL = '$goal_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Goal Outcome Rejected Successfully";
-    } else {
-        $error[0] = "Goal Outcome Could not be Rejected. Please Retry.";
+
+    try {
+        $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Rejected' where ID_UNIT_GOAL = :goal_id; ";
+
+        $sqlmissionresult = $connection->prepare($sqlmission);
+        $sqlmissionresult -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+
+        if ($sqlmissionresult->execute()) {
+            $error[0] = "Goal Outcome Rejected Successfully";
+        } else {
+            $error[0] = "Goal Outcome Could not be Rejected. Please Retry.";
+        }
+    } catch(PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 }
 
@@ -219,9 +254,13 @@ require_once("../Resources/Includes/menu.php");
                     <label for="goallink"><h3>Linked to University Goal(s)</h3></label>
 
                     <?php
-                    $sqlug = "Select * from BP_UnitGoals A   join UniversityGoals B where find_in_set(ID_UNIV_GOAL,LINK_UNIV_GOAL)>0 and A.ID_UNIT_GOAL = '$goal_id'; ";
-                    $resultug = $mysqli->query($sqlug);
-                    while ($rowsug = $resultug->fetch_assoc()): { ?>
+                    $sqlug = "Select * from BP_UnitGoals A   join UniversityGoals B where find_in_set(ID_UNIV_GOAL,LINK_UNIV_GOAL)>0 and A.ID_UNIT_GOAL = :goal_id; ";
+
+                    $resultug = $connection->prepare($sqlug);
+                    $resultug -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+
+                    $resultug->execute();
+                    while ($rowsug = $resultug->fetch(4)): { ?>
                         <div class="checkbox" id="goallink">
                             <span class="icon">S</span><label style="color: grey"><?php echo $rowsug['GOAL_TITLE']; ?>
                             </label>
