@@ -29,14 +29,17 @@ require_once ("../Resources/Includes/connect.php");
  * Query to show Non terminated Organization Unit as on date.
  */
 $sqlou = "Select * from Hierarchy where OU_ABBREV != 'UNAFFIL' and OU_DATE_END IS NULL and OU_TYPE ='Academic Unit';";
-$resultou = $mysqli->query($sqlou);
+$resultou = $connection->prepare($sqlou);
+$resultou->execute();
+
 
 /*
  * Query to show Academic years for Initiating Blue Print.
  */
 
 $sqlay = "Select * from AcademicYears ORDER BY ID_ACAD_YEAR ASC;";
-$resultay = $mysqli->query($sqlay);
+$resultay = $connection->prepare($sqlay);
+$resultay->execute();
 
 /*
  * Blue Print Content Items & Details.
@@ -103,9 +106,12 @@ if (isset($_POST['submit'])) {
         foreach ($ou as $value) {
             list($ouid, $ouabbrev) = explode(",", $value);
 
-            $sqlbroadcheck = "select * from broadcast where BROADCAST_AY='$ay' and find_in_set('$ouid',BROADCAST_OU)>0; ";
-            $resultbroadcheck = $mysqli->query($sqlbroadcheck);
-            $rowbroadcheck = $resultbroadcheck->num_rows;
+            $sqlbroadcheck = "select * from broadcast where BROADCAST_AY=:ay and find_in_set(:ouid,BROADCAST_OU)>0; ";
+            $resultbroadcheck = $connection->prepare($sqlbroadcheck);
+            $resultbroadcheck->bindParam(":ay", $ay, PDO::PARAM_STR);
+            $resultbroadcheck->bindParam(":ouid", $ouid, PDO::PARAM_INT);
+            $resultbroadcheck -> execute();
+            $rowbroadcheck = $resultbroadcheck->rowCount();
             if ($rowbroadcheck >= 1) {
                 $error[1] = "You have already Initiated BluePrint for Org Unit: " . $ouabbrev . " for year : " . $ay;
                 $errorflag = 1;
@@ -119,8 +125,9 @@ if (isset($_POST['submit'])) {
                  * select last inserted value
                  */
                 $sqllastval = "SELECT max(ID_BROADCAST) AS Lastid FROM broadcast;";
-                $resultlastval = $mysqli->query($sqllastval);
-                $rowslastval = $resultlastval->fetch_assoc();
+                $resultlastval = $connection->prepare($sqlbroadcheck);
+                $resultlastval->execute();
+                $rowslastval = $resultlastval->fetch(4);
 
                 if ($first) {
                     $broad_id = intval($rowslastval['Lastid']) + 1;
@@ -201,7 +208,7 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-xs-3">
                     <select  name="AY" class="col-xs-4 form-control" id="AYname" style="padding: 0px !important; background-color: #fff !important;">
                         <option value=""></option>
-                        <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
+                        <?php while ($rowsay = $resultay->fetch(4)): { ?>
                             <option value="<?php echo $rowsay[1]; ?>"><?php echo $rowsay[1]; ?></option>
                         <?php } endwhile; ?>
                     </select>
@@ -212,7 +219,7 @@ require_once("../Resources/Includes/menu.php");
             <div class="checkbox" id="ouname">
                 <label><input type="checkbox" id="ckbCheckAll" >All Active Academic Units </label>
             </div>
-            <?php while ($rowsou = $resultou->fetch_array(MYSQLI_NUM)): { ?>
+            <?php while ($rowsou = $resultou->fetch(4)): { ?>
                 <div class="checkbox" id="ouname">
                     <label><input type="checkbox" name="ou_name[]"
                               class="checkBoxClass" value="<?php echo $rowsou[0].",".$rowsou[2]; ?>"><?php echo $rowsou[1]; ?></label>
