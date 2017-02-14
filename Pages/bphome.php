@@ -25,17 +25,17 @@ if ($outype == "Administration") {
 }
 
 // SQL to display Blueprint Content
-try {
-    if ($outype == "Academic Unit") {
-        $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
- LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
-        $resultbpcontent = $mysqli->query($sqlbpcontent);
-        $numbpcontent = $resultbpcontent->num_rows;
-    } elseif ($outype == "Administration") {
-        $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
- LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
-        $resultbpcontent = $mysqli->query($sqlbpcontent);
-    }
+try
+{
+    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON 
+BpContents.Linked_BP_ID = broadcast.ID_BROADCAST LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast
+.AUTHOR WHERE OU_ABBREV = :ouabbrev AND BROADCAST_AY=:bpayname ";
+    $resultbpcontent = $connection->prepare($sqlbpcontent);
+    $resultbpcontent->bindParam(':ouabbrev', $ouabbrev, 2);
+    $resultbpcontent->bindParam(':bpayname', $bpayname, 2);
+    $resultbpcontent->execute();
+
+    $numbpcontent = $resultbpcontent->rowCount();
 }
 catch (PDOException $e)
 {
@@ -43,51 +43,78 @@ catch (PDOException $e)
     error_log($e->getMessage());
 }
 
+try
+{
+    if ($outype == "Administration" || $outype == "Service Unit") {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified FROM broadcast INNER JOIN Hierarchy ON 
+    broadcast.BROADCAST_OU=Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND Hierarchy.OU_ABBREV =:ouabbrev ;";
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(':bpayname', $bpayname, 2);
+        $resultbroad->bindParam(':ouabbrev', $ouabbrev, 2);
 
-if ($outype == "Administration" || $outype == "Service Unit" ) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN 
+    Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND BROADCAST_OU =:ouid;";
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(':bpayname', $bpayname, 2);
+        $resultbroad->bindParam(':ouid', $ouid, 1);
+    }
+    $resultbroad->execute();
 }
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
-
-
+catch (PDOException $e)
+{
+//SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
+$rowbroad = $resultbroad->fetch(4);
 
 
 if(isset($_POST['submit_bp'])) {
 
-    $status = "Submitted Draft";
     $bpayname = $_GET['ayname'];
     $bpid = $_GET['id'];
+    try
+    {
+        $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='Submitted Draft', 
+BROADCAST_STATUS_OTHERS='Submitted Draft' WHERE BROADCAST_AY=:bpayname AND BROADCAST_OU =:ouid; ";
+        $resultbroadupdate = $connection->prepare($sqlbroadupdate);
+        $resultbroadupdate->bindParam(':bpayname', $bpayname, 2);
+        $resultbroadupdate->bindParam(':ouid', $ouid, 1);
 
-    $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='$status', BROADCAST_STATUS_OTHERS='$status' where BROADCAST_AY='$bpayname' AND BROADCAST_OU ='$ouid';  ";
-
-    if($mysqli->query($sqlbroadupdate)){
-        $message[0] = "Academic BluePrint Draft Submitted Successfully.";
-
-    } else {
-        $message[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+        if ($resultbroadupdate->execute()) {
+            $message[0] = "Academic BluePrint Draft Submitted Successfully.";
+        } else {
+            $message[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+        }
     }
-
+    catch (PDOException $e)
+    {
+//SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
+    }
 }
-
 
 
 if(isset($_POST['approve'])) {
 
     $bpid = $_GET['id'];
     $bpayname = $_GET['ayname'];
-    $status = "Final";
 
-
-    $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='$status', BROADCAST_STATUS_OTHERS='$status' where ID_BROADCAST = '$bpid';";
-
-    if($mysqli->query($sqlbroadupdate)){
-        $message[0] = "Academic BluePrint Draft Submitted Successfully.";
-
-    } else {
-        $message[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+    try
+    {
+        $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='Final', BROADCAST_STATUS_OTHERS='Final' WHERE 
+    ID_BROADCAST = :bpid;";
+        $resultbroadupdate = $connection->prepare($sqlbroadupdate);
+        if ($resultbroadupdate->execute(['bpid' => $bpid])) {
+            $message[0] = "Academic BluePrint Draft Submitted Successfully.";
+        } else {
+            $message[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+        }
+    }
+    catch (PDOException $e)
+    {
+//SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
     }
 
 }
@@ -140,13 +167,6 @@ require_once("../Resources/Includes/menu.php");
         </div>
     </div>
 
-    <!-- <div id="main-box" class="information col-xs-10 col-xs-offset-1">
-        <div class="col-xs-8">
-            <h1 class="box-title"><span class="plus">+</span><span class="minus hidden">-</span> Information</h1>
-            <p class="hidden">Information here</p>
-        </div>
-    </div> -->
-
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Blueprint</h1>
         <div id="list">
@@ -157,7 +177,7 @@ require_once("../Resources/Includes/menu.php");
                 <li class="col-xs-3">Status</li>
             </ul>
             <!-- Start the loop to pull from database here -->
-            <?php while($rowsbpcontent = $resultbpcontent->fetch_assoc()) :
+            <?php while($rowsbpcontent = $resultbpcontent->fetch(2)) :
                 if ($rowsbpcontent['Sr_No'] == '4') { ?>
             </div>
         <h1 class="box-title" style="margin-top: 50px;">Outcomes</h1>
@@ -203,31 +223,34 @@ require_once("../Resources/Includes/menu.php");
             <div>
             <input type="submit" name="submit_bp" value="Submit BluePrint"
                 <?php
-                $sqlbpcontent .= " and CONTENT_STATUS = 'Dean Approved' ;";
-                $resultcontent = $mysqli->query($sqlbpcontent);
-                $numrow = $resultcontent->num_rows;
+                $sqlbpcontent .= " AND CONTENT_STATUS = 'Dean Approved' ;";
+                $resultcontent = $connection->prepare($sqlbpcontent);
+                $resultcontent->bindParam(':ouabbrev', $ouabbrev, 2);
+                $resultcontent->bindParam(':bpayname', $bpayname, 2);
+                $resultcontent->execute();
+
+                $numrow = $resultcontent->rowCount();
                 if ($numrow < $numbpcontent) { echo 'disabled'; } ?>
                    class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
             </div>
-            <?php } elseif ($_SESSION['login_role'] == 'provost' && $rowbroad['BROADCAST_STATUS'] == 'Submitted Draft') { ?>
+            <?php } elseif ($_SESSION['login_role'] == 'provost' &&
+                $rowbroad['BROADCAST_STATUS'] == 'Submitted Draft') { ?>
 <!--                Provost Controls-->
                 <div>
-                    <input type="submit" name="approve" value="Approve BluePrint" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-left">
-                    <input type="submit" name="reject" value="Reject BluePrint" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                    <input type="submit" name="approve" value="Approve BluePrint"
+                           class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-left">
+                    <input type="submit" name="reject" value="Reject BluePrint"
+                           class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                 </div>
             <?php } ?>
         </form>
     </div>
-
-
 </div>
-
 
 <?php
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
-
 
 <script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>

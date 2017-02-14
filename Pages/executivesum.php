@@ -11,114 +11,57 @@ if (!$_SESSION['isLogged']) {
 }
 
 require_once("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
 
-$error = array();
+$message = array();
 $errorflag = 0;
+$bpid = $_SESSION ['bpid'];
+$bpayname = $_SESSION['bpayname'];
+$contentlink_id = $_GET['linkid'];
+
 $BackToDashboard = true;
 
 
-$bpid = $_SESSION ['bpid'];
-$contentlink_id = $_GET['linkid'];
-$author = $_SESSION['login_userid'];
-$ouid = $_SESSION['login_ouid'];
-$bpayname = $_SESSION['bpayname'];
-
-
-if ($ouid == 4) {
-    $ouabbrev = $_SESSION['bpouabbrev'];
-} else {
-    $ouabbrev = $_SESSION['login_ouabbrev'];
-}
-
-
-$time = date('Y-m-d H:i:s');
-
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
-try {
-    if ($ouid == 4) {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified FROM broadcast INNER JOIN Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY= :bpayname AND Hierarchy.OU_ABBREV = :ouabbrev;";
-
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-
-
-    } else {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY = :bpayname AND BROADCAST_OU = :ouid;";
-
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
-    }
-
-    $resultbroad->execute();
-    $rowbroad = $resultbroad->fetchAll(PDO::FETCH_BOTH);
-} catch (PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
-
-/*
- * Values for placeholders
- */
-try {
-    $sqlexvalue = "SELECT * FROM `AC_ExecSum` WHERE OU_ABBREV = :ouabbrev AND ID_EXECUTIVE_SUMMARY IN (SELECT max(ID_EXECUTIVE_SUMMARY) FROM AC_ExecSum WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV);";
-
-    $resultexvalue = $connection->prepare($sqlexvalue);
-    $resultexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-    $resultexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-
-    $resultexvalue->execute();
-
-    $rowsexvalue = $resultexvalue->fetch(4);
-
-} catch (PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
-
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-try {
-    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
-
-    $resultbpstatus = $connection->prepare($sqlbpstatus);
-    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
-    $resultbpstatus->execute();
-
-    $rowsbpstatus = $resultbpstatus->fetch(4);
-} catch (PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
-
-require "../Resources/Includes/EXECUTIVESUMCLASS.php";
+//Object for executive Summary Table
 $ExecutiveSummary = new EXECUTIVESUMCLASS();
+
+
+//  Blueprint Status information on title box
+$resultbroad = $ExecutiveSummary->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(4);
+
+
+// Values for placeholders
+$resultexvalue = $ExecutiveSummary->PlaceHolderValue();
+$rowsexvalue = $resultexvalue->fetch(4);
+
+// SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $ExecutiveSummary->GetStatus();
+
+$rowsbpstatus = $resultbpstatus->fetch(2);
+
 
 if (isset($_POST['savedraft'])) {
 
-    $ExecutiveSummary->saveDraft();
+    $message = $ExecutiveSummary->SaveDraft();
 
 }
 
-if (isset($_POST['submit_approval'])) {
-
-    $ExecutiveSummary->submitApproval();
+if (isset($_POST['submit_approve'])) {
+    $message[0] = "Executive Summary";
+    $message[0].= $ExecutiveSummary->SubmitApproval();
 
 }
 
 if (isset($_POST['approve'])) {
-
-    $ExecutiveSummary->appove();
-
+    $message[0] = "Executive Summary";
+    $message[0].=$ExecutiveSummary->Approve();
 }
 
 if (isset($_POST['reject'])) {
+    $message[0] = "Executive Summary";
+    $message[0].=$ExecutiveSummary->Reject();
 
-    $ExecutiveSummary->reject();
 
 }
 
@@ -135,11 +78,11 @@ require_once("../Resources/Includes/menu.php");
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['savedraft']) or isset($_POST['submit_approval']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
+<?php if (isset($_POST['savedraft']) or isset($_POST['submit_approve']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="bphome.php?ayname=<?php echo $bpayname."&id=".$bpid; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
@@ -248,7 +191,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input"
-                                  class="form-control wordCount"
+                                  type="textarea" class="form-control wordCount"
                                   required><?php echo mybr2nl($rowsexvalue["INTRODUCTION"]); ?></textarea>
                     </div>
                     <h3>Highlights</h3>
@@ -268,7 +211,9 @@ require_once("../Resources/Includes/menu.php");
 
                     <?php
 
-                    if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
+                    if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND
+                        ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean
+                         Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
                         <button id="save" type="submit" name="savedraft" class="btn-primary  pull-right">
                             Save Draft
                         </button>
@@ -317,7 +262,7 @@ require_once("../Resources/Includes/footer.php");
         var doc, image;
         var filename = $(selected).val();
         var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
-        var allowedext = ['gif', 'jpeg', 'png'];
+        var allowedext = ['gif', 'jpg', 'png'];
 
         if (filename.length > 0) {
             if (allowedext.indexOf(extention) !== -1) {

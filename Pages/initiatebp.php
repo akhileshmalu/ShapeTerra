@@ -45,7 +45,7 @@ $resultay->execute();
  * Blue Print Content Items & Details.
  */
 
-$bpcontent = array(
+$AcademicProgram = array(
     array("Executive Summary","executivesum.php"),
     array("Mission, Vision & Values","mvv.php"),
     array("Unit Goals","unitgoaloverview.php"),
@@ -143,9 +143,9 @@ if (isset($_POST['submit'])) {
                  * Content Creation per BluePrint
                  */
 
-                for ($j = 0; $j < count($bpcontent); $j++) {
-                    $topicdesc = $bpcontent[$j][0];
-                    $topiclink = $bpcontent[$j][1];
+                for ($j = 0; $j < count($AcademicProgram); $j++) {
+                    $topicdesc = $AcademicProgram[$j][0];
+                    $topiclink = $AcademicProgram[$j][1];
 
                     $srno = $j+1;
                     $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','$srno');";
