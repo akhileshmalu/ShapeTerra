@@ -2,6 +2,10 @@
 
 require "../Includes/BpContents.php";
 
+/*
+ * No More using it now. refer to BpContents.php
+ */
+
   Class EXECUTIVESUMCLASS extends BPCONTENTS {
 
 //    private $connection;
