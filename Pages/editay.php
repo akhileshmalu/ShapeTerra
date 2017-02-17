@@ -12,35 +12,61 @@ require_once("../Resources/Includes/connect.php");
 /*
  * Query for Selecting academic Year
  */
-$sqlay = "Select * from AcademicYears";
-$resultay = $mysqli->query($sqlay);
+try
+{
+    $sqlay = "Select * from AcademicYears";
+    $resultay = $connection->prepare($sqlay);
+    $resultay->execute();
+}
+catch (PDOException $e)
+{
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 
 
 if (isset($_POST['submit'])) {
 
-    if (!isset($_POST['startdate'])) {
-        $message[0] = "Please select a Start date for Academic Year";
-        $errorflag = 1;
-    }
-    if ($_POST['startdate'] >= $_POST['enddate']) {
-        $message[0] = "End date should be older than Start date.";
-        $errorflag = 1;
-    }
-
-    if ($errorflag != 1) {
-        $ayid = $_POST['AY'];
-        $startdate = $_POST['startdate'];
-        $enddate = $_POST['enddate'];
-        $censusdate = $_POST['censusdate'];
+    try {
 
 
-        $sql = "update AcademicYears set ACAD_YEAR_DATE_BEGIN ='$startdate', ACAD_YEAR_DATE_END ='$enddate',DATE_CENSUS ='$censusdate' where ID_ACAD_YEAR = '$ayid' ";
-        if ($mysqli->query($sql)) {
-            $message[0] = "Academic Year Updated Successfully.";
-        } else {
-            $message [0] = "Academic Year Could not be updated.";
+        if (!isset($_POST['startdate'])) {
+            $message[0] = "Please select a Start date for Academic Year";
+            $errorflag = 1;
         }
+        if ($_POST['startdate'] >= $_POST['enddate']) {
+            $message[0] = "End date should be older than Start date.";
+            $errorflag = 1;
+        }
+
+        if ($errorflag != 1) {
+            $ayid = $_POST['AY'];
+            $startdate = $_POST['startdate'];
+            $enddate = $_POST['enddate'];
+            $censusdate = $_POST['censusdate'];
+
+            $sqlEditAy = "UPDATE `AcademicYears` SET ACAD_YEAR_DATE_BEGIN = :startdate, ACAD_YEAR_DATE_END = :enddate,
+            DATE_CENSUS = :censusdate WHERE ID_ACAD_YEAR = :ayid ";
+
+            $resultEditAy = $connection->prepare($sqlEditAy);
+            $resultEditAy->bindParam(':startdate', $startdate, 2);
+            $resultEditAy->bindParam(':enddate', $enddate, 2);
+            $resultEditAy->bindParam(':censusdate', $censusdate, 2);
+            $resultEditAy->bindParam(':ayid', $ayid, 1);
+
+            if ($resultEditAy->execute()) {
+                $message[0] = "Academic Year Updated Successfully.";
+            } else {
+                $message [0] = "Academic Year Could not be updated.";
+            }
+        }
+
+    }
+    catch (PDOException $e)
+    {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 
 }
@@ -82,7 +108,7 @@ require_once("../Resources/Includes/menu.php");
                     <label for="AYgoal">Please select Academic Year:</label>
                     <select name="AY" class="form-control" id="AYgoal" required>
                         <option value=""></option>
-                        <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
+                        <?php while ($rowsay = $resultay->fetch(4)): { ?>
                             <option value="<?php echo $rowsay[0]; ?>" dummy1="<?php echo $rowsay[2]; ?>" dummy2="<?php echo $rowsay[3];?>" dummy3="<?php echo $rowsay[4]; ?>" > <?php echo $rowsay[1]; ?> </option>
                         <?php } endwhile; ?>
                     </select>

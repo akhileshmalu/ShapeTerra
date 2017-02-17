@@ -1,7 +1,7 @@
 <?php
 
-  Class BPCONTENTS
-  {
+Class BPCONTENTS
+{
 
       protected $connection;
       public $errorflag, $message, $author, $time, $contentLinkId, $bpayname, $ouabbrev, $ouid, $bpid;
@@ -176,7 +176,7 @@ BP_AUTHOR= :author , MOD_TIMESTAMP =:timeStampmod  WHERE ID_CONTENT = :contentli
           return $resultbroad;
       }
 
-  }
+}
 Class EXECUTIVESUMCLASS extends BPCONTENTS
 {
 
@@ -334,7 +334,9 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:timesta
                     $this->message[0] = "Executive Summary Info could not be added.";
                 }
 
-            } catch (PDOException $e){
+            }
+            catch (PDOException $e)
+            {
                 error_log($e->getMessage());
                 //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
             }

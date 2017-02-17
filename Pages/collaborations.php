@@ -31,38 +31,38 @@ if ($ouid == 4) {
 }
 
 //Object for Campus Climate Table
-$Collaboration = new COLLABORATION();
+$BpContent = new COLLABORATION();
 
 //  Blueprint Status information on title box
-$resultbroad = $Collaboration->BlueprintStatusDisplay();
+$resultbroad = $BpContent->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
 
 // Values for placeholders
-$resultexvalue = $Collaboration->PlaceHolderValue();
+$resultexvalue = $BpContent->PlaceHolderValue();
 $rowsExValue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
-$resultbpstatus = $Collaboration->GetStatus();
+$resultbpstatus = $BpContent->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 if (isset($_POST['savedraft'])) {
-    $message[0] = $Collaboration->SaveDraft();
+    $message[0] = $BpContent->SaveDraft();
 }
 
 if(isset($_POST['submit_approve'])) {
     $message[0] = "Collaboration";
-    $message[0].= $Collaboration->SubmitApproval();
+    $message[0].= $BpContent->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
     $message[0] = "Collaboration";
-    $message[0].= $Collaboration->Approve();
+    $message[0].= $BpContent->Approve();
 }
 
 if(isset($_POST['reject'])) {
     $message[0] = "Collaboration";
-    $message[0].= $Collaboration->Reject();
+    $message[0].= $BpContent->Reject();
 }
 
 
