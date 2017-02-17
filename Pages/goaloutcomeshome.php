@@ -21,6 +21,7 @@ $BackToDashboard = true;
  * Connection to DataBase.
  */
 require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
 
 /*
  * Local & Session variable Initialization
@@ -40,49 +41,15 @@ $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
-try {
-    if ($ouid == 4) {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+$goaloutcomehome = new BPCONTENTS();
 
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-        
-        
+// Blueprint Status information on title box
+$resultbroad = $goaloutcomehome->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
 
-    } else {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
-
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
-    }
-
-    $resultbroad->execute();
-    $rowbroad = $resultbroad->fetch(4);
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
-
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-try {
-    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
-
-    $resultbpstatus = $connection->prepare($sqlbpstatus);
-    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
-    $resultbpstatus->execute();
-
-    $rowsbpstatus = $resultbpstatus->fetch(4); 
-} catch (PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
+// SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $goaloutcomehome->GetStatus();
+$rowsbpstatus = $resultbpstatus->fetch(2);
 
 
 require_once("../Resources/Includes/header.php");

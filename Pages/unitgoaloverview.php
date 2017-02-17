@@ -21,6 +21,7 @@ $BackToDashboard = true;
  * Connection to DataBase.
  */
 require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
 
 /*
  * Local & Session variable Initialization
@@ -39,23 +40,15 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+$goaloutcomehome = new BPCONTENTS();
 
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
-}
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+// Blueprint Status information on title box
+$resultbroad = $goaloutcomehome->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
+
+// SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $goaloutcomehome->GetStatus();
+$rowsbpstatus = $resultbpstatus->fetch(2);
 
 
 

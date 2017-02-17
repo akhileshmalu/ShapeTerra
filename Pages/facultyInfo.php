@@ -46,11 +46,10 @@ $rowbroad = $resultbroad->fetch(4);
 
 // Values for placeholders
 $resultexvalue = $FacultyInfo->PlaceHolderValue();
-$rowsexvalue = $resultexvalue->fetch(4);
+$rowsexvalue = $resultexvalue->fetch(2);
 
 // SQL check Status of Blueprint Content for Edit restrictions
 $resultbpstatus = $FacultyInfo->GetStatus();
-
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 

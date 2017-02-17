@@ -12,7 +12,7 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 $errorflag = 0;
 $BackToDashboard = true;
 
@@ -21,6 +21,7 @@ $BackToDashboard = true;
  * Connection to DataBase.
  */
 require_once("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
 
 /*
  * Local & Session variable Initialization
@@ -28,8 +29,7 @@ require_once("../Resources/Includes/connect.php");
 $bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $bpayname = $_SESSION['bpayname'];
-$prevbpid = stringtoid($bpayname);
-$prevbpayname = idtostring($prevbpid - 101);
+
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 
@@ -44,157 +44,46 @@ if ($outype == "Administration" OR $outype == "Service Unit" ) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-// Display Information of Main-box basis roles
-try {
-    if ($ouid == 4) {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+//Object for executive Summary Table
+$mvv = new MVV();
 
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-        
-        
 
-    } else {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+//  Blueprint Status information on title box
+$resultbroad = $mvv->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(4);
 
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
-    }
 
-    $resultbroad->execute();
-    $rowbroad = $resultbroad->fetch(4);
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
+// Values for placeholders
+$resultexvalue = $mvv->PlaceHolderValue();
+$rowsmission = $resultexvalue->fetch(4);
 
-/*
- * Query to Select Previous Year Mission , Visoin, Value Statement for Specific Org Unit.
- */
-try {
-    $sqlmission = "SELECT * FROM BP_MissionVisionValues where OU_ABBREV = :ouabbrev AND ID_UNIT_MVV in (select max(ID_UNIT_MVV) from BP_MissionVisionValues where UNIT_MVV_AY IN (:bpayname,:prevbpayname) group by OU_ABBREV)";
-    //$sqlmission = "select * from BP_MissionVisionValues where (UNIT_MVV_AY ='$prevbpayname' or UNIT_MVV_AY ='$bpayname') and OU_ABBREV ='$ouabbrev' ORDER BY UNIT_MVV_AY DESC;";
+// SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $mvv->GetStatus();
 
-    $resultmission = $connection->prepare($sqlmission);
-    $resultmission->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-    $resultmission->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-    $resultmission->bindParam(":prevbpayname", $prevbpayname, PDO::PARAM_STR);
-    $resultmission->execute();
-
-    $rowsmission = $resultmission->fetch(4);
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
-
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-try {
-    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
-
-    $resultbpstatus = $connection->prepare($sqlbpstatus);
-    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
-    $resultbpstatus->execute();
-
-    $rowsbpstatus = $resultbpstatus->fetch(4); 
-} catch (PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
+$rowsbpstatus = $resultbpstatus->fetch(2);
 
 if (isset($_POST['submit'])) {
 
-    $missionstatement = mynl2br($_POST['missionstatement']);
-    $missionupdatedate = $_POST['misupdate'];
-    $visionstatement = mynl2br($_POST['visionstatement']);
-    $visionupdatedate = $_POST['visupdate'];
-    $valuestatement = mynl2br($_POST['valuestatement']);
-    $valueupdatedate = $_POST['valupdate'];
-    $contentlink_id = $_GET['linkid'];
-
-
-    $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT, MISSION_UPDATE_DATE, VISION_STATEMENT,VISION_UPDATE_DATE,VALUES_STATEMENT,VALUE_UPADTE_DATE)
-VALUES ('$ouabbrev','$author','$time','$bpayname','$missionstatement','$missionupdatedate','$visionstatement','$visionupdatedate','$valuestatement','$valueupdatedate');";
-
-    $sqlmission .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-
-    $sqlmission .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time'
-where ID_BROADCAST = '$bpid'; ";
-
-    if ($mysqli->multi_query($sqlmission)) {
-        $error[0] =  "Mission Updated Successfully";
-    } else {
-        $error[0] =   "Mission Could not be Updated. Please Retry.";
-    }
+    $message[0] = $mvv->SaveDraft();
 
 }
 
-if(isset($_POST['submit_approve'])) {
+if (isset($_POST['submit_approve'])) {
+    $message[0] = "Mission, Vision, & Values";
+    $message[0].= $mvv->SubmitApproval();
 
-    $contentlink_id = $_GET['linkid'];
-    try {
-       $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= :author, MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id; ";
-
-       $sqlmissionresult = $connection->prepare($sqlmission);
-       $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_STR);
-       $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_STR);
-       $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
-
-       if ($sqlmissionresult->execute()) {
-           $error[0] = "Mission, Vision & Values submitted Successfully";
-       } else {
-           $error[0] = "Mission, Vision & Values Could not be submitted. Please Retry.";
-       }
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
 }
 
-if(isset($_POST['approve'])) {
-
-    $contentlink_id = $_GET['linkid'];
-    try {
-        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= :author, MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id; ";
-        $sqlmissionresult = $connection->prepare($sqlmission);
-        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_STR);
-        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_STR);
-        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
-
-        if ($sqlmissionresult->execute()) {
-            $error[0] = "Mission, Vision & Values Approved Successfully";
-        } else {
-            $error[0] = "Mission, Vision & Values Could not be Approved. Please Retry.";
-        }
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
+if (isset($_POST['approve'])) {
+    $message[0] = "Mission, Vision, & Values";
+    $message[0].= $mvv->Approve();
 }
 
-if(isset($_POST['reject'])) {
+if (isset($_POST['reject'])) {
+    $message[0] = "Mission, Vision, & Values";
+    $message[0].= $mvv->Reject();
 
-    $contentlink_id = $_GET['linkid'];
-    try {
-        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= :author, MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id; ";
 
-        $sqlmissionresult = $connection->prepare($sqlmission);
-        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_STR);
-        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_STR);
-        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
-
-        if ($sqlmissionresult->execute()) {
-            $error[0] = "Mission, Vision & Values Rejected Successfully";
-        } else {
-            $error[0] = "Mission, Vision & Values Could not be Rejected. Please Retry.";
-        }
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
 }
 
 require_once("../Resources/Includes/header.php");
@@ -217,7 +106,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]."&id=".$bpid; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>

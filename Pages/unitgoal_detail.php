@@ -13,7 +13,7 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 $errorflag =0;
 $BackToGoal = true;
 
@@ -21,6 +21,7 @@ $BackToGoal = true;
  * Connection to DataBase.
  */
 require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
 
 /*
  * Local & Session variable Initialization
@@ -40,17 +41,12 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
+$UnitGoalDetail = new UNITGOALDETAIL();
 
-/*
- * BluePrint Header Info; conditional for provost & other users
- */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
-}
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+
+//  Blueprint Status information on title box
+$resultbroad = $CampusClimate->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(4);
 
 /*
  * SQL for pre-existing Goal Value
@@ -105,10 +101,10 @@ GOAL_VIEWPOINT = '$goalview', GOAL_STATEMENT = '$goalstatement', GOAL_ALIGNMENT 
 
     if($mysqli->multi_query($sqlunitgoal)) {
 
-        $error[0] = "Unit goals Updated Succesfully.";
+        $message[0] = "Unit goals Updated Succesfully.";
 
     } else {
-        $error[0] = "Unit goals could not be Updated.";
+        $message[0] = "Unit goals could not be Updated.";
     }
 
 
@@ -139,10 +135,10 @@ VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname
 
     if($mysqli->multi_query($sqlunitgoal)) {
 
-        $error[0] = "Unit goals Updated Succesfully.";
+        $message[0] = "Unit goals Updated Succesfully.";
 
     } else {
-        $error[0] = "Unit goals could not be Updated.";
+        $message[0] = "Unit goals could not be Updated.";
     }
 
 }
@@ -153,9 +149,9 @@ if(isset($_POST['submit_for_approval'])) {
     $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Pending Dean Approval', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
     $sqlunitgoal .= "Update `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
     if ($mysqli->multi_query($sqlunitgoal)) {
-        $error[0] = "Unit Goals Submitted for Approval Successfully";
+        $message[0] = "Unit Goals Submitted for Approval Successfully";
     } else {
-        $error[0] = "Unit Goals Could not be Submitted for Approval. Please Retry.";
+        $message[0] = "Unit Goals Could not be Submitted for Approval. Please Retry.";
     }
 }
 
@@ -174,9 +170,9 @@ if(isset($_POST['approve'])) {
     }
 
     if ($mysqli->multi_query($sqlunitgoal)) {
-        $error[0] = "Unit Goals Approved Successfully";
+        $message[0] = "Unit Goals Approved Successfully";
     } else {
-        $error[0] = "Unit Goals Could not be Approved. Please Retry.";
+        $message[0] = "Unit Goals Could not be Approved. Please Retry.";
     }
 }
 
@@ -184,9 +180,9 @@ if(isset($_POST['reject'])) {
     $goal_id = $_GET['goal_id'];
     $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Rejected', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
     if ($mysqli->query($sqlunitgoal)) {
-        $error[0] = "Unit Goals Rejected Successfully";
+        $message[0] = "Unit Goals Rejected Successfully";
     } else {
-        $error[0] = "Unit Goals Could not be Rejected. Please Retry.";
+        $message[0] = "Unit Goals Could not be Rejected. Please Retry.";
     }
 }
 
@@ -208,7 +204,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" onclick="$redirect = $('.alert button').attr('redirect');
 		$(window).attr('location',$redirect)" redirect="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id ?>" class="end btn-primary">Close</button>
     </div>

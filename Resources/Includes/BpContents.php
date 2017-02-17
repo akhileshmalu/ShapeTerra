@@ -177,6 +177,8 @@ BP_AUTHOR= :author , MOD_TIMESTAMP =:timeStampmod  WHERE ID_CONTENT = :contentli
       }
 
   }
+
+
 Class EXECUTIVESUMCLASS extends BPCONTENTS
 {
 
@@ -604,7 +606,7 @@ Class FACULTYINFO extends BPCONTENTS
 
       $createact = mynl2br($_POST['cractivity']);
 
-      $contentlink_id = $_GET['linkid'];
+      $this->time = date('Y-m-d H:i:s');
 
 
   //    if ($_FILES["supinfo"]["error"] > 0) {
@@ -621,7 +623,7 @@ Class FACULTYINFO extends BPCONTENTS
 
 
           if ($imageFileType != "pdf") {
-              $this->message[1] = "Sorry, only PDf files are allowed.";
+              $this->message = "Sorry, only PDf files are allowed.";
               $this->errorflag = 1;
 
           } else {
@@ -629,7 +631,7 @@ Class FACULTYINFO extends BPCONTENTS
                   // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
                   $supinfopath = $target_file;
               } else {
-                  $this->message[2] = "Sorry, there was an error uploading your file.";
+                  $this->message = "Sorry, there was an error uploading your file.";
               }
           }
       }
@@ -638,9 +640,12 @@ Class FACULTYINFO extends BPCONTENTS
           $sqlfacinfo = "INSERT INTO `AC_FacultyInfo` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
    VALUES (:ouabbrev,:bpayname,:author,:timestampmod,:facdev,:createact,:supinfopath);";
 
-          $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id;";
 
-          $sqlfacinfo .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:time where ID_BROADCAST = :bpid; ";
+          if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+            $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,MOD_TIMESTAMP =:timestampmod  where ID_CONTENT =:contentlink_id;";
+
+            $sqlfacinfo .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:timestampmod where ID_BROADCAST = :bpid; ";
+          }
 
           $resultfacinfo = $this->connection->prepare($sqlfacinfo);
           $resultfacinfo->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
@@ -651,11 +656,20 @@ Class FACULTYINFO extends BPCONTENTS
           $resultfacinfo->bindParam(':createact', $createact, PDO::PARAM_STR);
           $resultfacinfo->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR);
 
+          if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+            $resultfacinfo->bindParam(":author", $this->author, PDO::PARAM_STR);
+            $resultfacinfo->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+            $resultfacinfo->bindParam(':contentlink_id', $this->contentLinkId, PDO::PARAM_STR);
+            $resultfacinfo->bindParam(":author", $this->author, PDO::PARAM_STR);
+            $resultfacinfo->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+            $resultfacinfo->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
+          }
+
           if ($resultfacinfo->execute()) {
 
-              $this->message[0] = "Faculty Info Added Succesfully.";
+              $this->message = "Faculty Info Added Succesfully.";
           } else {
-              $this->message[3] = "Faculty Info could not be added.";
+              $this->message = "Faculty Info could not be added.";
           }
 
       }
@@ -668,8 +682,8 @@ Class FACULTYINFO extends BPCONTENTS
           $sqlexvalue = "SELECT * FROM `AC_FacultyInfo` where OU_ABBREV = :ouabbrev AND ID_FACULTY_INFO in (select max(ID_FACULTY_INFO) from AC_FacultyInfo where OUTCOMES_AY = :bpayname group by OU_ABBREV); ";
 
           $resultsexvalue = $this->connection->prepare($sqlexvalue);
-          $resultsexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-          $resultsexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+          $resultsexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+          $resultsexvalue->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
           $resultsexvalue->execute();
  
 
@@ -679,7 +693,175 @@ Class FACULTYINFO extends BPCONTENTS
         }
         return $resultsexvalue;
     }
-}Class ALUMNIDEVELOPMENT extends BPCONTENTS
+}
+
+Class GOALOUTCOME extends BPCONTENTS
+{
+    public function SaveDraft()
+    {
+      $goalstatus = $_POST['goal_status'];
+      $goalach = mynl2br($_POST['goal_ach']);
+      $resutilzed = mynl2br($_POST['goal_resutil']);
+      $goalconti = mynl2br($_POST['goal_conti']);
+      $resneed = mynl2br($_POST['resoneed']);
+      $goalincomplan = mynl2br($_POST['goal_plan_incomp']);
+      $goalupcominplan = mynl2br($_POST['goal_plan_upcoming']);
+      $goalreportstatus = "In Progress";
+      $goal_id = $_GET['goal_id'];
+      $this->time = date('Y-m-d H:i:s');
+
+
+
+      $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_PLAN_INCOMPLT, GOAL_UPCOMING_PLAN )
+      VALUES (:goal_id,:author,:timestampmod,:goalreportstatus,:goalstatus,:goalach,:resutilzed,:goalconti,:resneed,
+      :goalincomplan,:goalupcominplan)
+      ON DUPLICATE KEY UPDATE `ID_UNIT_GOAL` = VALUES(`ID_UNIT_GOAL`), OUTCOMES_AUTHOR = VALUES(`OUTCOMES_AUTHOR`), MOD_TIMESTAMP = VALUES(`MOD_TIMESTAMP`),
+      GOAL_REPORT_STATUS = VALUES(`GOAL_REPORT_STATUS`), GOAL_STATUS = VALUES(`GOAL_STATUS`), GOAL_ACHIEVEMENTS = VALUES(`GOAL_ACHIEVEMENTS`), GOAL_RSRCS_UTLZD = VALUES(`GOAL_RSRCS_UTLZD`),
+      GOAL_CONTINUATION = VALUES(`GOAL_CONTINUATION`), GOAL_RSRCS_NEEDED = VALUES(`GOAL_RSRCS_NEEDED`); ";
+
+      if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+          $sqlgoalout .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, MOD_TIMESTAMP =:timestampmod where ID_CONTENT =:contentlink_id;";
+
+          $sqlgoalout .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:timestampmod where ID_BROADCAST = :bpid; ";
+      }
+
+      $resultgoalout = $this->connection->prepare($sqlgoalout);
+      $resultgoalout->bindParam(":goal_id", $goal_id, PDO::PARAM_STR);
+      $resultgoalout->bindParam(":author", $this->author, PDO::PARAM_STR);
+      $resultgoalout->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+      $resultgoalout->bindParam(":goalreportstatus", $goalreportstatus, PDO::PARAM_STR);
+      $resultgoalout->bindParam(':goalstatus', $goalstatus, PDO::PARAM_STR);
+      $resultgoalout->bindParam(':goalach', $goalach, PDO::PARAM_STR);
+      $resultgoalout->bindParam(':resutilzed', $resutilzed, PDO::PARAM_STR);
+      $resultgoalout->bindParam(':goalconti', $goalconti, PDO::PARAM_STR);
+      $resultgoalout->bindParam(':resneed', $resneed, PDO::PARAM_STR);
+      $resultgoalout->bindParam(':goalincomplan', $goalincomplan, PDO::PARAM_STR);
+      $resultgoalout->bindParam(':goalupcominplan', $goalupcominplan, PDO::PARAM_STR);
+
+      if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+        $resultgoalout->bindParam(":author", $this->author, PDO::PARAM_STR);
+        $resultgoalout->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+        $resultgoalout->bindParam(":contentlink_id", $this->contentlink_id, PDO::PARAM_STR);
+        $resultgoalout->bindParam(":author", $this->author, PDO::PARAM_STR);
+        $resultgoalout->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+        $resultgoalout->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
+      }
+
+
+      if($resultgoalout->execute()) {
+          $this->message = "Goal Outcome Saved.";
+      } else{
+          $this->message = "Goal Outcome could not be Saved.";
+      }
+
+      return $this->message;
+    }
+
+    public function SubmitApproval() {
+          $goal_id = $_GET['goal_id'];
+          $goalreportstatus = "Pending Approval";
+
+          try
+          {
+            $sqlgoaloutap .= "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = :goalreportstatus where ID_UNIT_GOAL = :goal_id; ";
+
+            $resultgoaloutap = $this->connection->prepare($sqlgoaloutap);
+            $resultgoaloutap->bindParam(":goalreportstatus", $goalreportstatus, PDO::PARAM_STR);
+            $resultgoaloutap->bindParam(':goal_id', $goal_id, PDO::PARAM_STR);
+
+            //$sqlgoaloutap .= "Update `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
+
+            if($resultgoaloutap->execute()) {
+                $this->message[1] = "Goal Outcome submitted for Approval.";
+            } else {
+                $this->message[1] = "Goal Outcome could not be Submitted.";
+            }
+          } catch (PDOException $e){
+              error_log($e->getMessage());
+              //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+          }
+          return $this->message;
+      }
+
+      public function Approve() {
+        
+
+        try {
+          $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Approved' where ID_UNIT_GOAL = :goal_id; ";
+
+          $sqlmissionresult = $connection->prepare($sqlmission);
+          $sqlmissionresult -> bindParam(":goal_id", $this->contentLinkId, PDO::PARAM_INT);
+
+          if ($sqlmissionresult->execute()) {
+              $message[0] = "Goal Outcome Approved Successfully";
+          } else {
+              $message[0] = "Goal Outcome Could not be Approved. Please Retry.";
+          }
+        } catch(PDOException $e) {
+            error_log($e->getMessage());
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        }
+          return $this->message;
+      }
+
+      public function Reject() {
+          
+
+          try {
+              $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Rejected' where ID_UNIT_GOAL = :goal_id; ";
+
+              $sqlmissionresult = $connection->prepare($sqlmission);
+              $sqlmissionresult -> bindParam(":goal_id", $this->contentLinkId , PDO::PARAM_INT);
+
+              if ($sqlmissionresult->execute()) {
+                  $message[0] = "Goal Outcome Rejected Successfully";
+              } else {
+                  $message[0] = "Goal Outcome Could not be Rejected. Please Retry.";
+              }
+          } catch(PDOException $e) {
+              error_log($e->getMessage());
+              //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+          }
+          return $this->message;
+      }
+
+    public function OutcomePlaceholders()
+    {
+        $goal_id=$_GET['goal_id'];
+        try {
+            $sqlexgoalout = "select * from BP_UnitGoalOutcomes where ID_UNIT_GOAL = :goal_id ";
+            $resultexgoalout = $this->connection->prepare($sqlexgoalout);
+            $resultexgoalout -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+            $resultexgoalout -> execute();
+
+        } catch(PDOException $e) {
+            error_log($e->getMessage());
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        }
+        return $resultexgoalout;
+    }
+
+    public function PlaceHolderValue()
+    {
+        $goal_id=$_GET['goal_id'];
+        try {
+          $sqlunitgoal = "select * from BP_UnitGoals where ID_UNIT_GOAL = :goal_id ";
+          $resultunitgoal = $this->connection->prepare($sqlunitgoal);
+          $resultunitgoal -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+          $resultunitgoal -> execute();
+
+          
+        } catch(PDOException $e) {
+            error_log($e->getMessage());
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        }
+        return $resultunitgoal;
+    }
+}
+
+
+
+Class ALUMNIDEVELOPMENT extends BPCONTENTS
 {
     public function SaveDraft()
     {
@@ -954,5 +1136,182 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
             //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
         }
         return $resultexvalue;
+    }
+}
+
+Class INITIATIVES extends BPCONTENTS
+{
+    public function SaveDraft()
+    {
+      $this->time = date('Y-m-d H:i:s');
+      $ugexplearn = mynl2br($_POST['ugexplearning']);
+      $gradexplearn = mynl2br($_POST['gradexplearning']);
+      $afford = mynl2br($_POST['afford']);
+      $reputation = mynl2br($_POST['reputation']);
+      $coolstuff = mynl2br($_POST['coolstuff']);
+      $challenges = mynl2br($_POST['challenges']);
+
+    //    if ($_FILES["supinfo"]["message"] > 0) {
+    //        $message[0] = "Return Code: No Input " . $_FILES["supinfo"]["error"] . "<br />";
+    //        $errorflag = 1;
+    //
+    //    } else {
+
+    if ($_FILES['supinfo']['tmp_name'] !="") {
+        $target_dir = "../uploads/initiatives/";
+        $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+
+
+        if ($imageFileType != "pdf") {
+            $this->message = "Sorry, only PDf files are allowed.";
+            $errorflag = 1;
+
+        } else {
+            if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+                // $message[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
+                $supinfopath = $target_file;
+            } else {
+                $this->message = "Sorry, there was an error uploading your file.";
+                $errorflag = 1;
+            }
+        }
+    }
+
+        if ($errorflag != 1) {
+            $sqlinitiatives = "INSERT INTO `AC_InitObsrv` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, EXPERIENTIAL_LEARNING_UGRAD, EXPERIENTIAL_LEARNING_GRAD, AFFORDABILITY, REPUTATION_ENHANCE,COOL_STUFF, CHALLENGES,AC_SUPPL_INITIATIVES_OBSRV)
+              VALUES (:ouabbrev,:bpayname,:author,:timestampmod,:ugexplearn,:gradexplearn,:afford,:reputation,:coolstuff,:challenges,:supinfopath)
+              ON DUPLICATE KEY UPDATE `OU_ABBREV` = VALUES(`OU_ABBREV`),`OUTCOMES_AY` = VALUES(`OUTCOMES_AY`),`OUTCOMES_AUTHOR` = VALUES(`OUTCOMES_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`EXPERIENTIAL_LEARNING_UGRAD` = VALUES(`EXPERIENTIAL_LEARNING_UGRAD`),
+              `EXPERIENTIAL_LEARNING_GRAD` =VALUES(`EXPERIENTIAL_LEARNING_GRAD`), `AFFORDABILITY`=VALUES(`AFFORDABILITY`),`REPUTATION_ENHANCE`=VALUES(`REPUTATION_ENHANCE`),`COOL_STUFF`=VALUES(`COOL_STUFF`),`CHALLENGES`=VALUES(`CHALLENGES`),`AC_SUPPL_INITIATIVES_OBSRV`= VALUES(`AC_SUPPL_INITIATIVES_OBSRV`);";
+
+            if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+              $sqlinitiatives .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,MOD_TIMESTAMP =:timestampmod  where ID_CONTENT =:contentlink_id;";
+              $sqlinitiatives .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = :author, LastModified = :timestampmod where ID_BROADCAST = :bpid; ";
+            }
+
+            $resultinitiatives = $this->connection->prepare($sqlinitiatives);
+
+            $resultinitiatives->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+            $resultinitiatives->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+            $resultinitiatives->bindParam(":author", $this->author, PDO::PARAM_STR);
+            $resultinitiatives->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+            $resultinitiatives->bindParam(':ugexplearn', $ugexplearn, PDO::PARAM_STR );
+            $resultinitiatives->bindParam(':externalcollaborators', $externalcollaborators, PDO::PARAM_STR );
+            $resultinitiatives->bindParam(':gradexplearn', $gradexplearn, PDO::PARAM_STR );
+            $resultinitiatives->bindParam(':afford', $afford, PDO::PARAM_STR );
+            $resultinitiatives->bindParam(':reputation', $reputation, PDO::PARAM_STR );
+            $resultinitiatives->bindParam(':coolstuff', $coolstuff, PDO::PARAM_STR );
+            $resultinitiatives->bindParam(':challenges', $challenges, PDO::PARAM_STR );
+            $resultinitiatives->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR );
+
+            if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+              $resultinitiatives->bindParam(":author", $this->author, PDO::PARAM_STR);
+              $resultinitiatives->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+              $resultinitiatives->bindParam(":contentlink_id", $this->contentlink_id, PDO::PARAM_STR);
+              $resultinitiatives->bindParam(":author", $this->author, PDO::PARAM_STR);
+              $resultinitiatives->bindParam(':timestampmod', $this->time, PDO::PARAM_STR );
+              $resultinitiatives->bindParam(':bpid', $this->bpid, PDO::PARAM_STR );
+            }
+
+            if ($resultinitiatives->execute()) {
+                $this->message = "Initiatives and Observations Updated Succesfully.";
+            } else {
+                $this->message = "Initiatives and Observations could not be Updated.";
+            }
+        }
+        return $this->message;
+    }
+
+    public function PlaceHolderValue()
+    {
+      try {
+        $sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV=:ouabbrev and OUTCOMES_AY=:bpayname ";
+        $resultexvalue = $this->connection->prepare($sqlexvalue);
+        $resultexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+        $resultexvalue->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+        $resultexvalue->execute();
+
+      } catch(PDOException $e) {
+          error_log($e->getMessage());
+          //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+      }
+      return $resultexvalue;
+    }
+}
+
+Class MVV extends BPCONTENTS
+{
+    public function SaveDraft()
+    {
+      $this->time = date('Y-m-d H:i:s');
+      $prevbpid = stringtoid($this->bpayname);
+      $prevbpayname = idtostring($prevbpid - 101);
+      $missionstatement = mynl2br($_POST['missionstatement']);
+      $missionupdatedate = $_POST['misupdate'];
+      $visionstatement = mynl2br($_POST['visionstatement']);
+      $visionupdatedate = $_POST['visupdate'];
+      $valuestatement = mynl2br($_POST['valuestatement']);
+      $valueupdatedate = $_POST['valupdate'];
+
+      $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT, MISSION_UPDATE_DATE, VISION_STATEMENT,VISION_UPDATE_DATE,VALUES_STATEMENT,VALUE_UPADTE_DATE)
+        VALUES (:ouabbrev,:author,:timestampmod,:bpayname,:missionstatement,:missionupdatedate,:visionstatement,:visionupdatedate,:valuestatement,:valueupdatedate);";
+
+      if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+        $sqlmission .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, MOD_TIMESTAMP =:timestampmod  where ID_CONTENT = :contentlink_id; ";
+
+        $sqlmission .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= :author, LastModified = :timestampmod where ID_BROADCAST = :bpid; ";
+      }
+
+      $resultmission = $this->connection->prepare($sqlmission);
+
+      $resultmission->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+      $resultmission->bindParam(":author", $this->author, PDO::PARAM_STR);
+      $resultmission->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+      $resultmission->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+      $resultmission->bindParam(':missionstatement', $missionstatement, PDO::PARAM_STR );
+      $resultmission->bindParam(':missionupdatedate', $missionupdatedate, PDO::PARAM_STR );
+      $resultmission->bindParam(':visionstatement', $visionstatement, PDO::PARAM_STR );
+      $resultmission->bindParam(':visionupdatedate', $visionupdatedate, PDO::PARAM_STR );
+      $resultmission->bindParam(':valuestatement', $valuestatement, PDO::PARAM_STR );
+      $resultmission->bindParam(':valueupdatedate', $valueupdatedate, PDO::PARAM_STR );
+
+      if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+        $resultmission->bindParam(":author", $this->author, PDO::PARAM_STR);
+        $resultmission->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+        $resultmission->bindParam(":contentlink_id", $this->contentlink_id, PDO::PARAM_STR);
+        $resultmission->bindParam(":author", $this->author, PDO::PARAM_STR);
+        $resultmission->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+        $resultmission->bindParam(":bpid", $this->bpid, PDO::PARAM_STR);
+      }
+
+      if ($resultmission->execute()) {
+          $this->message = "Mission, Vission, & Values Successfully";
+      } else {
+          $this->message = "Mission, Vission, & Values Could not be Updated. Please Retry.";
+      }
+        
+        return $this->message;
+    }
+
+    public function PlaceHolderValue()
+    {
+      $prevbpid = stringtoid($this->bpayname);
+      $prevbpayname = idtostring($prevbpid - 101);
+
+      try {
+        $sqlmission = "SELECT * FROM BP_MissionVisionValues where OU_ABBREV = :ouabbrev AND ID_UNIT_MVV in (select max(ID_UNIT_MVV) from BP_MissionVisionValues where UNIT_MVV_AY IN (:bpayname,:prevbpayname) group by OU_ABBREV)";
+        //$sqlmission = "select * from BP_MissionVisionValues where (UNIT_MVV_AY ='$prevbpayname' or UNIT_MVV_AY ='$bpayname') and OU_ABBREV ='$ouabbrev' ORDER BY UNIT_MVV_AY DESC;";
+
+        $resultmission = $this->connection->prepare($sqlmission);
+        $resultmission->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+        $resultmission->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+        $resultmission->bindParam(":prevbpayname", $prevbpayname, PDO::PARAM_STR);
+        $resultmission->execute();
+
+      } catch(PDOException $e) {
+          error_log($e->getMessage());
+          //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+      }
+      return $resultmission;
     }
 }

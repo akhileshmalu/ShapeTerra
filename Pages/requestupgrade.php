@@ -4,7 +4,7 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 
 require_once ("../Resources/Includes/connect.php");
 
@@ -12,21 +12,23 @@ require_once ("../Resources/Includes/connect.php");
  * Selection of All Admin_User for User Management
  */
 $sql ="select NETWORK_USERNAME from PermittedUsers where SYS_USER_ROLE ='admin_user'";
-$result = $mysqli->query($sql);
-
+$result = $connection->prepare($sql)
+$result->excute();
 
 /*
  * Selection of all available User Rights
  */
 $rightsql ="select ID_USER_RIGHT,USER_RIGHT from UserRights";
-$rightresult = $mysqli1->query($rightsql);
+$rightresult = $connetion->prepare($rightsql);
+$rightresult->excute();
 
 /*
  * Selection of all available User roles
  */
 
 $rolesql ="select ID_USER_ROLE, USER_ROLE from UserRoles";
-$roleresult = $mysqli2->query($rolesql);
+$roleresult = $connetion->prepare($rightsql);
+$roleresult->excute();
 
 if(isset($_POST['request'])){
 
@@ -50,7 +52,8 @@ if(isset($_POST['request'])){
 
 
             $sql = "INSERT INTO requestpanel (email,rights,role,reqstatus,approver) VALUES ('$email','$rights','$role','$reqstatus','$approver')";
-            if ($mysqli->query($sql)) {
+            $sqlresult = $connection->prepare($sql);
+            if ($sqlresult->execute()) {
 
                 //Confirmation Mail Variables to User
                 $sub = "Your privileges change request has been submitted successfully.";
@@ -65,16 +68,16 @@ if(isset($_POST['request'])){
                 $msg .= "User: '$email' has requeted for privilege upgrade"."<br>"."<br/><br/>"."Please action the request through your taskboard.";
                 mail($approver, $sub, $msg, $headers);
 
-                $error[0] = "Request submitted Successfully";
+                $message[0] = "Request submitted Successfully";
             } else {
-                $error[0] = "Request could not be submitted. Please retry";
+                $message[0] = "Request could not be submitted. Please retry";
             }
         } else {
-            $error[0] = "Please select an Approver";
+            $message[0] = "Please select an Approver";
 
         }
     } else {
-        $error [0] = "Please select valid user privilege";
+        $message [0] = "Please select valid user privilege";
     }
 
 }
@@ -100,7 +103,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="account.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>

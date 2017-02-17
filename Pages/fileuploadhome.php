@@ -17,9 +17,15 @@ $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 $_SESSION['FUayname'] = $FUayname;
 $notBackToDashboard = true;
-$sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+
+$sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU =:ouid; ";
+$resultbroad = $connection->prepare($sqlbroad);
+$resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_INT);
+$resultbroad->execute();
+
+$rowbroad = $resultbroad->fetch(4);
+
+
 //Menu control for back to dashboard button
 //true: Dont show button
 //false: show button

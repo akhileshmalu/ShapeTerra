@@ -7,22 +7,18 @@
  * Session & Error control Initialization.
  */
 session_start();
-if(!$_SESSION['isLogged']) {
+
+if (!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+
+require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
+
+$message = array();
 $errorflag =0;
 $BackToGoalOutHome = true;
-
-/*
- * Connection to DataBase.
- */
-require_once ("../Resources/Includes/connect.php");
-
-/*
- * Local & Session variable Initialization
- */
 $bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $goal_id=$_GET['goal_id'];
@@ -39,62 +35,35 @@ $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
-try {
-    if ($ouid == 4) {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+$goaloutcome = new GOALOUTCOME();
 
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-        
-        
-
-    } else {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
-
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
-    }
-
-    $resultbroad->execute();
-    $rowbroad = $resultbroad->fetch(4);
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
+// Blueprint Status information on title box
+$resultbroad = $goaloutcome->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
 
 /*
  * Existing values to show for goal outcomes, If exist.
  */
-try {
-    $sqlexgoalout = "select * from BP_UnitGoalOutcomes where ID_UNIT_GOAL = :goal_id ";
-    $resultexgoalout = $connection -> prepare($sqlexgoalout);
-    $resultexgoalout -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
-    $resultexgoalout -> execute();
+$resultexgoalout = $goaloutcome->OutcomePlaceholders();
+$rowsexgoalout = $resultexgoalout->fetch(4);
 
-    $rowsexgoalout = $resultexgoalout->fetch(4);
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
 /*
  * values to show for goals, If exist.
  */
-try {
-    $sqlunitgoal = "select * from BP_UnitGoals where ID_UNIT_GOAL = :goal_id ";
-    $resultunitgoal = $connection -> prepare($sqlunitgoal);
-    $resultunitgoal -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
-    $resultunitgoal -> execute();
+// try {
+//     $sqlunitgoal = "select * from BP_UnitGoals where ID_UNIT_GOAL = :goal_id ";
+//     $resultunitgoal = $connection -> prepare($sqlunitgoal);
+//     $resultunitgoal -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+//     $resultunitgoal -> execute();
 
-    $rowsunitgoal = $resultunitgoal->fetch(4);
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
+//     $rowsunitgoal = $resultunitgoal->fetch(4);
+// } catch(PDOException $e) {
+//     error_log($e->getMessage());
+//     //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+// }
+
+$resultunitgoal = $goaloutcome->PlaceHolderValue();
+$rowsunitgoal = $resultunitgoal->fetch(4);
 
 // Value Set for Goal ViewPoints;
 $goalviewpoint = array(
@@ -109,52 +78,13 @@ $goalviewpoint = array(
  */
 
 if(isset($_POST['savedraft'])) {
-
-    $goalstatus = $_POST['goal_status'];
-    $goalach = mynl2br($_POST['goal_ach']);
-    $resutilzed = mynl2br($_POST['goal_resutil']);
-    $goalconti = mynl2br($_POST['goal_conti']);
-    $resneed = mynl2br($_POST['resoneed']);
-    $goalincomplan = mynl2br($_POST['goal_plan_incomp']);
-    $goalupcominplan = mynl2br($_POST['goal_plan_upcoming']);
-    $goalreportstatus = "In Progress";
-    $contentlink_id = $_GET['linkid'];
-    $goal_id = $_GET['goal_id'];
-
-
-
-    $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_PLAN_INCOMPLT, GOAL_UPCOMING_PLAN )
-VALUES ('$goal_id','$author','$time','$goalreportstatus','$goalstatus','$goalach','$resutilzed','$goalconti','$resneed','$goalincomplan','$goalupcominplan')
-ON DUPLICATE KEY UPDATE `ID_UNIT_GOAL` = VALUES(`ID_UNIT_GOAL`), OUTCOMES_AUTHOR = VALUES(`OUTCOMES_AUTHOR`), MOD_TIMESTAMP = VALUES(`MOD_TIMESTAMP`),
-GOAL_REPORT_STATUS = VALUES(`GOAL_REPORT_STATUS`), GOAL_STATUS = VALUES(`GOAL_STATUS`), GOAL_ACHIEVEMENTS = VALUES(`GOAL_ACHIEVEMENTS`), GOAL_RSRCS_UTLZD = VALUES(`GOAL_RSRCS_UTLZD`),
-GOAL_CONTINUATION = VALUES(`GOAL_CONTINUATION`), GOAL_RSRCS_NEEDED = VALUES(`GOAL_RSRCS_NEEDED`); ";
-
-    $sqlgoalout .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
-
-    $sqlgoalout .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
-
-    if($resultgoalout = $mysqli->multi_query($sqlgoalout)) {
-        $error[0] = "Goal Outcome Saved.";
-    } else{
-        $error[0] = "Goal Outcome could not be Saved.";
-    }
-
+    $message[0] = $goaloutcome->SaveDraft();
 }
 
 if(isset($_POST['submit_approve'])) {
 
-    $goal_id = $_GET['goal_id'];
-    $contentlink_id = $_GET['linkid'];
-    $goalreportstatus = "Pending Approval";
-    $sqlgoaloutap .= "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = '$goalreportstatus' where ID_UNIT_GOAL = '$goal_id'; ";
-
-    //$sqlgoaloutap .= "Update `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
-
-    if($resultgoaloutap = $mysqli->multi_query($sqlgoaloutap)) {
-        $error[1] = "Goal Outcome submitted for Approval.";
-    } else {
-        $error[1] = "Goal Outcome could not be Submitted.";
-    }
+    $message[0] = "Goal Outcome";
+    $message[0].= $goaloutcome->SubmitApproval();
 
 }
 
@@ -162,44 +92,16 @@ if(isset($_POST['submit_approve'])) {
 
 if(isset($_POST['approve'])) {
 
-    $contentlink_id = $_GET['linkid'];
+    $message[0] = "Goal Outcome";
+    $message[0].= $goaloutcome->Approve();
 
-    try {
-        $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Approved' where ID_UNIT_GOAL = :goal_id; ";
-
-        $sqlmissionresult = $connection->prepare($sqlmission);
-        $sqlmissionresult -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
-
-        if ($sqlmissionresult->execute()) {
-            $error[0] = "Goal Outcome Approved Successfully";
-        } else {
-            $error[0] = "Goal Outcome Could not be Approved. Please Retry.";
-        }
-    } catch(PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
 }
 
 if(isset($_POST['reject'])) {
 
-    $contentlink_id = $_GET['linkid'];
+    $message[0] = "Goal Outcome";
+    $message[0].= $goaloutcome->Reject();
 
-    try {
-        $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Rejected' where ID_UNIT_GOAL = :goal_id; ";
-
-        $sqlmissionresult = $connection->prepare($sqlmission);
-        $sqlmissionresult -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
-
-        if ($sqlmissionresult->execute()) {
-            $error[0] = "Goal Outcome Rejected Successfully";
-        } else {
-            $error[0] = "Goal Outcome Could not be Rejected. Please Retry.";
-        }
-    } catch(PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
 }
 
 
@@ -218,7 +120,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" onclick="$redirect = $('.alert button').attr('redirect');
 		$(window).attr('location',$redirect)" redirect="<?php echo "goaloutcomeshome.php?linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
     </div>

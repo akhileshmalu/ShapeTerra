@@ -12,11 +12,12 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 $errorflag =0;
 $BackToDashboard = true;
 
 require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
@@ -31,193 +32,58 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
+$Initiatives = new INITIATIVES();
 
-$time = date('Y-m-d H:i:s');
-
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
-try {
-    if ($ouid == 4) {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
-
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-        
-        
-
-    } else {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
-
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
-    }
-
-    $resultbroad->execute();
-    $rowbroad = $resultbroad->fetch(4);
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
+//  Blueprint Status information on title box
+$resultbroad = $Initiatives->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(4);
 
 /*
  * Values for placeholders
  */
-try {
-    $sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV=:ouabbrev and OUTCOMES_AY=:bpayname ";
-    $resultexvalue = $connection->prepare($sqlexvalue);
-    $resultexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-    $resultexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-    $resultexvalue->execute();
+// try {
+//     $sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV=:ouabbrev and OUTCOMES_AY=:bpayname ";
+//     $resultexvalue = $connection->prepare($sqlexvalue);
+//     $resultexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+//     $resultexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+//     $resultexvalue->execute();
 
-    $rowsexvalue = $resultexvalue->fetch(4);
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
+//     $rowsexvalue = $resultexvalue->fetch(4);
+// } catch(PDOException $e) {
+//     error_log($e->getMessage());
+//     //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+// }
 
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-try {
-    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
+// Values for placeholders
+$resultexvalue = $Initiatives->PlaceHolderValue();
+$rowsexvalue = $resultexvalue->fetch(4);
 
-    $resultbpstatus = $connection->prepare($sqlbpstatus);
-    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
-    $resultbpstatus->execute();
+// SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $Initiatives->GetStatus();
 
-    $rowsbpstatus = $resultbpstatus->fetch(4); 
-} catch (PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
+$rowsbpstatus = $resultbpstatus->fetch(2);
 
 
 if (isset($_POST['savedraft'])) {
-
-    $contentlink_id = $_GET['linkid'];
-    $ugexplearn = mynl2br($_POST['ugexplearning']);
-    $gradexplearn = mynl2br($_POST['gradexplearning']);
-    $afford = mynl2br($_POST['afford']);
-    $reputation = mynl2br($_POST['reputation']);
-    $coolstuff = mynl2br($_POST['coolstuff']);
-    $challenges = mynl2br($_POST['challenges']);
-
-//    if ($_FILES["supinfo"]["error"] > 0) {
-//        $error[0] = "Return Code: No Input " . $_FILES["supinfo"]["error"] . "<br />";
-//        $errorflag = 1;
-//
-//    } else {
-
-if ($_FILES['supinfo']['tmp_name'] !="") {
-    $target_dir = "../uploads/initiatives/";
-    $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
-    $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
-
-
-    if ($imageFileType != "pdf") {
-        $error[1] = "Sorry, only PDf files are allowed.";
-        $errorflag = 1;
-
-    } else {
-        if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
-            // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
-            $supinfopath = $target_file;
-        } else {
-            $error[1] = "Sorry, there was an error uploading your file.";
-            $errorflag = 1;
-        }
-    }
-}
-
-    if ($errorflag != 1) {
-        $sqlinitiatives = "INSERT INTO `AC_InitObsrv` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, EXPERIENTIAL_LEARNING_UGRAD, EXPERIENTIAL_LEARNING_GRAD, AFFORDABILITY, REPUTATION_ENHANCE,COOL_STUFF, CHALLENGES,AC_SUPPL_INITIATIVES_OBSRV)
- VALUES ('$ouabbrev','$bpayname','$author','$time','$ugexplearn','$gradexplearn','$afford','$reputation','$coolstuff','$challenges','$supinfopath')
- ON DUPLICATE KEY UPDATE `OU_ABBREV` = VALUES(`OU_ABBREV`),`OUTCOMES_AY` = VALUES(`OUTCOMES_AY`),`OUTCOMES_AUTHOR` = VALUES(`OUTCOMES_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),`EXPERIENTIAL_LEARNING_UGRAD` = VALUES(`EXPERIENTIAL_LEARNING_UGRAD`),
-`EXPERIENTIAL_LEARNING_GRAD` =VALUES(`EXPERIENTIAL_LEARNING_GRAD`), `AFFORDABILITY`=VALUES(`AFFORDABILITY`),`REPUTATION_ENHANCE`=VALUES(`REPUTATION_ENHANCE`),`COOL_STUFF`=VALUES(`COOL_STUFF`),`CHALLENGES`=VALUES(`CHALLENGES`),`AC_SUPPL_INITIATIVES_OBSRV`= VALUES(`AC_SUPPL_INITIATIVES_OBSRV`);";
-
-        $sqlinitiatives .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-        $sqlinitiatives .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = '$author', LastModified = '$time' where ID_BROADCAST = '$bpid'; ";
-
-        if ($mysqli->multi_query($sqlinitiatives)) {
-
-            $error[0] = "Initiatives & Observations Updated Succesfully.";
-        } else {
-            $error[3] = "Initiatives & Observations could not be Updated.";
-        }
-    }
+    $message[0] = $Initiatives->SaveDraft();
 }
 
 
-if(isset($_POST['submit_approval'])) {
-
-    $contentlink_id = $_GET['linkid'];
-
-    try {
-        $sqlinitiatives .= " UPDATE BpContents set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR = :author, MOD_TIMESTAMP = :time where ID_CONTENT = :contentlink_id;";
-
-        $sqlinitiativesresults = $connection->prepare($sqlinitiatives);
-        $sqlinitiativesresults->bindParam(":author", $author, PDO::PARAM_STR);
-        $sqlinitiativesresults->bindParam(":time", $time, PDO::PARAM_STR);
-        $sqlinitiativesresults->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
-
-        if ($sqlinitiativesresults->execute()) {
-
-            $error[0] = "Initiatives & Observation submitted Successfully";
-
-        } else {
-            $error[0] = "Initiatives & Observation Could not be submitted. Please Retry.";
-        }
-    } catch(PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
-
+if(isset($_POST['submit_approve'])) {
+    $message[0] = "Initiatives & Observations";
+    $message[0].= $Initiatives->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
 
-    $contentlink_id = $_GET['linkid'];
-    try {
-        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= :author, MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id; ";
-        $sqlmissionresults = $connection->prepare($sqlmission);
-        $sqlmissionresults->bindParam(":author", $author, PDO::PARAM_STR);
-        $sqlmissionresults->bindParam(":time", $time, PDO::PARAM_STR);
-        $sqlmissionresults->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
-
-        if ($sqlmissionresults->execute()) {
-            $error[0] = "Initiatives Approved Successfully";
-        } else {
-            $error[0] = "Initiatives Could not be Approved. Please Retry.";
-        }
-    } catch(PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
+    $message[0] = "Initiatives & Observations";
+    $message[0].= $Initiatives->Approve();
 }
 
 if(isset($_POST['reject'])) {
 
-    $contentlink_id = $_GET['linkid'];
-    try {
-        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= :author, MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id; ";
-
-        $sqlmissionresults = $connection->prepare($sqlmission);
-        $sqlmissionresults->bindParam(":author", $author, PDO::PARAM_STR);
-        $sqlmissionresults->bindParam(":time", $time, PDO::PARAM_STR);
-        $sqlmissionresults->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
-
-        if ($sqlmissionresults->execute()) {
-            $error[0] = "Initiatives Rejected Successfully";
-        } else {
-            $error[0] = "Initiatives Could not be Rejected. Please Retry.";
-        }
-    } catch(PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
+    $message[0] = "Initiatives & Observations";
+    $message[0].= $Initiatives->Reject();
 }
 
 
@@ -230,11 +96,11 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit_approval'])) { ?>
+<?php if (isset($_POST['submit_approve'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
@@ -242,7 +108,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="<?php echo "initiatives.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
