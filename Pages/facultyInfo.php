@@ -14,11 +14,12 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-$error = array();
+$message = array();
 $errorflag =0;
 $BackToDashboard = true;
 
 require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION['bpid'];
 $author = $_SESSION['login_userid'];
@@ -36,194 +37,47 @@ $fcdev=null;
 $createact=null;
 $time = date('Y-m-d H:i:s');
 
-try {
-    if ($ouid == 4) {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+//Object for faculty info
+$FacultyInfo = new FACULTYINFO();
 
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-        
-        
+//  Blueprint Status information on title box
+$resultbroad = $FacultyInfo->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(4);
 
-    } else{
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+// Values for placeholders
+$resultexvalue = $FacultyInfo->PlaceHolderValue();
+$rowsexvalue = $resultexvalue->fetch(4);
 
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
-    }
+// SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $FacultyInfo->GetStatus();
 
-    $resultbroad->execute();
-    $rowbroad = $resultbroad->fetch(4);
-
-} catch (PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
-
-try {
-    $sqlexvalue = "SELECT * FROM `AC_FacultyInfo` where OU_ABBREV = :ouabbrev AND ID_FACULTY_INFO in (select max(ID_FACULTY_INFO) from AC_FacultyInfo where OUTCOMES_AY = :bpayname group by OU_ABBREV); ";
-
-    $resultsexvalue = $connection->prepare($sqlexvalue);
-    $resultsexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-    $resultsexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-    $resultsexvalue->execute();
-
-    $rowsexvalue = $resultsexvalue->fetch(4); 
-
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
-
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-try {
-    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :id";
-
-    $resultbpstatus = $connection->prepare($sqlbpstatus);
-    $resultbpstatus->bindParam(":id", $contentlink_id, PDO::PARAM_INT);
-    $resultbpstatus->execute();
-
-    $rowsbpstatus = $resultbpstatus->fetch(4); 
-
-} catch(PDOException $e) {
-    error_log($e->getMessage());
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-}
+$rowsbpstatus = $resultbpstatus->fetch(2);
 
 
 if (isset($_POST['savedraft'])) {
 
-    $facdev = mynl2br($_POST['factextarea']);
-
-    $createact = mynl2br($_POST['cractivity']);
-
-    $contentlink_id = $_GET['linkid'];
-
-
-//    if ($_FILES["supinfo"]["error"] > 0) {
-//        $error[0] = "Return Code: No Input " . $_FILES["supinfo"]["error"] . "<br />";
-//        $errorflag = 1;
-//
-//    } else {
-//        $target_dir = "../../user"."/".$name."/";
-
-    if ($_FILES['supinfo']['tmp_name'] !="") {
-        $target_dir = "../uploads/facultyInfo/";
-        $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
-        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
-
-
-        if ($imageFileType != "pdf") {
-            $error[1] = "Sorry, only PDf files are allowed.";
-            $errorflag = 1;
-
-        } else {
-            if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
-                // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
-                $supinfopath = $target_file;
-            } else {
-                $error[2] = "Sorry, there was an error uploading your file.";
-            }
-        }
-    }
-
-    if ($errorflag != 1) {
-
-    //  *************************** \\
-    //  ********** ERROR ********** \\
-    //  ** Can't execute multiple * \\
-    //  ** queries in single PDO ** \\
-    //  ******** statement ******** \\
-    //  *************************** \\
-
-        $sqlfacinfo = "INSERT INTO `AC_FacultyInfo` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
- VALUES ('$ouabbrev','$bpayname','$author','$time','$facdev','$createact','$supinfopath');";
-
-        $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-
-        $sqlfacinfo .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
-
-        if ($mysqli->multi_query($sqlfacinfo)) {
-
-            $error[0] = "Faculty Info Added Succesfully.";
-        } else {
-            $error[3] = "Faculty Info could not be added.";
-        }
-
-    }
+    $message = $FacultyInfo->SaveDraft();
+    
 }
 
 
-if(isset($_POST['submit_approval'])) {
 
-    $contentlink_id = $_GET['linkid'];
+if (isset($_POST['submit_approve'])) {
+    $message[0] = "Faculty Info";
+    $message[0].= $FacultyInfo->SubmitApproval();
 
-    try {
-        $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= :author ,MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id;";
-
-        $sqlfacinforesult = $connection->prepare($sqlfacinfo);
-        $sqlfacinforesult->bindParam(":author", $author, PDO::PARAM_INT);
-        $sqlfacinforesult->bindParam(":time", $time, PDO::PARAM_INT);
-        $sqlfacinforesult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
-
-        if ($sqlfacinforesult->execute()) {
-            $error[0] = "Faculty Information submitted Successfully";
-        } else {
-            $error[0] = "Faculty Information Could not be submitted. Please Retry.";
-        }
-
-    } catch (PDOException $e){
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
 }
 
-if(isset($_POST['approve'])) {
-
-    try {
-        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= :author ,MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id;";
-
-        $sqlmissionresult = $connection->prepare($sqlmission);
-        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_INT);
-        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_INT);
-        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
-
-        if ($sqlmissionresult->execute()) {
-            $error[0] = "Faculty Information Approved Successfully";
-        } else {
-            $error[0] = "Faculty Information Could not be Approved. Please Retry.";
-        }
-
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
+if (isset($_POST['approve'])) {
+    $message[0] = "Faculty Info";
+    $message[0].=$FacultyInfo->Approve();
 }
 
-if(isset($_POST['reject'])) {
+if (isset($_POST['reject'])) {
+    $message[0] = "Faculty Info";
+    $message[0].=$FacultyInfo->Reject();
 
-    try {
-        $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= :author ,MOD_TIMESTAMP = :time  where ID_CONTENT =:contentlink_id;";
 
-        $sqlmissionresult = $connection->prepare($sqlmission);
-        $sqlmissionresult->bindParam(":author", $author, PDO::PARAM_INT);
-        $sqlmissionresult->bindParam(":time", $time, PDO::PARAM_INT);
-        $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_INT);
-
-        if ($sqlmissionresult->execute()) {
-            $error[0] = "Faculty Information Rejected Successfully";
-        } else {
-            $error[0] = "Faculty Information Could not be Rejected. Please Retry.";
-        }
-
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
 }
 
 require_once("../Resources/Includes/header.php");
@@ -239,7 +93,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="<?php echo "bphome.php?ayname=".$rowbroad[0]."&id=".$bpid; ?> " class="end btn-primary">Close</button>
     </div>
 <?php } ?>
@@ -295,7 +149,7 @@ require_once("../Resources/Includes/menu.php");
 
                 <?php 
 
-                if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+                if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
 
                     <button id="save" type="submit" name="savedraft"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">

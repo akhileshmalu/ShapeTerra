@@ -456,7 +456,230 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         return $resultexvalue;
     }
 }
-Class ALUMNIDEVELOPMENT extends BPCONTENTS
+
+// Class FACULTYAWARDS extends BPCONTENTS
+// {
+//     public function SubmitDraft()
+//     {
+
+//       $awardType = $_POST['awardType'];
+//       $awardLoc = $_POST['awardLoc'];
+//       $recipLname = $_POST['recipLname'];
+//       $recipFname = $_POST['recipFname'];
+//       $awardTitle = $_POST['awardTitle'];
+//       $awardOrg = $_POST['awardOrg'];
+//       $dateAward = $_POST['dateAward'];
+//       $contentlink_id = $_GET['linkid'];
+
+//       $sqlAcFacAward = "INSERT INTO `AC_FacultyAwards`
+//                           (OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST,
+//                           RECIPIENT_NAME_FIRST,AWARD_TITLE,timestampmod,DATE_AWARDED,ID_SORT)
+//                           VALUES(:ouabbrev,:bpayname,:author,:timestampmod,:awardType,:awardLoc,:recipLname,:recipFname,
+//                           :awardTitle,:awardOrg,:dateAward,'0');";
+
+//       $sqlAcFacAward .= "UPDATE `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = :author,MOD_TIMESTAMP =:timestampmod  
+//                           where ID_CONTENT =:contentlink_id;";
+
+//       $sqlAcFacAward .= "UPDATE  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', 
+//                           AUTHOR= :author, LastModified =:timestampmod where ID_BROADCAST = :bpid; ";
+
+//       $sqlACFacAwardResult = $this->connection->prepare($sqlAcFacAward);
+//       $sqlACFacAwardResult->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(":author", $this->author, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(':awardType', $awardType, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(':awardLoc', $awardLoc, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(':recipLname', $recipLname, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(':recipFname', $recipFname, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(':awardTitle', $awardTitle, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(':awardOrg', $awardOrg, PDO::PARAM_STR);
+//       $sqlACFacAwardResult->bindParam(':dateAward', $dateAward, PDO::PARAM_STR);
+
+//       if($mysqli->multi_query($sqlAcFacAward)){
+
+//           $Data = new Data();
+//           $Data->initOrderFacultyAwards();
+//           $message[0] = "Award Added Succesfully.";
+
+//       } else {
+//           $message[0] = "Award Could not be Added.";
+//       }
+
+
+//         $programranking = mynl2br($_POST['programranking']);
+//         $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
+//         $launch = mynl2br($_POST['launch']);
+//         $programterminations = mynl2br($_POST['programterminators']);
+
+//         if ($_FILES['supinfo']['tmp_name'] != "") {
+//             $target_dir = "../uploads/ac_programs/";
+//             $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+//             $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+//             $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
+
+//             if ($imageFileType != "pdf") {
+//                 $this->message = "Sorry, only PDF files are allowed.";
+//                 $this->errorflag = 1;
+
+//             } else {
+//                 if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+//                     $supinfopath = $target_file;
+//                 } else {
+//                     $this->message = "Sorry, there was an error uploading your file.";
+//                     $this->errorflag = 1;
+//                 }
+//             }
+//         }
+//         if ($this->errorflag != 1) {
+
+//             $sqlacprogram = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, 
+//         PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) VALUES 
+//         (:ouabbrev, :bpayname, :author, :timestampmod, :programranking, :instructionalmodalities, :launch, 
+// :programterminations, :supinfopath);";
+
+//             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+//                 $sqlacprogram .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
+//             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
+
+//                 $sqlacprogram .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+// BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+//             }
+
+//             $resultacprogram = $this->connection->prepare($sqlacprogram);
+//             $resultacprogram->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+//             $resultacprogram->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+//             $resultacprogram->bindParam(":author", $this->author, PDO::PARAM_STR);
+//             $resultacprogram->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+//             $resultacprogram->bindParam(':programranking', $programranking, PDO::PARAM_STR);
+//             $resultacprogram->bindParam(':instructionalmodalities', $instructionalmodalities, PDO::PARAM_STR);
+//             $resultacprogram->bindParam(':launch', $launch, PDO::PARAM_STR);
+//             $resultacprogram->bindParam(':programterminations', $programterminations, PDO::PARAM_STR);
+//             $resultacprogram->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR);
+
+//             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+
+//                 $resultacprogram->bindParam(":author", $this->author, PDO::PARAM_STR);
+//                 $resultacprogram->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+//                 $resultacprogram->bindParam(':contentlink_id', $this->contentLinkId, PDO::PARAM_STR);
+//                 $resultacprogram->bindParam(":author", $this->author, PDO::PARAM_STR);
+//                 $resultacprogram->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+//                 $resultacprogram->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
+//             }
+
+//             if ($resultacprogram->execute()) {
+//                 $this->message = "Academic Program Info Added Succesfully.";
+//             } else {
+//                 $this->message = "Academic Program Info could not be added.";
+//             }
+//         }
+//         return $this->message;
+//     }
+
+//     public function PlaceHolderValue()
+//     {
+//         try {
+//             $sqlexvalue = "SELECT * FROM `AC_Programs` WHERE OU_ABBREV = :ouabbrev AND ID_AC_PROGRAMS IN 
+// (SELECT MAX(ID_AC_PROGRAMS) FROM `AC_Programs` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
+
+//             $resultexvalue = $this->connection->prepare($sqlexvalue);
+//             $resultexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+//             $resultexvalue->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+
+//             $resultexvalue->execute();
+
+//         } catch (PDOException $e) {
+//             error_log($e->getMessage());
+//             //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+//         }
+//         return $resultexvalue;
+//     }
+// }
+
+Class FACULTYINFO extends BPCONTENTS
+{
+    public function SaveDraft()
+    {
+      $facdev = mynl2br($_POST['factextarea']);
+
+      $createact = mynl2br($_POST['cractivity']);
+
+      $contentlink_id = $_GET['linkid'];
+
+
+  //    if ($_FILES["supinfo"]["error"] > 0) {
+  //        $error[0] = "Return Code: No Input " . $_FILES["supinfo"]["error"] . "<br />";
+  //        $errorflag = 1;
+  //
+  //    } else {
+  //        $target_dir = "../../user"."/".$name."/";
+
+      if ($_FILES['supinfo']['tmp_name'] !="") {
+          $target_dir = "../uploads/facultyInfo/";
+          $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+          $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+
+
+          if ($imageFileType != "pdf") {
+              $this->message[1] = "Sorry, only PDf files are allowed.";
+              $this->errorflag = 1;
+
+          } else {
+              if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+                  // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
+                  $supinfopath = $target_file;
+              } else {
+                  $this->message[2] = "Sorry, there was an error uploading your file.";
+              }
+          }
+      }
+
+      if ($this->errorflag != 1) {
+          $sqlfacinfo = "INSERT INTO `AC_FacultyInfo` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
+   VALUES (:ouabbrev,:bpayname,:author,:timestampmod,:facdev,:createact,:supinfopath);";
+
+          $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id;";
+
+          $sqlfacinfo .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:time where ID_BROADCAST = :bpid; ";
+
+          $resultfacinfo = $this->connection->prepare($sqlfacinfo);
+          $resultfacinfo->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+          $resultfacinfo->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+          $resultfacinfo->bindParam(":author", $this->author, PDO::PARAM_STR);
+          $resultfacinfo->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+          $resultfacinfo->bindParam(':facdev', $facdev, PDO::PARAM_STR);
+          $resultfacinfo->bindParam(':createact', $createact, PDO::PARAM_STR);
+          $resultfacinfo->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR);
+
+          if ($resultfacinfo->execute()) {
+
+              $this->message[0] = "Faculty Info Added Succesfully.";
+          } else {
+              $this->message[3] = "Faculty Info could not be added.";
+          }
+
+      }
+        return $this->message;
+    }
+
+    public function PlaceHolderValue()
+    {
+        try {
+          $sqlexvalue = "SELECT * FROM `AC_FacultyInfo` where OU_ABBREV = :ouabbrev AND ID_FACULTY_INFO in (select max(ID_FACULTY_INFO) from AC_FacultyInfo where OUTCOMES_AY = :bpayname group by OU_ABBREV); ";
+
+          $resultsexvalue = $this->connection->prepare($sqlexvalue);
+          $resultsexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+          $resultsexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+          $resultsexvalue->execute();
+ 
+
+        } catch(PDOException $e) {
+            error_log($e->getMessage());
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        }
+        return $resultsexvalue;
+    }
+}Class ALUMNIDEVELOPMENT extends BPCONTENTS
 {
     public function SaveDraft()
     {

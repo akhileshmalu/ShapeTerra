@@ -15,7 +15,7 @@ if(!$_SESSION['isLogged']) {
     die();
 }
 require("../Resources/Includes/data.php");
-$error = array();
+$message = array();
 $errorflag = 0;
 $BackToDashboard = true;
 
@@ -41,6 +41,8 @@ if ($ouid == 4) {
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
+
+$Facultyawards = new FACULTYAWARDS();
 
 /*
  * faculty Award Grid ; conditional for provost & other users
@@ -145,10 +147,10 @@ if(isset($_POST['award_submit'])){
 
         $Data = new Data();
         $Data->initOrderFacultyAwards();
-        $error[0] = "Award Added Succesfully.";
+        $message[0] = "Award Added Succesfully.";
 
     } else {
-        $error[0] = "Award Could not be Added.";
+        $message[0] = "Award Could not be Added.";
     }
 
 }
@@ -167,10 +169,10 @@ if(isset($_POST['submit_approve'])) {
 
         if ($sqlfacinforesult->execute()) {
 
-            $error[0] = "Faculty Awards submitted Successfully";
+            $message[0] = "Faculty Awards submitted Successfully";
 
         } else {
-            $error[0] = "Faculty Awards Could not be submitted. Please Retry.";
+            $message[0] = "Faculty Awards Could not be submitted. Please Retry.";
         }
     } catch (PDOException $e) {
         error_log($e->getMessage());
@@ -193,9 +195,9 @@ if(isset($_POST['approve'])) {
         $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
 
         if ($sqlmissionresult->execute()) {
-            $error[0] = "Faculty Awards Approved Successfully";
+            $message[0] = "Faculty Awards Approved Successfully";
         } else {
-            $error[0] = "Faculty Awards Could not be Approved. Please Retry.";
+            $message[0] = "Faculty Awards Could not be Approved. Please Retry.";
         }
     } catch (PDOException $e) {
         error_log($e->getMessage());
@@ -217,9 +219,9 @@ if(isset($_POST['reject'])) {
         $sqlmissionresult->bindParam(":contentlink_id", $contentlink_id, PDO::PARAM_STR);
 
         if ($sqlmissionresult->execute()) {
-            $error[0] = "Faculty Awards Rejected Successfully";
+            $message[0] = "Faculty Awards Rejected Successfully";
         } else {
-            $error[0] = "Faculty Awards Could not be Rejected. Please Retry.";
+            $message[0] = "Faculty Awards Could not be Rejected. Please Retry.";
         }
     } catch (PDOException $e) {
         error_log($e->getMessage());
@@ -256,7 +258,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="<?php echo $_SERVER['PHP_SELF'].'?linkid='.$contentlink_id; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
@@ -265,7 +267,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]."&id=".$bpid; ?>" class="end btn-primary">Close</button>
     </div>
 
