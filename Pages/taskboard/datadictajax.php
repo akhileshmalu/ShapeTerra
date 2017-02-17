@@ -4,7 +4,8 @@ session_start();
 $author = $_SESSION['login_userid'];
 
 require_once("../../Resources/Includes/connect.php");
-// require our class
+
+// require Grid Class
 require_once("grid.php");
 
 if ($_SESSION['login_right'] == 7) {

@@ -21,46 +21,52 @@ $contentlink_id = $_GET['linkid'];
 
 $BackToDashboard = true;
 
+$ouid = $_SESSION['login_ouid'];
+if ($ouid == 4) {
+    $ouabbrev = $_SESSION['bpouabbrev'];
+} else {
+    $ouabbrev = $_SESSION['login_ouabbrev'];
+}
 
 //Object for executive Summary Table
-$ExecutiveSummary = new EXECUTIVESUMCLASS();
+$CampusClimate = new EXECUTIVESUMCLASS();
 
 
 //  Blueprint Status information on title box
-$resultbroad = $ExecutiveSummary->BlueprintStatusDisplay();
+$resultbroad = $CampusClimate->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
 
 // Values for placeholders
-$resultexvalue = $ExecutiveSummary->PlaceHolderValue();
-$rowsexvalue = $resultexvalue->fetch(4);
+$resultexvalue = $CampusClimate->PlaceHolderValue();
+$rowsExValue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
-$resultbpstatus = $ExecutiveSummary->GetStatus();
+$resultbpstatus = $CampusClimate->GetStatus();
 
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 
 if (isset($_POST['savedraft'])) {
 
-    $message = $ExecutiveSummary->SaveDraft();
+    $message[0] = $CampusClimate->SaveDraft();
 
 }
 
 if (isset($_POST['submit_approve'])) {
     $message[0] = "Executive Summary";
-    $message[0].= $ExecutiveSummary->SubmitApproval();
+    $message[0].= $CampusClimate->SubmitApproval();
 
 }
 
 if (isset($_POST['approve'])) {
     $message[0] = "Executive Summary";
-    $message[0].=$ExecutiveSummary->Approve();
+    $message[0].= $CampusClimate->Approve();
 }
 
 if (isset($_POST['reject'])) {
     $message[0] = "Executive Summary";
-    $message[0].=$ExecutiveSummary->Reject();
+    $message[0].= $CampusClimate->Reject();
 
 
 }
@@ -114,7 +120,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <input id="college-school-input" name="college-school-input" type="text" class="form-control"
-                               value="<?php echo $rowsexvalue["UNIT_NAME"]; ?>" required>
+                               value="<?php echo $rowsExValue["UNIT_NAME"]; ?>" required>
                     </div>
 
                     <h3>Dean's Name</h3>
@@ -123,7 +129,7 @@ require_once("../Resources/Includes/menu.php");
                             <small>Provide the formal name of the Dean exactly as you want it to appear.</small>
                         </p>
                         <input id="deans-name-input" name="deans-name-input" type="text" class="form-control"
-                               value="<?php echo $rowsexvalue["DEAN_NAME_PRINT"]; ?>" required>
+                               value="<?php echo $rowsExValue["DEAN_NAME_PRINT"]; ?>" required>
                     </div>
                     <h3>Dean's Title</h3>
                     <div id="deans-title" class="form-group form-indent">
@@ -132,7 +138,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <input id="deans-title-input" name="deans-title-input" type="text" class="form-control"
-                               value="<?php echo $rowsexvalue["DEAN_TITLE"]; ?>" required>
+                               value="<?php echo $rowsExValue["DEAN_TITLE"]; ?>" required>
                     </div>
                     <h3>Dean's Portrait</h3>
                     <div id="deans-portrait" class="form-group form-indent">
@@ -194,7 +200,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input"
                                   type="textarea" class="form-control wordCount"
-                                  required><?php echo mybr2nl($rowsexvalue["INTRODUCTION"]); ?></textarea>
+                                  required><?php echo mybr2nl($rowsExValue["INTRODUCTION"]); ?></textarea>
                     </div>
                     <h3>Highlights</h3>
                     <div id="highlights" class="form-group form-indent">
@@ -207,7 +213,7 @@ require_once("../Resources/Includes/menu.php");
                         <textarea rows="5" cols="25" maxlength="525" id="highlights-input" name="highlights-input"
                                   type="textarea"
                                   class="form-control wordCount"
-                        ><?php echo mybr2nl($rowsexvalue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
+                        ><?php echo mybr2nl($rowsExValue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
                     </div>
 
                     <!--                      Edit Control-->

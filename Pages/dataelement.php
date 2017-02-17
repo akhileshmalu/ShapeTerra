@@ -5,9 +5,6 @@
  * This Page controls Data Element Add Screen.
  */
 
-/*
- * Session & Error control Initialization.
- */
 session_start();
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
@@ -15,13 +12,15 @@ if(!$_SESSION['isLogged']) {
 }
 
 $message = array();
-$errorflag =0;
+$errorflag = 0;
 $notBackToDashboard = true;
 $elemid = $_GET['elem_id'];
 $elemstatus = $_GET['status'];
 $BackToDataDictHome = true;
 $bptopic =array();
 $bptopicstring = null;
+
+// Set of valid Values
 
 $timebasisoutcome = array (
     'Academic Years only - final: Aug 16- Aug 15',
@@ -63,9 +62,7 @@ $valuemandset = array(
 	'Unknown'
 );
 
-/*
- * Connection to DataBase.
- */
+// Connection to DataBase.
 require_once ("../Resources/Includes/connect.php");
 
 /*
@@ -77,27 +74,22 @@ $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-/*
- * SQL Existing Data Element Value
- */
+// SQL Existing Data Element Value
+
 $sqldataelem = "SELECT * FROM DataDictionary WHERE ID_DATA_ELEMENT='$elemid'; ";
 $resultdataelem = $mysqli -> query($sqldataelem);
 $rowsdataelem = $resultdataelem -> fetch_assoc();
 
-/*
- * Data Classification Value
- */
+// Data Classification Value
+
 $sqldataclass = "SELECT * FROM DataClassification;";
 $resultdataclass = $mysqli -> query($sqldataclass);
 
 
+// Blueprint TopicAreas Value
 
-/*
- * Blueprint TopicAreas Value
- */
 $sqltopicareas = "SELECT * FROM TopicAreas where TOPIC_FOR_DICTIONARY = 'Y';";
 $resulttopicareas = $mysqli -> query($sqltopicareas);
-
 
 
 if(isset($_POST['save'])) {

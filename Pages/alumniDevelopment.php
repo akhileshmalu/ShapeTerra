@@ -8,6 +8,7 @@ if(!$_SESSION['isLogged']) {
 }
 
 require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
 
 $message = array();
 $errorflag = 0;
@@ -16,7 +17,7 @@ $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
 $bpayname= $_SESSION['bpayname'];
-$time = date('Y-m-d H:i:s');
+
 
 //Menu button ctrl for back button
 $BackToDashboard = true;
@@ -27,190 +28,42 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
+//object for Alumni Dev Table
+$alumniDeveopment = new ALUMNIDEVELOPMENT();
 
-// Blueprint Title ; conditional for provost & other users
-
-try
-{
-    if ($ouid == 4) {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified FROM `broadcast` INNER JOIN Hierarchy ON 
-    `broadcast`.BROADCAST_OU = `Hierarchy`.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND Hierarchy.OU_ABBREV =:ouabbrev";
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(':bpayname', $bpayname, 2);
-        $resultbroad->bindParam(':ouabbrev', $ouabbrev, 2);
-    } else {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN 
-    Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND BROADCAST_OU =:ouid;";
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(':bpayname', $bpayname, 2);
-        $resultbroad->bindParam(':ouid', $ouid, 1);
-    }
-    $resultbroad->execute();
-}
-catch (PDOException $e)
-{
-    //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
-    error_log($e->getMessage());
-}
-
+// Blueprint Status information on title box
+$resultbroad = $alumniDeveopment->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
 
 // Values for placeholders
-try
-{
-    $sqlexvalue = "SELECT * FROM `AC_AlumDev` WHERE OU_ABBREV = :ouabbrev AND ID_ALUMNI_DEV IN 
-(SELECT MAX(ID_ALUMNI_DEV) FROM `AC_AlumDev` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
-    $resultexvalue = $connection->prepare($sqlexvalue);
-    $resultexvalue->bindParam(':ouabbrev', $ouabbrev, 2);
-    $resultexvalue->bindParam(':bpayname', $bpayname, 2);
-    $resultexvalue->execute();
-}
-catch (PDOException $e)
-{
-    //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
-    error_log($e->getMessage());
-}
-$rowsexvalue = $resultexvalue->fetch(2);
+$resultExValue = $alumniDeveopment->PlaceHolderValue();
+$rowsExValue = $resultExValue->fetch(2);
 
 
-// SQL check Status of Blueprint Content for Edit restrictions
-try
-{
-    $sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = :contentlink_id ;";
-    $resultbpstatus = $connection->prepare($sqlbpstatus);
-    $resultbpstatus->bindParam(':contentlink_id', $contentlink_id, 2);
-    $resultbpstatus->execute();
-}
-catch (PDOException $e)
-{
-    //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
-    error_log($e->getMessage());
-}
+//  SQL check Status of Blueprint Content for Edit restrictions
+
+$resultbpstatus = $alumniDeveopment->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
+
 if (isset($_POST['savedraft'])) {
-    $alumni = mynl2br($_POST['alumni']);
-    $development = mynl2br($_POST['development']);
-    $fundraising = mynl2br($_POST['fundraising']);
-    $gifts = mynl2br($_POST['gifts']);
-
-    if ($_FILES['supinfo']['tmp_name'] != "") {
-        $target_dir = "../uploads/alumni_dev/";
-        $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
-        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
-        $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
-
-
-        if ($imageFileType != "pdf") {
-            $message[1] = "Sorry, only PDF files are allowed.";
-            $errorflag = 1;
-
-        } else {
-            if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
-                // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
-                $supinfopath = $target_file;
-            } else {
-                $message[2] = "Sorry, there was an error uploading your file.";
-            }
-        }
-    }
-    if ($errorflag != 1) {
-
-        $sqlalumnidev = "INSERT INTO `AC_AlumDev` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, AC_UNIT_ALUMNI, AC_UNIT_DEVELOPMENT, AC_UNIT_FUNDRAISING, AC_UNIT_GIFTS, AC_UNIT_SUPPL_ALUM_DEV)
-VALUES ('$ouabbrev','$bpayname','$author','$time','$alumni','$development','$fundraising','$gifts','$supinfopath');";
-
-        $sqlalumnidev .= "Update `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-
-        $sqlalumnidev .= "Update `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
-
-        if ($mysqli->multi_query($sqlalumnidev)) {
-
-            $message[0] = "Alumni Development Info Added Succesfully.";
-        } else {
-            $message[3] = "Alumni Development Info could not be added.";
-        }
-    }
-
+    $message[0] = $alumniDeveopment->SaveDraft();
 }
 
-if(isset($_POST['submit_approval'])) {
-
-    $contentlink_id = $_GET['linkid'];
-
-    try {
-        $contentlink_id = $_GET['linkid'];
-
-        $sqlacprogram = "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR = :author,
-    MOD_TIMESTAMP = :timeCurrent WHERE ID_CONTENT = :contentLinkId ;";
-        $resultacprogram = $connection->prepare($sqlacprogram);
-        $resultacprogram->bindParam(':author', $author, 1);
-        $resultacprogram->bindParam(':timeCurrent', $time, 2);
-        $resultacprogram->bindParam(':contentLinkId', $contentlink_id, 1);
-
-        if ($resultacprogram->execute()) {
-            $message[0] = "Alumni Development Info submitted Successfully";
-        } else {
-            $message[0] = "Alumni Development Info Could not be submitted. Please Retry.";
-        }
-
-    } catch (PDOException $e) {
-        //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
-        error_log($e->getMessage());
-    }
+if(isset($_POST['submit_approve'])) {
+    $message[0] = "Alumni Development";
+    $message[0].= $alumniDeveopment->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
-
-    $contentlink_id = $_GET['linkid'];
-
-    try
-    {
-        $sqlacprogram = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = :author, MOD_TIMESTAMP 
-    = :timeCurrent WHERE ID_CONTENT =:contentLinkId ;";
-        $resultacprogram = $connection->prepare($sqlacprogram);
-        $resultacprogram->bindParam(':author', $author, 2);
-        $resultacprogram->bindParam(':timeCurrent', $time, 2);
-        $resultacprogram->bindParam(':contentLinkId', $contentlink_id, 2);
-
-        if ($resultacprogram->execute()) {
-            $message[0] = "Alumni Development Info Approved Successfully";
-        } else {
-            $message[0] = "Alumni Development Info Could not be Approved. Please Retry.";
-        }
-    }
-    catch (PDOException $e)
-    {
-        //SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
-        error_log($e->getMessage());
-    }
+    $message[0] = "Alumni Development";
+    $message[0].= $alumniDeveopment->Approve();
 }
 
 if(isset($_POST['reject'])) {
-
-    $contentlink_id = $_GET['linkid'];
-
-    try
-    {
-        $sqlacprogram = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = :author, MOD_TIMESTAMP 
-    = :timeCurrent  WHERE ID_CONTENT =:contentLinkId ;";
-        $resultacprogram = $connection->prepare($sqlacprogram);
-        $resultacprogram->bindParam(':author', $author, 2);
-        $resultacprogram->bindParam(':timeCurrent', $time, 2);
-        $resultacprogram->bindParam(':contentLinkId', $contentlink_id, 2);
-
-        if ($resultacprogram->execute()) {
-            $message[0] = "Alumni Development Info Rejected Successfully";
-        } else {
-            $message[0] = "Alumni Development Info Could not be Rejected. Please Retry.";
-        }
-    }
-    catch (PDOException $e)
-    {
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-        error_log($e->getMessage());
-    }
+    $message[0] = "Alumni Development";
+    $message[0].= $alumniDeveopment->Reject();
 }
-
 
 require_once("../Resources/Includes/header.php");
 
@@ -221,7 +74,7 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit_approval']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
+<?php if (isset($_POST['submit_approve']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
@@ -253,7 +106,7 @@ require_once("../Resources/Includes/menu.php");
                     during the Academic Year. Focus should be on relationships and activities with alumni; development
                     with non-alumni and fundraising are collected separately. </p>
                 <textarea name="alumni" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo mybr2nl($rowsexvalue['AC_UNIT_ALUMNI']); ?></textarea>
+                          required><?php echo mybr2nl($rowsExValue['AC_UNIT_ALUMNI']); ?></textarea>
             </div>
             <h3>Development<span
                         style="color: red"><sup>*</sup></span></h3>
@@ -261,7 +114,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">Describe your unit's substantial development initiatives and outcomes during the
                     Academic Year, excluding alumni, fundraising, and gifts.</p>
                 <textarea name="development" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo mybr2nl($rowsexvalue['AC_UNIT_DEVELOPMENT']); ?></textarea>
+                          class="form-control"><?php echo mybr2nl($rowsExValue['AC_UNIT_DEVELOPMENT']); ?></textarea>
             </div>
             <h3>Fundraising<span
                         style="color: red"><sup>*</sup></span></h3>
@@ -273,7 +126,7 @@ require_once("../Resources/Includes/menu.php");
                     </small>
                 </p>
                 <textarea name="fundraising" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo mybr2nl($rowsexvalue['AC_UNIT_FUNDRAISING']); ?></textarea>
+                          class="form-control"><?php echo mybr2nl($rowsExValue['AC_UNIT_FUNDRAISING']); ?></textarea>
             </div>
             <h3>Gifts<span
                         style="color: red"><sup>*</sup></span></h3>
@@ -284,7 +137,7 @@ require_once("../Resources/Includes/menu.php");
                     </small>
                 </p>
                 <textarea name="gifts" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo mybr2nl($rowsexvalue['AC_UNIT_GIFTS']); ?></textarea>
+                          class="form-control"><?php echo mybr2nl($rowsExValue['AC_UNIT_GIFTS']); ?></textarea>
             </div>
             <h3>Supplemental Info</h3>
             <div id="suppinfo" class="form-group form-indent">

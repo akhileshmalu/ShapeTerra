@@ -7,7 +7,7 @@ if(!$_SESSION['isLogged']) {
 require_once ("../Resources/Includes/connect.php");
 
 $message = array();
-$errorflag =0;
+$errorflag = 0;
 $author = $_SESSION['login_userid'];
 
 if(isset($_POST['submit'])) {
@@ -52,13 +52,13 @@ if(isset($_POST['submit'])) {
                 $sqladday = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,
                 ACAD_YEAR_DATE_END,DATE_CENSUS) VALUES (:id, :descrip,:startdate, :enddate, :censusdate );";
                 $resultadday = $connection->prepare($sqladday);
-                $resultaycheck->bindParam(':id', $id, 1);
-                $resultaycheck->bindParam(':descrip', $desc, 2);
-                $resultaycheck->bindParam(':startdate', $startdate, 2);
-                $resultaycheck->bindParam(':enddate', $enddate, 2);
-                $resultaycheck->bindParam(':censusdate', $censusdate, 2);
+                $resultadday->bindParam(':id', $id, 1);
+                $resultadday->bindParam(':descrip', $desc, 2);
+                $resultadday->bindParam(':startdate', $startdate, 2);
+                $resultadday->bindParam(':enddate', $enddate, 2);
+                $resultadday->bindParam(':censusdate', $censusdate, 2);
 
-                if ($resultaycheck->execute()) {
+                if ($resultadday->execute()) {
                     $message[0] = "Academic Year Added Successfully.";
                 } else {
                     $message [0] = "Academic Year Could not be added.";

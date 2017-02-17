@@ -101,7 +101,9 @@ Class Data
 
         } else {
 
-          if (exif_imagetype($deansSignatureLogoTmpDir) == IMAGETYPE_GIF || exif_imagetype($deansSignatureLogoTmpDir) == IMAGETYPE_JPG || exif_imagetype($deansSignatureLogoTmpDir) == IMAGETYPE_PNG) {
+          if (exif_imagetype($deansSignatureLogoTmpDir) == IMAGETYPE_GIF ||
+              exif_imagetype($deansSignatureLogoTmpDir) == IMAGETYPE_JPEG ||
+              exif_imagetype($deansSignatureLogoTmpDir) == IMAGETYPE_PNG) {
 
             move_uploaded_file($deansSignatureLogoTmpDir, $deansSignatureLogoFinalDir);
 
@@ -132,7 +134,9 @@ Class Data
 
         } else {
 
-          if (exif_imagetype($deansPortraitLogoTmpDir) == IMAGETYPE_GIF || exif_imagetype($deansPortraitLogoTmpDir) == IMAGETYPE_JPG || exif_imagetype($deansPortraitLogoTmpDir) == IMAGETYPE_PNG) {
+          if (exif_imagetype($deansPortraitLogoTmpDir) == IMAGETYPE_GIF ||
+              exif_imagetype($deansPortraitLogoTmpDir) == IMAGETYPE_JPEG ||
+              exif_imagetype($deansPortraitLogoTmpDir) == IMAGETYPE_PNG) {
 
             move_uploaded_file($deansPortraitLogoTmpDir, $deansPortraitLogoFinalDir);
 
@@ -156,7 +160,9 @@ Class Data
 
         $size = getimagesize($deansCollegeSchoolLogoTmpDir);
 
-        if (exif_imagetype($deansCollegeSchoolLogoTmpDir) == IMAGETYPE_GIF || exif_imagetype($deansCollegeSchoolLogoTmpDir) == IMAGETYPE_JPG || exif_imagetype($deansCollegeSchoolLogoTmpDir) == IMAGETYPE_PNG) {
+        if (exif_imagetype($deansCollegeSchoolLogoTmpDir) == IMAGETYPE_GIF ||
+            exif_imagetype($deansCollegeSchoolLogoTmpDir) == IMAGETYPE_JPEG ||
+            exif_imagetype($deansCollegeSchoolLogoTmpDir) == IMAGETYPE_PNG) {
 
           move_uploaded_file($deansCollegeSchoolLogoTmpDir, $deansCollegeSchoolLogoFinalDir);
 

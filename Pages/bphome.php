@@ -9,8 +9,8 @@ if(!$_SESSION['isLogged']) {
 require_once ("../Resources/Includes/connect.php");
 
 $message = array();
-$errorflag =0;
-$bpid = $_GET['id'];
+$errorflag = 0;
+@$bpid = $_GET['id'];
 $bpayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];

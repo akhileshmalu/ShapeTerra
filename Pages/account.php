@@ -228,7 +228,6 @@ require_once("../Resources/Includes/menu.php");
 <?php
 require_once("../Resources/Includes/footer.php");
 ?>
-
 <script src="../Resources/Library/js/search.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
 <script src="../Resources/Library/js/root.js"></script>

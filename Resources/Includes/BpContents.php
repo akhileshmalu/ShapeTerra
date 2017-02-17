@@ -122,7 +122,7 @@ BP_AUTHOR= :author , MOD_TIMESTAMP =:timeStampmod  WHERE ID_CONTENT = :contentli
           try {
 
               $sqlReject = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = :author, 
-              MOD_TIMESTAMP =:timestampmod WHERE ID_CONTENT = :contentlink_id; ";
+              MOD_TIMESTAMP =:timeStampmod WHERE ID_CONTENT = :contentlink_id; ";
 
               $resultReject = $this->connection->prepare($sqlReject);
               $resultReject->bindParam(":author", $this->author, PDO::PARAM_STR);
@@ -367,6 +367,7 @@ Class ACADEMICPROGRAM extends BPCONTENTS
 {
     public function SaveDraft()
     {
+        $this->time = date('Y-m-d H:i:s');
         $programranking = mynl2br($_POST['programranking']);
         $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
         $launch = mynl2br($_POST['launch']);
@@ -441,6 +442,283 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         try {
             $sqlexvalue = "SELECT * FROM `AC_Programs` WHERE OU_ABBREV = :ouabbrev AND ID_AC_PROGRAMS IN 
 (SELECT MAX(ID_AC_PROGRAMS) FROM `AC_Programs` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
+
+            $resultexvalue = $this->connection->prepare($sqlexvalue);
+            $resultexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+            $resultexvalue->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+
+            $resultexvalue->execute();
+
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        }
+        return $resultexvalue;
+    }
+}
+Class ALUMNIDEVELOPMENT extends BPCONTENTS
+{
+    public function SaveDraft()
+    {
+        $this->time = date('Y-m-d H:i:s');
+        $alumni = mynl2br($_POST['alumni']);
+        $development = mynl2br($_POST['development']);
+        $fundraising = mynl2br($_POST['fundraising']);
+        $gifts = mynl2br($_POST['gifts']);
+        $supinfopath = null;
+
+        if ($_FILES['supinfo']['tmp_name'] != "") {
+            $target_dir = "../uploads/alumni_dev/";
+            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+            $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
+
+
+            if ($imageFileType != "pdf") {
+                $this->message = "Sorry, only PDF files are allowed.";
+                $this->errorflag = 1;
+
+            } else {
+                if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+                    // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
+                    $supinfopath = $target_file;
+                } else {
+                    $this->message = "Sorry, there was an error uploading your file.";
+                    $this->errorflag = 1;
+                }
+            }
+        }
+        if ($this->errorflag != 1) {
+
+            $sqlalumnidev = "INSERT INTO `AC_AlumDev` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, 
+AC_UNIT_ALUMNI, AC_UNIT_DEVELOPMENT, AC_UNIT_FUNDRAISING, AC_UNIT_GIFTS, AC_UNIT_SUPPL_ALUM_DEV) VALUES (:ouabbrev,
+:bpayname, :author, :timestampmod, :alumni, :development, :fundraising, :gifts, :supinfopath);";
+
+            if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+                $sqlalumnidev .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
+            MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
+
+                $sqlalumnidev .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+            }
+
+            $resultalumnidev = $this->connection->prepare($sqlalumnidev);
+
+            $resultalumnidev->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+            $resultalumnidev->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+            $resultalumnidev->bindParam(":author", $this->author, PDO::PARAM_STR);
+            $resultalumnidev->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+            $resultalumnidev->bindParam(':alumni', $alumni, PDO::PARAM_STR );
+            $resultalumnidev->bindParam(':development', $development, PDO::PARAM_STR );
+            $resultalumnidev->bindParam(':fundraising', $fundraising, PDO::PARAM_STR );
+            $resultalumnidev->bindParam(':gifts', $gifts, PDO::PARAM_STR );
+            $resultalumnidev->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR );
+
+            if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+
+                $resultalumnidev->bindParam(":author", $this->author, PDO::PARAM_STR);
+                $resultalumnidev->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+                $resultalumnidev->bindParam(':contentlink_id', $this->contentLinkId, PDO::PARAM_STR);
+                $resultalumnidev->bindParam(":author", $this->author, PDO::PARAM_STR);
+                $resultalumnidev->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+                $resultalumnidev->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
+            }
+            if ($resultalumnidev->execute()) {
+
+                $this->message = "Alumni Development Info Added Succesfully.";
+            } else {
+                $this->message = "Alumni Development Info could not be added.";
+            }
+        }
+        return $this->message;
+    }
+
+    public function PlaceHolderValue()
+    {
+        try {
+            $sqlexvalue = "SELECT * FROM `AC_AlumDev` WHERE OU_ABBREV = :ouabbrev AND ID_ALUMNI_DEV IN 
+(SELECT MAX(ID_ALUMNI_DEV) FROM `AC_AlumDev` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
+
+            $resultexvalue = $this->connection->prepare($sqlexvalue);
+            $resultexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+            $resultexvalue->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+
+            $resultexvalue->execute();
+
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        }
+        return $resultexvalue;
+    }
+}
+Class CAMPUSCLIMATE extends BPCONTENTS
+{
+    public function SaveDraft()
+    {
+        $this->time = date('Y-m-d H:i:s');
+        $climate = mynl2br($_POST['climate']);
+        $supinfopath = null;
+
+        if ($_FILES['supinfo']['tmp_name'] != "") {
+            $target_dir = "../uploads/campus_climate/";
+            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+            $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
+
+            if ($imageFileType != "pdf") {
+                $this->message = "Sorry, only PDF files are allowed.";
+                $this->errorflag = 1;
+
+            } else {
+                if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+                    $supinfopath = $target_file;
+                } else {
+                    $this->message = "Sorry, there was an error uploading your file.";
+                    $this->errorflag = 1;
+                }
+            }
+        }
+        if ($this->errorflag != 1) {
+
+            $sqlclimate = "INSERT INTO `AC_CampusClimateInclusion` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
+MOD_TIMESTAMP, CLIMATE_INCLUSION, SUPPL_CLIMATE_INCLUSION) VALUES (:ouabbrev, :bpayname, :author, :timestampmod, 
+:climate, :supinfopath);";
+
+            if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+                $sqlclimate .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
+            MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
+
+                $sqlclimate .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+            }
+
+            $resultclimate = $this->connection->prepare($sqlclimate);
+
+            $resultclimate->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+            $resultclimate->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+            $resultclimate->bindParam(":author", $this->author, PDO::PARAM_STR);
+            $resultclimate->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+            $resultclimate->bindParam(':climate', $climate, PDO::PARAM_STR );
+            $resultclimate->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR );
+
+            if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+
+                $resultclimate->bindParam(":author", $this->author, PDO::PARAM_STR);
+                $resultclimate->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+                $resultclimate->bindParam(':contentlink_id', $this->contentLinkId, PDO::PARAM_STR);
+                $resultclimate->bindParam(":author", $this->author, PDO::PARAM_STR);
+                $resultclimate->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+                $resultclimate->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
+            }
+            if ($resultclimate->execute()) {
+
+                $this->message = "Campus & Climate Info Added Succesfully.";
+            } else {
+                $this->message = "Campus & Climate Info could not be added.";
+            }
+        }
+        return $this->message;
+    }
+
+    public function PlaceHolderValue()
+    {
+        try {
+            $sqlexvalue = "SELECT * FROM `AC_CampusClimateInclusion` WHERE OU_ABBREV = :ouabbrev AND 
+            ID_CLIMATE_INCLUSION IN (SELECT MAX(ID_CLIMATE_INCLUSION) FROM `AC_CampusClimateInclusion` WHERE 
+            OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
+
+            $resultexvalue = $this->connection->prepare($sqlexvalue);
+            $resultexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+            $resultexvalue->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+
+            $resultexvalue->execute();
+
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        }
+        return $resultexvalue;
+    }
+}
+Class COLLABORATION extends BPCONTENTS
+{
+    public function SaveDraft()
+    {
+        $this->time = date('Y-m-d H:i:s');
+        $supinfopath = null;
+        $internalcollaborators = mynl2br($_POST['internalcollaborators']);
+        $externalcollaborators = mynl2br($_POST['externalcollaborators']);
+        $othercollaborators = mynl2br($_POST['othercollaborators']);
+
+        if ($_FILES['supinfo']['tmp_name'] != "") {
+            $target_dir = "../uploads/collaborations";
+            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+
+
+            if ($imageFileType != "pdf") {
+                $this->message = "Sorry, only PDF files are allowed.";
+                $this->errorflag = 1;
+
+            } else {
+                if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
+                    $supinfopath = $target_file;
+                } else {
+                    $this->message = "Sorry, there was an error uploading your file.";
+                }
+            }
+        }
+
+        if ($this->errorflag != 1) {
+
+            $sqlcollob = "INSERT INTO `AC_Collaborations` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
+MOD_TIMESTAMP, COLLAB_INTERNAL, COLLAB_EXTERNAL, COLLAB_OTHER, SUPPL_COLLABORATIONS) VALUES (:ouabbrev, :bpayname, 
+:author, :timestampmod, :internalcollaborators, :externalcollaborators, :othercollaborators, :supinfopath);";
+
+            if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+                $sqlcollob .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
+            MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
+
+                $sqlcollob .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+            }
+
+            $resultclimate = $this->connection->prepare($sqlcollob);
+
+            $resultclimate->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
+            $resultclimate->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
+            $resultclimate->bindParam(":author", $this->author, PDO::PARAM_STR);
+            $resultclimate->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+            $resultclimate->bindParam(':internalcollaborators', $internalcollaborators, PDO::PARAM_STR );
+            $resultclimate->bindParam(':externalcollaborators', $externalcollaborators, PDO::PARAM_STR );
+            $resultclimate->bindParam(':othercollaborators', $othercollaborators, PDO::PARAM_STR );
+            $resultclimate->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR );
+
+            if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+
+                $resultclimate->bindParam(":author", $this->author, PDO::PARAM_STR);
+                $resultclimate->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+                $resultclimate->bindParam(':contentlink_id', $this->contentLinkId, PDO::PARAM_STR);
+                $resultclimate->bindParam(":author", $this->author, PDO::PARAM_STR);
+                $resultclimate->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+                $resultclimate->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
+            }
+            if ($resultclimate->execute()) {
+
+                $this->message = "Academic Collaborations Info Added Succesfully.";
+            } else {
+                $this->message = "Academic Collaborations Info could not be added.";
+            }
+        }
+        return $this->message;
+    }
+
+    public function PlaceHolderValue()
+    {
+        try {
+            $sqlexvalue = "SELECT * FROM `AC_Collaborations` WHERE OU_ABBREV = :ouabbrev AND ID_COLLABORATIONS IN 
+(SELECT MAX(ID_COLLABORATIONS) FROM `AC_Collaborations` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
 
             $resultexvalue = $this->connection->prepare($sqlexvalue);
             $resultexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);

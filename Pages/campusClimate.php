@@ -17,12 +17,13 @@ $errorflag =0;
 $BackToDashboard = true;
 
 require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
-$bpayname= $_SESSION['bpayname'];
+$bpayname = $_SESSION['bpayname'];
 
 
 if ($ouid == 4) {
@@ -31,115 +32,39 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
+//Object for Campus Climate Table
+$Collaboration = new CAMPUSCLIMATE();
 
-$time = date('Y-m-d H:i:s');
+// Blueprint Status information on title box
+$resultbroad = $Collaboration->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(4);
 
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
-}
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+// Values for placeholders
+$resultexvalue = $Collaboration->PlaceHolderValue();
+$rowsExValue = $resultexvalue->fetch(4);
 
-/*
- * Values for placeholders
- */
-$sqlexvalue = "SELECT * FROM `AC_CampusClimateInclusion` where OU_ABBREV = '$ouabbrev' AND ID_CLIMATE_INCLUSION in (select max(ID_CLIMATE_INCLUSION) from AC_CampusClimateInclusion where OUTCOMES_AY = '$bpayname' group by OU_ABBREV); ";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue -> fetch_assoc();
-
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+// SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $Collaboration->GetStatus();
+$rowsbpstatus = $resultbpstatus->fetch(2);
 
 if (isset($_POST['savedraft'])) {
-
-    $climate = mynl2br($_POST['climate']);
-
-    if ($_FILES['supinfo']['tmp_name'] != "") {
-        $target_dir = "../uploads/campus_climate/";
-        $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
-        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
-        $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
-
-
-        if ($imageFileType != "pdf") {
-            $message[1] = "Sorry, only PDF files are allowed.";
-            $errorflag = 1;
-
-        } else {
-            if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
-                // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
-                $supinfopath = $target_file;
-            } else {
-                $message[2] = "Sorry, there was an error uploading your file.";
-            }
-        }
-    }
-    if ($errorflag != 1) {
-
-        $sqlclimate = "INSERT INTO `AC_CampusClimateInclusion` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, CLIMATE_INCLUSION, SUPPL_CLIMATE_INCLUSION)
-VALUES ('$ouabbrev','$bpayname','$author','$time','$climate','$supinfopath');";
-
-        $sqlclimate .= "Update `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-
-        $sqlclimate .= "Update `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
-
-        if ($mysqli->multi_query($sqlclimate)) {
-
-            $message[0] = "Campus & Climate Info Added Succesfully.";
-        } else {
-            $message[3] = "Campus & Climate Info could not be added.";
-        }
-    }
-
+    $message[0] = $Collaboration->SaveDraft();
 }
 
-if(isset($_POST['submit_approval'])) {
-
-    $contentlink_id = $_GET['linkid'];
-
-    $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-
-    if ($mysqli->query($sqlfacinfo)) {
-
-        $message[0] = "Campus & Climate Info submitted Successfully";
-
-    } else {
-        $message[0] = "Campus & Climate Info Could not be submitted. Please Retry.";
-    }
-
+if(isset($_POST['submit_approve'])) {
+    $message[0] = "Campus & Climate";
+    $message[0].= $Collaboration->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
-
-    $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $message[0] = "Campus & Climate Info Approved Successfully";
-    } else {
-        $message[0] = "Campus & Climate Info Could not be Approved. Please Retry.";
-    }
+    $message[0] = "Campus & Climate";
+    $message[0].= $Collaboration->Approve();
 }
 
 if(isset($_POST['reject'])) {
-
-    $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $message[0] = "Campus & Climate Info Rejected Successfully";
-    } else {
-        $message[0] = "Campus & Climate Info Could not be Rejected. Please Retry.";
-    }
+    $message[0] = "Campus & Climate";
+    $message[0].= $Collaboration->Reject();
 }
-
 
 require_once("../Resources/Includes/header.php");
 
@@ -150,7 +75,7 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit_approval']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
+<?php if (isset($_POST['submit_approve']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
@@ -184,7 +109,7 @@ require_once("../Resources/Includes/menu.php");
                     have extensive information or narrative to include, please provide a brief synopsis here, and upload
                     a Supplemental Info PDF in the provided space below.</p>
                 <textarea name="climate" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo mybr2nl($rowsexvalue['CLIMATE_INCLUSION']); ?></textarea>
+                          required><?php echo mybr2nl($rowsExValue['CLIMATE_INCLUSION']); ?></textarea>
             </div>
             <h3>Supplemental Info</h3>
             <div id="suppinfo" class="form-group form-indent">
@@ -197,7 +122,6 @@ require_once("../Resources/Includes/menu.php");
                 <label for="supinfofile">Select File</label>
                 <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
             </div>
-
 
             <!--                      Edit Control-->
 

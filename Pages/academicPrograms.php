@@ -31,6 +31,7 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
+//Object for Academic Program table
 $AcademicProgram = new ACADEMICPROGRAM();
 
 // Blueprint Status information on title box
@@ -43,7 +44,6 @@ $rowsExValue = $resultExValue->fetch(2);
 
 
 //  SQL check Status of Blueprint Content for Edit restrictions
-
 $resultbpstatus = $AcademicProgram->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
