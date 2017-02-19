@@ -1,10 +1,10 @@
 <?php
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-require_once("../Resources/Includes/connect.php");
+
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
 $aysubmit = array();
 $ayname = "";
 $message = array();
@@ -193,7 +193,7 @@ require_once("../Resources/Includes/menu.php");
 <div class="hr"></div>
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
-        <h1 id="title">BluePrint Approval</h1> 
+        <h1 id="title">BluePrint Approval</h1>
     </div>
 
     <div id="list" class="col-lg-2 col-md-4 col-xs-4">
@@ -206,11 +206,11 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="form" class="col-lg-10 col-md-8 col-xs-8">
-        <form action="" method="POST">   
+        <form action="" method="POST">
             <div class="form-group mission active" id="actionlist">
 
                <label class="col-xs-12" for="missiontitle">Mission Statement</label>
-               
+
                <div class="col-xs-12">
                     <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addmissionModal"><span class="icon">&#xe035;</span> Add Mission
@@ -225,7 +225,7 @@ require_once("../Resources/Includes/menu.php");
 
            <div class="form-group hidden vision" id="actionlist">
                <label class="col-xs-12" for="visiontitle">Vision Statement</label>
-               
+
                <div class="col-xs-12">
                     <button id="add-vission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addvisionModal"><span class="icon">&#xe035;</span> Add vission
@@ -240,7 +240,7 @@ require_once("../Resources/Includes/menu.php");
 
            <div class="form-group hidden value" id="actionlist">
                 <label class="col-xs-12" for="visiontitle">Value Statement</label>
-               
+
                <div class="col-xs-12">
                     <button id="add-value" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addvalueModal"><span class="icon">&#xe035;</span> Add value
@@ -248,7 +248,7 @@ require_once("../Resources/Includes/menu.php");
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement" id="valuetitle"
                         readonly><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
 
-                   
+
                    <button id="next-tab" type="button" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
                 </div>

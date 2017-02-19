@@ -1,123 +1,109 @@
 <?php
 
-session_start();
+  require_once ("../Resources/Includes/initalize.php");
+  $initalize = new Initialize();
+  $initalize->checkSessionStatus();
+  $connection = $initalize->connection;
 
-require_once ("../Resources/Includes/connect.php");
+  /**
+   * Initialization of local variables
+   */
 
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+  $message = array();
+  $errorflag = 0;
+  $colCount = 0;
+  $count = 1;
+  $index = 0;
+  $discardid = array();
+  $sqldel = null;
+  $csv = array();
+  $tablefileds = array();
+  $tablevalue = array();
+  $sqlupload = null;
+  $notBackToDashboard = true;
+  $sumfac = array();
+  $sumstaff = array();
+  $datavalues = array();
+  $meta = array();
 
-/**
- * Initialization of local variables
- */
+  //Variable import for SQL
+  $content_id = $_GET['linkid'];
+  $time = date('Y-m-d H:i:s');
+  $author = $_SESSION['login_userid'];
+  $ouid = $_SESSION['login_ouid'];
+  $FUayname = $_SESSION['FUayname'];
+  $outype = $_SESSION['login_outype'];
 
-$message = array();
-$errorflag = 0;
-$colCount = 0;
-$count = 1;
-$index = 0;
-$discardid = array();
-$sqldel = null;
-$csv = array();
-$tablefileds = array();
-$tablevalue = array();
-$sqlupload = null;
-$notBackToDashboard = true;
-$sumfac = array();
-$sumstaff = array();
-$datavalues = array();
-$meta = array();
+  //Menu control back Button
+  $BackToFileUploadHome = true;
 
-//Variable import for SQL
+  // File Upload Status & Details.
+  try{
+      $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS =
+  IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id;";
+      $resultfucontent = $connection->prepare($sqlfucontent);
+      $resultfucontent->bindParam(':content_id', $content_id, 1);
+      $resultfucontent->execute();
+  }catch (PDOException $e){
+      //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+      error_log($e->getMessage());
+  }
 
-$content_id = $_GET['linkid'];
-$time = date('Y-m-d H:i:s');
-$author = $_SESSION['login_userid'];
-$ouid = $_SESSION['login_ouid'];
-$FUayname = $_SESSION['FUayname'];
-$outype = $_SESSION['login_outype'];
+  $rowsfucontent = $resultfucontent->fetch(2);
+  $tablename = $rowsfucontent['NAME_UPLOADFILE'];
 
-//Menu control back Button
-$BackToFileUploadHome = true;
+  // Display Of Values in validation from IR_AC_DiversityStudent Table of Database
+  try{
+      $sqldatadisplay = "SELECT * FROM IR_AC_DiversityPersonnel WHERE ID_IR_AC_DIVERSITY_PERSONNEL IN
+  (SELECT MAX(ID_IR_AC_DIVERSITY_PERSONNEL) FROM IR_AC_DiversityPersonnel WHERE OUTCOMES_AY = :FUayname GROUP BY
+  OU_ABBREV);";
+      $resultdatadisplay = $connection->prepare($sqldatadisplay);
+      $resultdatadisplay->bindParam(':FUayname', $FUayname, 2);
+      $resultdatadisplay->execute();
+  }catch (PDOException $e){
+      //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+      error_log($e->getMessage());
+  }
 
+  $dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
+  $fieldcnt = $resultdatadisplay->columnCount();
+  $num_records = $resultdatadisplay->rowCount();
 
-// File Upload Status & Details.
-try
-{
-    $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = 
-IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id;";
-    $resultfucontent = $connection->prepare($sqlfucontent);
-    $resultfucontent->bindParam(':content_id', $content_id, 1);
-    $resultfucontent->execute();
-}
-catch (PDOException $e)
-{
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    error_log($e->getMessage());
-}
-$rowsfucontent = $resultfucontent->fetch(2);
-$tablename = $rowsfucontent['NAME_UPLOADFILE'];
+  while($meta = $resultdatadisplay->getColumnMeta($colCount)) {
+      $datavalues[0][$i]=$meta[name];
+      $i++;
+      $colCount++;
+  }
 
+  while ($rowsdatadisplay = $resultdatadisplay->fetch(4)) {
+      for($col = 0; $col<$fieldcnt; $col++) {
+          $datavalues[$count][$col] = $rowsdatadisplay[$col];
+      }
+      $count++;
+  }
 
+  for ($j = 1; $j < $fieldcnt; $j++) {
+      for ($i = 0; $i <= $num_records; $i++) {
+          if($i == 0)    {
+              $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
+          } else {
+              $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
+          }
 
-// Display Of Values in validation from IR_AC_DiversityStudent Table of Database
-try
-{
-    $sqldatadisplay = "SELECT * FROM IR_AC_DiversityPersonnel WHERE ID_IR_AC_DIVERSITY_PERSONNEL IN 
-(SELECT MAX(ID_IR_AC_DIVERSITY_PERSONNEL) FROM IR_AC_DiversityPersonnel WHERE OUTCOMES_AY = :FUayname GROUP BY 
-OU_ABBREV);";
-    $resultdatadisplay = $connection->prepare($sqldatadisplay);
-    $resultdatadisplay->bindParam(':FUayname', $FUayname, 2);
-    $resultdatadisplay->execute();
-}
-catch (PDOException $e)
-{
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    error_log($e->getMessage());
-}
+      }
+      $dynamictable .= "</tr>";
+  }
 
-$dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
-$fieldcnt = $resultdatadisplay->columnCount();
-$num_records = $resultdatadisplay->rowCount();
-
-
-while($meta = $resultdatadisplay->getColumnMeta($colCount)) {
-    $datavalues[0][$i]=$meta[name];
-    $i++;
-    $colCount++;
-}
-
-
-while ($rowsdatadisplay = $resultdatadisplay->fetch(4)) {
-    for($col = 0; $col<$fieldcnt; $col++) {
-        $datavalues[$count][$col] = $rowsdatadisplay[$col];
-    }
-    $count++;
-}
-
-for ($j = 1; $j < $fieldcnt; $j++) {
-    for ($i = 0; $i <= $num_records; $i++) {
-        if($i == 0)    {
-            $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-        } else {
-            $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-        }
-
-    }
-    $dynamictable .= "</tr>";
-}
-$dynamictable .= '</table>';
+  $dynamictable .= '</table>';
 
 
-if (isset($_POST['upload'])) {
+  if (isset($_POST['upload'])) {
 
     $tablename = $rowsfucontent['NAME_UPLOADFILE'];
     //$ayname = $_POST['ay'];
 
 
-// check there are no errors
+    // check there are no errors
     if ($_FILES['csv']['error'] == 0) {
 
         $name = $_FILES['csv']['name'];
@@ -215,7 +201,7 @@ if (isset($_POST['upload'])) {
                 }
 
                 $sqlupload .= "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE ='Pending Validation',
-                LAST_MODIFIED_BY = '$author', LAST_MODIFIED_ON = '$time' where IR_SU_UploadStatus.ID_UPLOADFILE = 
+                LAST_MODIFIED_BY = '$author', LAST_MODIFIED_ON = '$time' where IR_SU_UploadStatus.ID_UPLOADFILE =
                 '$content_id'; ";
 
                 for ($checkfac = 0; $checkfac < count($sumfac); $checkfac++) {
@@ -242,20 +228,20 @@ if (isset($_POST['upload'])) {
 
                         try
                         {
-                        $sqlupload = "INSERT INTO IR_AC_DiversityPersonnel (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, 
-                        MOD_TIMESTAMP, FAC_FEMALE, FAC_MALE, FAC_AMERIND_ALASKNAT, FAC_ASIAN, FAC_BLACK, 
-                        FAC_HISPANIC, FAC_HI_PAC_ISL, FAC_NONRESIDENT_ALIEN, FAC_TWO_OR_MORE, 
-                        FAC_UNKNOWN_RACE_ETHNCTY, FAC_WHITE, STAFF_FEMALE, STAFF_MALE, STAFF_AMERIND_ALASKNAT, 
-                        STAFF_ASIAN, STAFF_BLACK, STAFF_HISPANIC, STAFF_HI_PAC_ISL, STAFF_NONRESIDENT_ALIEN, 
-                        STAFF_TWO_OR_MORE, STAFF_UNKNOWN_RACE_ETHNCTY, STAFF_WHITE) SELECT 'USCAAU' AS OU, 
-                        :FUayname AS AY,:authorName AS AUTHOR,:timeCurrent AS MOD_Time, SUM(FAC_FEMALE), SUM(FAC_MALE), 
-                        SUM(FAC_AMERIND_ALASKNAT), SUM(FAC_ASIAN), SUM(FAC_BLACK), SUM(FAC_HISPANIC), 
-                        SUM(FAC_HI_PAC_ISL), SUM(FAC_NONRESIDENT_ALIEN), SUM(FAC_TWO_OR_MORE), 
+                        $sqlupload = "INSERT INTO IR_AC_DiversityPersonnel (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
+                        MOD_TIMESTAMP, FAC_FEMALE, FAC_MALE, FAC_AMERIND_ALASKNAT, FAC_ASIAN, FAC_BLACK,
+                        FAC_HISPANIC, FAC_HI_PAC_ISL, FAC_NONRESIDENT_ALIEN, FAC_TWO_OR_MORE,
+                        FAC_UNKNOWN_RACE_ETHNCTY, FAC_WHITE, STAFF_FEMALE, STAFF_MALE, STAFF_AMERIND_ALASKNAT,
+                        STAFF_ASIAN, STAFF_BLACK, STAFF_HISPANIC, STAFF_HI_PAC_ISL, STAFF_NONRESIDENT_ALIEN,
+                        STAFF_TWO_OR_MORE, STAFF_UNKNOWN_RACE_ETHNCTY, STAFF_WHITE) SELECT 'USCAAU' AS OU,
+                        :FUayname AS AY,:authorName AS AUTHOR,:timeCurrent AS MOD_Time, SUM(FAC_FEMALE), SUM(FAC_MALE),
+                        SUM(FAC_AMERIND_ALASKNAT), SUM(FAC_ASIAN), SUM(FAC_BLACK), SUM(FAC_HISPANIC),
+                        SUM(FAC_HI_PAC_ISL), SUM(FAC_NONRESIDENT_ALIEN), SUM(FAC_TWO_OR_MORE),
                         SUM(FAC_UNKNOWN_RACE_ETHNCTY), SUM(FAC_WHITE), SUM(STAFF_FEMALE), SUM(STAFF_MALE),
-                        SUM(STAFF_AMERIND_ALASKNAT), SUM(STAFF_ASIAN), SUM(STAFF_BLACK), SUM(STAFF_HISPANIC), 
-                        SUM(STAFF_HI_PAC_ISL), SUM(STAFF_NONRESIDENT_ALIEN), SUM(STAFF_TWO_OR_MORE), 
-                        SUM(STAFF_UNKNOWN_RACE_ETHNCTY), SUM(STAFF_WHITE) FROM IR_AC_DiversityPersonnel WHERE 
-                        ID_IR_AC_DIVERSITY_PERSONNEL IN (SELECT MAX(ID_IR_AC_DIVERSITY_PERSONNEL) FROM 
+                        SUM(STAFF_AMERIND_ALASKNAT), SUM(STAFF_ASIAN), SUM(STAFF_BLACK), SUM(STAFF_HISPANIC),
+                        SUM(STAFF_HI_PAC_ISL), SUM(STAFF_NONRESIDENT_ALIEN), SUM(STAFF_TWO_OR_MORE),
+                        SUM(STAFF_UNKNOWN_RACE_ETHNCTY), SUM(STAFF_WHITE) FROM IR_AC_DiversityPersonnel WHERE
+                        ID_IR_AC_DIVERSITY_PERSONNEL IN (SELECT MAX(ID_IR_AC_DIVERSITY_PERSONNEL) FROM
                         IR_AC_DiversityPersonnel WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV);";
 
                         $resultupload = $connection->prepare($sqlupload);
@@ -311,7 +297,7 @@ if(isset($_POST['save'])) {
 }
 if(isset($_POST['error'])) {
 
-    $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='No File Provided',LAST_MODIFIED_BY ='$author', 
+    $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='No File Provided',LAST_MODIFIED_BY ='$author',
     LAST_MODIFIED_ON ='$time'  where  IR_SU_UploadStatus.ID_UPLOADFILE = '$content_id'; ";
 
     if ($mysqli->query($sqlupload)) {
@@ -333,15 +319,13 @@ if(isset($_POST['error'])) {
     } else {
         $message[0] = "Action Failed. Please Retry.";
     }
-}
+  }
 
+  require_once("../Resources/Includes/header.php");
 
+  // Include Menu and Top Bar
+  require_once("../Resources/Includes/menu.php");
 
-
-require_once("../Resources/Includes/header.php");
-
-// Include Menu and Top Bar
-require_once("../Resources/Includes/menu.php");
 ?>
 <div class="overlay hidden"></div>
 <?php if (isset($_POST['upload']) || isset($_POST['save']) || isset($_POST['error'])) { ?>
@@ -426,4 +410,3 @@ require_once("../Resources/Includes/footer.php");
         alert(b + " is selected.");
     }
 </script>
-

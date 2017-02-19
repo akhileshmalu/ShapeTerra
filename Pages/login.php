@@ -41,6 +41,8 @@ if (isset($_POST['login'])) {
              */
 
             if ($record['USER_STATUS'] == '1') {
+                ini_set("session.cookie_secure", 1);
+                ini_set("session.cookie_httponly", 1);
                 session_start(); // Session Initiation
                 $_SESSION['login_email'] = $email;                   //session variable register
                 header("location:account.php");                     //redirect to account page

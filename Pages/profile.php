@@ -1,14 +1,13 @@
 <?php
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
 $error = array();                                               //Error Array Created
 $errorflag = 0;                                                 //Flag Create
 
-require_once ("../Resources/Includes/connect.php");          	//Instance of Object class-connection Created
 $email = $_SESSION['login_email'];					  			//Session Variable store
 $sql = " SELECT FNAME, LNAME FROM PermittedUsers where NETWORK_USERNAME ='$email' ";														//Query to Database
 $result = $mysqli->query($sql);                             	// Query Execution

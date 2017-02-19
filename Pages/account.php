@@ -1,27 +1,21 @@
 <?php
 session_start();
 
-require_once ("../Resources/Includes/connect.php");
-
-// Restrict direct access to Page without Login
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 
 $email = $_SESSION['login_email'];
 
-try
-{
-    $sqlac = "SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP,OU_TYPE FROM PermittedUsers 
+try{
+    $sqlac = "SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP,OU_TYPE FROM PermittedUsers
  INNER JOIN Hierarchy ON ID_HIERARCHY = PermittedUsers.USER_OU_MEMBERSHIP WHERE NETWORK_USERNAME = :email";
 
     $resultac = $connection->prepare($sqlac);
     $resultac->bindParam(':email', $email, PDO::PARAM_STR);
     $resultac->execute();
-}
-catch (PDOException $e)
-{
+}catch (PDOException $e){
 //    SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
     error_log($e->getMessage());
 }
@@ -52,7 +46,7 @@ if ($outype == "Academic Unit") {
 
     try
     {
-        $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR 
+        $sqlbpunit = "SELECT * FROM `broadcast` INNER JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR
 WHERE BROADCAST_OU = :ouid ORDER BY BROADCAST_AY ASC;";
         $resultbpunit = $connection->prepare($sqlbpunit);
         $resultbpunit->bindParam(':ouid', $ouid, PDO::PARAM_INT);
@@ -69,7 +63,7 @@ WHERE BROADCAST_OU = :ouid ORDER BY BROADCAST_AY ASC;";
 
     try
     {
-        $sqldistinctay = "SELECT DISTINCT(BROADCAST_AY) FROM `broadcast` INNER JOIN PermittedUsers 
+        $sqldistinctay = "SELECT DISTINCT(BROADCAST_AY) FROM `broadcast` INNER JOIN PermittedUsers
 ON PermittedUsers.ID_STATUS = broadcast.AUTHOR ORDER BY BROADCAST_AY ASC;";
         $resultdistinctay = $connection->prepare($sqldistinctay);
         $resultdistinctay->execute();
@@ -233,4 +227,3 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/root.js"></script>
 <script src="../Resources/Library/js/grid.js"></script>
 <script src="../Resources/Library/js/dashboard.js"></script>
-

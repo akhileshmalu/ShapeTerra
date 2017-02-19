@@ -98,5 +98,4 @@ require_once("../Resources/Includes/menu.php");
 
 <?php
 //Include Footer
-require_once("../Resources/Includes/footer.php");
-?>
+require_once("../Resources/Includes/footer.php");?>

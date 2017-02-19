@@ -1,12 +1,9 @@
 <?php
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-
-require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 
 $message = array();
 $errorflag = 0;
@@ -27,7 +24,7 @@ if ($outype == "Administration") {
 // SQL to display Blueprint Content
 try
 {
-    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON 
+    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON
 BpContents.Linked_BP_ID = broadcast.ID_BROADCAST LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast
 .AUTHOR WHERE OU_ABBREV = :ouabbrev AND BROADCAST_AY=:bpayname ";
     $resultbpcontent = $connection->prepare($sqlbpcontent);
@@ -46,14 +43,14 @@ catch (PDOException $e)
 try
 {
     if ($outype == "Administration" || $outype == "Service Unit") {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified FROM broadcast INNER JOIN Hierarchy ON 
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified FROM broadcast INNER JOIN Hierarchy ON
     broadcast.BROADCAST_OU=Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND Hierarchy.OU_ABBREV =:ouabbrev ;";
         $resultbroad = $connection->prepare($sqlbroad);
         $resultbroad->bindParam(':bpayname', $bpayname, 2);
         $resultbroad->bindParam(':ouabbrev', $ouabbrev, 2);
 
     } else {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN 
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN
     Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND BROADCAST_OU =:ouid;";
         $resultbroad = $connection->prepare($sqlbroad);
         $resultbroad->bindParam(':bpayname', $bpayname, 2);
@@ -75,7 +72,7 @@ if(isset($_POST['submit_bp'])) {
     $bpid = $_GET['id'];
     try
     {
-        $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='Submitted Draft', 
+        $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='Submitted Draft',
 BROADCAST_STATUS_OTHERS='Submitted Draft' WHERE BROADCAST_AY=:bpayname AND BROADCAST_OU =:ouid; ";
         $resultbroadupdate = $connection->prepare($sqlbroadupdate);
         $resultbroadupdate->bindParam(':bpayname', $bpayname, 2);
@@ -102,7 +99,7 @@ if(isset($_POST['approve'])) {
 
     try
     {
-        $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='Final', BROADCAST_STATUS_OTHERS='Final' WHERE 
+        $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='Final', BROADCAST_STATUS_OTHERS='Final' WHERE
     ID_BROADCAST = :bpid;";
         $resultbroadupdate = $connection->prepare($sqlbroadupdate);
         if ($resultbroadupdate->execute(['bpid' => $bpid])) {

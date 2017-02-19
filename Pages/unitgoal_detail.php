@@ -8,19 +8,14 @@
 /*
  * Session & Error control Initialization.
  */
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+ require_once ("../Resources/Includes/initalize.php");
+ $initalize = new Initialize();
+ $initalize->checkSessionStatus();
+ $connection = $initalize->connection;
+
 $error = array();
 $errorflag =0;
 $BackToGoal = true;
-
-/*
- * Connection to DataBase.
- */
-require_once ("../Resources/Includes/connect.php");
 
 /*
  * Local & Session variable Initialization
@@ -129,7 +124,7 @@ if(isset($_POST['new_goal_submit'])) {
     $goalaction = mynl2br($_POST['goal_action']);
     $goalnotes = mynl2br($_POST['goal_notes']);
 
-    $sqlunitgoal = "INSERT INTO `BP_UnitGoals` (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_VIEWPOINT, GOAL_STATEMENT, GOAL_ALIGNMENT, GOAL_ACTION_PLAN, GOAL_NOTES) 
+    $sqlunitgoal = "INSERT INTO `BP_UnitGoals` (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_VIEWPOINT, GOAL_STATEMENT, GOAL_ALIGNMENT, GOAL_ACTION_PLAN, GOAL_NOTES)
 VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalview','$goalstatement','$goalalignment','$goalaction','$goalnotes');";
 
     $sqlunitgoal .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
@@ -363,4 +358,3 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     });
 </script>
-

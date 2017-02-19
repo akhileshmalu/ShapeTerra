@@ -6,11 +6,12 @@
 /*
  * Session & Error control Initialization.
  */
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+
+ require_once ("../Resources/Includes/initalize.php");
+ $initalize = new Initialize();
+ $initalize->checkSessionStatus();
+ $connection = $initalize->connection;
+
 $error = array();
 $errorflag =0;
 $BackToGoalOutHome = true;
@@ -49,8 +50,8 @@ try {
         $resultbroad = $connection->prepare($sqlbroad);
         $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
         $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-        
-        
+
+
 
     } else {
         $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";

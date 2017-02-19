@@ -7,16 +7,14 @@
  * This Page controls Initiatives & Observations.
  */
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+
 $message = array();
 $errorflag =0;
 $BackToDashboard = true;
 
-require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION ['bpid'];
@@ -24,7 +22,6 @@ $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
 $bpayname = $_SESSION['bpayname'];
-
 
 if ($ouid == 4) {
     $ouabbrev = $_SESSION['bpouabbrev'];

@@ -1,10 +1,10 @@
 <?php
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}$error = array();
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+$error = array();
 $errorflag = 0;
 $i = 0;
 $count = 1;
@@ -19,8 +19,6 @@ $author = $_SESSION['login_userid'];
 $BackToFileUploadHome = true;
 $discardid = array();
 //$fields = array ();
-
-require_once ("../Resources/Includes/connect.php");
 
 
 $csv = array();
@@ -38,7 +36,7 @@ $datavalues = array();
 /*
  * File Upload Status & Details.
  */
-$sqlfucontent = "select * from IR_SU_UploadStatus 
+$sqlfucontent = "select * from IR_SU_UploadStatus
 LEFT JOIN PermittedUsers ON  PermittedUsers.ID_STATUS= IR_SU_UploadStatus.LAST_MODIFIED_BY where  IR_SU_UploadStatus.ID_UPLOADFILE= '$content_id' ; ";
 $resultfucontent = $mysqli->query($sqlfucontent);
 $rowsfucontent = $resultfucontent ->fetch_assoc();
@@ -402,4 +400,3 @@ require_once("../Resources/Includes/menu.php");
 
 
     </script>
-

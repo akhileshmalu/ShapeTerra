@@ -8,11 +8,11 @@
 /*
  * Session & Error control Initialization.
  */
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
 $notBackToDashboard = true;
 $error = array();
 $errorflag =0;
@@ -116,7 +116,7 @@ if(isset($_POST['save'])) {
 
     try {
 
-        $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,  MOD_BY, MOD_TIMESTAMP) 
+        $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,  MOD_BY, MOD_TIMESTAMP)
     VALUES (:aystring,:oustring,:bptopicstring,:footnotetopic,:narrative,:author,:time);";
 
         $sqladdfootresult = $connection->prepare($sqladdfoot);
@@ -164,7 +164,7 @@ if(isset($_POST['directsave'])) {
 
     try {
 
-        $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,FOOTNOTE_STATUS , MOD_BY, MOD_TIMESTAMP) 
+        $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,FOOTNOTE_STATUS , MOD_BY, MOD_TIMESTAMP)
         VALUES (:aystring,:oustring,:bptopicstring,:footnotetopic,:narrative,'Approved',:author,:time);";
 
             $sqladdfootresult = $connection->prepare($sqladdfoot);
@@ -248,7 +248,7 @@ if (isset($_POST['approve'])) {
 
         $sqladdfootresult = $connection->prepare($sqladdfoot);
         $sqladdfootresult->bindParam(":elemid", $elemid, PDO::PARAM_INT);
-        
+
 
         if($sqladdfootresult->execute()) {
             $error[0] = "Footnote has been approved.";
@@ -471,4 +471,3 @@ require_once("../Resources/Includes/footer.php");
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
-

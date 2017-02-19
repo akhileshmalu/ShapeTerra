@@ -1,6 +1,6 @@
 <?php
 
-require_once ("../Includes/connect.php");
+  require_once ("../Includes/connect.php");
   require "../Library/FPDF/fpdf.php";
 
   class PDF_MC_Table extends FPDF{

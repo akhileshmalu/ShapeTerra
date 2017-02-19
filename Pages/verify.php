@@ -1,6 +1,8 @@
 <?php
-session_start();
-require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 $error = array();
 
 //link shall be used only once

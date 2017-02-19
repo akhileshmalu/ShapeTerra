@@ -1,13 +1,8 @@
 <?php
 
-session_start();
-
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-
-require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
 require_once ("../Resources/Includes/BpContents.php");
 
 $message = array();

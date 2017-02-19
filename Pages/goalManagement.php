@@ -1,9 +1,10 @@
 <?php
-session_start();
-if(!$_SESSION['isLogged']) {
-	header("location:login.php");
-	die();
-}
+
+	require_once ("../Resources/Includes/initalize.php");
+	$initalize = new Initialize();
+	$initalize->checkSessionStatus();
+	$connection = $initalize->connection;
+
 	$message = array();
 	$errorflag = 0;
 	$goalstatement="";

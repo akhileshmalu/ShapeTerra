@@ -9,11 +9,11 @@ $pagename = "bphome";
  * This Page controls Academic Faculty Info.
  */
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+ require_once ("../Resources/Includes/initalize.php");
+ $initalize = new Initialize();
+ $initalize->checkSessionStatus();
+ $connection = $initalize->connection;
+ 
 $message = array();
 $errorflag =0;
 $BackToDashboard = true;
@@ -57,7 +57,7 @@ $rowsbpstatus = $resultbpstatus->fetch(2);
 if (isset($_POST['savedraft'])) {
 
     $message = $FacultyInfo->SaveDraft();
-    
+
 }
 
 
@@ -118,10 +118,10 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status"><small>Optional. List and describe your unit's efforts at faculty development during the Academic Year, including investments, activities, incentives, objectives, and outcomes.
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac)</small></p>
                 <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" >
-                <?php 
-                    echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']); 
+                <?php
+                    echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']);
                 ?>
-                    
+
                 </textarea>
             </div>
             <h3>Other Activity</h3>
@@ -130,14 +130,14 @@ require_once("../Resources/Includes/menu.php");
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac).</small></p>
 
                 <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control">
-                <?php 
-                    echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']); 
-                ?>        
+                <?php
+                    echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']);
+                ?>
                 </textarea>
             </div>
 
-            
-            
+
+
             <h3>Supplemental Faculty Info</h3>
             <div id="suppfacinfo" class="form-group form-indent">
                 <p class="status"><small>Optional.  You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide additional detail on Faculty for the Academic Year.  This document will appear as an Appendix in the Draft Report and Final Report.</small></p>
@@ -147,7 +147,7 @@ require_once("../Resources/Includes/menu.php");
 
                 <!--                      Edit Control-->
 
-                <?php 
+                <?php
 
                 if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
 
