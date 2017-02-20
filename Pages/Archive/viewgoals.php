@@ -2,7 +2,10 @@
 $error = array();
 $errorflag = 0;
 
-require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 $sql = "Select * from AcademicYears where  GOAL_STATUS_ID = 6;";
 $result = $mysqli->query($sql);
 

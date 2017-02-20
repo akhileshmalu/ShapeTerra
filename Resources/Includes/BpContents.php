@@ -1,7 +1,7 @@
 <?php
 
-  Class BPCONTENTS
-  {
+Class BPCONTENTS
+{
 
       protected $connection;
       public $errorflag, $message, $author, $time, $contentLinkId, $bpayname, $ouabbrev, $ouid, $bpid;
@@ -53,7 +53,7 @@
 
           try
           {
-              $sqlSubmitApr = "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', 
+              $sqlSubmitApr = "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval',
 BP_AUTHOR= :author , MOD_TIMESTAMP =:timeStampmod  WHERE ID_CONTENT = :contentlink_id ;";
 
               $resultSubmitApr = $this->connection->prepare($sqlSubmitApr);
@@ -87,7 +87,7 @@ BP_AUTHOR= :author , MOD_TIMESTAMP =:timeStampmod  WHERE ID_CONTENT = :contentli
 
           try {
 
-              $sqlAprove = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = :author, 
+              $sqlAprove = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR = :author,
               MOD_TIMESTAMP = :timeStampmod where ID_CONTENT =:contentlink_id; ";
 
               $resultAprove = $this->connection->prepare($sqlAprove);
@@ -121,7 +121,7 @@ BP_AUTHOR= :author , MOD_TIMESTAMP =:timeStampmod  WHERE ID_CONTENT = :contentli
           $this->time = date('Y-m-d H:i:s');
           try {
 
-              $sqlReject = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = :author, 
+              $sqlReject = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR = :author,
               MOD_TIMESTAMP =:timeStampmod WHERE ID_CONTENT = :contentlink_id; ";
 
               $resultReject = $this->connection->prepare($sqlReject);
@@ -157,7 +157,7 @@ BP_AUTHOR= :author , MOD_TIMESTAMP =:timeStampmod  WHERE ID_CONTENT = :contentli
                   $resultbroad->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
 
               } else {
-                  $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN 
+                  $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN
         Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY = :bpayname AND Hierarchy.OU_ABBREV = :ouabbrev ;";
 
                   $resultbroad = $this->connection->prepare($sqlbroad);
@@ -176,9 +176,13 @@ BP_AUTHOR= :author , MOD_TIMESTAMP =:timeStampmod  WHERE ID_CONTENT = :contentli
           return $resultbroad;
       }
 
+<<<<<<< HEAD
   }
 
 
+=======
+}
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 Class EXECUTIVESUMCLASS extends BPCONTENTS
 {
 
@@ -188,8 +192,8 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
         $collname = $_POST['college-school-input'];
         $deanname = $_POST['deans-name-input'];
         $deantitle = $_POST['deans-title-input'];
-        $introduction = mynl2br($_POST['introduction-input']);
-        $highlights = mynl2br($_POST['highlights-input']);
+        $introduction = $initalize->mynl2br($_POST['introduction-input']);
+        $highlights = $initalize->mynl2br($_POST['highlights-input']);
         $bpid = $_SESSION['bpid'];
         $this->time = date('Y-m-d H:i:s');
 
@@ -304,7 +308,7 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
                     $sqlexecsum .= "UPDATE  `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
 MOD_TIMESTAMP =:timestampmod  WHERE ID_CONTENT =:contentlink_id;";
 
-                    $sqlexecsum .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+                    $sqlexecsum .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
 BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:timestampmod WHERE ID_BROADCAST = :bpid; ";
                 }
 
@@ -336,7 +340,9 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:timesta
                     $this->message[0] = "Executive Summary Info could not be added.";
                 }
 
-            } catch (PDOException $e){
+            }
+            catch (PDOException $e)
+            {
                 error_log($e->getMessage());
                 //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
             }
@@ -349,7 +355,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:timesta
     public function PlaceHolderValue()
     {
         try {
-            $sqlexvalue = "SELECT * FROM `AC_ExecSum` WHERE OU_ABBREV = :ouabbrev AND ID_EXECUTIVE_SUMMARY 
+            $sqlexvalue = "SELECT * FROM `AC_ExecSum` WHERE OU_ABBREV = :ouabbrev AND ID_EXECUTIVE_SUMMARY
 IN (SELECT max(ID_EXECUTIVE_SUMMARY) FROM AC_ExecSum WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV);";
 
             $resultexvalue = $this->connection->prepare($sqlexvalue);
@@ -370,10 +376,10 @@ Class ACADEMICPROGRAM extends BPCONTENTS
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
-        $programranking = mynl2br($_POST['programranking']);
-        $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
-        $launch = mynl2br($_POST['launch']);
-        $programterminations = mynl2br($_POST['programterminators']);
+        $programranking = $initalize->mynl2br($_POST['programranking']);
+        $instructionalmodalities = $initalize->mynl2br($_POST['instructionalmodalities']);
+        $launch = $initalize->mynl2br($_POST['launch']);
+        $programterminations = $initalize->mynl2br($_POST['programterminators']);
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
             $target_dir = "../uploads/ac_programs/";
@@ -396,16 +402,16 @@ Class ACADEMICPROGRAM extends BPCONTENTS
         }
         if ($this->errorflag != 1) {
 
-            $sqlacprogram = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, 
-        PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) VALUES 
-        (:ouabbrev, :bpayname, :author, :timestampmod, :programranking, :instructionalmodalities, :launch, 
+            $sqlacprogram = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP,
+        PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) VALUES
+        (:ouabbrev, :bpayname, :author, :timestampmod, :programranking, :instructionalmodalities, :launch,
 :programterminations, :supinfopath);";
 
             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-                $sqlacprogram .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
+                $sqlacprogram .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
 
-                $sqlacprogram .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+                $sqlacprogram .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
 BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
             }
 
@@ -442,7 +448,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
     public function PlaceHolderValue()
     {
         try {
-            $sqlexvalue = "SELECT * FROM `AC_Programs` WHERE OU_ABBREV = :ouabbrev AND ID_AC_PROGRAMS IN 
+            $sqlexvalue = "SELECT * FROM `AC_Programs` WHERE OU_ABBREV = :ouabbrev AND ID_AC_PROGRAMS IN
 (SELECT MAX(ID_AC_PROGRAMS) FROM `AC_Programs` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
 
             $resultexvalue = $this->connection->prepare($sqlexvalue);
@@ -479,10 +485,17 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
 //                           VALUES(:ouabbrev,:bpayname,:author,:timestampmod,:awardType,:awardLoc,:recipLname,:recipFname,
 //                           :awardTitle,:awardOrg,:dateAward,'0');";
 
+<<<<<<< HEAD
 //       $sqlAcFacAward .= "UPDATE `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = :author,MOD_TIMESTAMP =:timestampmod  
 //                           where ID_CONTENT =:contentlink_id;";
 
 //       $sqlAcFacAward .= "UPDATE  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', 
+=======
+//       $sqlAcFacAward .= "UPDATE `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = :author,MOD_TIMESTAMP =:timestampmod
+//                           where ID_CONTENT =:contentlink_id;";
+
+//       $sqlAcFacAward .= "UPDATE  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress',
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 //                           AUTHOR= :author, LastModified =:timestampmod where ID_BROADCAST = :bpid; ";
 
 //       $sqlACFacAwardResult = $this->connection->prepare($sqlAcFacAward);
@@ -509,10 +522,17 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
 //       }
 
 
+<<<<<<< HEAD
 //         $programranking = mynl2br($_POST['programranking']);
 //         $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
 //         $launch = mynl2br($_POST['launch']);
 //         $programterminations = mynl2br($_POST['programterminators']);
+=======
+//         $programranking = $initalize->mynl2br($_POST['programranking']);
+//         $instructionalmodalities = $initalize->mynl2br($_POST['instructionalmodalities']);
+//         $launch = $initalize->mynl2br($_POST['launch']);
+//         $programterminations = $initalize->mynl2br($_POST['programterminators']);
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
 //         if ($_FILES['supinfo']['tmp_name'] != "") {
 //             $target_dir = "../uploads/ac_programs/";
@@ -535,6 +555,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
 //         }
 //         if ($this->errorflag != 1) {
 
+<<<<<<< HEAD
 //             $sqlacprogram = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, 
 //         PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) VALUES 
 //         (:ouabbrev, :bpayname, :author, :timestampmod, :programranking, :instructionalmodalities, :launch, 
@@ -545,6 +566,18 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
 //             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
 
 //                 $sqlacprogram .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+=======
+//             $sqlacprogram = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP,
+//         PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) VALUES
+//         (:ouabbrev, :bpayname, :author, :timestampmod, :programranking, :instructionalmodalities, :launch,
+// :programterminations, :supinfopath);";
+
+//             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+//                 $sqlacprogram .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
+//             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
+
+//                 $sqlacprogram .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 // BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
 //             }
 
@@ -581,7 +614,11 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
 //     public function PlaceHolderValue()
 //     {
 //         try {
+<<<<<<< HEAD
 //             $sqlexvalue = "SELECT * FROM `AC_Programs` WHERE OU_ABBREV = :ouabbrev AND ID_AC_PROGRAMS IN 
+=======
+//             $sqlexvalue = "SELECT * FROM `AC_Programs` WHERE OU_ABBREV = :ouabbrev AND ID_AC_PROGRAMS IN
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 // (SELECT MAX(ID_AC_PROGRAMS) FROM `AC_Programs` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
 
 //             $resultexvalue = $this->connection->prepare($sqlexvalue);
@@ -602,11 +639,19 @@ Class FACULTYINFO extends BPCONTENTS
 {
     public function SaveDraft()
     {
+<<<<<<< HEAD
       $facdev = mynl2br($_POST['factextarea']);
 
       $createact = mynl2br($_POST['cractivity']);
 
       $this->time = date('Y-m-d H:i:s');
+=======
+      $facdev = $initalize->mynl2br($_POST['factextarea']);
+
+      $createact = $initalize->mynl2br($_POST['cractivity']);
+
+      $contentlink_id = $_GET['linkid'];
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
 
   //    if ($_FILES["supinfo"]["error"] > 0) {
@@ -623,7 +668,11 @@ Class FACULTYINFO extends BPCONTENTS
 
 
           if ($imageFileType != "pdf") {
+<<<<<<< HEAD
               $this->message = "Sorry, only PDf files are allowed.";
+=======
+              $this->message[1] = "Sorry, only PDf files are allowed.";
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
               $this->errorflag = 1;
 
           } else {
@@ -631,7 +680,11 @@ Class FACULTYINFO extends BPCONTENTS
                   // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
                   $supinfopath = $target_file;
               } else {
+<<<<<<< HEAD
                   $this->message = "Sorry, there was an error uploading your file.";
+=======
+                  $this->message[2] = "Sorry, there was an error uploading your file.";
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
               }
           }
       }
@@ -640,12 +693,18 @@ Class FACULTYINFO extends BPCONTENTS
           $sqlfacinfo = "INSERT INTO `AC_FacultyInfo` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
    VALUES (:ouabbrev,:bpayname,:author,:timestampmod,:facdev,:createact,:supinfopath);";
 
+<<<<<<< HEAD
 
           if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
             $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,MOD_TIMESTAMP =:timestampmod  where ID_CONTENT =:contentlink_id;";
 
             $sqlfacinfo .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:timestampmod where ID_BROADCAST = :bpid; ";
           }
+=======
+          $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id;";
+
+          $sqlfacinfo .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:time where ID_BROADCAST = :bpid; ";
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
           $resultfacinfo = $this->connection->prepare($sqlfacinfo);
           $resultfacinfo->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
@@ -656,6 +715,7 @@ Class FACULTYINFO extends BPCONTENTS
           $resultfacinfo->bindParam(':createact', $createact, PDO::PARAM_STR);
           $resultfacinfo->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR);
 
+<<<<<<< HEAD
           if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
             $resultfacinfo->bindParam(":author", $this->author, PDO::PARAM_STR);
             $resultfacinfo->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
@@ -670,6 +730,13 @@ Class FACULTYINFO extends BPCONTENTS
               $this->message = "Faculty Info Added Succesfully.";
           } else {
               $this->message = "Faculty Info could not be added.";
+=======
+          if ($resultfacinfo->execute()) {
+
+              $this->message[0] = "Faculty Info Added Succesfully.";
+          } else {
+              $this->message[3] = "Faculty Info could not be added.";
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
           }
 
       }
@@ -682,6 +749,7 @@ Class FACULTYINFO extends BPCONTENTS
           $sqlexvalue = "SELECT * FROM `AC_FacultyInfo` where OU_ABBREV = :ouabbrev AND ID_FACULTY_INFO in (select max(ID_FACULTY_INFO) from AC_FacultyInfo where OUTCOMES_AY = :bpayname group by OU_ABBREV); ";
 
           $resultsexvalue = $this->connection->prepare($sqlexvalue);
+<<<<<<< HEAD
           $resultsexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
           $resultsexvalue->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
           $resultsexvalue->execute();
@@ -797,10 +865,18 @@ Class GOALOUTCOME extends BPCONTENTS
           } else {
               $message[0] = "Goal Outcome Could not be Approved. Please Retry.";
           }
+=======
+          $resultsexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+          $resultsexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+          $resultsexvalue->execute();
+
+
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
         } catch(PDOException $e) {
             error_log($e->getMessage());
             //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
         }
+<<<<<<< HEAD
           return $this->message;
       }
 
@@ -862,14 +938,19 @@ Class GOALOUTCOME extends BPCONTENTS
 
 
 Class ALUMNIDEVELOPMENT extends BPCONTENTS
+=======
+        return $resultsexvalue;
+    }
+}Class ALUMNIDEVELOPMENT extends BPCONTENTS
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 {
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
-        $alumni = mynl2br($_POST['alumni']);
-        $development = mynl2br($_POST['development']);
-        $fundraising = mynl2br($_POST['fundraising']);
-        $gifts = mynl2br($_POST['gifts']);
+        $alumni = $initalize->mynl2br($_POST['alumni']);
+        $development = $initalize->mynl2br($_POST['development']);
+        $fundraising = $initalize->mynl2br($_POST['fundraising']);
+        $gifts = $initalize->mynl2br($_POST['gifts']);
         $supinfopath = null;
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
@@ -895,15 +976,15 @@ Class ALUMNIDEVELOPMENT extends BPCONTENTS
         }
         if ($this->errorflag != 1) {
 
-            $sqlalumnidev = "INSERT INTO `AC_AlumDev` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, 
+            $sqlalumnidev = "INSERT INTO `AC_AlumDev` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP,
 AC_UNIT_ALUMNI, AC_UNIT_DEVELOPMENT, AC_UNIT_FUNDRAISING, AC_UNIT_GIFTS, AC_UNIT_SUPPL_ALUM_DEV) VALUES (:ouabbrev,
 :bpayname, :author, :timestampmod, :alumni, :development, :fundraising, :gifts, :supinfopath);";
 
             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-                $sqlalumnidev .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
+                $sqlalumnidev .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
 
-                $sqlalumnidev .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+                $sqlalumnidev .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
 BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
             }
 
@@ -941,7 +1022,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
     public function PlaceHolderValue()
     {
         try {
-            $sqlexvalue = "SELECT * FROM `AC_AlumDev` WHERE OU_ABBREV = :ouabbrev AND ID_ALUMNI_DEV IN 
+            $sqlexvalue = "SELECT * FROM `AC_AlumDev` WHERE OU_ABBREV = :ouabbrev AND ID_ALUMNI_DEV IN
 (SELECT MAX(ID_ALUMNI_DEV) FROM `AC_AlumDev` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
 
             $resultexvalue = $this->connection->prepare($sqlexvalue);
@@ -962,7 +1043,7 @@ Class CAMPUSCLIMATE extends BPCONTENTS
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
-        $climate = mynl2br($_POST['climate']);
+        $climate = $initalize->mynl2br($_POST['climate']);
         $supinfopath = null;
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
@@ -987,14 +1068,14 @@ Class CAMPUSCLIMATE extends BPCONTENTS
         if ($this->errorflag != 1) {
 
             $sqlclimate = "INSERT INTO `AC_CampusClimateInclusion` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
-MOD_TIMESTAMP, CLIMATE_INCLUSION, SUPPL_CLIMATE_INCLUSION) VALUES (:ouabbrev, :bpayname, :author, :timestampmod, 
+MOD_TIMESTAMP, CLIMATE_INCLUSION, SUPPL_CLIMATE_INCLUSION) VALUES (:ouabbrev, :bpayname, :author, :timestampmod,
 :climate, :supinfopath);";
 
             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-                $sqlclimate .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
+                $sqlclimate .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
 
-                $sqlclimate .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+                $sqlclimate .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
 BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
             }
 
@@ -1029,8 +1110,8 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
     public function PlaceHolderValue()
     {
         try {
-            $sqlexvalue = "SELECT * FROM `AC_CampusClimateInclusion` WHERE OU_ABBREV = :ouabbrev AND 
-            ID_CLIMATE_INCLUSION IN (SELECT MAX(ID_CLIMATE_INCLUSION) FROM `AC_CampusClimateInclusion` WHERE 
+            $sqlexvalue = "SELECT * FROM `AC_CampusClimateInclusion` WHERE OU_ABBREV = :ouabbrev AND
+            ID_CLIMATE_INCLUSION IN (SELECT MAX(ID_CLIMATE_INCLUSION) FROM `AC_CampusClimateInclusion` WHERE
             OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
 
             $resultexvalue = $this->connection->prepare($sqlexvalue);
@@ -1052,9 +1133,9 @@ Class COLLABORATION extends BPCONTENTS
     {
         $this->time = date('Y-m-d H:i:s');
         $supinfopath = null;
-        $internalcollaborators = mynl2br($_POST['internalcollaborators']);
-        $externalcollaborators = mynl2br($_POST['externalcollaborators']);
-        $othercollaborators = mynl2br($_POST['othercollaborators']);
+        $internalcollaborators = $initalize->mynl2br($_POST['internalcollaborators']);
+        $externalcollaborators = $initalize->mynl2br($_POST['externalcollaborators']);
+        $othercollaborators = $initalize->mynl2br($_POST['othercollaborators']);
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
             $target_dir = "../uploads/collaborations";
@@ -1078,14 +1159,14 @@ Class COLLABORATION extends BPCONTENTS
         if ($this->errorflag != 1) {
 
             $sqlcollob = "INSERT INTO `AC_Collaborations` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
-MOD_TIMESTAMP, COLLAB_INTERNAL, COLLAB_EXTERNAL, COLLAB_OTHER, SUPPL_COLLABORATIONS) VALUES (:ouabbrev, :bpayname, 
+MOD_TIMESTAMP, COLLAB_INTERNAL, COLLAB_EXTERNAL, COLLAB_OTHER, SUPPL_COLLABORATIONS) VALUES (:ouabbrev, :bpayname,
 :author, :timestampmod, :internalcollaborators, :externalcollaborators, :othercollaborators, :supinfopath);";
 
             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-                $sqlcollob .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
+                $sqlcollob .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
 
-                $sqlcollob .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+                $sqlcollob .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
 BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
             }
 
@@ -1122,7 +1203,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
     public function PlaceHolderValue()
     {
         try {
-            $sqlexvalue = "SELECT * FROM `AC_Collaborations` WHERE OU_ABBREV = :ouabbrev AND ID_COLLABORATIONS IN 
+            $sqlexvalue = "SELECT * FROM `AC_Collaborations` WHERE OU_ABBREV = :ouabbrev AND ID_COLLABORATIONS IN
 (SELECT MAX(ID_COLLABORATIONS) FROM `AC_Collaborations` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
 
             $resultexvalue = $this->connection->prepare($sqlexvalue);
@@ -1138,6 +1219,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         return $resultexvalue;
     }
 }
+<<<<<<< HEAD
 
 Class INITIATIVES extends BPCONTENTS
 {
@@ -1315,3 +1397,5 @@ Class MVV extends BPCONTENTS
       return $resultmission;
     }
 }
+=======
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff

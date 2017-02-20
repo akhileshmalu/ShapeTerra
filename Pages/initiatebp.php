@@ -7,11 +7,11 @@
  * This Page controls Intiation of Academic BluePrint module.
  */
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+ require_once ("../Resources/Includes/initalize.php");
+ $initalize = new Initialize();
+ $initalize->checkSessionStatus();
+ $connection = $initalize->connection;
+
 $time  = date('Y-m-d H:i:s');
 $message = array();
 $errorflag =0;
@@ -21,9 +21,6 @@ $ou=array();
 $broad_id = 0;
 $author = $_SESSION['login_userid'];
 $first = TRUE;
-
-
-require_once ("../Resources/Includes/connect.php");
 
 /*
  * Query to show Non terminated Organization Unit as on date.

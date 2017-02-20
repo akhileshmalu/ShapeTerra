@@ -7,16 +7,14 @@
  * This Page controls Initiatives & Observations.
  */
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+
 $message = array();
 $errorflag = 0;
 $BackToDashboard = true;
 
-require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION ['bpid'];
@@ -33,38 +31,38 @@ if ($ouid == 4) {
 }
 
 //Object for Campus Climate Table
-$Collaboration = new COLLABORATION();
+$BpContent = new COLLABORATION();
 
 //  Blueprint Status information on title box
-$resultbroad = $Collaboration->BlueprintStatusDisplay();
+$resultbroad = $BpContent->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
 
 // Values for placeholders
-$resultexvalue = $Collaboration->PlaceHolderValue();
+$resultexvalue = $BpContent->PlaceHolderValue();
 $rowsExValue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
-$resultbpstatus = $Collaboration->GetStatus();
+$resultbpstatus = $BpContent->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 if (isset($_POST['savedraft'])) {
-    $message[0] = $Collaboration->SaveDraft();
+    $message[0] = $BpContent->SaveDraft();
 }
 
 if(isset($_POST['submit_approve'])) {
     $message[0] = "Collaboration";
-    $message[0].= $Collaboration->SubmitApproval();
+    $message[0].= $BpContent->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
     $message[0] = "Collaboration";
-    $message[0].= $Collaboration->Approve();
+    $message[0].= $BpContent->Approve();
 }
 
 if(isset($_POST['reject'])) {
     $message[0] = "Collaboration";
-    $message[0].= $Collaboration->Reject();
+    $message[0].= $BpContent->Reject();
 }
 
 
@@ -107,13 +105,13 @@ require_once("../Resources/Includes/menu.php");
             <div class="form-group form-indent">
                 <p class="status">List your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are internal to the University.  Details should be omitted; list by name only. </p>
                 <textarea name="internalcollaborators" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo mybr2nl($rowsExValue['COLLAB_INTERNAL']); ?></textarea>
+                          required><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_INTERNAL']); ?></textarea>
             </div>
             <h3>External Collaborations</h3>
             <div class="form-group form-indent">
                 <p class="status">List your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are external to the University.  Details should be omitted; list by name only. </p>
                 <textarea name="externalcollaborators" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo mybr2nl($rowsExValue['COLLAB_EXTERNAL']); ?></textarea>
+                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_EXTERNAL']); ?></textarea>
             </div>
             <h3>Other Collaborations</h3>
             <div class="form-group form-indent">
@@ -122,7 +120,7 @@ require_once("../Resources/Includes/menu.php");
                     </small>
                 </p>
                 <textarea name="othercollaborators" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo mybr2nl($rowsExValue['COLLAB_OTHER']); ?></textarea>
+                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_OTHER']); ?></textarea>
             </div>
 
             <h3>Supplemental Info</h3>

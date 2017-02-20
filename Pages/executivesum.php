@@ -4,13 +4,10 @@
  * This Page controls Initiatives & Observations.
  */
 
-session_start();
-if (!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
 
-require_once("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 $message = array();
@@ -200,7 +197,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input"
                                   type="textarea" class="form-control wordCount"
-                                  required><?php echo mybr2nl($rowsExValue["INTRODUCTION"]); ?></textarea>
+                                  required><?php echo $initalize->mybr2nl($rowsExValue["INTRODUCTION"]); ?></textarea>
                     </div>
                     <h3>Highlights</h3>
                     <div id="highlights" class="form-group form-indent">
@@ -213,7 +210,7 @@ require_once("../Resources/Includes/menu.php");
                         <textarea rows="5" cols="25" maxlength="525" id="highlights-input" name="highlights-input"
                                   type="textarea"
                                   class="form-control wordCount"
-                        ><?php echo mybr2nl($rowsExValue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
+                        ><?php echo $initalize->mybr2nl($rowsExValue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
                     </div>
 
                     <!--                      Edit Control-->

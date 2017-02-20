@@ -7,6 +7,7 @@
 /*
  * Session & Error control Initialization.
  */
+<<<<<<< HEAD
 session_start();
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
@@ -23,13 +24,30 @@ $BackToDashboard = true;
 require_once("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
+=======
+
+ require_once ("../Resources/Includes/initalize.php");
+ $initalize = new Initialize();
+ $initalize->checkSessionStatus();
+ $connection = $initalize->connection;
+
+$error = array();
+$errorflag = 0;
+$BackToDashboard = true;
+
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 /*
  * Local & Session variable Initialization
  */
 $bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $bpayname = $_SESSION['bpayname'];
+<<<<<<< HEAD
 
+=======
+$prevbpid = $initalize->stringtoid($bpayname);
+$prevbpayname = $initalize->idtostring($prevbpid - 101);
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 
@@ -44,21 +62,67 @@ if ($outype == "Administration" OR $outype == "Service Unit" ) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
+<<<<<<< HEAD
 //Object for executive Summary Table
 $mvv = new MVV();
+=======
+// Display Information of Main-box basis roles
+try {
+    if ($ouid == 4) {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+
+
+
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
+    }
+
+    $resultbroad->execute();
+    $rowbroad = $resultbroad->fetch(4);
+} catch(PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
 
 //  Blueprint Status information on title box
 $resultbroad = $mvv->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
+<<<<<<< HEAD
+=======
+    $rowsbpstatus = $resultbpstatus->fetch(4);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
 // Values for placeholders
 $resultexvalue = $mvv->PlaceHolderValue();
 $rowsmission = $resultexvalue->fetch(4);
 
+<<<<<<< HEAD
 // SQL check Status of Blueprint Content for Edit restrictions
 $resultbpstatus = $mvv->GetStatus();
+=======
+    $missionstatement = $initalize->mynl2br($_POST['missionstatement']);
+    $missionupdatedate = $_POST['misupdate'];
+    $visionstatement = $initalize->mynl2br($_POST['visionstatement']);
+    $visionupdatedate = $_POST['visupdate'];
+    $valuestatement = $initalize->mynl2br($_POST['valuestatement']);
+    $valueupdatedate = $_POST['valupdate'];
+    $contentlink_id = $_GET['linkid'];
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
@@ -143,12 +207,12 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="missionstatement"
                               id="missiontitle" maxlength="1000"
-                              required><?php echo mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
+                              required><?php echo $initalize->mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
                 </div>
 
                 <h3>Last Updated:<span
                         style="color: red"><sup>*</sup></span></h3>
-                <div class="form-group col-xs-12 form-indent">    
+                <div class="form-group col-xs-12 form-indent">
                     <div class='input-group date col-xs-4' id='datetimepicker1'>
                         <input type='text' name="misupdate" value="<?php echo $rowsmission['MISSION_UPDATE_DATE']; ?>" class="form-control" required>
                         <span class="input-group-addon">
@@ -159,7 +223,7 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Vision Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="visionstatement" maxlength="1000"
-                              id="visiontitle"><?php echo mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
+                              id="visiontitle"><?php echo $initalize->mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
                 </div>
 
                 <h3>Last Updated:</h3>
@@ -174,7 +238,7 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Values Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="valuestatement" maxlength="1000"
-                              id="valuetitle"><?php echo mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
+                              id="valuetitle"><?php echo $initalize->mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
                 </div>
 
                 <h3>Last Updated:</h3>

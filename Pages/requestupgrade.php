@@ -1,12 +1,20 @@
 <?php
+<<<<<<< HEAD
 session_start();
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
 $message = array();
+=======
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
-require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
+$error = array();
 
 /*
  * Selection of All Admin_User for User Management

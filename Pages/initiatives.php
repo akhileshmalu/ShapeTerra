@@ -7,17 +7,16 @@
  * This Page controls Initiatives & Observations.
  */
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-$message = array();
+
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
+$error = array();
 $errorflag =0;
 $BackToDashboard = true;
 
-require_once ("../Resources/Includes/connect.php");
-require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
@@ -38,21 +37,6 @@ $Initiatives = new INITIATIVES();
 $resultbroad = $Initiatives->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
-/*
- * Values for placeholders
- */
-// try {
-//     $sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV=:ouabbrev and OUTCOMES_AY=:bpayname ";
-//     $resultexvalue = $connection->prepare($sqlexvalue);
-//     $resultexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-//     $resultexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-//     $resultexvalue->execute();
-
-//     $rowsexvalue = $resultexvalue->fetch(4);
-// } catch(PDOException $e) {
-//     error_log($e->getMessage());
-//     //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-// }
 
 // Values for placeholders
 $resultexvalue = $Initiatives->PlaceHolderValue();
@@ -60,8 +44,6 @@ $rowsexvalue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
 $resultbpstatus = $Initiatives->GetStatus();
-
-$rowsbpstatus = $resultbpstatus->fetch(2);
 
 
 if (isset($_POST['savedraft'])) {
@@ -134,27 +116,27 @@ require_once("../Resources/Includes/menu.php");
                     <p class="status"><small>Describe your unit's initiatives, improvements, challenges, and progress with Experiential Learning at each level during the Academic Year (as applicable).</small></p>
                     <h3>Undergraduate</h3>
                     <div class="form-group form-indent">
-                      <textarea id="undergrad" name="ugexplearning" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo mybr2nl($rowsexvalue['EXPERIENTIAL_LEARNING_UGRAD']); ?></textarea>
+                      <textarea id="undergrad" name="ugexplearning" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo $initalize->mybr2nl($rowsexvalue['EXPERIENTIAL_LEARNING_UGRAD']); ?></textarea>
                     </div>
                     <h3>Graduate</h3>
                     <div class="form-group form-indent">
-                        <textarea id="graduate" name="gradexplearning" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['EXPERIENTIAL_LEARNING_GRAD']); ?></textarea>
+                        <textarea id="graduate" name="gradexplearning" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $initalize->mybr2nl($rowsexvalue['EXPERIENTIAL_LEARNING_GRAD']); ?></textarea>
                     </div>
                 </div>
                 <h3>Affordability</h3>
                 <div id="afford" class="form-group form-indent">
                     <p class="status"><small>Describe your unit's assessment of affordability and efforts to address affordability during the Academic Year.</small></p>
-                    <textarea  name="afford" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['AFFORDABILITY']); ?></textarea>
+                    <textarea  name="afford" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $initalize->mybr2nl($rowsexvalue['AFFORDABILITY']); ?></textarea>
                 </div>
                 <h3>Reputation Enhancement</h3>
                 <div id="reputation" class="form-group form-indent">
                     <p class="status"><small>Describe innovations, happy accidents, good news, etc. that occurred within your unit during the Academic Year, not noted elsewhere in your reporting.</small></p>
-                    <textarea  name="reputation" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['REPUTATION_ENHANCE']); ?></textarea>
+                    <textarea  name="reputation" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $initalize->mybr2nl($rowsexvalue['REPUTATION_ENHANCE']); ?></textarea>
                 </div>
                 <h3>Challenges</h3>
                 <div id="challenge" class="form-group form-indent">
                     <p class="status"><small>Describe challenges and resource needs you anticipate for the current and upcoming Academic Years, not noted elsewhere in your reporting - or which merit additional attention.</small></p>
-                    <textarea  name="challenges" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['CHALLENGES']); ?></textarea>
+                    <textarea  name="challenges" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $initalize->mybr2nl($rowsexvalue['CHALLENGES']); ?></textarea>
                 </div>
                 <h3>Supplemental Info</h3>
                 <div id="suppinfo" class="form-group form-indent">

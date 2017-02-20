@@ -1,12 +1,9 @@
 <?php
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-
-require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 
 $message = array();
 $errorflag = 0;
@@ -36,7 +33,7 @@ $discardid = array();
 // File Upload Status & Details.
 try
 {
-    $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON 
+    $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON
 PermittedUsers.ID_STATUS =IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id ;";
     $resultfucontent = $connection->prepare($sqlfucontent)->execute(['content_id'=> $content_id]);
 }
@@ -220,7 +217,7 @@ if (isset($_POST['upload'])) {
                         //USCALLAU USC ALL Academic Units Aggregator record creation . Also includes the idea to let user update more units in future
                         // Below query group all discrete units and resolve collusion basis latest (max) ID value and then sum the records and constitute USCAAU
 
-                        $sqlupload = "INSERT INTO IR_AC_FacultyPop (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, TTF_FTE_ALL, TTF_FTE_PROF_TNR, TTF_FTE_ASSOC_PROF_TNR, TTF_FTE_PROF, TTF_FTE_ASSOC_PROF, TTF_FTE_ASSIST_PROF, RSRCH_FTE_ALL, RSRCH_FTE_PROF, RSRCH_FTE_ASSOC_PROF, RSRCH_FTE_ASSIST_PROF, CIF_FTE_ALL, CIF_FTE_CLNCL_PROF, CIF_FTE_CLNCL_ASSOC_PROF, CIF_FTE_CLNCL_ASSIST_PROF, CIF_FTE_INSTR_LCTR, OTHRFAC_ALL, OTHRFAC_PT_ADJUNCT, OTHRFAC_PT_OTHER, STUDENT_FACULTY_RATIO) 
+                        $sqlupload = "INSERT INTO IR_AC_FacultyPop (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, TTF_FTE_ALL, TTF_FTE_PROF_TNR, TTF_FTE_ASSOC_PROF_TNR, TTF_FTE_PROF, TTF_FTE_ASSOC_PROF, TTF_FTE_ASSIST_PROF, RSRCH_FTE_ALL, RSRCH_FTE_PROF, RSRCH_FTE_ASSOC_PROF, RSRCH_FTE_ASSIST_PROF, CIF_FTE_ALL, CIF_FTE_CLNCL_PROF, CIF_FTE_CLNCL_ASSOC_PROF, CIF_FTE_CLNCL_ASSIST_PROF, CIF_FTE_INSTR_LCTR, OTHRFAC_ALL, OTHRFAC_PT_ADJUNCT, OTHRFAC_PT_OTHER, STUDENT_FACULTY_RATIO)
 SELECT 'USCAAU' AS OU,'$FUayname' AS AY,'$author' AS AUTHOR,'$time' AS MOD_Time,sum(TTF_FTE_ALL), sum(TTF_FTE_PROF_TNR), sum(TTF_FTE_ASSOC_PROF_TNR), sum(TTF_FTE_PROF), sum(TTF_FTE_ASSOC_PROF), sum(TTF_FTE_ASSIST_PROF), sum(RSRCH_FTE_ALL), sum(RSRCH_FTE_PROF), sum(RSRCH_FTE_ASSOC_PROF), sum(RSRCH_FTE_ASSIST_PROF), sum(CIF_FTE_ALL), sum(CIF_FTE_CLNCL_PROF), sum(CIF_FTE_CLNCL_ASSOC_PROF), sum(CIF_FTE_CLNCL_ASSIST_PROF), sum(CIF_FTE_INSTR_LCTR), sum(OTHRFAC_ALL), sum(OTHRFAC_PT_ADJUNCT), sum(OTHRFAC_PT_OTHER),
 , 'NA' FROM IR_AC_FacultyPop where ID_AC_FACULTY_POPULATION in (select max(ID_AC_FACULTY_POPULATION) from IR_AC_FacultyPop where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
                         $mysqli->query($sqlupload);
@@ -380,7 +377,7 @@ require_once("../Resources/Includes/menu.php");
                             <p><b class="garnet">Academic Year:</b>2001</p>
                             <p><b class="garnet">College/School:</b>CEC</p>
                             <p><b class="garnet">Outcomes Author:</b>Blake Finn</p>
-                            <p><b class="garnet">Last Modified:</b> <?php echo $rowsdatadisplay['TTF_FTE_PROF_TNR']; ?> </p> 
+                            <p><b class="garnet">Last Modified:</b> <?php echo $rowsdatadisplay['TTF_FTE_PROF_TNR']; ?> </p>
 
 
                             <h2 class="data-display">Tenure-track Faculty (FTE Positions)</h2>
@@ -409,14 +406,14 @@ require_once("../Resources/Includes/menu.php");
                                 <tr class="indent">
                                     <td><b class="garnet">Total - Tenure-track Faculty (FTE positions):</b></td>
                                     <td><?php echo $rowsdatadisplay['TTF_FTE_ALL']; ?></td>
-                                </tr>                                
+                                </tr>
 
                             <tr><td><h2 class="data-display">Research Faculty (FTE Positions)</h2></td></tr>
 
                             <tr class="indent">
                                 <td><b class="garnet">Research Professor:</b></td>
                                 <td> <?php echo $rowsdatadisplay['RSRCH_FTE_PROF']; ?> </td>
-                            </tr>                            
+                            </tr>
                             <tr class="indent">
                                 <td><b class="garnet">Research Associate Professor:</b></td>
                                 <td> <?php echo $rowsdatadisplay['RSRCH_FTE_ASSOC_PROF']; ?> </td>
@@ -439,7 +436,7 @@ require_once("../Resources/Includes/menu.php");
                             <tr class="indent">
                                 <td><b class="garnet">Clinical  Professor:</b></td>
                                 <td> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_PROF']; ?> </td>
-                            </tr>                            
+                            </tr>
                             <tr class="indent">
                                 <td><b class="garnet">Clinical  Associate Professor:</b></td>
                                 <td> <?php echo $rowsdatadisplay['CIF_FTE_CLNCL_ASSOC_PROF']; ?> </td>
@@ -463,7 +460,7 @@ require_once("../Resources/Includes/menu.php");
                             <tr class="indent">
                                 <td><b class="garnet">Adjunct Faculty</b></td>
                                 <td><?php echo $rowsdatadisplay['OTHRFAC_PT_ADJUNCT']; ?> </td>
-                            </tr>                             
+                            </tr>
                             <tr class="indent">
                                 <td><b class="garnet">Other Faculty:</b></td>
                                 <td><?php echo $rowsdatadisplay['OTHRFAC_PT_OTHER']; ?> </td>
@@ -506,4 +503,3 @@ require_once("../Resources/Includes/footer.php");
         alert(b + " is selected.");
     }
 </script>
-

@@ -1,13 +1,8 @@
 <?php
 
-session_start();
-
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-
-require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
 require_once ("../Resources/Includes/BpContents.php");
 
 $message = array();
@@ -106,7 +101,7 @@ require_once("../Resources/Includes/menu.php");
                     during the Academic Year. Focus should be on relationships and activities with alumni; development
                     with non-alumni and fundraising are collected separately. </p>
                 <textarea name="alumni" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo mybr2nl($rowsExValue['AC_UNIT_ALUMNI']); ?></textarea>
+                          required><?php echo $initalize->mybr2nl($rowsExValue['AC_UNIT_ALUMNI']); ?></textarea>
             </div>
             <h3>Development<span
                         style="color: red"><sup>*</sup></span></h3>
@@ -114,7 +109,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">Describe your unit's substantial development initiatives and outcomes during the
                     Academic Year, excluding alumni, fundraising, and gifts.</p>
                 <textarea name="development" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo mybr2nl($rowsExValue['AC_UNIT_DEVELOPMENT']); ?></textarea>
+                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['AC_UNIT_DEVELOPMENT']); ?></textarea>
             </div>
             <h3>Fundraising<span
                         style="color: red"><sup>*</sup></span></h3>
@@ -126,7 +121,7 @@ require_once("../Resources/Includes/menu.php");
                     </small>
                 </p>
                 <textarea name="fundraising" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo mybr2nl($rowsExValue['AC_UNIT_FUNDRAISING']); ?></textarea>
+                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['AC_UNIT_FUNDRAISING']); ?></textarea>
             </div>
             <h3>Gifts<span
                         style="color: red"><sup>*</sup></span></h3>
@@ -137,7 +132,7 @@ require_once("../Resources/Includes/menu.php");
                     </small>
                 </p>
                 <textarea name="gifts" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo mybr2nl($rowsExValue['AC_UNIT_GIFTS']); ?></textarea>
+                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['AC_UNIT_GIFTS']); ?></textarea>
             </div>
             <h3>Supplemental Info</h3>
             <div id="suppinfo" class="form-group form-indent">

@@ -1,9 +1,10 @@
 <?php
-session_start();
-if(!$_SESSION['isLogged']) {
-	header("location:login.php");
-	die();
-}
+
+	require_once ("../Resources/Includes/initalize.php");
+	$initalize = new Initialize();
+	$initalize->checkSessionStatus();
+	$connection = $initalize->connection;
+
 	$message = array();
 	$errorflag = 0;
 	$goalstatement="";
@@ -29,9 +30,9 @@ if(!$_SESSION['isLogged']) {
 
 	    if ($errorflag != 1) {
 
-	        $ay = test_input($_POST['AY']);
-	        $goaltitle = test_input($_POST['goaltitle']);
-	        $goalstatement = mynl2br($_POST['goalstatement']);
+	        $ay = $initalize->test_input($_POST['AY']);
+	        $goaltitle = $initalize->test_input($_POST['goaltitle']);
+	        $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
 	        $sql = "SELECT max(ID_UNIV_GOAL) AS lastid FROM UniversityGoals;";
 	        $result = $mysqli->query($sql);
 	        $row = $result->fetch_assoc();
@@ -46,7 +47,7 @@ if(!$_SESSION['isLogged']) {
 	            $message[0] = "Goal has been successfully added.";
 
 
-	        $id= stringtoid($_POST['AY']);
+	        $id= $initalize->stringtoid($_POST['AY']);
 				//
 	//        $sql = "INSERT INTO AcademicYears (ID_ACAD_YEAR,ACAD_YEAR_DESC,ACAD_YEAR_DATE_BEGIN,ACAD_YEAR_DATE_END) VALUES ('$id','$ay','$academicstartdate','$academicenddate');";
 	          $sql = "Update AcademicYears SET GOAL_STATUS_ID = 06 where ID_ACAD_YEAR = '$id'";

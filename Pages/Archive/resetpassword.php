@@ -26,7 +26,7 @@ if(isset($_POST['reset'])){
 
         require_once("../Resources/Includes/connect.php");
 
-        $newpassword = md5(test_input($_POST['newpassword']));
+        $newpassword = md5($initalize->test_input($_POST['newpassword']));
         $email = $_SESSION['login_email'];
 
         $sql = "UPDATE PermittedUsers SET PW_DEV = '$newpassword' WHERE NETWORK_USERNAME = '$email'";
@@ -98,5 +98,4 @@ require_once("../Resources/Includes/menu.php");
 
 <?php
 //Include Footer
-require_once("../Resources/Includes/footer.php");
-?>
+require_once("../Resources/Includes/footer.php");?>

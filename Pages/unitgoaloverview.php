@@ -8,11 +8,11 @@
 /*
  * Session & Error control Initialization.
  */
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
 $error = array();
 $errorflag =0;
 $BackToDashboard = true;
@@ -64,8 +64,8 @@ $rowsbpstatus = $resultbpstatus->fetch(2);
 //    foreach ($unigoallink as $value) {
 //        $unigoallinkname .= $value . ",";
 //    }
-//    $goalstatement = mynl2br($_POST['goalstatement']);
-//    $goalalignment = mynl2br($_POST['goalalignment']);
+//    $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
+//    $goalalignment = $initalize->mynl2br($_POST['goalalignment']);
 //
 //
 //    $sqlcreatebp .= "INSERT INTO `BP_UnitGoals` ( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";

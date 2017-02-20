@@ -1,10 +1,9 @@
 <?php
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-require_once ("../Resources/Includes/connect.php");
+
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 
 $message = array();
 $errorflag = 0;
@@ -26,8 +25,8 @@ if(isset($_POST['submit'])) {
         $enddate = $_POST['enddate'];
         $censusdate = $_POST['censusdate'];
 
-        $id = stringdatestoid($startdate,$enddate);
-        $desc = idtostring($id);
+        $id = $initalize->stringdatestoid($startdate,$enddate);
+        $desc = $initalize->idtostring($id);
 
         try
         {
@@ -98,7 +97,7 @@ require_once("../Resources/Includes/menu.php");
 <div class="hr"></div>
 <div id="main-content" class="col-xs-10">
     <div id="title-header">
-        <h1 id="title">Add Academic Year</h1> 
+        <h1 id="title">Add Academic Year</h1>
     </div>
     <div class="content-general">
         <form action="" method="POST">

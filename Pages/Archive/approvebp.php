@@ -1,10 +1,10 @@
 <?php
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-require_once("../Resources/Includes/connect.php");
+
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
 $aysubmit = array();
 $ayname = "";
 $message = array();
@@ -37,13 +37,13 @@ $sqlbroad = "SELECT * FROM broadcast inner join Hierarchy on BROADCAST_OU = Hier
 $resultbroad = $mysqli1->query($sqlbroad);
 $rowsbroad = $resultbroad->fetch_assoc();
 $ay = $rowsbroad['BROADCAST_AY'];
-$ayid = stringtoid($ay);
+$ayid = $initalize->stringtoid($ay);
 
 /*
  * Calculate Previous Year String
  */
 $prevay = $ayid - 101;
-$aydesc = idtostring($prevay);
+$aydesc = $initalize->idtostring($prevay);
 
 $author = $_SESSION['login_email'];
 $time = date('Y-m-d H:i:s');
@@ -76,8 +76,8 @@ if(isset($_POST['goal_submit'])) {
     foreach ($unigoallink as $value) {
         $unigoallinkname .= $value . ",";
     }
-    $goalstatement = mynl2br($_POST['goalstatement']);
-    $goalalignment = mynl2br($_POST['goalalignment']);
+    $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
+    $goalalignment = $initalize->mynl2br($_POST['goalalignment']);
 //
 //    $sqlcreatebp.= "CREATE TABLE IF NOT EXISTS tempunitgoals (
 //  `ID_UNIT_GOAL` int(4) NOT NULL,
@@ -117,9 +117,9 @@ if (isset($_POST['approve'])) {
 
     if ($errorflag != 1) {
         $goalid = $_POST['goaltitlelist'];
-        $missionstatement = mynl2br($_POST['missionstatement']);
-        $visionstatement = mynl2br($_POST['visionstatement']);
-        $valuestatement = mynl2br($_POST['valuestatement']);
+        $missionstatement = $initalize->mynl2br($_POST['missionstatement']);
+        $visionstatement = $initalize->mynl2br($_POST['visionstatement']);
+        $valuestatement = $initalize->mynl2br($_POST['valuestatement']);
 
 
         //Mission , Vision , value Statement recorded for BP Academic Year
@@ -193,7 +193,7 @@ require_once("../Resources/Includes/menu.php");
 <div class="hr"></div>
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
-        <h1 id="title">BluePrint Approval</h1> 
+        <h1 id="title">BluePrint Approval</h1>
     </div>
 
     <div id="list" class="col-lg-2 col-md-4 col-xs-4">
@@ -206,11 +206,11 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="form" class="col-lg-10 col-md-8 col-xs-8">
-        <form action="" method="POST">   
+        <form action="" method="POST">
             <div class="form-group mission active" id="actionlist">
 
                <label class="col-xs-12" for="missiontitle">Mission Statement</label>
-               
+
                <div class="col-xs-12">
                     <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addmissionModal"><span class="icon">&#xe035;</span> Add Mission
@@ -225,7 +225,7 @@ require_once("../Resources/Includes/menu.php");
 
            <div class="form-group hidden vision" id="actionlist">
                <label class="col-xs-12" for="visiontitle">Vision Statement</label>
-               
+
                <div class="col-xs-12">
                     <button id="add-vission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addvisionModal"><span class="icon">&#xe035;</span> Add vission
@@ -240,7 +240,7 @@ require_once("../Resources/Includes/menu.php");
 
            <div class="form-group hidden value" id="actionlist">
                 <label class="col-xs-12" for="visiontitle">Value Statement</label>
-               
+
                <div class="col-xs-12">
                     <button id="add-value" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-left" data-toggle="modal"
                         data-target="#addvalueModal"><span class="icon">&#xe035;</span> Add value
@@ -248,7 +248,7 @@ require_once("../Resources/Includes/menu.php");
                     <textarea rows="5" cols="25" wrap="hard" class="form-control" name="valuestatement" id="valuetitle"
                         readonly><?php echo $rowsmission['VALUES_STATEMENT']; ?></textarea>
 
-                   
+
                    <button id="next-tab" type="button" class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right changeTab"> Next Tab
                    </button>
                 </div>

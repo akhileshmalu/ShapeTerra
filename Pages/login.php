@@ -20,9 +20,13 @@ if (isset($_POST['login'])) {
     if (empty($_POST['email']) || (empty($_POST['password']))) {
         $message[0] = "Invalid Email Address or password";
     } else {
-        require_once("../Resources/Includes/connect.php");         //Instance of Object class-connection Created
-        $email = test_input($_POST['email']);                       // Secured Input
-        $password = md5(test_input($_POST['password']));
+        require_once ("../Resources/Includes/initalize.php");
+        $initalize = new Initialize();
+        $initalize->checkSessionStatus();
+        $connection = $initalize->connection;        
+
+        $email = $initalize->test_input($_POST['email']);                       // Secured Input
+        $password = md5($initalize->test_input($_POST['password']));
 
         //Query into database for record check
         $sql = "SELECT * FROM PermittedUsers where NETWORK_USERNAME =:email AND PW_DEV =:password ";
@@ -41,6 +45,8 @@ if (isset($_POST['login'])) {
              */
 
             if ($record['USER_STATUS'] == '1') {
+                ini_set("session.cookie_secure", 1);
+                ini_set("session.cookie_httponly", 1);
                 session_start(); // Session Initiation
                 $_SESSION['login_email'] = $email;                   //session variable register
                 header("location:account.php");                     //redirect to account page

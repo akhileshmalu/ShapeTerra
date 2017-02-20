@@ -1,10 +1,9 @@
 <?php
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-require_once ("../Resources/Includes/connect.php");
+
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 
 $email = $_SESSION['login_email'];
 $sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE,SYS_USER_RIGHT, OU_ABBREV,FNAME,LNAME from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
@@ -157,4 +156,3 @@ $obj_pdf->writeHTML($content);
 $obj_pdf->Output('GoalSheet.pdf', 'I');
 
 ?>
-

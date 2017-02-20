@@ -6,12 +6,24 @@
 /*
  * Session & Error control Initialization.
  */
+<<<<<<< HEAD
 session_start();
 
 if (!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
+=======
+
+ require_once ("../Resources/Includes/initalize.php");
+ $initalize = new Initialize();
+ $initalize->checkSessionStatus();
+ $connection = $initalize->connection;
+
+$error = array();
+$errorflag =0;
+$BackToGoalOutHome = true;
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
 require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
@@ -35,11 +47,41 @@ $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
+<<<<<<< HEAD
 $goaloutcome = new GOALOUTCOME();
 
 // Blueprint Status information on title box
 $resultbroad = $goaloutcome->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
+=======
+/*
+ * faculty Award Grid ; conditional for provost & other users
+ */
+try {
+    if ($ouid == 4) {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+
+
+
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
+
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_STR);
+    }
+
+    $resultbroad->execute();
+    $rowbroad = $resultbroad->fetch(4);
+} catch(PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
 /*
  * Existing values to show for goal outcomes, If exist.
@@ -78,7 +120,40 @@ $goalviewpoint = array(
  */
 
 if(isset($_POST['savedraft'])) {
+<<<<<<< HEAD
     $message[0] = $goaloutcome->SaveDraft();
+=======
+
+    $goalstatus = $_POST['goal_status'];
+    $goalach = $initalize->mynl2br($_POST['goal_ach']);
+    $resutilzed = $initalize->mynl2br($_POST['goal_resutil']);
+    $goalconti = $initalize->mynl2br($_POST['goal_conti']);
+    $resneed = $initalize->mynl2br($_POST['resoneed']);
+    $goalincomplan = $initalize->mynl2br($_POST['goal_plan_incomp']);
+    $goalupcominplan = $initalize->mynl2br($_POST['goal_plan_upcoming']);
+    $goalreportstatus = "In Progress";
+    $contentlink_id = $_GET['linkid'];
+    $goal_id = $_GET['goal_id'];
+
+
+
+    $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_PLAN_INCOMPLT, GOAL_UPCOMING_PLAN )
+VALUES ('$goal_id','$author','$time','$goalreportstatus','$goalstatus','$goalach','$resutilzed','$goalconti','$resneed','$goalincomplan','$goalupcominplan')
+ON DUPLICATE KEY UPDATE `ID_UNIT_GOAL` = VALUES(`ID_UNIT_GOAL`), OUTCOMES_AUTHOR = VALUES(`OUTCOMES_AUTHOR`), MOD_TIMESTAMP = VALUES(`MOD_TIMESTAMP`),
+GOAL_REPORT_STATUS = VALUES(`GOAL_REPORT_STATUS`), GOAL_STATUS = VALUES(`GOAL_STATUS`), GOAL_ACHIEVEMENTS = VALUES(`GOAL_ACHIEVEMENTS`), GOAL_RSRCS_UTLZD = VALUES(`GOAL_RSRCS_UTLZD`),
+GOAL_CONTINUATION = VALUES(`GOAL_CONTINUATION`), GOAL_RSRCS_NEEDED = VALUES(`GOAL_RSRCS_NEEDED`); ";
+
+    $sqlgoalout .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
+
+    $sqlgoalout .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+
+    if($resultgoalout = $mysqli->multi_query($sqlgoalout)) {
+        $error[0] = "Goal Outcome Saved.";
+    } else{
+        $error[0] = "Goal Outcome could not be Saved.";
+    }
+
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 }
 
 if(isset($_POST['submit_approve'])) {
@@ -175,13 +250,13 @@ require_once("../Resources/Includes/menu.php");
 
                 <div id="goalstate" class="form-group col-xs-12">
                     <h3>Goal Statement </h3>
-                    <textarea  rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled readonly><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']);?></textarea>
+                    <textarea  rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled readonly><?php echo $initalize->mybr2nl($rowsunitgoal['GOAL_STATEMENT']);?></textarea>
                 </div>
 
 
                 <div id="goalalign" class="form-group col-xs-12">
                     <h3>Goal Alignment</h3>
-                    <textarea   rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
+                    <textarea   rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled readonly><?php echo $initalize->mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
 <!--                <label for ="goalview" ></label>-->
@@ -207,37 +282,37 @@ require_once("../Resources/Includes/menu.php");
 <!--                <label for ="goalach" ></label>-->
                 <div id="goalachcont" class="form-group col-xs-12 hidden">
                     <h3>Goal Achievement </h3>
-                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
+                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
                 </div>
 
 <!--                <label for ="goalresutil" ></label>-->
                 <div id="goalresutilcont" class="form-group col-xs-12 hidden">
                     <h3>Resources Utilized </h3>
-                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
+                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
                 </div>
 
 <!--                <label id ="goalcontilable" ></label>-->
                 <div id="goalconticont" class="form-group col-xs-12 hidden">
                     <h3>Goal Continuation </h3>
-                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
+                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
                 </div>
 
 <!--                <label for ="goalplanincomp" ></label>-->
                 <div id="goalincompcont" class="form-group col-xs-12 hidden">
                     <h3>Goal Plans for Incomplete Goal</h3>
-                    <textarea id="goalincomptext" name="goal_plan_incomp" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_PLAN_INCOMPLT']); ?></textarea>
+                    <textarea id="goalincomptext" name="goal_plan_incomp" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_PLAN_INCOMPLT']); ?></textarea>
                 </div>
 
 <!--                <label for ="goalplanupcom" ></label>-->
                 <div id="goalupcomincont" class="form-group col-xs-12 hidden">
                     <h3>Goal Upcoming Plans </h3>
-                    <textarea id="goalupcomintext" name="goal_plan_upcoming" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_UPCOMING_PLAN']); ?></textarea>
+                    <textarea id="goalupcomintext" name="goal_plan_upcoming" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_UPCOMING_PLAN']); ?></textarea>
                 </div>
 
 <!--                <label id = "resoneedlable" ></label>-->
                 <div id="resoneedcont" class="form-group col-xs-12 hidden">
                     <h3>Resource Needed </h3>
-                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
+                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
                 </div>
 
 

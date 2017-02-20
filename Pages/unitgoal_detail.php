@@ -8,22 +8,34 @@
 /*
  * Session & Error control Initialization.
  */
+<<<<<<< HEAD
 session_start();
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
 $message = array();
+=======
+ require_once ("../Resources/Includes/initalize.php");
+ $initalize = new Initialize();
+ $initalize->checkSessionStatus();
+ $connection = $initalize->connection;
+
+$error = array();
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 $errorflag =0;
 $BackToGoal = true;
 
 /*
+<<<<<<< HEAD
  * Connection to DataBase.
  */
 require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 /*
+=======
+>>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
  * Local & Session variable Initialization
  */
 $bpid = $_SESSION['bpid'];
@@ -80,17 +92,17 @@ $goalviewpoint = array(
 if(isset($_POST['goal_submit'])) {
     $contentlink_id = $_GET['linkid'];
     $goal_id = $_GET['goal_id'];
-    $goaltitle = mynl2br($_POST['goaltitle']);
+    $goaltitle = $initalize->mynl2br($_POST['goaltitle']);
 
     $unigoallink = $_POST['goallink'];
     foreach ($unigoallink as $value) {
         $unigoallinkname .= $value . ",";
     }
-    $goalstatement = mynl2br($_POST['goalstatement']);
-    $goalalignment = mynl2br($_POST['goalalignment']);
+    $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
+    $goalalignment = $initalize->mynl2br($_POST['goalalignment']);
     $goalview = $_POST['goal_viewpoint'];
-    $goalaction = mynl2br($_POST['goal_action']);
-    $goalnotes = mynl2br($_POST['goal_notes']);
+    $goalaction = $initalize->mynl2br($_POST['goal_action']);
+    $goalnotes = $initalize->mynl2br($_POST['goal_notes']);
 
     $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time',GOAL_STATUS = 'In Progress', UNIT_GOAL_TITLE = '$goaltitle', LINK_UNIV_GOAL = '$unigoallinkname',
 GOAL_VIEWPOINT = '$goalview', GOAL_STATEMENT = '$goalstatement', GOAL_ALIGNMENT = '$goalalignment', GOAL_ACTION_PLAN = '$goalaction', GOAL_NOTES = '$goalnotes'  WHERE ID_UNIT_GOAL = '$goal_id' ;";
@@ -113,19 +125,19 @@ GOAL_VIEWPOINT = '$goalview', GOAL_STATEMENT = '$goalstatement', GOAL_ALIGNMENT 
 if(isset($_POST['new_goal_submit'])) {
     $contentlink_id = $_GET['linkid'];
 
-    $goaltitle = mynl2br($_POST['goaltitle']);
+    $goaltitle = $initalize->mynl2br($_POST['goaltitle']);
 
     $unigoallink = $_POST['goallink'];
     foreach ($unigoallink as $value) {
         $unigoallinkname .= $value . ",";
     }
-    $goalstatement = mynl2br($_POST['goalstatement']);
-    $goalalignment = mynl2br($_POST['goalalignment']);
+    $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
+    $goalalignment = $initalize->mynl2br($_POST['goalalignment']);
     $goalview = $_POST['goal_viewpoint'];
-    $goalaction = mynl2br($_POST['goal_action']);
-    $goalnotes = mynl2br($_POST['goal_notes']);
+    $goalaction = $initalize->mynl2br($_POST['goal_action']);
+    $goalnotes = $initalize->mynl2br($_POST['goal_notes']);
 
-    $sqlunitgoal = "INSERT INTO `BP_UnitGoals` (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_VIEWPOINT, GOAL_STATEMENT, GOAL_ALIGNMENT, GOAL_ACTION_PLAN, GOAL_NOTES) 
+    $sqlunitgoal = "INSERT INTO `BP_UnitGoals` (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_VIEWPOINT, GOAL_STATEMENT, GOAL_ALIGNMENT, GOAL_ACTION_PLAN, GOAL_NOTES)
 VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalview','$goalstatement','$goalalignment','$goalaction','$goalnotes');";
 
     $sqlunitgoal .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
@@ -238,7 +250,7 @@ require_once("../Resources/Includes/menu.php");
                 </p>
 <!--                <input type="text" class="form-control form-indent wordCount" style="width: 90%" name="goaltitle" id="goaltitle" maxlength="150"-->
 <!--                       value="--><?php //echo $rowsexvalue['UNIT_GOAL_TITLE'] ?><!--" required>-->
-                <textarea  class="form-control form-indent wordCount" rows="2" col="50" style="width: 95%" name="goaltitle" id="goaltitle" maxlength="150" required><?php echo mybr2nl($rowsexvalue['UNIT_GOAL_TITLE']); ?></textarea>
+                <textarea  class="form-control form-indent wordCount" rows="2" col="50" style="width: 95%" name="goaltitle" id="goaltitle" maxlength="150" required><?php echo $initalize->mybr2nl($rowsexvalue['UNIT_GOAL_TITLE']); ?></textarea>
             </div>
             <div class="form-group">
                 <h3>Linked to University Goals (select all that apply)</h3>
@@ -289,7 +301,7 @@ require_once("../Resources/Includes/menu.php");
                     <small>Provide a full statement of the Goal. </small>
                 </p>
                 <textarea rows="5" class="form-control form-indent" style="width: 95%" name="goalstatement" id="goalstatement"
-                          required><?php echo mybr2nl($rowsexvalue['GOAL_STATEMENT']); ?></textarea>
+                          required><?php echo $initalize->mybr2nl($rowsexvalue['GOAL_STATEMENT']); ?></textarea>
             </div>
 
             <div class="form-group">
@@ -299,7 +311,7 @@ require_once("../Resources/Includes/menu.php");
                     <small>Explain how this Goal aligns to your unit's Mission, Vision, and Values.</small>
                 </p>
                 <textarea rows="5" class="form-control form-indent" style="width: 95%" name="goalalignment" id="goalalignment"
-                          required><?php echo mybr2nl($rowsexvalue['GOAL_ALIGNMENT']); ?></textarea>
+                          required><?php echo $initalize->mybr2nl($rowsexvalue['GOAL_ALIGNMENT']); ?></textarea>
             </div>
 
             <div  class="form-group">
@@ -307,7 +319,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Describe your general plan to achieve this goal over the life of the goal.</small>
                 </p>
-                <textarea name="goal_action" rows="5" cols="25" wrap="hard" style="width: 95%" class="form-control form-indent" ><?php echo mybr2nl($rowsexvalue['GOAL_ACTION_PLAN']); ?></textarea>
+                <textarea name="goal_action" rows="5" cols="25" wrap="hard" style="width: 95%" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexvalue['GOAL_ACTION_PLAN']); ?></textarea>
             </div>
 
             <div id="notes" class="form-group">
@@ -315,7 +327,7 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Provide any relevant notes about this forward-looking goal.</small>
                 </p>
-                <textarea name="goal_notes" rows="3" cols="25" wrap="hard" style="width: 95%" class="form-control form-indent" ><?php echo mybr2nl($rowsexvalue['GOAL_NOTES']); ?></textarea>
+                <textarea name="goal_notes" rows="3" cols="25" wrap="hard" style="width: 95%" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexvalue['GOAL_NOTES']); ?></textarea>
             </div>
 
             <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') { ?>
@@ -359,4 +371,3 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     });
 </script>
-

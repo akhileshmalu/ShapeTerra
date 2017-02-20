@@ -7,16 +7,14 @@
  * This Page controls Initiatives & Observations.
  */
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+
 $message = array();
 $errorflag =0;
 $BackToDashboard = true;
 
-require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION ['bpid'];
@@ -24,7 +22,6 @@ $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
 $bpayname = $_SESSION['bpayname'];
-
 
 if ($ouid == 4) {
     $ouabbrev = $_SESSION['bpouabbrev'];
@@ -109,7 +106,7 @@ require_once("../Resources/Includes/menu.php");
                     have extensive information or narrative to include, please provide a brief synopsis here, and upload
                     a Supplemental Info PDF in the provided space below.</p>
                 <textarea name="climate" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo mybr2nl($rowsExValue['CLIMATE_INCLUSION']); ?></textarea>
+                          required><?php echo $initalize->mybr2nl($rowsExValue['CLIMATE_INCLUSION']); ?></textarea>
             </div>
             <h3>Supplemental Info</h3>
             <div id="suppinfo" class="form-group form-indent">
