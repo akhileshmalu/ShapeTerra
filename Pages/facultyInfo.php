@@ -119,7 +119,7 @@ require_once("../Resources/Includes/menu.php");
                     You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac)</small></p>
                 <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" >
                 <?php
-                    echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']);
+                    echo $initalize->mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']);
                 ?>
 
                 </textarea>
@@ -131,7 +131,7 @@ require_once("../Resources/Includes/menu.php");
 
                 <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control">
                 <?php
-                    echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']);
+                    echo $initalize->mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']);
                 ?>
                 </textarea>
             </div>

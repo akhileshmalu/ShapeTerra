@@ -71,8 +71,8 @@ $rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 //    foreach ($unigoallink as $value) {
 //        $unigoallinkname .= $value . ",";
 //    }
-//    $goalstatement = mynl2br($_POST['goalstatement']);
-//    $goalalignment = mynl2br($_POST['goalalignment']);
+//    $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
+//    $goalalignment = $initalize->mynl2br($_POST['goalalignment']);
 //
 //
 //    $sqlcreatebp .= "INSERT INTO `BP_UnitGoals` ( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";

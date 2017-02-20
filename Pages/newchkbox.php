@@ -19,13 +19,13 @@ $sqlbroad = "SELECT * FROM broadcast inner join Hierarchy on BROADCAST_OU = Hier
 $resultbroad = $mysqli1->query($sqlbroad);
 $rowsbroad = $resultbroad->fetch_assoc();
 $ay = $rowsbroad['BROADCAST_AY'];
-$ayid = stringtoid($ay);
+$ayid = $initalize->stringtoid($ay);
 
 /*
  * Calculate Previous Year String
  */
 $prevay = $ayid - 101;
-$aydesc = idtostring($prevay);
+$aydesc = $initalize->idtostring($prevay);
 
 $author = $_SESSION['login_email'];
 $time = date('Y-m-d H:i:s');
@@ -38,8 +38,8 @@ if(isset($_POST['goal_submit'])) {
     foreach ($unigoallink as $value) {
         $unigoallinkname .= $value . ",";
     }
-    $goalstatement = mynl2br($_POST['goalstatement']);
-    $goalalignment = mynl2br($_POST['goalalignment']);
+    $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
+    $goalalignment = $initalize->mynl2br($_POST['goalalignment']);
 
     $sqlcreatebp .= "INSERT INTO tempunitgoals ( OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_STATEMENT, GOAL_ALIGNMENT) VALUES ('$ouabbrev','$author','$time','$ay','$goaltitle','$unigoallinkname','$goalstatement','$goalalignment');";
 

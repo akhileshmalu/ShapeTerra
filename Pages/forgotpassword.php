@@ -1,5 +1,9 @@
 <?php
 
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+
 $message = array();
 $errorflag = 0;
 
@@ -20,8 +24,7 @@ if(isset($_POST['forgot'])){
     if($errorflag == 0){
 
         //Establish Connection
-        require_once ("../Resources/Includes/connect.php");
-        $email = test_input($_POST['email']);
+        $email = $initalize->test_input($_POST['email']);
 
         $sql ="select FNAME,PW_DEV FROM PermittedUsers where NETWORK_USERNAME = '$email'";
         $result = $mysqli -> query($sql);
@@ -193,7 +196,7 @@ require_once("../Resources/Includes/header.php");
                         c0.3-0.1,0.4,0,0.6,0.3c0,0,1,2,1,2.1C145.9,88.5,145.9,88.6,145.6,89C145.7,88.9,145.7,88.9,145.6,89z"/>
                 </g>
                 <polygon fill="#FFFFFF" points="147.3,52.2 160.3,52.2 158.8,54.6 148.7,54.6                 "/>
-                <polygon fill="#FFFFFF" points="149,55.7 158.8,55.7 158.8,64.2 174.5,64.2 174.5,65.3 158.8,65.3 158.8,76.1 156.8,76.1 
+                <polygon fill="#FFFFFF" points="149,55.7 158.8,55.7 158.8,64.2 174.5,64.2 174.5,65.3 158.8,65.3 158.8,76.1 156.8,76.1
                     156.8,57.8 151.1,57.8 151.1,76.1 149,76.1               "/>
                 <path fill="#FFFFFF" d="M161.2,58.8c1.1-0.5,1.7,0,1.7,0v17.3h-1.7V58.8z"/>
                 <path fill="#FFFFFF" d="M165.5,60.8c1.1-0.5,1.7,0,1.7,0v15.3h-1.7V60.8z"/>
@@ -203,7 +206,7 @@ require_once("../Resources/Includes/header.php");
                     c1.1,0.8,1.6,1.4,2.5,2.5c1.1,1.4,1.6,2.3,2.3,4v-5.2c-0.8-0.7-1.3-1.1-2.3-1.7c-1.5-0.9-2.5-1.2-4.2-1.6l-4.1,4.9h3.1l-2.8,4.3
                     h2.6l-3.1,3.3l0,15.8L142.6,76.1z"/>
                 <polygon fill="#FFFFFF" points="127.9,52.2 114.9,52.2 116.3,54.6 126.5,54.6                 "/>
-                <polygon fill="#FFFFFF" points="126.1,55.7 116.3,55.7 116.3,64.2 100.7,64.2 100.7,65.3 116.3,65.3 116.3,76.1 118.3,76.1 
+                <polygon fill="#FFFFFF" points="126.1,55.7 116.3,55.7 116.3,64.2 100.7,64.2 100.7,65.3 116.3,65.3 116.3,76.1 118.3,76.1
                     118.3,57.8 124.1,57.8 124.1,76.1 126.1,76.1                 "/>
                 <path fill="#FFFFFF" d="M113.9,58.8c-1.1-0.5-1.7,0-1.7,0v17.3h1.7V58.8z"/>
                 <path fill="#FFFFFF" d="M109.6,60.8c-1.1-0.5-1.7,0-1.7,0v15.3h1.7V60.8z"/>
@@ -269,8 +272,8 @@ require_once("../Resources/Includes/header.php");
             </g>
         </g>
     </g>
-        </switch>  
-    <h1 class="col-xs-12">Forgot your password?</h1>   
+        </switch>
+    <h1 class="col-xs-12">Forgot your password?</h1>
     <div id="login-form" class="col-xs-6 col-xs-offset-3 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
     <form action="" id="forgotpassword" name="forgotpasswordform" method="POST">
         <label id="error" class="text-center"> <?php foreach ($message as $value)echo "<span class=\"icon\">&#xe063;</span> ".$value; ?> </label>
@@ -289,6 +292,3 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/footer.php");
 ?>
 <script src="../Resources/Library/js/login.js"></script>
-
-
-

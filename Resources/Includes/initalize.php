@@ -4,7 +4,8 @@
 
     public $connection;
 
-    function __construct(){
+    function __construct()
+    {
 
       //error logging set to 0 for prod
       error_reporting(1);
@@ -36,7 +37,8 @@
 
     }
 
-    private function connectToDB(){
+    private function connectToDB()
+    {
 
       define('HOSTNAME', "localhost");
       define("USERNAME", "root");
@@ -133,7 +135,7 @@
         return strtr($text, array("\r\n" => '<br />', "\r" => '<br />', "\n" => '<br />', ";" => '&#59;', "'" => '&#39;'));
     }
 
-    public function mybr2nl($text)
+    public function $initalize->mybr2nl($text)
     {
         return strtr($text, array("<br />" => "\r\n", "&#39;" => "'", "&#59;" => ";"));
     }

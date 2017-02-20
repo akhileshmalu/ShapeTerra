@@ -37,13 +37,13 @@ $sqlbroad = "SELECT * FROM broadcast inner join Hierarchy on BROADCAST_OU = Hier
 $resultbroad = $mysqli1->query($sqlbroad);
 $rowsbroad = $resultbroad->fetch_assoc();
 $ay = $rowsbroad['BROADCAST_AY'];
-$ayid = stringtoid($ay);
+$ayid = $initalize->stringtoid($ay);
 
 /*
  * Calculate Previous Year String
  */
 $prevay = $ayid - 101;
-$aydesc = idtostring($prevay);
+$aydesc = $initalize->idtostring($prevay);
 
 $author = $_SESSION['login_email'];
 $time = date('Y-m-d H:i:s');
@@ -76,8 +76,8 @@ if(isset($_POST['goal_submit'])) {
     foreach ($unigoallink as $value) {
         $unigoallinkname .= $value . ",";
     }
-    $goalstatement = mynl2br($_POST['goalstatement']);
-    $goalalignment = mynl2br($_POST['goalalignment']);
+    $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
+    $goalalignment = $initalize->mynl2br($_POST['goalalignment']);
 //
 //    $sqlcreatebp.= "CREATE TABLE IF NOT EXISTS tempunitgoals (
 //  `ID_UNIT_GOAL` int(4) NOT NULL,
@@ -117,9 +117,9 @@ if (isset($_POST['approve'])) {
 
     if ($errorflag != 1) {
         $goalid = $_POST['goaltitlelist'];
-        $missionstatement = mynl2br($_POST['missionstatement']);
-        $visionstatement = mynl2br($_POST['visionstatement']);
-        $valuestatement = mynl2br($_POST['valuestatement']);
+        $missionstatement = $initalize->mynl2br($_POST['missionstatement']);
+        $visionstatement = $initalize->mynl2br($_POST['visionstatement']);
+        $valuestatement = $initalize->mynl2br($_POST['valuestatement']);
 
 
         //Mission , Vision , value Statement recorded for BP Academic Year

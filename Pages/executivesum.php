@@ -197,7 +197,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input"
                                   type="textarea" class="form-control wordCount"
-                                  required><?php echo mybr2nl($rowsExValue["INTRODUCTION"]); ?></textarea>
+                                  required><?php echo $initalize->mybr2nl($rowsExValue["INTRODUCTION"]); ?></textarea>
                     </div>
                     <h3>Highlights</h3>
                     <div id="highlights" class="form-group form-indent">
@@ -210,7 +210,7 @@ require_once("../Resources/Includes/menu.php");
                         <textarea rows="5" cols="25" maxlength="525" id="highlights-input" name="highlights-input"
                                   type="textarea"
                                   class="form-control wordCount"
-                        ><?php echo mybr2nl($rowsExValue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
+                        ><?php echo $initalize->mybr2nl($rowsExValue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
                     </div>
 
                     <!--                      Edit Control-->

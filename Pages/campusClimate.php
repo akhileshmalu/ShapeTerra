@@ -106,7 +106,7 @@ require_once("../Resources/Includes/menu.php");
                     have extensive information or narrative to include, please provide a brief synopsis here, and upload
                     a Supplemental Info PDF in the provided space below.</p>
                 <textarea name="climate" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo mybr2nl($rowsExValue['CLIMATE_INCLUSION']); ?></textarea>
+                          required><?php echo $initalize->mybr2nl($rowsExValue['CLIMATE_INCLUSION']); ?></textarea>
             </div>
             <h3>Supplemental Info</h3>
             <div id="suppinfo" class="form-group form-indent">

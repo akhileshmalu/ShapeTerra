@@ -25,8 +25,8 @@ if(isset($_POST['submit'])) {
         $enddate = $_POST['enddate'];
         $censusdate = $_POST['censusdate'];
 
-        $id = stringdatestoid($startdate,$enddate);
-        $desc = idtostring($id);
+        $id = $initalize->stringdatestoid($startdate,$enddate);
+        $desc = $initalize->idtostring($id);
 
         try
         {

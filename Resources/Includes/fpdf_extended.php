@@ -206,7 +206,7 @@
   $pdf->Write(5,"Introduction");
   $pdf->Ln(7);
   $pdf->setFont("Arial","",12);
-  $pdf->Write(5,mybr2nl($data["INTRODUCTION"]));
+  $pdf->Write(5,$initalize->mybr2nl($data["INTRODUCTION"]));
 
   $pdf->Ln(15);
   $pdf->setFont("Arial","B",16);
@@ -220,7 +220,7 @@
   for ($i = 0; count($highlightsArray) > $i; $i++){
 
     $pdf->Ln(5);
-    $pdf->Write(5,chr(127).mybr2nl($highlightsArray[$i]));
+    $pdf->Write(5,chr(127).$initalize->mybr2nl($highlightsArray[$i]));
 
   }
 
@@ -336,7 +336,7 @@ $pdf->Write(5,$ouName);
   $pdf->setX(15);
   $pdf->SetFont('Arial','',11);
   $pdf->Ln(5);
-  $pdf->Write(5,mybr2nl($data["MISSION_STATEMENT"]));
+  $pdf->Write(5,$initalize->mybr2nl($data["MISSION_STATEMENT"]));
   $pdf->setX(30);
   $pdf->Ln(5);
   $pdf->Write(5,$data["MISSION_DATE_UPDATED"]);
@@ -349,7 +349,7 @@ $pdf->Write(5,$ouName);
   $pdf->setX(15);
   $pdf->SetFont('Arial','',11);
   $pdf->Ln(5);
-  $pdf->Write(5,mybr2nl($data["VISION_STATEMENT"]));
+  $pdf->Write(5,$initalize->mybr2nl($data["VISION_STATEMENT"]));
   $pdf->setX(30);
   $pdf->Ln(5);
   $pdf->Write(5,$data["VISION_DATE_UPDATED"]);
@@ -362,7 +362,7 @@ $pdf->Write(5,$ouName);
   $pdf->setX(15);
   $pdf->SetFont('Arial','',11);
   $pdf->Ln(5);
-  $pdf->Write(5,mybr2nl($data["VALUES_STATEMENT"]));
+  $pdf->Write(5,$initalize->mybr2nl($data["VALUES_STATEMENT"]));
 
   $pdf->AddPage();
 
@@ -403,15 +403,15 @@ $pdf->Write(5,$ouName);
     $pdf->SetDrawColor(0, 0, 0);
     $pdf->setTextColor(0,0,0);
 
-    $pdf->Row(array("Goal Statement",mybr2nl($data["GOAL_STATEMENT"])));
+    $pdf->Row(array("Goal Statement",$initalize->mybr2nl($data["GOAL_STATEMENT"])));
     $pdf->Row(array("Linkage to University Goal",$universityGoals));
     $pdf->Row(array("Alignment with Mission, Vision, and Values",$data["GOAL_ALIGNMENT"]));
-    $pdf->Row(array("Status",mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
-    $pdf->Row(array("Achievements",mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
-    $pdf->Row(array("Resources Utilized",mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
-    $pdf->Row(array("Continuation",mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
-    $pdf->Row(array("Resources Needed",mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
-    $pdf->Row(array("Plans for upcoming year (if not completed)",mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
+    $pdf->Row(array("Status",$initalize->mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
+    $pdf->Row(array("Achievements",$initalize->mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
+    $pdf->Row(array("Resources Utilized",$initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
+    $pdf->Row(array("Continuation",$initalize->mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
+    $pdf->Row(array("Resources Needed",$initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
+    $pdf->Row(array("Plans for upcoming year (if not completed)",$initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
 
   }
 
@@ -451,15 +451,15 @@ $pdf->Write(5,$ouName);
     $pdf->SetDrawColor(0, 0, 0);
     $pdf->setTextColor(0,0,0);
 
-    $pdf->Row(array("Goal Statement",mybr2nl($data["GOAL_STATEMENT"])));
+    $pdf->Row(array("Goal Statement",$initalize->mybr2nl($data["GOAL_STATEMENT"])));
     $pdf->Row(array("Linkage to University Goal",$universityGoals));
-    $pdf->Row(array("Alignment with Mission, Vision, and Values",mybr2nl($data["GOAL_ALIGNMENT"])));
-    $pdf->Row(array("Status",mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
-    $pdf->Row(array("Achievements",mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
-    $pdf->Row(array("Resources Utilized",mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
-    $pdf->Row(array("Continuation",mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
-    $pdf->Row(array("Resources Needed",mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
-    $pdf->Row(array("Plans for upcoming year (if not completed)",mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
+    $pdf->Row(array("Alignment with Mission, Vision, and Values",$initalize->mybr2nl($data["GOAL_ALIGNMENT"])));
+    $pdf->Row(array("Status",$initalize->mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
+    $pdf->Row(array("Achievements",$initalize->mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
+    $pdf->Row(array("Resources Utilized",$initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
+    $pdf->Row(array("Continuation",$initalize->mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
+    $pdf->Row(array("Resources Needed",$initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
+    $pdf->Row(array("Plans for upcoming year (if not completed)",$initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
 
   }
 
@@ -499,15 +499,15 @@ $pdf->Write(5,$ouName);
     $pdf->SetDrawColor(0, 0, 0);
     $pdf->setTextColor(0,0,0);
 
-    $pdf->Row(array("Goal Statement",mybr2nl($data["GOAL_STATEMENT"])));
+    $pdf->Row(array("Goal Statement",$initalize->mybr2nl($data["GOAL_STATEMENT"])));
     $pdf->Row(array("Linkage to University Goal",$universityGoals));
-    $pdf->Row(array("Alignment with Mission, Vision, and Values",mybr2nl($data["GOAL_ALIGNMENT"])));
-    $pdf->Row(array("Status",mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
-    $pdf->Row(array("Achievements",mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
-    $pdf->Row(array("Resources Utilized",mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
-    $pdf->Row(array("Continuation",mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
-    $pdf->Row(array("Resources Needed",mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
-    $pdf->Row(array("Plans for upcoming year (if not completed)",mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
+    $pdf->Row(array("Alignment with Mission, Vision, and Values",$initalize->mybr2nl($data["GOAL_ALIGNMENT"])));
+    $pdf->Row(array("Status",$initalize->mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
+    $pdf->Row(array("Achievements",$initalize->mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
+    $pdf->Row(array("Resources Utilized",$initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
+    $pdf->Row(array("Continuation",$initalize->mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
+    $pdf->Row(array("Resources Needed",$initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
+    $pdf->Row(array("Plans for upcoming year (if not completed)",$initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
 
   }
 
@@ -625,7 +625,7 @@ $pdf->Write(5,$ouName);
   while($data = $getCollaborations->fetch()){
 
     $pdf->Ln(5);
-    $pdf->Write(5,chr(127)." ".mybr2nl($data["COLLAB_INTERNAL"]));
+    $pdf->Write(5,chr(127)." ".$initalize->mybr2nl($data["COLLAB_INTERNAL"]));
 
   }
 
@@ -645,7 +645,7 @@ $pdf->Write(5,$ouName);
   while($data = $getCollaborations->fetch()){
 
     $pdf->Ln(5);
-    $pdf->Write(5,chr(127)." ".mybr2nl($data["COLLAB_EXTERNAL"]));
+    $pdf->Write(5,chr(127)." ".$initalize->mybr2nl($data["COLLAB_EXTERNAL"]));
 
   }
 
@@ -665,7 +665,7 @@ $pdf->Write(5,$ouName);
   while($data = $getCollaborations->fetch()){
 
     $pdf->Ln(5);
-    $pdf->Write(5,chr(127)." ".mybr2nl($data["COLLAB_OTHER"]));
+    $pdf->Write(5,chr(127)." ".$initalize->mybr2nl($data["COLLAB_OTHER"]));
 
   }
 

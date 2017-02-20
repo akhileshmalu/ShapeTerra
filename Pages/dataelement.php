@@ -93,28 +93,28 @@ $resulttopicareas = $mysqli -> query($sqltopicareas);
 
 if(isset($_POST['save'])) {
 
-    $funcname = mynl2br($_POST['functionalname']);
-    $techname = mynl2br($_POST['technicalname']);
-    $syslabel = mynl2br($_POST['syslabel']);
+    $funcname = $initalize->mynl2br($_POST['functionalname']);
+    $techname = $initalize->mynl2br($_POST['technicalname']);
+    $syslabel = $initalize->mynl2br($_POST['syslabel']);
     $printlabel = $_POST['printlabel'];
     $dataclass = $_POST['dataclass'];
-    $basicmean = mynl2br($_POST['basicmean']);
-    $userinst = mynl2br($_POST['userinstr']);
+    $basicmean = $initalize->mynl2br($_POST['basicmean']);
+    $userinst = $initalize->mynl2br($_POST['userinstr']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
     foreach ($bptopic as $item){
         $bptopicstring .=$item.',';
     }
-    $usage = mynl2br($_POST['usage']);
-    $datasource = mynl2br($_POST['datasource']);
+    $usage = $initalize->mynl2br($_POST['usage']);
+    $datasource = $initalize->mynl2br($_POST['datasource']);
     $resparty = $_POST['resparty'];
     $contact = $_POST['contactperson'];
     $datatype = $_POST['datatype'];
-    $datatrans = mynl2br($_POST['datatrans']);
-    $valuemand = mynl2br($_POST['valuemand']);
-    $permitvalue = mynl2br($_POST['permitvalue']);
-    $constraint = mynl2br($_POST['constraint']);
-    $notes = mynl2br($_POST['notes']);
+    $datatrans = $initalize->mynl2br($_POST['datatrans']);
+    $valuemand = $initalize->mynl2br($_POST['valuemand']);
+    $permitvalue = $initalize->mynl2br($_POST['permitvalue']);
+    $constraint = $initalize->mynl2br($_POST['constraint']);
+    $notes = $initalize->mynl2br($_POST['notes']);
     $defauthorfname = $_POST['defauthorfname'];
     $defauthorlname = $_POST['defauthorlname'];
 
@@ -135,28 +135,28 @@ VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTH
 
 if(isset($_POST['directsave'])) {
 
-    $funcname = mynl2br($_POST['functionalname']);
-    $techname = mynl2br($_POST['technicalname']);
-    $syslabel = mynl2br($_POST['syslabel']);
+    $funcname = $initalize->mynl2br($_POST['functionalname']);
+    $techname = $initalize->mynl2br($_POST['technicalname']);
+    $syslabel = $initalize->mynl2br($_POST['syslabel']);
     $printlabel = $_POST['printlabel'];
     $dataclass = $_POST['dataclass'];
-    $basicmean = mynl2br($_POST['basicmean']);
-    $userinst = mynl2br($_POST['userinstr']);
+    $basicmean = $initalize->mynl2br($_POST['basicmean']);
+    $userinst = $initalize->mynl2br($_POST['userinstr']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
     foreach ($bptopic as $item){
         $bptopicstring .=$item.',';
     }
-    $usage = mynl2br($_POST['usage']);
-    $datasource = mynl2br($_POST['datasource']);
+    $usage = $initalize->mynl2br($_POST['usage']);
+    $datasource = $initalize->mynl2br($_POST['datasource']);
     $resparty = $_POST['resparty'];
     $contact = $_POST['contactperson'];
     $datatype = $_POST['datatype'];
-    $datatrans = mynl2br($_POST['datatrans']);
-    $valuemand = mynl2br($_POST['valuemand']);
-    $permitvalue = mynl2br($_POST['permitvalue']);
-    $constraint = mynl2br($_POST['constraint']);
-    $notes = mynl2br($_POST['notes']);
+    $datatrans = $initalize->mynl2br($_POST['datatrans']);
+    $valuemand = $initalize->mynl2br($_POST['valuemand']);
+    $permitvalue = $initalize->mynl2br($_POST['permitvalue']);
+    $constraint = $initalize->mynl2br($_POST['constraint']);
+    $notes = $initalize->mynl2br($_POST['notes']);
     $defauthorfname = $_POST['defauthorfname'];
     $defauthorlname = $_POST['defauthorlname'];
 
@@ -178,28 +178,28 @@ VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTH
 
 if(isset($_POST['update'])) {
 
-    $funcname = mynl2br($_POST['functionalname']);
-    $techname = mynl2br($_POST['technicalname']);
-    $syslabel = mynl2br($_POST['syslabel']);
+    $funcname = $initalize->mynl2br($_POST['functionalname']);
+    $techname = $initalize->mynl2br($_POST['technicalname']);
+    $syslabel = $initalize->mynl2br($_POST['syslabel']);
     $printlabel = $_POST['printlabel'];
     $dataclass = $_POST['dataclass'];
-    $basicmean = mynl2br($_POST['basicmean']);
-    $userinst = mynl2br($_POST['userinstr']);
+    $basicmean = $initalize->mynl2br($_POST['basicmean']);
+    $userinst = $initalize->mynl2br($_POST['userinstr']);
     $timebasis = $_POST['timebasis'];
     $bptopic = $_POST['bptopic'];
     foreach ($bptopic as $item){
         $bptopicstring .=$item.',';
     }
-    $usage = mynl2br($_POST['usage']);
-    $datasource = mynl2br($_POST['datasource']);
+    $usage = $initalize->mynl2br($_POST['usage']);
+    $datasource = $initalize->mynl2br($_POST['datasource']);
     $resparty = $_POST['resparty'];
     $contact = $_POST['contactperson'];
     $datatype = $_POST['datatype'];
-    $datatrans = mynl2br($_POST['datatrans']);
-    $valuemand = mynl2br($_POST['valuemand']);
-    $permitvalue = mynl2br($_POST['permitvalue']);
-    $constraint = mynl2br($_POST['constraint']);
-    $notes = mynl2br($_POST['notes']);
+    $datatrans = $initalize->mynl2br($_POST['datatrans']);
+    $valuemand = $initalize->mynl2br($_POST['valuemand']);
+    $permitvalue = $initalize->mynl2br($_POST['permitvalue']);
+    $constraint = $initalize->mynl2br($_POST['constraint']);
+    $notes = $initalize->mynl2br($_POST['notes']);
     $defauthorfname = $_POST['defauthorfname'];
     $defauthorlname = $_POST['defauthorlname'];
 
@@ -371,7 +371,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="basicmean" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
+                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
                     </div>
 
                     <h3>User Instructions</h3>
@@ -382,7 +382,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="3" name="userinstr" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['USER_INSTRCTN']); ?></textarea>
+                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['USER_INSTRCTN']); ?></textarea>
                     </div>
 
                     <h3>Time Basis for Outcome <span style="color: red"><sup>*</sup></span></h3>
@@ -447,7 +447,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="usage" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['INTERP_USAGE']); ?></textarea>
+                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['INTERP_USAGE']); ?></textarea>
                     </div>
 
                     <button id="next-tab" type="button"
@@ -473,7 +473,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <textarea rows="4" name="datasource" cols="25" wrap="hard"
                                   class="form-control"
-                                  required><?php echo mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
+                                  required><?php echo $initalize->mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
                     </div>
 
                     <h3>Responsible Party <span
@@ -539,7 +539,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="datatrans" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['DATA_TRANSFORM']); ?></textarea>
+                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['DATA_TRANSFORM']); ?></textarea>
                     </div>
 
                     <h3>Values Mandatory <span
@@ -572,7 +572,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="permitvalue" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_PERMITTED']); ?></textarea>
+                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['VALUES_PERMITTED']); ?></textarea>
                     </div>
 
                     <h3>Constraints on Values </h3>
@@ -589,7 +589,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="constraint" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_CONSTRAINTS']); ?></textarea>
+                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['VALUES_CONSTRAINTS']); ?></textarea>
                     </div>
 
                     <h3>Notes / Misc </h3>
@@ -600,7 +600,7 @@ require_once("../Resources/Includes/menu.php");
                             <small>Any miscellaneous notes that do not fit elsewhere.</small>
                         </p>
                         <textarea rows="4" name="notes" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['NOTES_DATA_ELEMENT']); ?></textarea>
+                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['NOTES_DATA_ELEMENT']); ?></textarea>
                     </div>
 
                     <!--                    <button id="next-tab" type="button"-->

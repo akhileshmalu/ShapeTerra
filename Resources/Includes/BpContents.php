@@ -186,8 +186,8 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
         $collname = $_POST['college-school-input'];
         $deanname = $_POST['deans-name-input'];
         $deantitle = $_POST['deans-title-input'];
-        $introduction = mynl2br($_POST['introduction-input']);
-        $highlights = mynl2br($_POST['highlights-input']);
+        $introduction = $initalize->mynl2br($_POST['introduction-input']);
+        $highlights = $initalize->mynl2br($_POST['highlights-input']);
         $bpid = $_SESSION['bpid'];
         $this->time = date('Y-m-d H:i:s');
 
@@ -368,10 +368,10 @@ Class ACADEMICPROGRAM extends BPCONTENTS
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
-        $programranking = mynl2br($_POST['programranking']);
-        $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
-        $launch = mynl2br($_POST['launch']);
-        $programterminations = mynl2br($_POST['programterminators']);
+        $programranking = $initalize->mynl2br($_POST['programranking']);
+        $instructionalmodalities = $initalize->mynl2br($_POST['instructionalmodalities']);
+        $launch = $initalize->mynl2br($_POST['launch']);
+        $programterminations = $initalize->mynl2br($_POST['programterminators']);
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
             $target_dir = "../uploads/ac_programs/";
@@ -507,10 +507,10 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
 //       }
 
 
-//         $programranking = mynl2br($_POST['programranking']);
-//         $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
-//         $launch = mynl2br($_POST['launch']);
-//         $programterminations = mynl2br($_POST['programterminators']);
+//         $programranking = $initalize->mynl2br($_POST['programranking']);
+//         $instructionalmodalities = $initalize->mynl2br($_POST['instructionalmodalities']);
+//         $launch = $initalize->mynl2br($_POST['launch']);
+//         $programterminations = $initalize->mynl2br($_POST['programterminators']);
 
 //         if ($_FILES['supinfo']['tmp_name'] != "") {
 //             $target_dir = "../uploads/ac_programs/";
@@ -600,9 +600,9 @@ Class FACULTYINFO extends BPCONTENTS
 {
     public function SaveDraft()
     {
-      $facdev = mynl2br($_POST['factextarea']);
+      $facdev = $initalize->mynl2br($_POST['factextarea']);
 
-      $createact = mynl2br($_POST['cractivity']);
+      $createact = $initalize->mynl2br($_POST['cractivity']);
 
       $contentlink_id = $_GET['linkid'];
 
@@ -684,10 +684,10 @@ Class FACULTYINFO extends BPCONTENTS
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
-        $alumni = mynl2br($_POST['alumni']);
-        $development = mynl2br($_POST['development']);
-        $fundraising = mynl2br($_POST['fundraising']);
-        $gifts = mynl2br($_POST['gifts']);
+        $alumni = $initalize->mynl2br($_POST['alumni']);
+        $development = $initalize->mynl2br($_POST['development']);
+        $fundraising = $initalize->mynl2br($_POST['fundraising']);
+        $gifts = $initalize->mynl2br($_POST['gifts']);
         $supinfopath = null;
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
@@ -780,7 +780,7 @@ Class CAMPUSCLIMATE extends BPCONTENTS
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
-        $climate = mynl2br($_POST['climate']);
+        $climate = $initalize->mynl2br($_POST['climate']);
         $supinfopath = null;
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
@@ -870,9 +870,9 @@ Class COLLABORATION extends BPCONTENTS
     {
         $this->time = date('Y-m-d H:i:s');
         $supinfopath = null;
-        $internalcollaborators = mynl2br($_POST['internalcollaborators']);
-        $externalcollaborators = mynl2br($_POST['externalcollaborators']);
-        $othercollaborators = mynl2br($_POST['othercollaborators']);
+        $internalcollaborators = $initalize->mynl2br($_POST['internalcollaborators']);
+        $externalcollaborators = $initalize->mynl2br($_POST['externalcollaborators']);
+        $othercollaborators = $initalize->mynl2br($_POST['othercollaborators']);
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
             $target_dir = "../uploads/collaborations";

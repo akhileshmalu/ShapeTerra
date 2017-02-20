@@ -14,7 +14,7 @@ if(isset($_GET['email']) && !empty($_GET['email']) AND isset($_GET['hash']) && !
     //Activation from First time user
     if ($_GET['type'] == 1) {
 
-        $email = test_input($_GET['email']);
+        $email = $initalize->test_input($_GET['email']);
         $hash = $_GET['hash'];
         $sql = "Select * from PermittedUsers where NETWORK_USERNAME = '$email' and HASH ='$hash' ";
         $result = $mysqli->query($sql);
@@ -35,7 +35,7 @@ if(isset($_GET['email']) && !empty($_GET['email']) AND isset($_GET['hash']) && !
 
     // Activation from Lost your Password
     if ($_GET['type'] == 0) {
-        $email = test_input($_GET['email']);
+        $email = $initalize->test_input($_GET['email']);
         $hash = $_GET['hash'];
 
         $sql = "select * FROM PermittedUsers where NETWORK_USERNAME = '$email' and hash ='$hash'";

@@ -37,7 +37,7 @@ $goalidlist = array();
 
 if(isset($_POST['save'])) {
 
-    $execsummary = mynl2br($_POST['execsummary']);
+    $execsummary = $initalize->mynl2br($_POST['execsummary']);
 
     $sqlgoalout = "UPDATE broadcast SET BROADCAST_EXECSUM ='$execsummary', BROADCAST_STATUS = 'Completed by User', BROADCAST_STATUS_OTHERS = 'Completed by User',Menucontrol ='Approver',LastModified='$time' where BROADCAST_AY='$aydesc' and BROADCAST_OU ='$ou';";
 
@@ -46,7 +46,7 @@ if(isset($_POST['save'])) {
     $indexgoaloc = "goaloutcome".$i;
     $indexgoalunit = "goalno".$i;
 
-        $outcome = mynl2br($_POST[ $indexgoaloc]);
+        $outcome = $initalize->mynl2br($_POST[ $indexgoaloc]);
         $idoutcome = $_POST[$indexgoalunit];
 
         $sqlgoalout .= "INSERT INTO BP_UnitGoalOutcomes(ID_UNIT_GOAL,OUTCOMES_AUTHOR,MOD_TIMESTAMP,GOAL_ACHIEVEMENTS) VALUES ('$idoutcome','$author','$time','$outcome');";
