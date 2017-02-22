@@ -15,12 +15,9 @@ if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-<<<<<<< HEAD
+
 require("../Resources/Includes/data.php");
 $message = array();
-=======
-$error = array();
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 $errorflag = 0;
 $BackToDashboard = true;
 
@@ -40,28 +37,12 @@ $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-<<<<<<< HEAD
+
 $Facultyawards = new FACULTYAWARDS();
 
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
 
-try {
-    if ($ouid == 4) {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY= :bpayname and Hierarchy.OU_ABBREV = :ouabbrev;";
-
-        $resultbroad = $connection->prepare($sqlbroad);
-        $resultbroad->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-        $resultbroad->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-        
-        
-
-    } else {
-        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY = :bpayname and BROADCAST_OU = :ouid;";
-=======
 $BpContent = new BPCONTENTS();
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
+
 
 //  Blueprint Status information on title box
 $resultbroad = $BpContent->BlueprintStatusDisplay();
@@ -126,7 +107,7 @@ if(isset($_POST['award_submit'])){
             $sqlAcFacAward .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
 
-<<<<<<< HEAD
+
     if($mysqli->multi_query($sqlAcFacAward)){
 
         $Data = new Data();
@@ -144,12 +125,11 @@ if(isset($_POST['submit_approve'])) {
     $contentlink_id = $_GET['linkid'];
 
     try {
-        $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= :author ,MOD_TIMESTAMP =:time  where ID_CONTENT = :contentlink_id;";
-=======
+
             $sqlAcFacAward .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
 BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
         }
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
+
 
         $resultaward = $connection->prepare($sqlAcFacAward);
 
@@ -176,20 +156,13 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         }
 
         if($resultaward->execute()) {
-
-<<<<<<< HEAD
-            $message[0] = "Faculty Awards submitted Successfully";
-
-        } else {
-            $message[0] = "Faculty Awards Could not be submitted. Please Retry.";
-=======
             $Data = new Data($connection);
             $Data->initOrderFacultyAwards();
             $error[0] = "Award Added Succesfully.";
 
         } else {
             $error[0] = "Award Could not be Added.";
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
+
         }
     }
     catch (PDOException $e) {
@@ -204,19 +177,6 @@ if(isset($_POST['submit_approve'])) {
 
     $message[0] = "Faculty Awards";
     $message[0].= $BpContent->SubmitApproval();
-
-<<<<<<< HEAD
-        if ($sqlmissionresult->execute()) {
-            $message[0] = "Faculty Awards Approved Successfully";
-        } else {
-            $message[0] = "Faculty Awards Could not be Approved. Please Retry.";
-        }
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
-=======
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 }
 
 if(isset($_POST['approve'])) {
@@ -228,20 +188,9 @@ if(isset($_POST['approve'])) {
 
 if(isset($_POST['reject'])) {
 
-<<<<<<< HEAD
-        if ($sqlmissionresult->execute()) {
-            $message[0] = "Faculty Awards Rejected Successfully";
-        } else {
-            $message[0] = "Faculty Awards Could not be Rejected. Please Retry.";
-        }
-    } catch (PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
-=======
+
     $message[0] = "Faculty Awards";
-    $message[0].= $BpContent->Approve();
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
+    $message[0].= $BpContent->Reject();
 }
 
 require_once("../Resources/Includes/header.php");

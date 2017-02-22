@@ -8,34 +8,27 @@
 /*
  * Session & Error control Initialization.
  */
-<<<<<<< HEAD
 session_start();
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
 $message = array();
-=======
  require_once ("../Resources/Includes/initalize.php");
  $initalize = new Initialize();
  $initalize->checkSessionStatus();
  $connection = $initalize->connection;
-
-$error = array();
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 $errorflag =0;
 $BackToGoal = true;
 
 /*
-<<<<<<< HEAD
+
  * Connection to DataBase.
  */
-require_once ("../Resources/Includes/connect.php");
+//require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 /*
-=======
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
  * Local & Session variable Initialization
  */
 $bpid = $_SESSION['bpid'];

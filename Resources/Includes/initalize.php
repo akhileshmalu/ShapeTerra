@@ -42,7 +42,7 @@
 
       define('HOSTNAME', "localhost");
       define("USERNAME", "root");
-      define("PASSCODE", "");
+      define("PASSCODE", "root");
       define("DB", "TESTDB");
 
       $mysqli = new mysqli(HOSTNAME,USERNAME,PASSCODE,DB);
@@ -135,7 +135,7 @@
         return strtr($text, array("\r\n" => '<br />', "\r" => '<br />', "\n" => '<br />', ";" => '&#59;', "'" => '&#39;'));
     }
 
-    public function $initalize->mybr2nl($text)
+    public function mybr2nl($text)
     {
         return strtr($text, array("<br />" => "\r\n", "&#39;" => "'", "&#59;" => ";"));
     }

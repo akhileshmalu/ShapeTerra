@@ -10,7 +10,7 @@ $email = $_SESSION['login_email'];
 
 try{
     $sqlac = "SELECT ID_STATUS,FNAME,LNAME,USER_OU_MEMBERSHIP,OU_TYPE FROM PermittedUsers
- INNER JOIN Hierarchy ON ID_HIERARCHY = PermittedUsers.USER_OU_MEMBERSHIP WHERE NETWORK_USERNAME = :email";
+ INNER JOIN Hierarchy ON ID_HIERARCHY = PermittedUsers.USER_OU_MEMBERSHIP WHERE NETWORK_USERNAME = :email ;";
 
     $resultac = $connection->prepare($sqlac);
     $resultac->bindParam(':email', $email, PDO::PARAM_STR);

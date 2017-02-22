@@ -176,13 +176,8 @@ BP_AUTHOR= :author , MOD_TIMESTAMP =:timeStampmod  WHERE ID_CONTENT = :contentli
           return $resultbroad;
       }
 
-<<<<<<< HEAD
-  }
-
-
-=======
 }
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
+
 Class EXECUTIVESUMCLASS extends BPCONTENTS
 {
 
@@ -465,193 +460,19 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
     }
 }
 
-// Class FACULTYAWARDS extends BPCONTENTS
-// {
-//     public function SubmitDraft()
-//     {
-
-//       $awardType = $_POST['awardType'];
-//       $awardLoc = $_POST['awardLoc'];
-//       $recipLname = $_POST['recipLname'];
-//       $recipFname = $_POST['recipFname'];
-//       $awardTitle = $_POST['awardTitle'];
-//       $awardOrg = $_POST['awardOrg'];
-//       $dateAward = $_POST['dateAward'];
-//       $contentlink_id = $_GET['linkid'];
-
-//       $sqlAcFacAward = "INSERT INTO `AC_FacultyAwards`
-//                           (OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST,
-//                           RECIPIENT_NAME_FIRST,AWARD_TITLE,timestampmod,DATE_AWARDED,ID_SORT)
-//                           VALUES(:ouabbrev,:bpayname,:author,:timestampmod,:awardType,:awardLoc,:recipLname,:recipFname,
-//                           :awardTitle,:awardOrg,:dateAward,'0');";
-
-<<<<<<< HEAD
-//       $sqlAcFacAward .= "UPDATE `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = :author,MOD_TIMESTAMP =:timestampmod  
-//                           where ID_CONTENT =:contentlink_id;";
-
-//       $sqlAcFacAward .= "UPDATE  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', 
-=======
-//       $sqlAcFacAward .= "UPDATE `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR = :author,MOD_TIMESTAMP =:timestampmod
-//                           where ID_CONTENT =:contentlink_id;";
-
-//       $sqlAcFacAward .= "UPDATE  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress',
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
-//                           AUTHOR= :author, LastModified =:timestampmod where ID_BROADCAST = :bpid; ";
-
-//       $sqlACFacAwardResult = $this->connection->prepare($sqlAcFacAward);
-//       $sqlACFacAwardResult->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(":author", $this->author, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(':awardType', $awardType, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(':awardLoc', $awardLoc, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(':recipLname', $recipLname, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(':recipFname', $recipFname, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(':awardTitle', $awardTitle, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(':awardOrg', $awardOrg, PDO::PARAM_STR);
-//       $sqlACFacAwardResult->bindParam(':dateAward', $dateAward, PDO::PARAM_STR);
-
-//       if($mysqli->multi_query($sqlAcFacAward)){
-
-//           $Data = new Data();
-//           $Data->initOrderFacultyAwards();
-//           $message[0] = "Award Added Succesfully.";
-
-//       } else {
-//           $message[0] = "Award Could not be Added.";
-//       }
-
-
-<<<<<<< HEAD
-//         $programranking = mynl2br($_POST['programranking']);
-//         $instructionalmodalities = mynl2br($_POST['instructionalmodalities']);
-//         $launch = mynl2br($_POST['launch']);
-//         $programterminations = mynl2br($_POST['programterminators']);
-=======
-//         $programranking = $initalize->mynl2br($_POST['programranking']);
-//         $instructionalmodalities = $initalize->mynl2br($_POST['instructionalmodalities']);
-//         $launch = $initalize->mynl2br($_POST['launch']);
-//         $programterminations = $initalize->mynl2br($_POST['programterminators']);
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
-
-//         if ($_FILES['supinfo']['tmp_name'] != "") {
-//             $target_dir = "../uploads/ac_programs/";
-//             $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
-//             $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
-//             $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
-
-//             if ($imageFileType != "pdf") {
-//                 $this->message = "Sorry, only PDF files are allowed.";
-//                 $this->errorflag = 1;
-
-//             } else {
-//                 if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
-//                     $supinfopath = $target_file;
-//                 } else {
-//                     $this->message = "Sorry, there was an error uploading your file.";
-//                     $this->errorflag = 1;
-//                 }
-//             }
-//         }
-//         if ($this->errorflag != 1) {
-
-<<<<<<< HEAD
-//             $sqlacprogram = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, 
-//         PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) VALUES 
-//         (:ouabbrev, :bpayname, :author, :timestampmod, :programranking, :instructionalmodalities, :launch, 
-// :programterminations, :supinfopath);";
-
-//             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-//                 $sqlacprogram .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
-//             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
-
-//                 $sqlacprogram .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
-=======
-//             $sqlacprogram = "INSERT INTO AC_Programs (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP,
-//         PROGRAM_RANKINGS, INSTRUCT_MODALITIES, PROGRAM_LAUNCHES, PROGRAM_TERMINATIONS, AC_SUPPL_PROGRAMS) VALUES
-//         (:ouabbrev, :bpayname, :author, :timestampmod, :programranking, :instructionalmodalities, :launch,
-// :programterminations, :supinfopath);";
-
-//             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-//                 $sqlacprogram .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
-//             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
-
-//                 $sqlacprogram .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
-// BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
-//             }
-
-//             $resultacprogram = $this->connection->prepare($sqlacprogram);
-//             $resultacprogram->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
-//             $resultacprogram->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
-//             $resultacprogram->bindParam(":author", $this->author, PDO::PARAM_STR);
-//             $resultacprogram->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
-//             $resultacprogram->bindParam(':programranking', $programranking, PDO::PARAM_STR);
-//             $resultacprogram->bindParam(':instructionalmodalities', $instructionalmodalities, PDO::PARAM_STR);
-//             $resultacprogram->bindParam(':launch', $launch, PDO::PARAM_STR);
-//             $resultacprogram->bindParam(':programterminations', $programterminations, PDO::PARAM_STR);
-//             $resultacprogram->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR);
-
-//             if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-
-//                 $resultacprogram->bindParam(":author", $this->author, PDO::PARAM_STR);
-//                 $resultacprogram->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
-//                 $resultacprogram->bindParam(':contentlink_id', $this->contentLinkId, PDO::PARAM_STR);
-//                 $resultacprogram->bindParam(":author", $this->author, PDO::PARAM_STR);
-//                 $resultacprogram->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
-//                 $resultacprogram->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
-//             }
-
-//             if ($resultacprogram->execute()) {
-//                 $this->message = "Academic Program Info Added Succesfully.";
-//             } else {
-//                 $this->message = "Academic Program Info could not be added.";
-//             }
-//         }
-//         return $this->message;
-//     }
-
-//     public function PlaceHolderValue()
-//     {
-//         try {
-<<<<<<< HEAD
-//             $sqlexvalue = "SELECT * FROM `AC_Programs` WHERE OU_ABBREV = :ouabbrev AND ID_AC_PROGRAMS IN 
-=======
-//             $sqlexvalue = "SELECT * FROM `AC_Programs` WHERE OU_ABBREV = :ouabbrev AND ID_AC_PROGRAMS IN
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
-// (SELECT MAX(ID_AC_PROGRAMS) FROM `AC_Programs` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
-
-//             $resultexvalue = $this->connection->prepare($sqlexvalue);
-//             $resultexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
-//             $resultexvalue->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
-
-//             $resultexvalue->execute();
-
-//         } catch (PDOException $e) {
-//             error_log($e->getMessage());
-//             //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-//         }
-//         return $resultexvalue;
-//     }
-// }
 
 Class FACULTYINFO extends BPCONTENTS
 {
     public function SaveDraft()
     {
-<<<<<<< HEAD
-      $facdev = mynl2br($_POST['factextarea']);
-
-      $createact = mynl2br($_POST['cractivity']);
-
       $this->time = date('Y-m-d H:i:s');
-=======
+
       $facdev = $initalize->mynl2br($_POST['factextarea']);
 
       $createact = $initalize->mynl2br($_POST['cractivity']);
 
       $contentlink_id = $_GET['linkid'];
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
+
 
 
   //    if ($_FILES["supinfo"]["error"] > 0) {
@@ -668,11 +489,8 @@ Class FACULTYINFO extends BPCONTENTS
 
 
           if ($imageFileType != "pdf") {
-<<<<<<< HEAD
-              $this->message = "Sorry, only PDf files are allowed.";
-=======
-              $this->message[1] = "Sorry, only PDf files are allowed.";
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
+
+              $this->message = "Sorry, only PDF files are allowed.";
               $this->errorflag = 1;
 
           } else {
@@ -680,11 +498,7 @@ Class FACULTYINFO extends BPCONTENTS
                   // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
                   $supinfopath = $target_file;
               } else {
-<<<<<<< HEAD
                   $this->message = "Sorry, there was an error uploading your file.";
-=======
-                  $this->message[2] = "Sorry, there was an error uploading your file.";
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
               }
           }
       }
@@ -693,18 +507,12 @@ Class FACULTYINFO extends BPCONTENTS
           $sqlfacinfo = "INSERT INTO `AC_FacultyInfo` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
    VALUES (:ouabbrev,:bpayname,:author,:timestampmod,:facdev,:createact,:supinfopath);";
 
-<<<<<<< HEAD
-
           if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
             $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,MOD_TIMESTAMP =:timestampmod  where ID_CONTENT =:contentlink_id;";
 
             $sqlfacinfo .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:timestampmod where ID_BROADCAST = :bpid; ";
           }
-=======
-          $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,MOD_TIMESTAMP =:time  where ID_CONTENT =:contentlink_id;";
 
-          $sqlfacinfo .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:time where ID_BROADCAST = :bpid; ";
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 
           $resultfacinfo = $this->connection->prepare($sqlfacinfo);
           $resultfacinfo->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
@@ -715,7 +523,6 @@ Class FACULTYINFO extends BPCONTENTS
           $resultfacinfo->bindParam(':createact', $createact, PDO::PARAM_STR);
           $resultfacinfo->bindParam(':supinfopath', $supinfopath, PDO::PARAM_STR);
 
-<<<<<<< HEAD
           if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
             $resultfacinfo->bindParam(":author", $this->author, PDO::PARAM_STR);
             $resultfacinfo->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
@@ -730,13 +537,6 @@ Class FACULTYINFO extends BPCONTENTS
               $this->message = "Faculty Info Added Succesfully.";
           } else {
               $this->message = "Faculty Info could not be added.";
-=======
-          if ($resultfacinfo->execute()) {
-
-              $this->message[0] = "Faculty Info Added Succesfully.";
-          } else {
-              $this->message[3] = "Faculty Info could not be added.";
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
           }
 
       }
@@ -749,7 +549,6 @@ Class FACULTYINFO extends BPCONTENTS
           $sqlexvalue = "SELECT * FROM `AC_FacultyInfo` where OU_ABBREV = :ouabbrev AND ID_FACULTY_INFO in (select max(ID_FACULTY_INFO) from AC_FacultyInfo where OUTCOMES_AY = :bpayname group by OU_ABBREV); ";
 
           $resultsexvalue = $this->connection->prepare($sqlexvalue);
-<<<<<<< HEAD
           $resultsexvalue->bindParam(":ouabbrev", $this->ouabbrev, PDO::PARAM_STR);
           $resultsexvalue->bindParam(":bpayname", $this->bpayname, PDO::PARAM_STR);
           $resultsexvalue->execute();
@@ -865,24 +664,14 @@ Class GOALOUTCOME extends BPCONTENTS
           } else {
               $message[0] = "Goal Outcome Could not be Approved. Please Retry.";
           }
-=======
-          $resultsexvalue->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-          $resultsexvalue->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-          $resultsexvalue->execute();
-
-
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
-        } catch(PDOException $e) {
-            error_log($e->getMessage());
-            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+        }catch (PDOException $e) {
+              error_log($e->getMessage());
+              //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
         }
-<<<<<<< HEAD
-          return $this->message;
       }
 
       public function Reject() {
           
-
           try {
               $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Rejected' where ID_UNIT_GOAL = :goal_id; ";
 
@@ -936,13 +725,7 @@ Class GOALOUTCOME extends BPCONTENTS
 }
 
 
-
 Class ALUMNIDEVELOPMENT extends BPCONTENTS
-=======
-        return $resultsexvalue;
-    }
-}Class ALUMNIDEVELOPMENT extends BPCONTENTS
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 {
     public function SaveDraft()
     {
@@ -1038,6 +821,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         return $resultexvalue;
     }
 }
+
 Class CAMPUSCLIMATE extends BPCONTENTS
 {
     public function SaveDraft()
@@ -1127,6 +911,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         return $resultexvalue;
     }
 }
+
 Class COLLABORATION extends BPCONTENTS
 {
     public function SaveDraft()
@@ -1219,7 +1004,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         return $resultexvalue;
     }
 }
-<<<<<<< HEAD
+
 
 Class INITIATIVES extends BPCONTENTS
 {
@@ -1397,5 +1182,4 @@ Class MVV extends BPCONTENTS
       return $resultmission;
     }
 }
-=======
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
+

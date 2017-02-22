@@ -9,19 +9,19 @@ $pagename = "bphome";
  * This Page controls Academic Faculty Info.
  */
 
-<<<<<<< HEAD
+
 session_start();
 if(!$_SESSION['isLogged']) {
     header("location:login.php");
     die();
 }
-=======
+
  require_once ("../Resources/Includes/initalize.php");
  $initalize = new Initialize();
  $initalize->checkSessionStatus();
  $connection = $initalize->connection;
  
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
+
 $message = array();
 $errorflag =0;
 $BackToDashboard = true;
@@ -54,29 +54,22 @@ $rowbroad = $resultbroad->fetch(4);
 
 // Values for placeholders
 $resultexvalue = $FacultyInfo->PlaceHolderValue();
-<<<<<<< HEAD
 $rowsexvalue = $resultexvalue->fetch(2);
 
 // SQL check Status of Blueprint Content for Edit restrictions
 $resultbpstatus = $FacultyInfo->GetStatus();
-=======
 $rowsexvalue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
 $resultbpstatus = $FacultyInfo->GetStatus();
 
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 
 if (isset($_POST['savedraft'])) {
 
     $message = $FacultyInfo->SaveDraft();
-<<<<<<< HEAD
     
-=======
-
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
 }
 
 

@@ -22,7 +22,6 @@ if (isset($_POST['login'])) {
     } else {
         require_once ("../Resources/Includes/initalize.php");
         $initalize = new Initialize();
-        $initalize->checkSessionStatus();
         $connection = $initalize->connection;        
 
         $email = $initalize->test_input($_POST['email']);                       // Secured Input
