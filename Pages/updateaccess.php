@@ -3,6 +3,7 @@ require_once ("../Resources/Includes/initalize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 $connection = $initalize->connection;
+
 $error =array();
 $fname = $_SESSION['login_fname'];
 $approver = $_SESSION['login_email'];

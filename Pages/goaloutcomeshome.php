@@ -11,22 +11,13 @@
  require_once ("../Resources/Includes/initalize.php");
  $initalize = new Initialize();
  $initalize->checkSessionStatus();
- $connection = $initalize->connection;
 
 $message = array();
 $errorflag =0;
 $BackToDashboard = true;
-
-/*
-<<<<<<< HEAD
- * Connection to DataBase.
- */
-require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 /*
-=======
->>>>>>> dbec9d37112f9ebc9bf4cdb7eb0a5a1c731422ff
  * Local & Session variable Initialization
  */
 $contentlink_id = $_GET['linkid'];

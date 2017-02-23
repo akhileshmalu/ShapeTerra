@@ -4,15 +4,10 @@
  * This Page controls Mission Vision & Value Screen.
  */
 
-/*
- * Session & Error control Initialization.
- */
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
 $message = array();
 $errorflag = 0;
 $BackToDashboard = true;
@@ -21,14 +16,6 @@ $BackToDashboard = true;
 /*
  * Connection to DataBase.
  */
-//require_once("../Resources/Includes/connect.php");
-
-
- require_once ("../Resources/Includes/initalize.php");
-
- $initalize = new Initialize();
- $initalize->checkSessionStatus();
- $connection = $initalize->connection;
 
   require_once ("../Resources/Includes/BpContents.php");
 

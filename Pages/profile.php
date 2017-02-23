@@ -25,11 +25,6 @@ if(isset($_POST['submit'])) {
     }
     if($errorflag == 0){
 
-        require_once ("../Resources/Includes/initalize.php");
-        $initalize = new Initialize();
-        $initalize->checkSessionStatus();
-        $connection = $initalize->connection;                      
-
         $fname = $initalize->test_input($_POST['fname']);                  //Secured Input
         $lname = $initalize->test_input($_POST['lname']);
         $email = $_SESSION['login_email'];

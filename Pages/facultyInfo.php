@@ -9,24 +9,15 @@ $pagename = "bphome";
  * This Page controls Academic Faculty Info.
  */
 
-
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-
  require_once ("../Resources/Includes/initalize.php");
  $initalize = new Initialize();
  $initalize->checkSessionStatus();
- $connection = $initalize->connection;
- 
+
 
 $message = array();
 $errorflag =0;
 $BackToDashboard = true;
 
-require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION['bpid'];
@@ -69,7 +60,7 @@ $rowsbpstatus = $resultbpstatus->fetch(2);
 if (isset($_POST['savedraft'])) {
 
     $message = $FacultyInfo->SaveDraft();
-    
+
 }
 
 

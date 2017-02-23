@@ -12,16 +12,10 @@
 require_once ("../Resources/Includes/initalize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
-$connection = $initalize->connection;
 
 $message = array();
 $errorflag =0;
 $notBackToDashboard = true;
-
-/*
- * Connection to DataBase.
- */
-require_once ("../Resources/Includes/connect.php");
 
 /*
  * Local & Session variable Initialization

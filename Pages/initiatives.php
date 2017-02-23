@@ -11,7 +11,6 @@
 require_once ("../Resources/Includes/initalize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
-$connection = $initalize->connection;
 
 $error = array();
 $errorflag =0;

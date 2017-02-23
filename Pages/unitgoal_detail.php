@@ -8,16 +8,13 @@
 /*
  * Session & Error control Initialization.
  */
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
 $message = array();
- require_once ("../Resources/Includes/initalize.php");
- $initalize = new Initialize();
- $initalize->checkSessionStatus();
- $connection = $initalize->connection;
 $errorflag =0;
 $BackToGoal = true;
 

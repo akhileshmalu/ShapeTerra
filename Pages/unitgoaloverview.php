@@ -11,7 +11,6 @@
 require_once ("../Resources/Includes/initalize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
-$connection = $initalize->connection;
 
 $error = array();
 $errorflag =0;
@@ -20,7 +19,6 @@ $BackToDashboard = true;
 /*
  * Connection to DataBase.
  */
-require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 /*

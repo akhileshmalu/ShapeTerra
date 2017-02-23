@@ -8,13 +8,6 @@ $initalize = new Initialize();
 $initalize->checkSessionStatus();
 require_once ("../Resources/Includes/BpContents.php");
 
-session_start();
-
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-
 $message = array();
 $errorflag =0;
 $bpid = $_SESSION ['bpid'];

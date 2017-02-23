@@ -11,7 +11,7 @@ $connection = $initalize->connection;
 
 $message = array();
 $errorflag =0;
-require_once ("../Resources/Includes/connect.php");
+
 $FUayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];

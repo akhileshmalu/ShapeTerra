@@ -7,8 +7,6 @@ $connection = $initalize->connection;
 
 $message = array();
 $errorflag =0;
-
-require_once("../Resources/Includes/connect.php");
 /*
  * Query for Selecting academic Year
  */

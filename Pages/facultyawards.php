@@ -2,21 +2,14 @@
 
 $pagename = "bphome";
 
-require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/initalize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 require_once ("../Resources/Includes/BpContents.php");
 require_once ("../Resources/Includes/data.php");
 // This Page controls Faculty Awards Screen.
 
-
-// Session & Error control Initialization.
-
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-
-require("../Resources/Includes/data.php");
 $message = array();
 $errorflag = 0;
 $BackToDashboard = true;
@@ -104,7 +97,7 @@ if(isset($_POST['award_submit'])){
         :recipFname, :awardTitle,:awardOrg,:dateAward,'0');";
 
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-            $sqlAcFacAward .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, 
+            $sqlAcFacAward .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
             MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
 
 
@@ -126,8 +119,11 @@ if(isset($_POST['submit_approve'])) {
 
     try {
 
-            $sqlAcFacAward .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', 
+            $sqlAcFacAward .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
 BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+        }catch (PDOException $e) {
+            error_log($e->getMessage());
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
         }
 
 
@@ -165,11 +161,6 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
 
         }
     }
-    catch (PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
-
 
 }
 
