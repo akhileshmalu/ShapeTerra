@@ -9,7 +9,7 @@ $pagename = "bphome";
  * This Page controls Academic Faculty Info.
  */
 
- require_once ("../Resources/Includes/initalize.php");
+ require_once("../Resources/Includes/Initialize.php");
  $initalize = new Initialize();
  $initalize->checkSessionStatus();
 

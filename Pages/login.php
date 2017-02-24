@@ -20,7 +20,7 @@ if (isset($_POST['login'])) {
     if (empty($_POST['email']) || (empty($_POST['password']))) {
         $message[0] = "Invalid Email Address or password";
     } else {
-        require_once ("../Resources/Includes/initalize.php");
+        require_once("../Resources/Includes/Initialize.php");
         $initalize = new Initialize();
         $connection = $initalize->connection;        
 
@@ -34,7 +34,7 @@ if (isset($_POST['login'])) {
         $result->bindParam('password', $password, 2);
         $result->execute();
 
-        $row_cnt = $result->rowCount();                               //count no of rows in result object.
+        $row_cnt = $result->rowCount();                                 //count no of rows in result object.
         if ($row_cnt >= '1') {                                        //If there exist one or more records
 
             $record = $result->fetch(2);

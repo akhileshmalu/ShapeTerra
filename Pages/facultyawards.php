@@ -62,12 +62,6 @@ try {
 
 if(isset($_POST['award_submit'])){
 
-    //  *************************** \\
-    //  ********** ERROR ********** \\
-    //  ** Can't execute multiple * \\
-    //  ** queries in single PDO ** \\
-    //  ******** statement ******** \\
-    //  *************************** \\
 
     $awardType = $_POST['awardType'];
     $awardLoc = $_POST['awardLoc'];

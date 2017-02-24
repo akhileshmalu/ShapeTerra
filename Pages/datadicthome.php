@@ -2,7 +2,7 @@
 /*
  * This Page controls Data Dictionary Home Screen.
  */
-require_once ("../Resources/Includes/initalize.php");
+require_once("../Resources/Includes/Initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 

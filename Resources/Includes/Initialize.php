@@ -1,6 +1,6 @@
 <?php
 
-  Class Initialize{
+  Class Initialize {
 
     public $connection;
 
@@ -39,7 +39,6 @@
 
     private function connectToDB()
     {
-
       define('HOSTNAME', "localhost");
       define("USERNAME", "root");
       define("PASSCODE", "root");

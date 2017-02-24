@@ -5,7 +5,9 @@
  * This Page controls Data Element Add Screen.
  */
 
-require_once ("../Resources/Includes/initalize.php");
+require_once("../Resources/Includes/Initialize.php");
+require_once ("../Resources/Includes/BpContents.php");
+
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 $connection = $initalize->connection;
@@ -61,189 +63,52 @@ $valuemandset = array(
 	'Unknown'
 );
 
-// Connection to DataBase.
-require_once ("../Resources/Includes/connect.php");
 
-/*
- * Local & Session variable Initialization
- */
 
+// Local & Session variable Initialization
 $ouid = $_SESSION['login_ouid'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-// SQL Existing Data Element Value
 
-$sqldataelem = "SELECT * FROM DataDictionary WHERE ID_DATA_ELEMENT='$elemid'; ";
-$resultdataelem = $mysqli -> query($sqldataelem);
-$rowsdataelem = $resultdataelem -> fetch_assoc();
+$DataDictionary = new DATADICTIONARY();
+
+
+// SQL Existing Data Element Value
+$resultdataelem = $DataDictionary->ElementExValue();
+$rowsdataelem = $resultdataelem -> fetch(2);
+
 
 // Data Classification Value
-
-$sqldataclass = "SELECT * FROM DataClassification;";
-$resultdataclass = $mysqli -> query($sqldataclass);
+$resultdataclass = $DataDictionary->GetDataClassification();
 
 
 // Blueprint TopicAreas Value
-
-$sqltopicareas = "SELECT * FROM TopicAreas where TOPIC_FOR_DICTIONARY = 'Y';";
-$resulttopicareas = $mysqli -> query($sqltopicareas);
+$resulttopicareas = $DataDictionary->GetTopicAreas();
 
 
 if(isset($_POST['save'])) {
-
-    $funcname = $initalize->mynl2br($_POST['functionalname']);
-    $techname = $initalize->mynl2br($_POST['technicalname']);
-    $syslabel = $initalize->mynl2br($_POST['syslabel']);
-    $printlabel = $_POST['printlabel'];
-    $dataclass = $_POST['dataclass'];
-    $basicmean = $initalize->mynl2br($_POST['basicmean']);
-    $userinst = $initalize->mynl2br($_POST['userinstr']);
-    $timebasis = $_POST['timebasis'];
-    $bptopic = $_POST['bptopic'];
-    foreach ($bptopic as $item){
-        $bptopicstring .=$item.',';
-    }
-    $usage = $initalize->mynl2br($_POST['usage']);
-    $datasource = $initalize->mynl2br($_POST['datasource']);
-    $resparty = $_POST['resparty'];
-    $contact = $_POST['contactperson'];
-    $datatype = $_POST['datatype'];
-    $datatrans = $initalize->mynl2br($_POST['datatrans']);
-    $valuemand = $initalize->mynl2br($_POST['valuemand']);
-    $permitvalue = $initalize->mynl2br($_POST['permitvalue']);
-    $constraint = $initalize->mynl2br($_POST['constraint']);
-    $notes = $initalize->mynl2br($_POST['notes']);
-    $defauthorfname = $_POST['defauthorfname'];
-    $defauthorlname = $_POST['defauthorlname'];
-
-    $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,LABEL_SYSTEM,LABEL_PRINT, BASIC_MEANING,USER_INSTRCTN, TIME_BASIS_OUTCOME,
-INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON,
-VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','$syslabel','$printlabel',
-'$basicmean','$userinst','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
-'$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
-
-    if($mysqli->query($sqladdelem)) {
-        $message[0] = "Your Data Element has been submitted for review.This will be accepted in data dictionary post approval.";
-    } else {
-        $message[0] = "Data Element could not be submitted.";
-    }
-
-
+    $message[0] = $DataDictionary->SaveWithReview();
 }
 
 if(isset($_POST['directsave'])) {
-
-    $funcname = $initalize->mynl2br($_POST['functionalname']);
-    $techname = $initalize->mynl2br($_POST['technicalname']);
-    $syslabel = $initalize->mynl2br($_POST['syslabel']);
-    $printlabel = $_POST['printlabel'];
-    $dataclass = $_POST['dataclass'];
-    $basicmean = $initalize->mynl2br($_POST['basicmean']);
-    $userinst = $initalize->mynl2br($_POST['userinstr']);
-    $timebasis = $_POST['timebasis'];
-    $bptopic = $_POST['bptopic'];
-    foreach ($bptopic as $item){
-        $bptopicstring .=$item.',';
-    }
-    $usage = $initalize->mynl2br($_POST['usage']);
-    $datasource = $initalize->mynl2br($_POST['datasource']);
-    $resparty = $_POST['resparty'];
-    $contact = $_POST['contactperson'];
-    $datatype = $_POST['datatype'];
-    $datatrans = $initalize->mynl2br($_POST['datatrans']);
-    $valuemand = $initalize->mynl2br($_POST['valuemand']);
-    $permitvalue = $initalize->mynl2br($_POST['permitvalue']);
-    $constraint = $initalize->mynl2br($_POST['constraint']);
-    $notes = $initalize->mynl2br($_POST['notes']);
-    $defauthorfname = $_POST['defauthorfname'];
-    $defauthorlname = $_POST['defauthorlname'];
-
-
-    $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,LABEL_SYSTEM,LABEL_PRINT,STATUS, BASIC_MEANING,USER_INSTRCTN, TIME_BASIS_OUTCOME,
-INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON,
-VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','$syslabel','$printlabel','Approved',
-'$basicmean','$userinst','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
-'$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
-
-    if($mysqli->query($sqladdelem)) {
-        $message[0] = "Your Data Element has been added in Data Dictionary.";
-    } else {
-        $message[0] = "Data Element could not be added.";
-    }
-
-
+    $message[0] = $DataDictionary->SaveWithReview('Approved');
 }
 
 if(isset($_POST['update'])) {
 
-    $funcname = $initalize->mynl2br($_POST['functionalname']);
-    $techname = $initalize->mynl2br($_POST['technicalname']);
-    $syslabel = $initalize->mynl2br($_POST['syslabel']);
-    $printlabel = $_POST['printlabel'];
-    $dataclass = $_POST['dataclass'];
-    $basicmean = $initalize->mynl2br($_POST['basicmean']);
-    $userinst = $initalize->mynl2br($_POST['userinstr']);
-    $timebasis = $_POST['timebasis'];
-    $bptopic = $_POST['bptopic'];
-    foreach ($bptopic as $item){
-        $bptopicstring .=$item.',';
-    }
-    $usage = $initalize->mynl2br($_POST['usage']);
-    $datasource = $initalize->mynl2br($_POST['datasource']);
-    $resparty = $_POST['resparty'];
-    $contact = $_POST['contactperson'];
-    $datatype = $_POST['datatype'];
-    $datatrans = $initalize->mynl2br($_POST['datatrans']);
-    $valuemand = $initalize->mynl2br($_POST['valuemand']);
-    $permitvalue = $initalize->mynl2br($_POST['permitvalue']);
-    $constraint = $initalize->mynl2br($_POST['constraint']);
-    $notes = $initalize->mynl2br($_POST['notes']);
-    $defauthorfname = $_POST['defauthorfname'];
-    $defauthorlname = $_POST['defauthorlname'];
-
-
-    $sqladdelem = "Update DataDictionary  SET DATA_ELMNT_FUNC_NAME = '$funcname', DATA_ELEMENT_TECH_NAME= '$techname',LABEL_SYSTEM = '$syslabel', LABEL_PRINT = '$printlabel', BASIC_MEANING = '$basicmean',
- USER_INSTRCTN = '$userinst',TIME_BASIS_OUTCOME = '$timebasis', INTERP_USAGE = '$usage', DATA_CLASSIFICATION = '$dataclass', DATA_SOURCE = '$datasource',
-  DATA_TYPE = '$datatype', DATA_TRANSFORM = '$datatrans', BP_TOPIC ='$bptopicstring', RESPONSIBLE_PARTY ='$resparty',
-  CONTACT_PERSON = '$contact', VALUES_MANDATORY = '$valuemand', VALUES_PERMITTED = '$permitvalue', VALUES_CONSTRAINTS = '$constraint',
-  NOTES_DATA_ELEMENT = '$notes', AUTHOR_FNAME = '$defauthorfname',AUTHOR_LNAME = '$defauthorlname', MOD_BY = '$author', MOD_TIMESTAMP = '$time' where ID_DATA_ELEMENT = $elemid;";
-
-    if($mysqli->query($sqladdelem)) {
-        $message[0] = "Your Data Element has been updated in Data Dictionary.";
-    } else {
-        $message[0] = "Data Element could not be updated.";
-    }
-
-
+    $message[0] = $DataDictionary->Update();
 }
 
 
 if(isset($_POST['approve'])) {
-
-
-    $sqladdelem = "update DataDictionary SET STATUS = 'Approved' where ID_DATA_ELEMENT = '$elemid';";
-
-    if($mysqli->query($sqladdelem)) {
-        $message[0] = "Data Element has been approved & included in Data Dictionary.";
-    } else {
-        $message[0] = "Data Element could not be approved.";
-    }
-
+    $message[0] = $DataDictionary->Approve();
 }
 
 if(isset($_POST['discard'])) {
 
-
-    $sqladdelem = "update DataDictionary SET STATUS = 'Archived' where ID_DATA_ELEMENT = '$elemid';";
-
-    if($mysqli->query($sqladdelem)) {
-        $message[0] = "Data Element has been Archived & excluded from Data Dictionary.";
-    } else {
-        $message[0] = "Data Element could not be Archived.";
-    }
-
+    $message[0] = $DataDictionary->Reject();
 }
 
 
@@ -353,7 +218,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <select type="text" name="dataclass" class="form-control">
                             <option value=""></option>
-                            <?php while ($rowsdataclass = $resultdataclass->fetch_assoc()) {
+                            <?php while ($rowsdataclass = $resultdataclass->fetch(2)) {
                                 echo "<option value=" . $rowsdataclass['ID_DATA_CLASS'];
                                 if ($rowsdataelem['DATA_CLASSIFICATION'] == $rowsdataclass['ID_DATA_CLASS']) {
                                     echo " selected = selected";
@@ -414,8 +279,8 @@ require_once("../Resources/Includes/menu.php");
 
                         $i = 0;
                         $columns = 3;
-                        while ($rowstopicareas = $resulttopicareas->fetch_assoc()) {
-                            if ($i % $column == 0) {
+                        while ($rowstopicareas = $resulttopicareas->fetch(2)) {
+                            if ($i % $columns == 0) {
                                 echo "<div class='col-xs-6 chcekbox'><label>";
                             }
                             echo "<input type='checkbox' name='bptopic[]' value='" . $rowstopicareas['ID_TOPIC'] . "'";
@@ -427,7 +292,7 @@ require_once("../Resources/Includes/menu.php");
                             }
                             echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'];
                             $i++;
-                            if ($i % $column == 0) {
+                            if ($i % $columns == 0) {
                                 echo "</label></div>";
                             }
                         }

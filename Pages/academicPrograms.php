@@ -3,7 +3,7 @@
 /*
  * This Page controls Academic Program Module
  */
-require_once ("../Resources/Includes/initalize.php");
+require_once("../Resources/Includes/Initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 require_once ("../Resources/Includes/BpContents.php");

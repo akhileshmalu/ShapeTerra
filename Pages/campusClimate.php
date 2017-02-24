@@ -7,7 +7,7 @@
  * This Page controls Initiatives & Observations.
  */
 
-require_once ("../Resources/Includes/initalize.php");
+require_once("../Resources/Includes/Initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 

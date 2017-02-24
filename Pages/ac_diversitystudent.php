@@ -1,6 +1,6 @@
 <?php
 
-require_once ("../Resources/Includes/initalize.php");
+require_once("../Resources/Includes/Initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 $connection = $initalize->connection;
@@ -37,7 +37,7 @@ $notBackToDashboard =true;
 // File Upload Status & Details.
 try
 {
-    $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS=
+    $sqlfucontent = "SELECT * FROM `IR_SU_UploadStatus` LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS=
     IR_SU_UploadStatus.LAST_MODIFIED_BY where IR_SU_UploadStatus.ID_UPLOADFILE= :content_id;";
     $resultfucontent = $connection->prepare($sqlfucontent);
     $resultfucontent->execute([':content_id'=> $content_id]);
