@@ -2,12 +2,8 @@
 
 $pagename = "bphome";
 
-require_once ("../Resources/Includes/initalize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
-require_once ("../Resources/Includes/BpContents.php");
 require_once ("../Resources/Includes/data.php");
+require_once ("../Resources/Includes/BpContents.php");
 // This Page controls Faculty Awards Screen.
 
 $message = array();

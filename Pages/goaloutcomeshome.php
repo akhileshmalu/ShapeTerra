@@ -151,7 +151,7 @@ require_once("../Resources/Includes/menu.php");
                     $("#jsGridBack").jsGrid({
                       width: "100%",
                       height: "300px",
-                      sorting: true,
+                      sorting: false,
                       paging: true,
                       data: data,
                       rowClass: function(item, itemIndex) {
@@ -233,7 +233,7 @@ require_once("../Resources/Includes/menu.php");
                     $("#jsGridReal").jsGrid({
                       width: "100%",
                       height: "300px",
-                      sorting: true,
+                      sorting: false,
                       paging: true,
                       data: data,
                       rowClass: function(item, itemIndex) {
@@ -315,7 +315,7 @@ require_once("../Resources/Includes/menu.php");
                     $("#jsGridAhead").jsGrid({
                       width: "100%",
                       height: "300px",
-                      sorting: true,
+                      sorting: false,
                       paging: true,
                       data: data,
                       rowClass: function(item, itemIndex) {
@@ -382,9 +382,8 @@ require_once("../Resources/Includes/menu.php");
                   });
                 });
               });
-              </script>
+            </script>
         </div>
-
     </div>
 </div>
 

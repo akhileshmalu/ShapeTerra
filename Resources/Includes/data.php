@@ -1,7 +1,9 @@
 <?php
-require_once ("connect.php");
-session_start();
-ob_start();
+
+require "initalize.php";
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 
 if (isset($_POST['functionNum']))
   $function = $_POST['functionNum'];
@@ -520,6 +522,7 @@ Class Data
       $ouAbbrev = $_SESSION['login_ouabbrev'];
 
     }
+
     $counter = 0;
 
     $getUnitGoals = $this->connection->prepare("SELECT * FROM `AC_FacultyAwards` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ? ORDER BY ID_SORT ASC");
