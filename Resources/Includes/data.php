@@ -51,26 +51,6 @@ Class Data
     $this->connection = $connection;
   }
 
-  // Passed Paremeterized constructor
-//  private function connection()
-//  {
-//
-//    try {
-//
-//      $connection = new PDO(sprintf('mysql:host=%s;dbname=%s', "localhost", "TESTDB"), "root", "root");
-//      $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//
-//      return $connection;
-//
-//    } catch (PDOException $e) {
-//
-//      return $e->getMessage();
-//      exit();
-//
-//    }
-//
-//  }
-
   //executive summary
 
   public function saveExecutiveSummaryDet()
@@ -707,4 +687,3 @@ Class Data
   }
 
 }
-
