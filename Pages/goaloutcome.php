@@ -3,7 +3,7 @@
  * This Page controls Goal Outcomes.
  */
 
- require_once ("../Resources/Includes/initalize.php");
+ require_once ("../Resources/Includes/initialize.php");
  $initalize = new Initialize();
  $initalize->checkSessionStatus();
 
@@ -158,7 +158,7 @@ require_once("../Resources/Includes/menu.php");
                     <?php
                     $sqlug = "Select * from BP_UnitGoals A   join UniversityGoals B where find_in_set(ID_UNIV_GOAL,LINK_UNIV_GOAL)>0 and A.ID_UNIT_GOAL = :goal_id; ";
 
-                    $resultug = $connection->prepare($sqlug);
+                    $resultug = $goaloutcome->connection->prepare($sqlug);
                     $resultug -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
 
                     $resultug->execute();
@@ -196,9 +196,15 @@ require_once("../Resources/Includes/menu.php");
                     <select id="goalstlist" name="goal_status"  class="form-control form-indent" style="padding: 0px; background-color: #fff !important;">
                         <option value="0"> -- select an option -- </option>
                         <?php $selectedViewPoint = $rowsunitgoal['GOAL_VIEWPOINT'];
-                        $sqlgoalstatus ="select * from GoalStatus where STATUS_VIEWPOINT = '$selectedViewPoint'; ";
-                    $resultgoalstatus = $mysqli->query($sqlgoalstatus);
-                    while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :?>
+                        try {
+                            $sqlgoalstatus ="select * from GoalStatus where STATUS_VIEWPOINT = :selectedViewPoint; ";
+                            $resultgoalstatus = $goaloutcome->connection->prepare($sqlgoalstatus);
+                            $resultgoalstatus->bindParam(':selectedViewPoint', $selectedViewPoint,2);
+                            $resultgoalstatus->execute();
+                        } catch(PDOException $e) {
+                            error_log($e->getMessage());
+                        }
+                    while($rowsgoalstatus = $resultgoalstatus -> fetch(2)) :?>
                         <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"
                             <?php if($rowsgoalstatus['ID_STATUS'] == $rowsexgoalout['GOAL_STATUS']) echo " selected = selected"; ?>> <?php echo $rowsgoalstatus['STATUS']; ?> </option>
                         <?php  endwhile; ?>

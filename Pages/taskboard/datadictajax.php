@@ -3,7 +3,9 @@ session_start();
 
 $author = $_SESSION['login_userid'];
 
-require_once("../../Resources/Includes/connect.php");
+require_once("../../Resources/Includes/Initialize.php");
+$initialize = new Initialize();
+$mysqli = $initialize->mysqli;
 
 // require Grid Class
 require_once("grid.php");

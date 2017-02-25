@@ -1,6 +1,6 @@
 <?php
 
-require "initalize.php";
+require "initialize.php";
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 $connection = $initalize->connection;
@@ -71,7 +71,7 @@ Class Data
 
         $deansSignatureLogoName = $deansSignatureLogo;
         $deansSignatureLogoTmpDir = $_FILES["deans-signature-logo"]["tmp_name"];
-        $deansSignatureLogoFinalName = hash("SHA512", $deansSignatureName);
+        $deansSignatureLogoFinalName = hash("SHA512", $deansSignatureLogoName);
         $deansSignatureLogoFinalDir = "../uploads/logos/" . $deansSignatureLogoFinalName;
 
         $size = getimagesize($deansSignatureLogoTmpDir);

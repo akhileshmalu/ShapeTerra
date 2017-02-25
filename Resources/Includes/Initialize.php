@@ -2,14 +2,15 @@
 
   Class Initialize {
 
-    public $connection;
+    public $connection, $mysqli, $menucon;
 
     function __construct()
     {
-
+        session_start();
       //error logging set to 0 for prod
       error_reporting(1);
       @ini_set('display_errors', 1);
+        @ini_set('always_populate_raw_post_data', '-1');
 
       //Setting Default Time
       date_default_timezone_set('America/New_York');
@@ -19,16 +20,6 @@
       header("X-Frame-Options: SAMEORIGIN");
 
       $this->connection = $this->connectToDB();
-
-      // Environment Variables
-      $site = "localhost:8888/shapeterra";
-
-      /*
-       * Menu directive for local server
-       * Menu.php will utilize navdir variable to redirect to local host pages.
-       * Server does not need navdir path.
-       */
-      $navdir = "Shapeterra/";
 
       //Global Email Variable
       $headers = "MIME-Version: 1.0" . "\r\n";
@@ -44,13 +35,15 @@
       define("PASSCODE", "root");
       define("DB", "TESTDB");
 
-      $mysqli = new mysqli(HOSTNAME,USERNAME,PASSCODE,DB);
+
+        //Temporary objects for mysqli in order to run old code
+      $this->mysqli = new mysqli(HOSTNAME,USERNAME,PASSCODE,DB);
       $mysqli1 = new mysqli(HOSTNAME,USERNAME,PASSCODE,DB);
       $mysqli2 = new mysqli(HOSTNAME,USERNAME,PASSCODE,DB);
-      $menucon = new mysqli(HOSTNAME,USERNAME,PASSCODE,DB);
+//      $this->menucon = new mysqli(HOSTNAME,USERNAME,PASSCODE,DB);
 
-      if($mysqli->connect_error){
-          echo "Connection Failed". $mysqli->connect_error;
+      if($this->mysqli->connect_error){
+          echo "Connection Failed". $this->mysqli->connect_error;
       }
 
       // PDO Object for SQL
@@ -68,9 +61,6 @@
 
     public function checkSessionStatus()
     {
-
-      session_start();
-
       if(!$_SESSION['isLogged']) {
           header("location:login.php");
           die();

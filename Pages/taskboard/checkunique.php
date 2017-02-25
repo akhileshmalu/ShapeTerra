@@ -1,6 +1,8 @@
 <?php
 
-require_once("../../Resources/Includes/connect.php");
+require_once("../../Resources/Includes/Initialize.php");
+$initialize = new Initialize();
+$mysqli = $initialize->mysqli;
 
 //Uniqueness check of Functional name
 

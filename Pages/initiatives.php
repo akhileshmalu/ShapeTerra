@@ -7,12 +7,12 @@
  * This Page controls Initiatives & Observations.
  */
 
-
-require_once ("../Resources/Includes/initalize.php");
+require_once ("../Resources/Includes/initialize.php");
+require_once ("../Resources/Includes/BpContents.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 
-$error = array();
+$message = array();
 $errorflag =0;
 $BackToDashboard = true;
 
@@ -43,6 +43,7 @@ $rowsexvalue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
 $resultbpstatus = $Initiatives->GetStatus();
+$rowsbpstatus = $resultbpstatus->fetch(4);
 
 
 if (isset($_POST['savedraft'])) {

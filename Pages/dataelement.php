@@ -6,11 +6,10 @@
  */
 
 require_once("../Resources/Includes/Initialize.php");
-require_once ("../Resources/Includes/BpContents.php");
+require_once ("../Resources/Includes/DataDictionary.php");
 
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
-$connection = $initalize->connection;
 
 $message = array();
 $errorflag = 0;

@@ -10,7 +10,6 @@
    *  -------- Note 1 Finished--------------------------------------------
    */
 
-date_default_timezone_set("America/New_York");    //Setting time zone to EST time
 
 $message = array(); //Variable to store error msg
 $errorflag = null;
@@ -46,7 +45,7 @@ if (isset($_POST['login'])) {
             if ($record['USER_STATUS'] == '1') {
                 ini_set("session.cookie_secure", 1);
                 ini_set("session.cookie_httponly", 1);
-                session_start(); // Session Initiation
+//                session_start(); // Session Initiation
                 $_SESSION['login_email'] = $email;                   //session variable register
                 header("location:account.php");                     //redirect to account page
                 $_SESSION['isLogged'] = true;

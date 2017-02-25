@@ -4,7 +4,7 @@
  * This Page controls Mission Vision & Value Screen.
  */
 
-require_once ("../Resources/Includes/initalize.php");
+require_once ("../Resources/Includes/initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 
@@ -140,7 +140,7 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="missionstatement"
                               id="missiontitle" maxlength="1000"
-                              required><?php echo $initalize->mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
+                              required><?php echo $mvv->mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
                 </div>
 
                 <h3>Last Updated:<span
@@ -156,7 +156,7 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Vision Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="visionstatement" maxlength="1000"
-                              id="visiontitle"><?php echo $initalize->mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
+                              id="visiontitle"><?php echo $mvv->mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
                 </div>
 
                 <h3>Last Updated:</h3>
@@ -171,7 +171,7 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Values Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="valuestatement" maxlength="1000"
-                              id="valuetitle"><?php echo $initalize->mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
+                              id="valuetitle"><?php echo $mvv->mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
                 </div>
 
                 <h3>Last Updated:</h3>

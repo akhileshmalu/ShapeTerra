@@ -1,7 +1,9 @@
 <?php
 session_start();
 
-require_once("../../Resources/Includes/connect.php");
+require_once("../../Resources/Includes/Initialize.php");
+$initialize = new Initialize();
+$mysqli = $initialize->mysqli;
 
 $bpayname = $_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];

@@ -1,16 +1,17 @@
 <?php
 
-Class BPCONTENTS
+Class BPCONTENTS extends Initialize
 {
 
-      protected $connection;
+//      protected $connection;
       public $errorflag, $message, $author, $time, $contentLinkId, $bpayname, $ouabbrev, $ouid, $bpid;
 
       function __construct()
       {
           //getting the connection object
-          $this->connection = new PDO(sprintf('mysql:host=%s;dbname=%s', HOSTNAME, DB), USERNAME, PASSCODE);
-          $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          parent::__construct ();
+//          $this->connection = new PDO(sprintf('mysql:host=%s;dbname=%s', HOSTNAME, DB), USERNAME, PASSCODE);
+//          $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           $this->errorflag = 0;
           $this->message = null;
           $this->author = $_SESSION['login_userid'];
@@ -187,8 +188,8 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
         $collname = $_POST['college-school-input'];
         $deanname = $_POST['deans-name-input'];
         $deantitle = $_POST['deans-title-input'];
-        $introduction = $initalize->mynl2br($_POST['introduction-input']);
-        $highlights = $initalize->mynl2br($_POST['highlights-input']);
+        $introduction = Initialize::mynl2br($_POST['introduction-input']);
+        $highlights = Initialize::mynl2br($_POST['highlights-input']);
         $bpid = $_SESSION['bpid'];
         $this->time = date('Y-m-d H:i:s');
 
@@ -371,10 +372,10 @@ Class ACADEMICPROGRAM extends BPCONTENTS
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
-        $programranking = $initalize->mynl2br($_POST['programranking']);
-        $instructionalmodalities = $initalize->mynl2br($_POST['instructionalmodalities']);
-        $launch = $initalize->mynl2br($_POST['launch']);
-        $programterminations = $initalize->mynl2br($_POST['programterminators']);
+        $programranking = Initialize::mynl2br($_POST['programranking']);
+        $instructionalmodalities = Initialize::mynl2br($_POST['instructionalmodalities']);
+        $launch = Initialize::mynl2br($_POST['launch']);
+        $programterminations = Initialize::mynl2br($_POST['programterminators']);
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
             $target_dir = "../uploads/ac_programs/";
@@ -467,12 +468,11 @@ Class FACULTYINFO extends BPCONTENTS
     {
       $this->time = date('Y-m-d H:i:s');
 
-      $facdev = $initalize->mynl2br($_POST['factextarea']);
+      $facdev = Initialize::mynl2br($_POST['factextarea']);
 
-      $createact = $initalize->mynl2br($_POST['cractivity']);
+      $createact = Initialize::mynl2br($_POST['cractivity']);
 
-      $contentlink_id = $_GET['linkid'];
-
+      $this->contentLinkId = $_GET['linkid'];
 
 
   //    if ($_FILES["supinfo"]["error"] > 0) {
@@ -567,12 +567,12 @@ Class GOALOUTCOME extends BPCONTENTS
     public function SaveDraft()
     {
       $goalstatus = $_POST['goal_status'];
-      $goalach = mynl2br($_POST['goal_ach']);
-      $resutilzed = mynl2br($_POST['goal_resutil']);
-      $goalconti = mynl2br($_POST['goal_conti']);
-      $resneed = mynl2br($_POST['resoneed']);
-      $goalincomplan = mynl2br($_POST['goal_plan_incomp']);
-      $goalupcominplan = mynl2br($_POST['goal_plan_upcoming']);
+      $goalach = Initialize::mynl2br($_POST['goal_ach']);
+      $resutilzed = Initialize::mynl2br($_POST['goal_resutil']);
+      $goalconti = Initialize::mynl2br($_POST['goal_conti']);
+      $resneed = Initialize::mynl2br($_POST['resoneed']);
+      $goalincomplan = Initialize::mynl2br($_POST['goal_plan_incomp']);
+      $goalupcominplan = Initialize::mynl2br($_POST['goal_plan_upcoming']);
       $goalreportstatus = "In Progress";
       $goal_id = $_GET['goal_id'];
       $this->time = date('Y-m-d H:i:s');
@@ -608,7 +608,7 @@ Class GOALOUTCOME extends BPCONTENTS
       if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
         $resultgoalout->bindParam(":author", $this->author, PDO::PARAM_STR);
         $resultgoalout->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
-        $resultgoalout->bindParam(":contentlink_id", $this->contentlink_id, PDO::PARAM_STR);
+        $resultgoalout->bindParam(":contentlink_id", $this->contentLinkId, PDO::PARAM_STR);
         $resultgoalout->bindParam(":author", $this->author, PDO::PARAM_STR);
         $resultgoalout->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
         $resultgoalout->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
@@ -656,7 +656,7 @@ Class GOALOUTCOME extends BPCONTENTS
         try {
           $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Approved' where ID_UNIT_GOAL = :goal_id; ";
 
-          $sqlmissionresult = $connection->prepare($sqlmission);
+          $sqlmissionresult = $this->connection->prepare($sqlmission);
           $sqlmissionresult -> bindParam(":goal_id", $this->contentLinkId, PDO::PARAM_INT);
 
           if ($sqlmissionresult->execute()) {
@@ -675,7 +675,7 @@ Class GOALOUTCOME extends BPCONTENTS
           try {
               $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Rejected' where ID_UNIT_GOAL = :goal_id; ";
 
-              $sqlmissionresult = $connection->prepare($sqlmission);
+              $sqlmissionresult = $this->connection->prepare($sqlmission);
               $sqlmissionresult -> bindParam(":goal_id", $this->contentLinkId , PDO::PARAM_INT);
 
               if ($sqlmissionresult->execute()) {
@@ -730,10 +730,10 @@ Class ALUMNIDEVELOPMENT extends BPCONTENTS
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
-        $alumni = $initalize->mynl2br($_POST['alumni']);
-        $development = $initalize->mynl2br($_POST['development']);
-        $fundraising = $initalize->mynl2br($_POST['fundraising']);
-        $gifts = $initalize->mynl2br($_POST['gifts']);
+        $alumni = Initialize::mynl2br($_POST['alumni']);
+        $development = Initialize::mynl2br($_POST['development']);
+        $fundraising = Initialize::mynl2br($_POST['fundraising']);
+        $gifts = Initialize::mynl2br($_POST['gifts']);
         $supinfopath = null;
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
@@ -828,9 +828,9 @@ Class COLLABORATION extends BPCONTENTS
     {
         $this->time = date('Y-m-d H:i:s');
         $supinfopath = null;
-        $internalcollaborators = $initalize->mynl2br($_POST['internalcollaborators']);
-        $externalcollaborators = $initalize->mynl2br($_POST['externalcollaborators']);
-        $othercollaborators = $initalize->mynl2br($_POST['othercollaborators']);
+        $internalcollaborators = Initialize::mynl2br($_POST['internalcollaborators']);
+        $externalcollaborators = Initialize::mynl2br($_POST['externalcollaborators']);
+        $othercollaborators = Initialize::mynl2br($_POST['othercollaborators']);
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
             $target_dir = "../uploads/collaborations";
@@ -920,7 +920,7 @@ Class CAMPUSCLIMATE extends BPCONTENTS
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
-        $climate = $initalize->mynl2br($_POST['climate']);
+        $climate = Initialize::mynl2br($_POST['climate']);
         $supinfopath = null;
 
         if ($_FILES['supinfo']['tmp_name'] != "") {
@@ -1011,13 +1011,13 @@ Class MVV extends BPCONTENTS
     public function SaveDraft()
     {
       $this->time = date('Y-m-d H:i:s');
-      $prevbpid = stringtoid($this->bpayname);
-      $prevbpayname = idtostring($prevbpid - 101);
-      $missionstatement = mynl2br($_POST['missionstatement']);
+//      $prevbpid = stringtoid($this->bpayname);
+//      $prevbpayname = idtostring($prevbpid - 101);
+      $missionstatement = Initialize::mynl2br($_POST['missionstatement']);
       $missionupdatedate = $_POST['misupdate'];
-      $visionstatement = mynl2br($_POST['visionstatement']);
+      $visionstatement = Initialize::mynl2br($_POST['visionstatement']);
       $visionupdatedate = $_POST['visupdate'];
-      $valuestatement = mynl2br($_POST['valuestatement']);
+      $valuestatement = Initialize::mynl2br($_POST['valuestatement']);
       $valueupdatedate = $_POST['valupdate'];
 
       $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT, MISSION_UPDATE_DATE, VISION_STATEMENT,VISION_UPDATE_DATE,VALUES_STATEMENT,VALUE_UPADTE_DATE)
@@ -1045,7 +1045,7 @@ Class MVV extends BPCONTENTS
       if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
         $resultmission->bindParam(":author", $this->author, PDO::PARAM_STR);
         $resultmission->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
-        $resultmission->bindParam(":contentlink_id", $this->contentlink_id, PDO::PARAM_STR);
+        $resultmission->bindParam(":contentlink_id", $this->contentLinkId, PDO::PARAM_STR);
         $resultmission->bindParam(":author", $this->author, PDO::PARAM_STR);
         $resultmission->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
         $resultmission->bindParam(":bpid", $this->bpid, PDO::PARAM_STR);
@@ -1056,7 +1056,12 @@ Class MVV extends BPCONTENTS
       } else {
           $this->message = "Mission, Vission, & Values Could not be Updated. Please Retry.";
       }
+    }
 
+    public function PlaceHolderValue()
+    {
+        $prevbpid = Initialize::stringtoid($this->bpayname);
+        $prevbpayname = Initialize::idtostring($prevbpid - 101);
         try {
             $sqlmission = "SELECT * FROM BP_MissionVisionValues where OU_ABBREV = :ouabbrev AND ID_UNIT_MVV in (select max(ID_UNIT_MVV) from BP_MissionVisionValues where UNIT_MVV_AY IN (:bpayname,:prevbpayname) group by OU_ABBREV)";
 
@@ -1075,19 +1080,18 @@ Class MVV extends BPCONTENTS
     }
 }
 
-
 Class INITIATIVES extends BPCONTENTS
 {
     public function SaveDraft()
     {
         $this->time = date('Y-m-d H:i:s');
         $this->contentLinkId = $_GET['linkid'];
-        $ugexplearn = $initalize->mynl2br($_POST['ugexplearning']);
-        $gradexplearn = $initalize->mynl2br($_POST['gradexplearning']);
-        $afford = $initalize->mynl2br($_POST['afford']);
-        $reputation = $initalize->mynl2br($_POST['reputation']);
-        $coolstuff = $initalize->mynl2br($_POST['coolstuff']);
-        $challenges = $initalize->mynl2br($_POST['challenges']);
+        $ugexplearn = Initialize::mynl2br($_POST['ugexplearning']);
+        $gradexplearn = Initialize::mynl2br($_POST['gradexplearning']);
+        $afford = Initialize::mynl2br($_POST['afford']);
+        $reputation = Initialize::mynl2br($_POST['reputation']);
+        $coolstuff = Initialize::mynl2br($_POST['coolstuff']);
+        $challenges = Initialize::mynl2br($_POST['challenges']);
 
         if ($_FILES['supinfo']['tmp_name'] !="") {
             $target_dir = "../uploads/initiatives/";
@@ -1158,9 +1162,6 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
 
     public function PlaceHolderValue()
     {
-      $prevbpid = stringtoid($this->bpayname);
-      $prevbpayname = idtostring($prevbpid - 101);
-
         try {
             $sqlexvalue = "SELECT * FROM `AC_InitObsrv` WHERE OU_ABBREV = :ouabbrev AND ID_INITIATIVES_OBSERVATIONS IN
 (SELECT MAX(ID_INITIATIVES_OBSERVATIONS) FROM `AC_InitObsrv` WHERE OUTCOMES_AY = :bpayname GROUP BY OU_ABBREV)";
@@ -1178,3 +1179,4 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         return $resultexvalue;
     }
 }
+

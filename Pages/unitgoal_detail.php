@@ -9,7 +9,7 @@
  * Session & Error control Initialization.
  */
 
-require_once ("../Resources/Includes/initalize.php");
+require_once ("../Resources/Includes/initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 $connection = $initalize->connection;
@@ -22,7 +22,6 @@ $BackToGoal = true;
 
  * Connection to DataBase.
  */
-//require_once ("../Resources/Includes/connect.php");
 require_once ("../Resources/Includes/BpContents.php");
 
 /*
@@ -43,30 +42,55 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-$UnitGoalDetail = new UNITGOALDETAIL();
-
+//$UnitGoalDetail = new UNITGOALDETAIL();
+$Bpcontent = new BPCONTENTS();
 
 //  Blueprint Status information on title box
-$resultbroad = $CampusClimate->BlueprintStatusDisplay();
+$resultbroad = $Bpcontent->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
+$mysqli = $Bpcontent->mysqli;
 /*
  * SQL for pre-existing Goal Value
  */
-$sqlexvalue = "SELECT * FROM `BP_UnitGoals` WHERE ID_UNIT_GOAL = '$goal_id' ;";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue->fetch_assoc();
+try {
+    $sqlexvalue = "SELECT * FROM `BP_UnitGoals` WHERE ID_UNIT_GOAL = :goal_id ;";
+    $resultexvalue = $Bpcontent->connection->prepare($sqlexvalue);
+    $resultexvalue->bindParam(':goal_id', $goal_id, 1);
+    $resultexvalue->execute();
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+}
+
+$rowsexvalue = $resultexvalue->fetch(2);
 
 // SQL for Goal Status for Edit control
-$sqlgoalstatus = "SELECT GOAL_STATUS FROM BP_UnitGoals WHERE ID_UNIT_GOAL = '$goal_id';";
-$resultgoalstatus = $mysqli->query($sqlgoalstatus);
-$rowsgoalstatus = $resultgoalstatus->fetch_array(MYSQLI_NUM);
+
+try {
+    $sqlgoalstatus = "SELECT GOAL_STATUS FROM BP_UnitGoals WHERE ID_UNIT_GOAL = :goal_id;";
+    $resultgoalstatus = $Bpcontent->connection->prepare($sqlgoalstatus);
+    $resultgoalstatus->bindParam(':goal_id', $goal_id, 1);
+    $resultgoalstatus->execute();
+
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+}
+$rowsgoalstatus = $resultgoalstatus->fetch(4);
 
 //SQL to check goal level 'goal approval' by Dean to action content status 'Goal Approval'
 // Checks if given goal is last goal to approve ; if yes then create sql to change content status of Goal Overview module.
-$sqlgoalchk = "SELECT * FROM BP_UnitGoals WHERE OU_ABBREV = '$ouabbrev' AND UNIT_GOAL_AY='$bpayname' ";
-$resultgoalchk = $mysqli->query($sqlgoalchk);
-$numrow = $resultgoalchk->num_rows;
+try {
+    $sqlgoalchk = "SELECT * FROM BP_UnitGoals WHERE OU_ABBREV = :ouabbrev AND UNIT_GOAL_AY= :bpayname ";
+    $resultgoalchk = $Bpcontent->connection->prepare($sqlgoalchk);
+    $resultgoalchk->bindParam(':ouabbrev', $ouabbrev, 2);
+    $resultgoalchk->bindParam(':bpayname', $bpayname, 2);
+    $resultgoalchk->execute();
+
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+}
+
+$numrow = $resultgoalchk->rowCount();
 
 // Value Set for Goal ViewPoints;
 $goalviewpoint = array(
@@ -80,111 +104,241 @@ $goalviewpoint = array(
  */
 
 if(isset($_POST['goal_submit'])) {
+    $Bpcontent->time = date('Y-m-d H:i:s');
     $contentlink_id = $_GET['linkid'];
     $goal_id = $_GET['goal_id'];
-    $goaltitle = $initalize->mynl2br($_POST['goaltitle']);
+    $goaltitle = $Bpcontent->mynl2br($_POST['goaltitle']);
 
     $unigoallink = $_POST['goallink'];
     foreach ($unigoallink as $value) {
         $unigoallinkname .= $value . ",";
     }
-    $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
-    $goalalignment = $initalize->mynl2br($_POST['goalalignment']);
+    $goalstatement = $Bpcontent->mynl2br($_POST['goalstatement']);
+    $goalalignment = $Bpcontent->mynl2br($_POST['goalalignment']);
     $goalview = $_POST['goal_viewpoint'];
-    $goalaction = $initalize->mynl2br($_POST['goal_action']);
-    $goalnotes = $initalize->mynl2br($_POST['goal_notes']);
+    $goalaction = $Bpcontent->mynl2br($_POST['goal_action']);
+    $goalnotes = $Bpcontent->mynl2br($_POST['goal_notes']);
 
-    $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time',GOAL_STATUS = 'In Progress', UNIT_GOAL_TITLE = '$goaltitle', LINK_UNIV_GOAL = '$unigoallinkname',
-GOAL_VIEWPOINT = '$goalview', GOAL_STATEMENT = '$goalstatement', GOAL_ALIGNMENT = '$goalalignment', GOAL_ACTION_PLAN = '$goalaction', GOAL_NOTES = '$goalnotes'  WHERE ID_UNIT_GOAL = '$goal_id' ;";
+    try {
 
-    $sqlunitgoal .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_AUTHOR = :author, MOD_TIMESTAMP = :timeStampmod, 
+GOAL_STATUS = 'In Progress', UNIT_GOAL_TITLE = :goaltitle, LINK_UNIV_GOAL = :unigoallinkname,
+GOAL_VIEWPOINT = :goalview, GOAL_STATEMENT = :goalstatement, GOAL_ALIGNMENT = :goalalignment, 
+GOAL_ACTION_PLAN = :goalaction, GOAL_NOTES = :goalnotes  WHERE ID_UNIT_GOAL = :goal_id ;";
 
-    $sqlunitgoal .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+        if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+            $sqlunitgoal .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
+            MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
 
-    if($mysqli->multi_query($sqlunitgoal)) {
+            $sqlunitgoal .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
+BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+        }
 
-        $message[0] = "Unit goals Updated Succesfully.";
+        $resultunitgoal = $Bpcontent->connection->prepare($sqlunitgoal);
 
-    } else {
-        $message[0] = "Unit goals could not be Updated.";
+        $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goaltitle", $goaltitle, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":unigoallinkname", $unigoallinkname, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalview", $goalview, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalstatement", $goalstatement, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalalignment", $goalalignment, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalaction", $goalaction, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalnotes", $goalnotes, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+
+        if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+
+            $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(':bpid', $Bpcontent->bpid, PDO::PARAM_STR);
+        }
+
+        if ($resultunitgoal->execute()) {
+
+            $message[0] = "Unit goals Updated Succesfully.";
+        } else {
+            $message[0] = "Unit goals could not be Updated.";
+        }
+
+
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
     }
-
 
 }
 
 if(isset($_POST['new_goal_submit'])) {
     $contentlink_id = $_GET['linkid'];
-
-    $goaltitle = $initalize->mynl2br($_POST['goaltitle']);
+    $Bpcontent->time = date('Y-m-d H:i:s');
+    $goaltitle = $Bpcontent->mynl2br($_POST['goaltitle']);
 
     $unigoallink = $_POST['goallink'];
     foreach ($unigoallink as $value) {
         $unigoallinkname .= $value . ",";
     }
-    $goalstatement = $initalize->mynl2br($_POST['goalstatement']);
-    $goalalignment = $initalize->mynl2br($_POST['goalalignment']);
+    $goalstatement = $Bpcontent->mynl2br($_POST['goalstatement']);
+    $goalalignment = $Bpcontent->mynl2br($_POST['goalalignment']);
     $goalview = $_POST['goal_viewpoint'];
-    $goalaction = $initalize->mynl2br($_POST['goal_action']);
-    $goalnotes = $initalize->mynl2br($_POST['goal_notes']);
+    $goalaction = $Bpcontent->mynl2br($_POST['goal_action']);
+    $goalnotes = $Bpcontent->mynl2br($_POST['goal_notes']);
 
-    $sqlunitgoal = "INSERT INTO `BP_UnitGoals` (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_VIEWPOINT, GOAL_STATEMENT, GOAL_ALIGNMENT, GOAL_ACTION_PLAN, GOAL_NOTES)
-VALUES ('$ouabbrev','$author','$time','$bpayname','$goaltitle','$unigoallinkname','$goalview','$goalstatement','$goalalignment','$goalaction','$goalnotes');";
+    try {
 
-    $sqlunitgoal .= "Update  `BpContents` set CONTENT_STATUS = 'In Progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        $sqlunitgoal = "INSERT INTO `BP_UnitGoals` (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, 
+UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_VIEWPOINT, GOAL_STATEMENT, GOAL_ALIGNMENT, GOAL_ACTION_PLAN, GOAL_NOTES)
+VALUES (:ouabbrev, :author, :timestampmod, :bpayname, :goaltitle, :unigoallinkname, :goalview, :goalstatement,
+:goalalignment, :goalaction, :goalnotes);";
 
-    $sqlunitgoal .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress',BROADCAST_STATUS_OTHERS = 'In Progress',  AUTHOR= '$author',LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
+        if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+            $sqlunitgoal .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
+            MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
+
+            $sqlunitgoal .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
+BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+        }
+
+        $resultunitgoal = $Bpcontent->connection->prepare($sqlunitgoal);
+
+        $resultunitgoal->bindParam(":ouabbrev", $Bpcontent->ouabbrev, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":bpayname", $Bpcontent->bpayname, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goaltitle", $goaltitle, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":unigoallinkname", $unigoallinkname, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalview", $goalview, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalstatement", $goalstatement, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalalignment", $goalalignment, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalaction", $goalaction, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goalnotes", $goalnotes, PDO::PARAM_STR);
+
+        if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
+
+            $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
+        }
+
+        if ($resultunitgoal->execute()) {
+
+            $message[0] = "Unit goals Updated Succesfully.";
+        } else {
+            $message[0] = "Unit goals could not be Updated.";
+        }
 
 
-    if($mysqli->multi_query($sqlunitgoal)) {
-
-        $message[0] = "Unit goals Updated Succesfully.";
-
-    } else {
-        $message[0] = "Unit goals could not be Updated.";
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
     }
-
 }
 
 if(isset($_POST['submit_for_approval'])) {
+
+    $Bpcontent->time = date('Y-m-d H:i:s');
     $contentlink_id = $_GET['linkid'];
     $goal_id = $_GET['goal_id'];
-    $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Pending Dean Approval', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
-    $sqlunitgoal .= "Update `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-    if ($mysqli->multi_query($sqlunitgoal)) {
-        $message[0] = "Unit Goals Submitted for Approval Successfully";
-    } else {
-        $message[0] = "Unit Goals Could not be Submitted for Approval. Please Retry.";
+
+    try {
+        $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Pending Dean Approval', GOAL_AUTHOR = :author, 
+        MOD_TIMESTAMP = :timeStampmod  where ID_UNIT_GOAL = :goal_id;";
+        $sqlunitgoal .= "Update `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= :author,
+        MOD_TIMESTAMP =:timeStampmod  where ID_CONTENT = :contentlink_id;";
+
+        $resultunitgoal = $Bpcontent->connection->prepare($sqlunitgoal);
+
+        $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+        $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
+
+        if ($resultunitgoal->execute()) {
+
+            $message[0] = "Unit Goals Submitted for Approval Successfully";
+        } else {
+            $message[0] = "Unit Goals Could not be Submitted for Approval. Please Retry.";
+        }
+
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
     }
 }
 
 if(isset($_POST['approve'])) {
+    $Bpcontent->time = date('Y-m-d H:i:s');
     $goal_id = $_GET['goal_id'];
     $contentlink_id = $_GET['linkid'];
-    $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Approved', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
 
-    //check if goal is last goal to approve which should change status of goal overview module to "dean approved".
-    $sqlgoalchk .= "AND GOAL_STATUS = 'Dean Approved';";
-    $resultgoalchk = $mysqli->query($sqlgoalchk);
-    $numrowapprove = $resultgoalchk->num_rows;
+    try {
 
-    if ($numrow-1 == $numrowapprove) {
-        $sqlunitgoal .= "Update `BpContents` set CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-    }
+        $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Approved', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
 
-    if ($mysqli->multi_query($sqlunitgoal)) {
-        $message[0] = "Unit Goals Approved Successfully";
-    } else {
-        $message[0] = "Unit Goals Could not be Approved. Please Retry.";
+        //check if goal is last goal to approve which should change status of goal overview module to "dean approved".
+        $sqlgoalchk .= "AND GOAL_STATUS = 'Dean Approved';";
+
+        $resultgoalchk = $Bpcontent->connection->prepare($sqlgoalchk);
+        $resultgoalchk->bindParam(':ouabbrev', $ouabbrev, 2);
+        $resultgoalchk->bindParam(':bpayname', $bpayname, 2);
+        $resultgoalchk->execute();
+        $numrowapprove = $resultgoalchk->rowCount();
+
+        if ($numrow-1 == $numrowapprove) {
+            $sqlunitgoal .= "Update `BpContents` set CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+        }
+
+        $resultunitgoal = $Bpcontent->connection->prepare($sqlunitgoal);
+
+        $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+
+        if ($numrow-1 == $numrowapprove) {
+            $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
+        }
+
+        if ($resultunitgoal->execute()) {
+
+            $message[0] = "Unit Goals Approved Successfully";
+        } else {
+            $message[0] = "Unit Goals Could not be Approved. Please Retry.";
+        }
+
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
     }
 }
 
 if(isset($_POST['reject'])) {
+
     $goal_id = $_GET['goal_id'];
-    $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Rejected', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
-    if ($mysqli->query($sqlunitgoal)) {
-        $message[0] = "Unit Goals Rejected Successfully";
-    } else {
-        $message[0] = "Unit Goals Could not be Rejected. Please Retry.";
+
+    try {
+        $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Rejected', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
+
+        $resultunitgoal = $Bpcontent->connection->prepare($sqlunitgoal);
+
+        $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+
+        if ($resultunitgoal->execute()) {
+
+            $message[0] = "Unit Goals Rejected Successfully";
+        } else {
+            $message[0] = "Unit Goals Could not be Rejected. Please Retry.";
+        }
+
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
     }
 }
 
@@ -249,8 +403,9 @@ require_once("../Resources/Includes/menu.php");
                 </p>
                 <?php
                 $sqlug = "SELECT * FROM UniversityGoals ORDER BY ID_UNIV_GOAL ASC;";
-                $resultug = $mysqli->query($sqlug);
-                while ($rowsug = $resultug->fetch_assoc()) { ?>
+                $resultug = $Bpcontent->connection->prepare($sqlug);
+                $resultug->execute();
+                while ($rowsug = $resultug->fetch(2)) { ?>
                     <div class="checkbox form-indent" id="goallink">
                         <label><input type="checkbox" name="goallink[]"
                                       class="checkBoxClass"
@@ -291,7 +446,7 @@ require_once("../Resources/Includes/menu.php");
                     <small>Provide a full statement of the Goal. </small>
                 </p>
                 <textarea rows="5" class="form-control form-indent" style="width: 95%" name="goalstatement" id="goalstatement"
-                          required><?php echo $initalize->mybr2nl($rowsexvalue['GOAL_STATEMENT']); ?></textarea>
+                          required><?php echo $Bpcontent->mybr2nl($rowsexvalue['GOAL_STATEMENT']); ?></textarea>
             </div>
 
             <div class="form-group">
@@ -301,7 +456,7 @@ require_once("../Resources/Includes/menu.php");
                     <small>Explain how this Goal aligns to your unit's Mission, Vision, and Values.</small>
                 </p>
                 <textarea rows="5" class="form-control form-indent" style="width: 95%" name="goalalignment" id="goalalignment"
-                          required><?php echo $initalize->mybr2nl($rowsexvalue['GOAL_ALIGNMENT']); ?></textarea>
+                          required><?php echo $Bpcontent->mybr2nl($rowsexvalue['GOAL_ALIGNMENT']); ?></textarea>
             </div>
 
             <div  class="form-group">
@@ -309,7 +464,8 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Describe your general plan to achieve this goal over the life of the goal.</small>
                 </p>
-                <textarea name="goal_action" rows="5" cols="25" wrap="hard" style="width: 95%" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexvalue['GOAL_ACTION_PLAN']); ?></textarea>
+                <textarea name="goal_action" rows="5" cols="25" wrap="hard" style="width: 95%" class="form-control
+                form-indent" ><?php echo $Bpcontent->mybr2nl($rowsexvalue['GOAL_ACTION_PLAN']); ?></textarea>
             </div>
 
             <div id="notes" class="form-group">
@@ -317,7 +473,8 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">
                     <small>Provide any relevant notes about this forward-looking goal.</small>
                 </p>
-                <textarea name="goal_notes" rows="3" cols="25" wrap="hard" style="width: 95%" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexvalue['GOAL_NOTES']); ?></textarea>
+                <textarea name="goal_notes" rows="3" cols="25" wrap="hard" style="width: 95%" class="form-control
+                form-indent" ><?php echo $Bpcontent->mybr2nl($rowsexvalue['GOAL_NOTES']); ?></textarea>
             </div>
 
             <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') { ?>

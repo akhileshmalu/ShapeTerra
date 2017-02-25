@@ -27,7 +27,7 @@ $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
 $BpContent = new BPCONTENTS();
-
+//$connection = $BpContent->connection;
 
 //  Blueprint Status information on title box
 $resultbroad = $BpContent->BlueprintStatusDisplay();
@@ -40,18 +40,22 @@ $rowsbpstatus = $resultbpstatus->fetch(2);
 /*
  * New award modal Input values : Award type
  */
-try{
-    $sqlaward = "select * from AwardType;";
-    $awardresult = $connection->prepare($sqlaward)->execute();
-}catch (PDOException $e) {
+try {
+    $sqlaward = "select * from `AwardType` ; ";
+    $resultaward = $BpContent->connection->prepare($sqlaward);
+    $resultaward->execute();
+
+} catch (PDOException $e) {
     error_log($e->getMessage());
     //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
 }
 
 try {
-    $sqlawardLoc = "select * from AwardLocation;";
-    $awardlocresult = $connection->prepare($sqlawardLoc)->execute();
-}catch (PDOException $e) {
+    $sqlawardLoc = "SELECT * from `AwardLocation` ; ";
+    $resultawardLoc = $BpContent->connection->prepare($sqlawardLoc);
+    $resultawardLoc->execute();
+
+} catch (PDOException $e) {
     error_log($e->getMessage());
     //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
 }
@@ -60,7 +64,7 @@ try {
  * Add Modal Record Addition
  */
 
-if(isset($_POST['award_submit'])){
+if(isset($_POST['award_submit'])) {
 
 
     $awardType = $_POST['awardType'];
@@ -72,7 +76,7 @@ if(isset($_POST['award_submit'])){
     $dateAward = $_POST['dateAward'];
     $contentlink_id = $_GET['linkid'];
 
-    try{
+    try {
 
       $sqlAcFacAward = " INSERT INTO `AC_FacultyAwards` (OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,
       AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST, RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED,
@@ -83,77 +87,49 @@ if(isset($_POST['award_submit'])){
           $sqlAcFacAward .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
           MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
 
+          $sqlAcFacAward .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
+      BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+      }
+        $resultaward = $BpContent->connection->prepare($sqlAcFacAward);
 
-        if($mysqli->multi_query($sqlAcFacAward)){
+        $resultaward->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
+        $resultaward->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
+        $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
+        $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
+        $resultaward->bindParam(':awardType', $awardType, PDO::PARAM_STR );
+        $resultaward->bindParam(':awardLoc', $awardLoc, PDO::PARAM_STR );
+        $resultaward->bindParam(':recipLname', $recipLname, PDO::PARAM_STR );
+        $resultaward->bindParam(':recipFname', $recipFname, PDO::PARAM_STR );
+        $resultaward->bindParam(':awardTitle', $awardTitle, PDO::PARAM_STR );
+        $resultaward->bindParam(':awardOrg', $awardOrg, PDO::PARAM_STR );
+        $resultaward->bindParam(':dateAward', $dateAward, PDO::PARAM_STR );
 
-            $Data = new Data();
-            $Data->initOrderFacultyAwards();
-            $message[0] = "Award Added Succesfully.";
+        if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
 
-        } else {
-            $message[0] = "Award Could not be Added.";
+            $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
+            $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
+            $resultaward->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
+            $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
+            $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
+            $resultaward->bindParam(':bpid', $bpid, PDO::PARAM_STR);
         }
 
-      }
+        if($resultaward->execute()) {
+            $Data = new Data($BpContent->connection);
+            $Data->initOrderFacultyAwards();
+            $error[0] = "Award Added Succesfully.";
 
-  }catch(PDOException $e){
+        } else {
+            $error[0] = "Award Could not be Added.";
+
+        }
+    } catch (PDOException $e) {
 
     error_log($e->getMessage());
 
   }
 
 }
-
-if(isset($_POST['submit_approve'])) {
-
-    $contentlink_id = $_GET['linkid'];
-
-    try {
-
-      $sqlAcFacAward .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
-      BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
-
-    }catch (PDOException $e) {
-        error_log($e->getMessage());
-        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    }
-
-
-    $resultaward = $connection->prepare($sqlAcFacAward);
-
-    $resultaward->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
-    $resultaward->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
-    $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
-    $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
-    $resultaward->bindParam(':awardType', $awardType, PDO::PARAM_STR );
-    $resultaward->bindParam(':awardLoc', $awardLoc, PDO::PARAM_STR );
-    $resultaward->bindParam(':recipLname', $recipLname, PDO::PARAM_STR );
-    $resultaward->bindParam(':recipFname', $recipFname, PDO::PARAM_STR );
-    $resultaward->bindParam(':awardTitle', $awardTitle, PDO::PARAM_STR );
-    $resultaward->bindParam(':awardOrg', $awardOrg, PDO::PARAM_STR );
-    $resultaward->bindParam(':dateAward', $dateAward, PDO::PARAM_STR );
-
-    if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-
-        $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
-        $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
-        $resultaward->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
-        $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
-        $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
-        $resultaward->bindParam(':bpid', $bpid, PDO::PARAM_STR);
-    }
-
-    if($resultaward->execute()) {
-        $Data = new Data($connection);
-        $Data->initOrderFacultyAwards();
-        $error[0] = "Award Added Succesfully.";
-
-    } else {
-        $error[0] = "Award Could not be Added.";
-
-    }
-
-  }
 
 if(isset($_POST['submit_approve'])) {
 
@@ -245,8 +221,7 @@ require_once("../Resources/Includes/menu.php");
 
             <div id="addnew" class="">
                 <button id="add-mission" type="button" class="btn-secondary col-lg-3 col-md-7 col-sm-8 pull-right"
-                        data-toggle="modal" data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Awards
-                </button>
+                        data-toggle="modal" data-target="#addawardModal"><span class="icon">&#xe035;</span>Add New Awards</button>
             </div>
         <?php endif; ?>
 
@@ -365,7 +340,6 @@ require_once("../Resources/Includes/menu.php");
         <div class="modal-body">
             <form method="POST" action="<?php echo "facultyawards.php?linkid=".$contentlink_id; ?>">
                 <div class="form-group">
-
                     <label for="awardtype">Select Award Type:<span
                         style="color: red"><sup>*</sup></span></label>
                     <select  name="awardType" class="form-control" id="awardtype">
@@ -416,7 +390,6 @@ require_once("../Resources/Includes/menu.php");
         </div>
     </div>
 </div>
-
 
 <?php
 //Include Footer

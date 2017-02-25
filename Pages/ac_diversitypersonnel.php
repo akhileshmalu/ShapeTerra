@@ -1,103 +1,103 @@
 <?php
 
-  require_once("../Resources/Includes/Initialize.php");
-  $initalize = new Initialize();
-  $initalize->checkSessionStatus();
-  $connection = $initalize->connection;
+require_once("../Resources/Includes/Initialize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 
-  /**
-   * Initialization of local variables
-   */
+/**
+ * Initialization of local variables
+ */
 
-  $message = array();
-  $errorflag = 0;
-  $colCount = 0;
-  $count = 1;
-  $index = 0;
-  $discardid = array();
-  $sqldel = null;
-  $csv = array();
-  $tablefileds = array();
-  $tablevalue = array();
-  $sqlupload = null;
-  $notBackToDashboard = true;
-  $sumfac = array();
-  $sumstaff = array();
-  $datavalues = array();
-  $meta = array();
+$message = array();
+$errorflag = 0;
+$colCount = 0;
+$count = 1;
+$index = 0;
+$discardid = array();
+$sqldel = null;
+$csv = array();
+$tablefileds = array();
+$tablevalue = array();
+$sqlupload = null;
+$notBackToDashboard = true;
+$sumfac = array();
+$sumstaff = array();
+$datavalues = array();
+$meta = array();
 
-  //Variable import for SQL
-  $content_id = $_GET['linkid'];
-  $time = date('Y-m-d H:i:s');
-  $author = $_SESSION['login_userid'];
-  $ouid = $_SESSION['login_ouid'];
-  $FUayname = $_SESSION['FUayname'];
-  $outype = $_SESSION['login_outype'];
+//Variable import for SQL
+$content_id = $_GET['linkid'];
+$time = date('Y-m-d H:i:s');
+$author = $_SESSION['login_userid'];
+$ouid = $_SESSION['login_ouid'];
+$FUayname = $_SESSION['FUayname'];
+$outype = $_SESSION['login_outype'];
 
-  //Menu control back Button
-  $BackToFileUploadHome = true;
+//Menu control back Button
+$BackToFileUploadHome = true;
 
-  // File Upload Status & Details.
-  try{
-      $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS =
+// File Upload Status & Details.
+try {
+    $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS =
   IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id;";
-      $resultfucontent = $connection->prepare($sqlfucontent);
-      $resultfucontent->bindParam(':content_id', $content_id, 1);
-      $resultfucontent->execute();
-  }catch (PDOException $e){
-      //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-      error_log($e->getMessage());
-  }
+    $resultfucontent = $connection->prepare($sqlfucontent);
+    $resultfucontent->bindParam(':content_id', $content_id, 1);
+    $resultfucontent->execute();
+} catch (PDOException $e) {
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
 
-  $rowsfucontent = $resultfucontent->fetch(2);
-  $tablename = $rowsfucontent['NAME_UPLOADFILE'];
+$rowsfucontent = $resultfucontent->fetch(2);
+$tablename = $rowsfucontent['NAME_UPLOADFILE'];
 
-  // Display Of Values in validation from IR_AC_DiversityStudent Table of Database
-  try{
-      $sqldatadisplay = "SELECT * FROM IR_AC_DiversityPersonnel WHERE ID_IR_AC_DIVERSITY_PERSONNEL IN
+// Display Of Values in validation from IR_AC_DiversityStudent Table of Database
+try {
+    $sqldatadisplay = "SELECT * FROM IR_AC_DiversityPersonnel WHERE ID_IR_AC_DIVERSITY_PERSONNEL IN
   (SELECT MAX(ID_IR_AC_DIVERSITY_PERSONNEL) FROM IR_AC_DiversityPersonnel WHERE OUTCOMES_AY = :FUayname GROUP BY
   OU_ABBREV);";
-      $resultdatadisplay = $connection->prepare($sqldatadisplay);
-      $resultdatadisplay->bindParam(':FUayname', $FUayname, 2);
-      $resultdatadisplay->execute();
-  }catch (PDOException $e){
-      //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-      error_log($e->getMessage());
-  }
+    $resultdatadisplay = $connection->prepare($sqldatadisplay);
+    $resultdatadisplay->bindParam(':FUayname', $FUayname, 2);
+    $resultdatadisplay->execute();
+} catch (PDOException $e) {
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
 
-  $dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
-  $fieldcnt = $resultdatadisplay->columnCount();
-  $num_records = $resultdatadisplay->rowCount();
+$dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
+$fieldcnt = $resultdatadisplay->columnCount();
+$num_records = $resultdatadisplay->rowCount();
 
-  while($meta = $resultdatadisplay->getColumnMeta($colCount)) {
-      $datavalues[0][$i]=$meta[name];
-      $i++;
-      $colCount++;
-  }
+while ($meta = $resultdatadisplay->getColumnMeta($colCount)) {
+    $datavalues[0][$i] = $meta[name];
+    $i++;
+    $colCount++;
+}
 
-  while ($rowsdatadisplay = $resultdatadisplay->fetch(4)) {
-      for($col = 0; $col<$fieldcnt; $col++) {
-          $datavalues[$count][$col] = $rowsdatadisplay[$col];
-      }
-      $count++;
-  }
+while ($rowsdatadisplay = $resultdatadisplay->fetch(4)) {
+    for ($col = 0; $col < $fieldcnt; $col++) {
+        $datavalues[$count][$col] = $rowsdatadisplay[$col];
+    }
+    $count++;
+}
 
-  for ($j = 1; $j < $fieldcnt; $j++) {
-      for ($i = 0; $i <= $num_records; $i++) {
-          if($i == 0)    {
-              $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-          } else {
-              $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-          }
+for ($j = 1; $j < $fieldcnt; $j++) {
+    for ($i = 0; $i <= $num_records; $i++) {
+        if ($i == 0) {
+            $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
+        } else {
+            $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
+        }
 
-      }
-      $dynamictable .= "</tr>";
-  }
+    }
+    $dynamictable .= "</tr>";
+}
 
-  $dynamictable .= '</table>';
+$dynamictable .= '</table>';
 
 
-  if (isset($_POST['upload'])) {
+if (isset($_POST['upload'])) {
 
     $tablename = $rowsfucontent['NAME_UPLOADFILE'];
     //$ayname = $_POST['ay'];
@@ -153,7 +153,8 @@
                                     $sumfac[$row - 1] += intval($csv[$row][$colindex]);
                                 }
                                 if ($i == 7 or $i == 8 or $i == 9 or $i == 10 or $i == 11 or $i == 12 or $i == 13 or
-                                    $i == 14 or $i == 15) {
+                                    $i == 14 or $i == 15
+                                ) {
                                     $sumfac[$row - 1] -= intval($csv[$row][$colindex]);
                                 }
 
@@ -164,7 +165,8 @@
 
                                 }
                                 if ($i == 18 or $i == 19 or $i == 20 or $i == 21 or $i == 22 or $i == 23 or $i == 24
-                                    or $i == 25) {
+                                    or $i == 25
+                                ) {
                                     $sumstaff[$row - 1] -= intval($csv[$row][$colindex]);
                                 }
 
@@ -226,9 +228,8 @@
                         // user update more units in future. Below query group all discrete units and resolve
                         // collusion basis latest (max) ID value and then sum the records and constitute USCAAU
 
-                        try
-                        {
-                        $sqlupload = "INSERT INTO IR_AC_DiversityPersonnel (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
+                        try {
+                            $sqlupload = "INSERT INTO IR_AC_DiversityPersonnel (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
                         MOD_TIMESTAMP, FAC_FEMALE, FAC_MALE, FAC_AMERIND_ALASKNAT, FAC_ASIAN, FAC_BLACK,
                         FAC_HISPANIC, FAC_HI_PAC_ISL, FAC_NONRESIDENT_ALIEN, FAC_TWO_OR_MORE,
                         FAC_UNKNOWN_RACE_ETHNCTY, FAC_WHITE, STAFF_FEMALE, STAFF_MALE, STAFF_AMERIND_ALASKNAT,
@@ -244,14 +245,12 @@
                         ID_IR_AC_DIVERSITY_PERSONNEL IN (SELECT MAX(ID_IR_AC_DIVERSITY_PERSONNEL) FROM
                         IR_AC_DiversityPersonnel WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV);";
 
-                        $resultupload = $connection->prepare($sqlupload);
+                            $resultupload = $connection->prepare($sqlupload);
                             $resultupload->bindParam(':FUayname', $FUayname, 2);
                             $resultupload->bindParam(':authorName', $author, 2);
                             $resultupload->bindParam(':timeCurrent', $time, 2);
                             $resultupload->execute();
-                        }
-                        catch (PDOException $e)
-                        {
+                        } catch (PDOException $e) {
                             //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
                             error_log($e->getMessage());
                         }
@@ -321,10 +320,10 @@ if(isset($_POST['error'])) {
     }
   }
 
-  require_once("../Resources/Includes/header.php");
+require_once("../Resources/Includes/header.php");
 
-  // Include Menu and Top Bar
-  require_once("../Resources/Includes/menu.php");
+// Include Menu and Top Bar
+require_once("../Resources/Includes/menu.php");
 
 ?>
 <div class="overlay hidden"></div>

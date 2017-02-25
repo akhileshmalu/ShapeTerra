@@ -6,7 +6,9 @@ $ouabbrev = $_SESSION['login_ouabbrev'];
 $bpayname= $_SESSION['bpayname'];
 $bpouabbrev = $_SESSION['bpouabbrev'];
 
-require_once("../../Resources/Includes/connect.php");
+require_once("../../Resources/Includes/Initialize.php");
+$initialize = new Initialize();
+$mysqli = $initialize->mysqli;
 
 require_once("grid.php");
 

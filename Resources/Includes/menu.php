@@ -13,18 +13,36 @@
 * selected is either true or false, set initial to false and selected will be determined by page
 *
 */
- require_once ("../Resources/Includes/initalize.php");
-        $initalize = new Initialize();
-        $connection = $initalize->connection; 
- $initalize->menucon = new mysqli(HOSTNAME,USERNAME,PASSCODE,DB);
+
+
+//require_once ("initialize.php");
+$initalize = new Initialize();
+//$connection = $initalize->connection;
+$menucon = $initalize->connection;
+
+
+// Local variables for Dev Environment only
+$site = "localhost:8888/shapeterra";
+$navdir = "Shapeterra/";
+
 
 // require_once ("../Resources/Includes/connect.php");
 $email = $_SESSION['login_email'];
-$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE,SYS_USER_RIGHT, OU_ABBREV,FNAME,LNAME ,USER_OU_MEMBERSHIP,OU_TYPE from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
+try {
+	$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE,SYS_USER_RIGHT, OU_ABBREV,FNAME,LNAME ,USER_OU_MEMBERSHIP,OU_TYPE from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
 inner join UserRoles on PermittedUsers.SYS_USER_ROLE = UserRoles.ID_USER_ROLE
-inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY WHERE  NETWORK_USERNAME ='$email';";
-$resultmenu = $initalize->menucon->query($sqlmenu);
-$rowsmenu = $resultmenu ->fetch_assoc();
+inner join Hierarchy on PermittedUsers.USER_OU_MEMBERSHIP = Hierarchy.ID_HIERARCHY WHERE  NETWORK_USERNAME =:email ;";
+
+	$resultmenu = $menucon->prepare($sqlmenu);
+	$resultmenu->bindParam(':email', $email, 2);
+	$resultmenu->execute();
+
+} catch (PDOException $e) {
+	//        SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+	echo $e->getMessage();
+}
+
+$rowsmenu = $resultmenu->fetch(2);
 $_SESSION['login_ouabbrev'] = $rowsmenu['OU_ABBREV'];
 $_SESSION['login_ouname'] = $rowsmenu['OU_NAME'];
 $_SESSION['login_right'] = $rowsmenu['SYS_USER_RIGHT'];

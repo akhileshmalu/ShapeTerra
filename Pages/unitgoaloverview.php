@@ -1,10 +1,5 @@
 <?php
 
-
-/*
- * This Page controls Faculty Awards Screen.
- */
-
 /*
  * Session & Error control Initialization.
  */
@@ -12,7 +7,7 @@ require_once("../Resources/Includes/Initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 
-$error = array();
+$message = array();
 $errorflag =0;
 $BackToDashboard = true;
 
