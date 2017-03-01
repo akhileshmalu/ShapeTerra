@@ -1,3 +1,9 @@
+<!-- ___________________________________________ -->
+<!-- ___________________________________________ -->
+<!-- Copied From collaborations page as template -->
+<!-- ___________________________________________ -->
+<!-- ___________________________________________ -->
+
 <?php
 
 //error_reporting(E_ALL);
@@ -12,7 +18,7 @@ $initalize = new Initialize();
 $initalize->checkSessionStatus();
 
 $message = array();
-$errorflag =0;
+$errorflag = 0;
 $BackToDashboard = true;
 
 require_once ("../Resources/Includes/BpContents.php");
@@ -21,7 +27,8 @@ $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
-$bpayname = $_SESSION['bpayname'];
+$bpayname= $_SESSION['bpayname'];
+
 
 if ($ouid == 4) {
     $ouabbrev = $_SESSION['bpouabbrev'];
@@ -30,38 +37,40 @@ if ($ouid == 4) {
 }
 
 //Object for Campus Climate Table
-$Collaboration = new CAMPUSCLIMATE();
+$BpContent = new COLLABORATION();
 
-// Blueprint Status information on title box
-$resultbroad = $Collaboration->BlueprintStatusDisplay();
+//  Blueprint Status information on title box
+$resultbroad = $BpContent->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
+
 // Values for placeholders
-$resultexvalue = $Collaboration->PlaceHolderValue();
+$resultexvalue = $BpContent->PlaceHolderValue();
 $rowsExValue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
-$resultbpstatus = $Collaboration->GetStatus();
+$resultbpstatus = $BpContent->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 if (isset($_POST['savedraft'])) {
-    $message[0] = $Collaboration->SaveDraft();
+    $message[0] = $BpContent->SaveDraft();
 }
 
 if(isset($_POST['submit_approve'])) {
-    $message[0] = "Campus & Climate";
-    $message[0].= $Collaboration->SubmitApproval();
+    $message[0] = "Collaboration";
+    $message[0].= $BpContent->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
-    $message[0] = "Campus & Climate";
-    $message[0].= $Collaboration->Approve();
+    $message[0] = "Collaboration";
+    $message[0].= $BpContent->Approve();
 }
 
 if(isset($_POST['reject'])) {
-    $message[0] = "Campus & Climate";
-    $message[0].= $Collaboration->Reject();
+    $message[0] = "Collaboration";
+    $message[0].= $BpContent->Reject();
 }
+
 
 require_once("../Resources/Includes/header.php");
 
@@ -77,7 +86,7 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0] . "&id=" . $bpid; ?>"
+        <button type="button" redirect="<?php echo "bphome.php?ayname=" . $rowbroad[0] . "&id=" . $bpid; ?>"
                 class="end btn-primary">Close
         </button>
     </div>
@@ -96,39 +105,32 @@ require_once("../Resources/Includes/menu.php");
         </div>
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Campus Climate &amp; Inclusion</h1>
-        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST"
-              enctype="multipart/form-data">
-            <h3>Campus Climate &amp; Inclusion</h3>
+        <h1 class="box-title">Teaching</h1>
+        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST" enctype="multipart/form-data">
+            
+            <h3>Faculty to Student Ratio<span
+                        style="color: red"><sup>*</sup></span></h3>
             <div class="form-group form-indent">
-                <p class="status">Describe activities your unit conducted within the Academic Year that were designed to
-                    improve campus climate and inclusion. The response may be brief or up to several paragraphs. If you
-                    have extensive information or narrative to include, please provide a brief synopsis here, and upload
-                    a Supplemental Info PDF in the provided space below.</p>
-                <textarea name="climate" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo $initalize->mybr2nl($rowsExValue['CLIMATE_INCLUSION']); ?></textarea>
-                <div class="checkbox">
-                    <label for="optionalCheck">
-                        <input type="checkbox" name="optionalCheck" id="climate"/> No response to this item
-                    </label>
-                </div>
+                <p class="status">Please calculate and provide the ratio in the space provided based on the formula: <br /> (Total FT Students + 1/3PT Students) / (Total FT Instructional Faculty +1/3 PT instructional Faculty)+Staff who teach. </p>
+                <textarea name="FACULTY_STUDENT_RATIO" rows="6" cols="25" wrap="hard"
+                          class="form-control" required><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_EXTERNAL']); ?></textarea>
             </div>
-            <h3>Supplemental Info</h3>
-            <div id="suppinfo" class="form-group form-indent">
+            <h3></h3>
+            <div class="form-group form-indent">
                 <p class="status">
-                    <small> Optional. You may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide
-                        additional detail on Campus Climate and Inclusion efforts of your Academic Unit during the
-                        Academic Year.
+                    <small>What does the quantitative data reflect on the faculty student ratio?  Do you agree with the data?  Why or why not?  Please describe your plans for the future to impact this ratio. 
                     </small>
                 </p>
-                <label for="supinfofile">Select File</label>
-                <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
+                <textarea name="FACULTY_STUDENT_RATIO_NARRTV" rows="6" cols="25" wrap="hard"
+                          class="form-control" required><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_OTHER']); ?></textarea>
+                
             </div>
 
             <!--                      Edit Control-->
 
             <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
                 <button id="save" type="submit" name="savedraft"
+                        onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
                         class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                     Save Draft
                 </button>
@@ -153,6 +155,7 @@ require_once("../Resources/Includes/menu.php");
         </form>
     </div>
 </div>
+
 
 
 <?php

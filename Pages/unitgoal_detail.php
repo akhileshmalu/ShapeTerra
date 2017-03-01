@@ -466,6 +466,11 @@ require_once("../Resources/Includes/menu.php");
                 </p>
                 <textarea name="goal_action" rows="5" cols="25" wrap="hard" style="width: 95%" class="form-control
                 form-indent" ><?php echo $Bpcontent->mybr2nl($rowsexvalue['GOAL_ACTION_PLAN']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="goal_action"/> No response to this item
+                    </label>
+                </div>
             </div>
 
             <div id="notes" class="form-group">
@@ -475,6 +480,12 @@ require_once("../Resources/Includes/menu.php");
                 </p>
                 <textarea name="goal_notes" rows="3" cols="25" wrap="hard" style="width: 95%" class="form-control
                 form-indent" ><?php echo $Bpcontent->mybr2nl($rowsexvalue['GOAL_NOTES']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="goal_notes"/> No response to this item
+                    </label>
+                </div>
+
             </div>
 
             <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') { ?>

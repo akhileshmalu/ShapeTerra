@@ -191,7 +191,7 @@ require_once("../Resources/Includes/menu.php");
                 </div>
 
 <!--                <label for ="goalstatus" ></label>-->
-                <div id="goalstatus" class="form-group col-xs-12">
+                <div id="goalstatus" class="form-group col-xs-3">
                     <h3>Goal Status</h3>
                     <select id="goalstlist" name="goal_status"  class="form-control form-indent" style="padding: 0px; background-color: #fff !important;">
                         <option value="0"> -- select an option -- </option>

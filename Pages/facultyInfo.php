@@ -126,6 +126,11 @@ require_once("../Resources/Includes/menu.php");
                 ?>
 
                 </textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="factextarea"/> No response to this item
+                    </label>
+                </div>
             </div>
             <h3>Other Activity</h3>
             <div id="createact" class="form-group form-indent">
@@ -137,6 +142,11 @@ require_once("../Resources/Includes/menu.php");
                     echo $initalize->mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']);
                 ?>
                 </textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="cractivity"/> No response to this item
+                    </label>
+                </div>
             </div>
 
 

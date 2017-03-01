@@ -45,15 +45,23 @@ $resultay->execute();
 $alumniDeveopment = array(
     array("Executive Summary","executivesum.php"),
     array("Mission, Vision & Values","mvv.php"),
-    array("Unit Goals","unitgoaloverview.php"),
-    array("Goal Management & Outcomes","goaloutcomeshome.php"),
-    array("Collaborations","collaborations.php"),
-    array("Faculty Awards","facultyawards.php"),
+    array("Unit Goals Management","unitgoaloverview.php"),
+
+
+    array("Goal Outcomes","goaloutcomeshome.php"),
     array("Academic Programs","academicPrograms.php"),
-    array("Alumni & Development","alumniDevelopment.php"),
-    array("Campus Climate","campusClimate.php"),
-    array("Faculty Info","facultyInfo.php"),
-    array("Initiatives & Observations","initiatives.php"),
+    array("Academic Initiatives","initiatives.php"),
+    array("Faculty Information","facultyInfo.php"),
+    array("Teaching","teaching.php"),
+    array("Student Recruiting & Retention","recruitReten.php"),
+    array("Faculty Awards","facultyawards.php"),
+    array("Faculty Awards Nominations","facultyNominations.php"),
+    array("Alumni Engagement & Fundraising","alumniDevelopment.php"),
+    array("Collaborations","collaborations.php"),
+    array("Campus Climate & Inclusion","campusClimate.php"),
+    array("Concluding Remarks","concludingRemarks.php"),
+    
+    
 );
 
 
@@ -122,7 +130,7 @@ if (isset($_POST['submit'])) {
                  * select last inserted value
                  */
                 $sqllastval = "SELECT max(ID_BROADCAST) AS Lastid FROM broadcast;";
-                $resultlastval = $connection->prepare($sqlbroadcheck);
+                $resultlastval = $connection->prepare($sqllastval);
                 $resultlastval->execute();
                 $rowslastval = $resultlastval->fetch(4);
 

@@ -117,26 +117,51 @@ require_once("../Resources/Includes/menu.php");
                     <h3>Undergraduate</h3>
                     <div class="form-group form-indent">
                       <textarea id="undergrad" name="ugexplearning" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo $initalize->mybr2nl($rowsexvalue['EXPERIENTIAL_LEARNING_UGRAD']); ?></textarea>
+                      <div class="checkbox">
+                        <label for="optionalCheck">
+                            <input type="checkbox" name="optionalCheck" id="ugexplearning"/> No response to this item
+                        </label>
+                    </div>
                     </div>
                     <h3>Graduate</h3>
                     <div class="form-group form-indent">
                         <textarea id="graduate" name="gradexplearning" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $initalize->mybr2nl($rowsexvalue['EXPERIENTIAL_LEARNING_GRAD']); ?></textarea>
+                        <div class="checkbox">
+                            <label for="optionalCheck">
+                                <input type="checkbox" name="optionalCheck" id="gradexplearning"/> No response to this item
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <h3>Affordability</h3>
-                <div id="afford" class="form-group form-indent">
+                <div id="" class="form-group form-indent">
                     <p class="status"><small>Describe your unit's assessment of affordability and efforts to address affordability during the Academic Year.</small></p>
                     <textarea  name="afford" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $initalize->mybr2nl($rowsexvalue['AFFORDABILITY']); ?></textarea>
+                    <div class="checkbox">
+                        <label for="optionalCheck">
+                            <input type="checkbox" name="optionalCheck" id="afford"/> No response to this item
+                        </label>
+                    </div>
                 </div>
                 <h3>Reputation Enhancement</h3>
                 <div id="reputation" class="form-group form-indent">
                     <p class="status"><small>Describe innovations, happy accidents, good news, etc. that occurred within your unit during the Academic Year, not noted elsewhere in your reporting.</small></p>
                     <textarea  name="reputation" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $initalize->mybr2nl($rowsexvalue['REPUTATION_ENHANCE']); ?></textarea>
+                    <div class="checkbox">
+                        <label for="optionalCheck">
+                            <input type="checkbox" name="optionalCheck" id="reputation"/> No response to this item
+                        </label>
+                    </div>
                 </div>
                 <h3>Challenges</h3>
                 <div id="challenge" class="form-group form-indent">
                     <p class="status"><small>Describe challenges and resource needs you anticipate for the current and upcoming Academic Years, not noted elsewhere in your reporting - or which merit additional attention.</small></p>
                     <textarea  name="challenges" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $initalize->mybr2nl($rowsexvalue['CHALLENGES']); ?></textarea>
+                    <div class="checkbox">
+                        <label for="optionalCheck">
+                            <input type="checkbox" name="optionalCheck" id="challenges"/> No response to this item
+                        </label>
+                    </div>
                 </div>
                 <h3>Supplemental Info</h3>
                 <div id="suppinfo" class="form-group form-indent">

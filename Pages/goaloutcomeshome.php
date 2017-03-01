@@ -99,7 +99,7 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Goal Management &amp; Outcomes</h1>
+        <h1 class="box-title">Goal Outcomes</h1>
         <p>Below are listed all goals for your unit.  Click any item by its Goal Title in order to edit or compose outcomes.  The response options provided for each goal are determined by the Goal Viewpoint you selected when the goal was entered in the system.</p>
         <div id="taskboard" style="margin-top: 10px;">
 <!--            <table class="grid" action="taskboard/goaloutcomeajax.php" title="Unit Goals">-->
@@ -168,7 +168,7 @@ require_once("../Resources/Includes/menu.php");
                         { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
                           return $("<a>").attr("href", "../Pages/goaloutcome.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
                         }, width: "auto" },
-                        { title: "Goal Status", itemTemplate: function(value,item){
+                        { title: "Goal Reporting Status", itemTemplate: function(value,item){
                           var status;
                           for (var i = 0; i < statusArray.length; i++){
                             if (statusArray[i][0] == item.ID_UNIT_GOAL){
@@ -250,7 +250,7 @@ require_once("../Resources/Includes/menu.php");
                         { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
                           return $("<a>").attr("href", "../Pages/goaloutcome.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
                         }, width: "auto" },
-                        { title: "Goal Status", itemTemplate: function(value,item){
+                        { title: "Goal Reporting Status", itemTemplate: function(value,item){
                           var status;
                           for (var i = 0; i < statusArray.length; i++){
                             if (statusArray[i][0] == item.ID_UNIT_GOAL){

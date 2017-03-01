@@ -106,6 +106,11 @@ require_once("../Resources/Includes/menu.php");
                     notes. </p>
                 <textarea name="programranking" rows="6" cols="25" wrap="hard" class="form-control"
                           required><?php echo $initalize->mybr2nl($rowsExValue['PROGRAM_RANKINGS']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="programranking"/> No response to this item
+                    </label>
+                </div>
             </div>
             <h3>Instructional Modalities</h3>
             <div class="form-group form-indent">
@@ -113,6 +118,11 @@ require_once("../Resources/Includes/menu.php");
                     unit's programmatic and course offerings that were enacted during the Academic Year. </p>
                 <textarea name="instructionalmodalities" rows="6" cols="25" wrap="hard" class="form-control"
                 ><?php echo $initalize->mybr2nl($rowsExValue['INSTRUCT_MODALITIES']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="instructionalmodalities"/> No response to this item
+                    </label>
+                </div>
             </div>
             <h3>Program Launches</h3>
             <div class="form-group form-indent">
@@ -125,6 +135,11 @@ require_once("../Resources/Includes/menu.php");
                 </p>
                 <textarea name="launch" rows="6" cols="25" wrap="hard" class="form-control"><?php echo $initalize->mybr2nl
                     ($rowsExValue['PROGRAM_LAUNCHES']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="launch"/> No response to this item
+                    </label>
+                </div>
             </div>
             <h3>Program Terminations</h3>
             <div class="form-group form-indent">
@@ -137,6 +152,11 @@ require_once("../Resources/Includes/menu.php");
                 </p>
                 <textarea name="programterminators" rows="6" cols="25" wrap="hard" class="form-control"><?php
                     echo $initalize->mybr2nl($rowsExValue['PROGRAM_TERMINATIONS']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="programterminators"/> No response to this item
+                    </label>
+                </div>
             </div>
             <h3>Supplemental Info</h3>
             <div id="suppinfo" class="form-group form-indent">

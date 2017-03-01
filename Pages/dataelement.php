@@ -489,14 +489,14 @@ require_once("../Resources/Includes/menu.php");
                             <small>Name of the individual who defined this data element initially.</small>
                         </p>
                         <div class="col-lg-6">
-                            <label for="fname">First Name</label>
-                            <input id="fname" type="text" name="defauthorfname" maxlength="25" class="form-control"
-                                   value="<?php echo $rowsdataelem['AUTHOR_FNAME']; ?>" required>
-                        </div>
-                        <div class="col-lg-6">
                             <label for="lname">Last Name</label>
                             <input id="lname" type="text" name="defauthorlname" maxlength="25" class="form-control"
                                    value="<?php echo $rowsdataelem['AUTHOR_LNAME']; ?>" required>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="fname">First Name</label>
+                            <input id="fname" type="text" name="defauthorfname" maxlength="25" class="form-control"
+                                   value="<?php echo $rowsdataelem['AUTHOR_FNAME']; ?>" required>
                         </div>
                     </div>
 

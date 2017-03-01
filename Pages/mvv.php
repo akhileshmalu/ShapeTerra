@@ -157,6 +157,11 @@ require_once("../Resources/Includes/menu.php");
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="visionstatement" maxlength="1000"
                               id="visiontitle"><?php echo $mvv->mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
+                    <div class="checkbox">
+                        <label for="optionalCheck">
+                            <input type="checkbox" name="optionalCheck" id="visionstatement"/> No response to this item
+                        </label>
+                    </div>
                 </div>
 
                 <h3>Last Updated:</h3>
@@ -166,12 +171,18 @@ require_once("../Resources/Includes/menu.php");
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
+
                     </div>
                 </div>
                 <h3>Values Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="valuestatement" maxlength="1000"
                               id="valuetitle"><?php echo $mvv->mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
+                    <div class="checkbox">
+                        <label for="optionalCheck">
+                            <input type="checkbox" name="optionalCheck" id="valuestatement"/> No response to this item
+                        </label>
+                    </div>
                 </div>
 
                 <h3>Last Updated:</h3>
@@ -211,16 +222,17 @@ require_once("../Resources/Includes/menu.php");
 </div>
 <?php require_once("../Resources/Includes/footer.php"); //Include Footer ?>
 <!--Calender Bootstrap inclusion for date picker INPUT-->
-<script type="text/javascript">
+<!-- <script type="text/javascript">
     $('.nav a').click(function (e) {
         e.preventDefault();
         $(this).tab('show')
     })
-</script>
-<script src="../Resources/Library/js/tabAlert.js"></script>
+</script> -->
+
+<script type="text/javascript" src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
-<script src="../Resources/Library/js/calender.js"></script>
-<script src="../Resources/Library/js/chkbox.js"></script>
-<script src="../Resources/Library/js/taskboard.js"></script>
-<script src="../Resources/Library/js/content.js"></script>
+<script type="text/javascript" src="../Resources/Library/js/calender.js"></script>
+<script type="text/javascript" src="../Resources/Library/js/chkbox.js"></script>
+<script type="text/javascript" src="../Resources/Library/js/taskboard.js"></script>
+<script type="text/javascript" src="../Resources/Library/js/content.js"></script>

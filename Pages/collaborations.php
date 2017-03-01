@@ -106,12 +106,22 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">List your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are internal to the University.  Details should be omitted; list by name only. </p>
                 <textarea name="internalcollaborators" rows="6" cols="25" wrap="hard" class="form-control"
                           required><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_INTERNAL']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="internalcollaborators"/> No response to this item
+                    </label>
+                </div>
             </div>
             <h3>External Collaborations</h3>
             <div class="form-group form-indent">
                 <p class="status">List your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are external to the University.  Details should be omitted; list by name only. </p>
                 <textarea name="externalcollaborators" rows="6" cols="25" wrap="hard"
                           class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_EXTERNAL']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="externalcollaborators"/> No response to this item
+                    </label>
+                </div>
             </div>
             <h3>Other Collaborations</h3>
             <div class="form-group form-indent">
@@ -121,6 +131,11 @@ require_once("../Resources/Includes/menu.php");
                 </p>
                 <textarea name="othercollaborators" rows="6" cols="25" wrap="hard"
                           class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_OTHER']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="othercollaborators"/> No response to this item
+                    </label>
+                </div>
             </div>
 
             <h3>Supplemental Info</h3>
