@@ -58,7 +58,8 @@ try
     $sqldatadisplay = "SELECT * FROM IR_AC_DiversityStudent WHERE OU_ABBREV='USCAAU' AND ID_IR_AC_DIVERSITY_STUDENTS IN
     (select max(ID_IR_AC_DIVERSITY_STUDENTS) FROM IR_AC_DiversityStudent WHERE OUTCOMES_AY = :FUayname GROUP BY
     OU_ABBREV)";
-    $resultdatadisplay = $connection->prepare($sqldatadisplay)->execute(['FUayname' => $FUayname]);
+    $resultdatadisplay = $connection->prepare($sqldatadisplay);
+    $resultdatadisplay->execute(['FUayname' => $FUayname]);
 }
 catch (PDOException $e)
 {

@@ -38,28 +38,40 @@ $datavalues = array();
  * File Upload Status & Details.
  */
 $sqlfucontent = "select * from IR_SU_UploadStatus
-LEFT JOIN PermittedUsers ON  PermittedUsers.ID_STATUS= IR_SU_UploadStatus.LAST_MODIFIED_BY where  IR_SU_UploadStatus.ID_UPLOADFILE= '$content_id' ; ";
-$resultfucontent = $mysqli->query($sqlfucontent);
-$rowsfucontent = $resultfucontent ->fetch_assoc();
+LEFT JOIN PermittedUsers ON  PermittedUsers.ID_STATUS= IR_SU_UploadStatus.LAST_MODIFIED_BY where  IR_SU_UploadStatus.ID_UPLOADFILE= :content_id ; ";
+$resultfucontent = $connection->prepare($sqlfucontent);
+$resultfucontent->bindParam(":content_id", $content_id, PDO::PARAM_STR);
+$resultfucontent->execute();
+
+$rowsfucontent = $resultbpstatus->fetch(4);
 $tablename = $rowsfucontent['NAME_UPLOADFILE'];
 
 
 /*
  * Primary Key of Table <ID>
  */
-$sqlupload = "SELECT * from $tablename where OUTCOMES_AY = '$FUayname'; ";
-$resultsqlupload = $mysqli->query($sqlupload);
-$fields = $resultsqlupload->fetch_field();
+$sqlupload = "SELECT * from :tablename where OUTCOMES_AY = :FUayname; ";
+
+$resultsqlupload = $connection->prepare($sqlupload);
+$resultsqlupload->bindParam(":tablename", $tablename, PDO::PARAM_STR);
+$resultsqlupload->bindParam(":FUayname", $FUayname, PDO::PARAM_STR);
+$resultsqlupload->execute();
+
+$fields = $resultsqlupload->fetch(4);
 $primary_key = $fields->name;
 
 
 /*
  * Display Of Values in validation from IR_AC_DiversityStudent Table of Database
  */
-$sqldatadisplay = "SELECT * FROM $tablename where $primary_key in (select max($primary_key) from $tablename where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
-//echo $sqldatadisplay;
-//$sqldatadisplay = "SELECT * FROM $tablename where OUTCOMES_AY = '$FUayname' group by OU_ABBREV ;";
-$resultdatadisplay = $mysqli -> query($sqldatadisplay);
+$sqldatadisplay = "SELECT * FROM :tablename where :primary_key in (select max(:primary_key) from :tablename where OUTCOMES_AY = :FUayname group by OU_ABBREV );";
+
+$resultdatadisplay = $connection->prepare($sqldatadisplay);
+$resultdatadisplay->bindParam(":tablename", $tablename, PDO::PARAM_STR);
+$resultdatadisplay->bindParam(":primary_key", $primary_key, PDO::PARAM_INT);
+$resultdatadisplay->bindParam(":tablename", $tablename, PDO::PARAM_STR);
+$resultdatadisplay->bindParam(":FUayname", $FUayname, PDO::PARAM_STR);
+$resultdatadisplay->execute();
 
 $dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
 $fieldcnt = $resultdatadisplay->field_count;
