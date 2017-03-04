@@ -32,7 +32,7 @@
     {
       define('HOSTNAME', "localhost");
       define("USERNAME", "root");
-      define("PASSCODE", "root");
+      define("PASSCODE", "");
       define("DB", "TESTDB");
 
 

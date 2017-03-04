@@ -1,11 +1,12 @@
+<!-- ___________________________________________ -->
+<!-- ___________________________________________ -->
+<!-- Copied From faculty awards page as template -->
+<!-- ___________________________________________ -->
+<!-- ___________________________________________ -->
+
 <?php
 
 $pagename = "bphome";
-
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
 
 require_once ("../Resources/Includes/data.php");
 require_once ("../Resources/Includes/BpContents.php");
@@ -233,24 +234,30 @@ require_once("../Resources/Includes/menu.php");
             </div>
         <?php endif; ?>
 
-        <h1 class="box-title">Faculty Awards</h1>
+        <h1 class="box-title">Faculty Nominations</h1>
         <div class="input-group col-xs-4 card-search">
                 <span class="input-group-addon icon" id="basic-addon1">&#xe041;</span>
                 <input type="text" class="form-control" class="col-xs-4" id="search-box-award" placeholder="Search"
                        aria-describedby="basic-addon1">
             </div>
-        <div id="taskboard" style="margin-top: 5px;">
-            <h3 style="padding: 5px;">Research Awards</h3>
-            <div id="jsGridResearch"></div>
-            <h3 style="padding: 5px;">Service Awards</h3>
-            <div id="jsGridService"></div>
-            <h3 style="padding: 5px;">Teaching Awards</h3>
-            <div id="jsGridTeaching"></div>
-            <h3 style="padding: 5px;">Other Awards</h3>
-            <div id="jsGridOther"></div>
+        <div id="taskboard" style="margin-top: 10px;">
+            <!--<table class="grid" action="taskboard/facultyajax.php" title="Faculty Awards">
+                <tr>
+                    <th col="AWARD_TYPE" width="100" type="text">Type</th>
+                    <th col="AWARD_TITLE" href="<?php echo "facultyawards_detail.php?linkid=".$contentlink_id."&award_id="?>{{columns.ID_FACULTY_AWARDS}}" width="300" type="text">Award</th>
+                    <th col="RECIPIENT_NAME" width="200" type="text">Recipient(s)</th>
+                                       <th col="" type="text">Actions</th>
+                </tr>
+            </table>-->
+
+            
+
+            <div id="jsGrid"></div>
+            <div id="table-status"></div>
             <script>
 
               var status;
+
 
               $.extend({
                 getUrlVars: function(){
@@ -269,14 +276,14 @@ require_once("../Resources/Includes/menu.php");
                 }
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Research", function(data) {
+              $.post("../Resources/Includes/data.php?functionNum=6", function(data) {
                 data = $.parseJSON(data);
-                $("#jsGridResearch").jsGrid({
+                $("#jsGrid").jsGrid({
                   width: "100%",
                   height: "400px",
                   sorting: true,
                   paging: true,
-
+                  
                   data: data,
                   rowClass: function(item, itemIndex) {
                     return "client-" + itemIndex;
@@ -296,10 +303,10 @@ require_once("../Resources/Includes/menu.php");
                       return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
                     }, type:"text", width: "auto"},
                     { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
-
+                    
                   ],
                   onRefreshed: function() {
-                    var $gridData = $("#jsGridResearch .jsgrid-grid-body tbody");
+                    var $gridData = $("#jsGrid .jsgrid-grid-body tbody");
                     $gridData.sortable({
                       update: function(e, ui) {
                         var clientIndexRegExp = /\s*client-(\d+)\s*/;
@@ -317,154 +324,6 @@ require_once("../Resources/Includes/menu.php");
                   }
                 });
               });
-
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Service", function(data) {
-                data = $.parseJSON(data);
-                $("#jsGridService").jsGrid({
-                  width: "100%",
-                  height: "400px",
-                  sorting: true,
-                  paging: true,
-
-                  data: data,
-                  rowClass: function(item, itemIndex) {
-                    return "client-" + itemIndex;
-                  },
-                  controller: {
-                    loadData: function() {
-                      return db.clients.slice(0, 15);
-                    }
-                  },
-                  fields: [
-                    { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                    { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
-                    { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
-                      return $("<a>").attr("href", "../Pages/facultyawards_detail.php?award_id="+item.ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
-                    }, type:"text", width: "auto" },
-                    { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
-                      return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
-                    }, type:"text", width: "auto"},
-                    { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
-
-                  ],
-                  onRefreshed: function() {
-                    var $gridData = $("#jsGridService .jsgrid-grid-body tbody");
-                    $gridData.sortable({
-                      update: function(e, ui) {
-                        var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                        var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                            return clientIndexRegExp.exec(classes)[1];
-                        });
-                        var items = $.map($gridData.find("tr"), function(row) {
-                            return $(row).data("JSGridItem");
-                        });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
-
-                        })
-                      }
-                    });
-                  }
-                });
-              });
-
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Teaching", function(data) {
-                data = $.parseJSON(data);
-                $("#jsGridTeaching").jsGrid({
-                  width: "100%",
-                  height: "400px",
-                  sorting: true,
-                  paging: true,
-
-                  data: data,
-                  rowClass: function(item, itemIndex) {
-                    return "client-" + itemIndex;
-                  },
-                  controller: {
-                    loadData: function() {
-                      return db.clients.slice(0, 15);
-                    }
-                  },
-                  fields: [
-                    { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                    { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
-                    { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
-                      return $("<a>").attr("href", "../Pages/facultyawards_detail.php?award_id="+item.ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
-                    }, type:"text", width: "auto" },
-                    { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
-                      return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
-                    }, type:"text", width: "auto"},
-                    { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
-
-                  ],
-                  onRefreshed: function() {
-                    var $gridData = $("#jsGridTeaching .jsgrid-grid-body tbody");
-                    $gridData.sortable({
-                      update: function(e, ui) {
-                        var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                        var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                            return clientIndexRegExp.exec(classes)[1];
-                        });
-                        var items = $.map($gridData.find("tr"), function(row) {
-                            return $(row).data("JSGridItem");
-                        });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
-
-                        })
-                      }
-                    });
-                  }
-                });
-              });
-
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Other", function(data) {
-                data = $.parseJSON(data);
-                $("#jsGridOther").jsGrid({
-                  width: "100%",
-                  height: "400px",
-                  sorting: true,
-                  paging: true,
-
-                  data: data,
-                  rowClass: function(item, itemIndex) {
-                    return "client-" + itemIndex;
-                  },
-                  controller: {
-                    loadData: function() {
-                      return db.clients.slice(0, 15);
-                    }
-                  },
-                  fields: [
-                    { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                    { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
-                    { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
-                      return $("<a>").attr("href", "../Pages/facultyawards_detail.php?award_id="+item.ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
-                    }, type:"text", width: "auto" },
-                    { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
-                      return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
-                    }, type:"text", width: "auto"},
-                    { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
-
-                  ],
-                  onRefreshed: function() {
-                    var $gridData = $("#jsGridOther .jsgrid-grid-body tbody");
-                    $gridData.sortable({
-                      update: function(e, ui) {
-                        var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                        var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                            return clientIndexRegExp.exec(classes)[1];
-                        });
-                        var items = $.map($gridData.find("tr"), function(row) {
-                            return $(row).data("JSGridItem");
-                        });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
-
-                        })
-                      }
-                    });
-                  }
-                });
-              });
-
             </script>
         </div>
         <form action="<?php echo "facultyawards.php?linkid=".$contentlink_id ?>" method="POST" >
@@ -519,11 +378,11 @@ require_once("../Resources/Includes/menu.php");
                         <?php } endwhile; ?>
                     </select>
 
-                    <label for="recipLname">Recipient Last Name:<span
+                    <label for="recipLname">Nominee Last Name:<span
                         style="color: red"><sup>*</sup></span></label>
                     <input type="text" class="form-control" name="recipLname" id="recipLname" required>
 
-                    <label for="recipFname">Recipient First Name:<span
+                    <label for="recipFname">Nominee First Name:<span
                         style="color: red"><sup>*</sup></span></label>
                     <input type="text" class="form-control" name="recipFname" id="recipFname" required>
 
@@ -535,7 +394,7 @@ require_once("../Resources/Includes/menu.php");
                         style="color: red"><sup>*</sup></span></label>
                     <input type="text" class="form-control" name="awardOrg" id="awardOrg" required>
 
-                     <label for="datetimepicker3">Date Awarded:<span
+                     <label for="datetimepicker3">Date Nominated:<span
                         style="color: red"><sup>*</sup></span></label>
                     <div class='input-group date col-xs-3' id='datetimepicker3'>
                         <input type='text' name="dateAward" class="form-control" required>

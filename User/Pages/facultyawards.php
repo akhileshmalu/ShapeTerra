@@ -2,11 +2,6 @@
 
 $pagename = "bphome";
 
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
-
 require_once ("../Resources/Includes/data.php");
 require_once ("../Resources/Includes/BpContents.php");
 // This Page controls Faculty Awards Screen.
@@ -239,14 +234,10 @@ require_once("../Resources/Includes/menu.php");
                 <input type="text" class="form-control" class="col-xs-4" id="search-box-award" placeholder="Search"
                        aria-describedby="basic-addon1">
             </div>
-        <div id="taskboard" style="margin-top: 5px;">
-            <h3 style="padding: 5px;">Research Awards</h3>
+        <div id="taskboard" style="margin-top: 10px;">
             <div id="jsGridResearch"></div>
-            <h3 style="padding: 5px;">Service Awards</h3>
             <div id="jsGridService"></div>
-            <h3 style="padding: 5px;">Teaching Awards</h3>
-            <div id="jsGridTeaching"></div>
-            <h3 style="padding: 5px;">Other Awards</h3>
+            <div id="jsGridTesting"></div>
             <div id="jsGridOther"></div>
             <script>
 
@@ -367,9 +358,9 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Teaching", function(data) {
+              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Testing", function(data) {
                 data = $.parseJSON(data);
-                $("#jsGridTeaching").jsGrid({
+                $("#jsGridTesting").jsGrid({
                   width: "100%",
                   height: "400px",
                   sorting: true,
@@ -397,7 +388,7 @@ require_once("../Resources/Includes/menu.php");
 
                   ],
                   onRefreshed: function() {
-                    var $gridData = $("#jsGridTeaching .jsgrid-grid-body tbody");
+                    var $gridData = $("#jsGridTesting .jsgrid-grid-body tbody");
                     $gridData.sortable({
                       update: function(e, ui) {
                         var clientIndexRegExp = /\s*client-(\d+)\s*/;
