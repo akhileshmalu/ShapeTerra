@@ -15,40 +15,47 @@
 
   if (!empty($function)){
 
-    $VisualData = new VisualData;
+    $ChartVisualizations = new ChartVisualizations;
 
   }
 
   switch ($function) {
     case 1:
       $yearDescription = $_GET["yearDescription"];
-      $VisualData->chartEnrollements($yearDescription);
+      $ChartVisualizations->chartEnrollements($yearDescription);
       break;
     case 2:
       $yearDescription = $_GET["yearDescription"];
-      $VisualData->chartFaculty($yearDescription);
+      $ChartVisualizations->chartFaculty($yearDescription);
       break;
     case 3:
       $yearDescription = $_GET["yearDescription"];
-      $VisualData->chartDiversityStudent($yearDescription);
+      $ChartVisualizations->chartDiversityStudent($yearDescription);
       break;
     case 4:
       $yearDescription = $_GET["yearDescription"];
-      $VisualData->chartDiversityPersonnel($yearDescription);
+      $ChartVisualizations->chartDiversityPersonnel($yearDescription);
+      break;
+    case 5:
+      $ChartVisualizations->exportToPng($_POST["imagebase"],$_POST["name"]);
       break;
     default:
       break;
   }
 
-  Class VisualData{
+  Class ChartVisualizations{
 
     private $conection;
 
-    function __construct(){
+    function __construct()
+    {
+
       $this->connection = $this->connection();
+
     }
 
-    private function connection(){
+    private function connection()
+    {
 
       try{
 
@@ -66,7 +73,8 @@
 
     }
 
-    public function getAcademicYears(){
+    public function getAcademicYears()
+    {
 
       $getAcademicYears = $this->connection->prepare("SELECT * FROM `AcademicYears`");
       $getAcademicYears->execute();
@@ -103,7 +111,8 @@
 
     }
 
-    public function getFacultyYears(){
+    public function getFacultyYears()
+    {
 
       $getAcademicYears = $this->connection->prepare("SELECT * FROM `AcademicYears`");
       $getAcademicYears->execute();
@@ -140,7 +149,8 @@
 
     }
 
-    public function getDiversityStudentYears(){
+    public function getDiversityStudentYears()
+    {
 
       $getAcademicYears = $this->connection->prepare("SELECT * FROM `AcademicYears`");
       $getAcademicYears->execute();
@@ -177,7 +187,8 @@
 
     }
 
-    public function getDiversityFacultyYears(){
+    public function getDiversityFacultyYears()
+    {
 
       $getAcademicYears = $this->connection->prepare("SELECT * FROM `AcademicYears`");
       $getAcademicYears->execute();
@@ -214,7 +225,8 @@
 
     }
 
-    public function chartEnrollements($yearDescription){
+    public function chartEnrollements($yearDescription)
+    {
 
       $getAcademicEnrollements = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ?");
       $getAcademicEnrollements->bindParam(1,$yearDescription,PDO::PARAM_STR);
@@ -288,6 +300,9 @@
                     responsive: false
                   }
                 });
+
+                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'enrollements', functionNum: '5'});
+
               </script>
             ";
 
@@ -301,7 +316,8 @@
 
     }
 
-    public function chartFaculty($yearDescription){
+    public function chartFaculty($yearDescription)
+    {
 
       $getFacultyData = $this->connection->prepare("SELECT * FROM `IR_AC_FacultyPop` WHERE OUTCOMES_AY = ?");
       $getFacultyData->bindParam(1,$yearDescription,PDO::PARAM_STR);
@@ -510,7 +526,8 @@
 
     }
 
-    public function chartDiversityStudent($yearDescription){
+    public function chartDiversityStudent($yearDescription)
+    {
 
       $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ?");
       $getDiversityData->bindParam(1,$yearDescription,PDO::PARAM_STR);
@@ -700,7 +717,8 @@
 
     }
 
-    public function chartDiversityPersonnel($yearDescription){
+    public function chartDiversityPersonnel($yearDescription)
+    {
 
       $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ?");
       $getDiversityData->bindParam(1,$yearDescription,PDO::PARAM_STR);
@@ -948,11 +966,25 @@
 
     }
 
-    public function chartHeader(){
+    public function exportToPng($base64Image,$pngName)
+    {
+
+      $fileHandler = var_dump(fopen("../../User/charts/".$pngName.".png","wb"));
+
+      $data = explode(",", $base64Image);
+      var_dump($data);
+      var_dump(fwrite($fileHandler, base64_decode($data[1])));
+      fclose($fileHandler);
 
     }
 
-    public function chartFooter(){
+    public function chartHeader()
+    {
+
+    }
+
+    public function chartFooter()
+    {
 
     }
 

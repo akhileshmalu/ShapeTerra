@@ -1,4 +1,3 @@
-
 <?php
 
 
@@ -60,6 +59,7 @@ $menu = array(
 	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "" ,"main","provost", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe04e" ,"admin","basic", false),
 	array("Deactivate Users", "../$navdir"."Pages/delete.php", "" ,"admin","basic", false),
+	array("Data Visualizations", "../$navdir"."Pages/visualizations.php", "" ,"main","basic", false)
 //	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
 	);
 
@@ -116,7 +116,7 @@ function download($filename){
 </div>
 
 <div class="row" id="top-bar">
-	<!-- 
+	<!--
 	Username
 	-->
 	<div id="user-name" class="dropdown">
@@ -124,8 +124,8 @@ function download($filename){
 	    <span class='icon'>&#xe056;</span><?php echo substr($_SESSION['login_fname'],0,1)." ".$_SESSION['login_lname']; ?>
 	    <span class="caret"></span>
 	  </button>
-	
-	<!-- 
+
+	<!--
 	Logout
 	-->
 
@@ -133,7 +133,7 @@ function download($filename){
 	  	<span class="icon">=</span>
 	  </a>
 
-	<!-- 
+	<!--
 	Username Dropdown
 	-->
 	  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
@@ -192,7 +192,7 @@ Generate PDF button currently disabled.
 	</button>
 -->
 </div>
-	<!-- 
+	<!--
 	Menu
 	-->
 
@@ -250,6 +250,7 @@ Generate PDF button currently disabled.
             if ($rowsmenu['OU_TYPE'] == 'Service Unit') {
                 if ($menu[$i][3] == "main" && ($menu[$i][4] == 'service'or $menu[$i][4] == "basic")) {
                     echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " ' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+										echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " ' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
                 }
                 continue;
             }
