@@ -16,7 +16,7 @@
       date_default_timezone_set('America/New_York');
       ini_set("date.timezone", "America/New_York");
 
-      //sercurity headers
+      //security headers
       header("X-Frame-Options: SAMEORIGIN");
 
       $this->connection = $this->connectToDB();

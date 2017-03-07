@@ -280,16 +280,17 @@ require_once("../Resources/Includes/menu.php");
                         $columns = 3;
                         while ($rowstopicareas = $resulttopicareas->fetch(2)) {
                             if ($i % $columns == 0) {
-                                echo "<div class='col-xs-6 chcekbox'><label>";
+                                echo "<div class='col-xs-6'><label>";
                             }
-                            echo "<input type='checkbox' name='bptopic[]' value='" . $rowstopicareas['ID_TOPIC'] . "'";
+                            echo "<div><input type='checkbox' name='bptopic[]' value='" . $rowstopicareas['ID_TOPIC'] .
+                                "'";
                             $topicitem = explode(',', $rowsdataelem['BP_TOPIC']);
                             foreach ($topicitem as $top) {
                                 if ($top == $rowstopicareas['ID_TOPIC']) {
                                     echo " checked";
                                 }
                             }
-                            echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'];
+                            echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC']."</div>";
                             $i++;
                             if ($i % $columns == 0) {
                                 echo "</label></div>";

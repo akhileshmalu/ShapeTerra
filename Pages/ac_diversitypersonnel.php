@@ -4,6 +4,7 @@ require_once("../Resources/Includes/Initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 $connection = $initalize->connection;
+//$mysqli = $initalize->mysqli;
 
 /**
  * Initialization of local variables

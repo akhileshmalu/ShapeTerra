@@ -26,7 +26,7 @@ if(isset($_POST['reset'])){
 
         require_once("../Resources/Includes/connect.php");
 
-        $newpassword = md5($initalize->test_input($_POST['newpassword']));
+        $newpassword = md5($initialize->test_input($_POST['newpassword']));
         $email = $_SESSION['login_email'];
 
         $sql = "UPDATE PermittedUsers SET PW_DEV = '$newpassword' WHERE NETWORK_USERNAME = '$email'";
