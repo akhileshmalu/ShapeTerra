@@ -112,12 +112,12 @@ if(isset($_POST['save'])) {
         $oustring .=$item.',';
     }
 
-    $narrative = nl2br($_POST['narrativevalue']);
+    $narrative = mynl2br($_POST['narrativevalue']);
 
     try {
 
         $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,  MOD_BY, MOD_TIMESTAMP)
-    VALUES (:aystring,:oustring,:bptopicstring,:footnotetopic,:narrative,:author,:time);";
+    VALUES (:aystring,:oustring,:bptopicstring,:footnotetopic,:narrative,:author,:timeStampmod);";
 
         $sqladdfootresult = $connection->prepare($sqladdfoot);
         $sqladdfootresult->bindParam(":aystring", $aystring, PDO::PARAM_STR);
@@ -126,7 +126,7 @@ if(isset($_POST['save'])) {
         $sqladdfootresult->bindParam(":footnotetopic", $footnotetopic, PDO::PARAM_STR);
         $sqladdfootresult->bindParam(":narrative", $narrative, PDO::PARAM_STR);
         $sqladdfootresult->bindParam(":author", $author, PDO::PARAM_STR);
-        $sqladdfootresult->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
 
 
         if ($sqladdfootresult->execute()) {
@@ -165,7 +165,7 @@ if(isset($_POST['directsave'])) {
     try {
 
         $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,FOOTNOTE_STATUS , MOD_BY, MOD_TIMESTAMP)
-        VALUES (:aystring,:oustring,:bptopicstring,:footnotetopic,:narrative,'Approved',:author,:time);";
+        VALUES (:aystring,:oustring,:bptopicstring,:footnotetopic,:narrative,'Approved',:author,:timeStampmod);";
 
             $sqladdfootresult = $connection->prepare($sqladdfoot);
             $sqladdfootresult->bindParam(":aystring", $aystring, PDO::PARAM_STR);
@@ -174,7 +174,7 @@ if(isset($_POST['directsave'])) {
             $sqladdfootresult->bindParam(":footnotetopic", $footnotetopic, PDO::PARAM_STR);
             $sqladdfootresult->bindParam(":narrative", $narrative, PDO::PARAM_STR);
             $sqladdfootresult->bindParam(":author", $author, PDO::PARAM_STR);
-            $sqladdfootresult->bindParam(":time", $time, PDO::PARAM_STR);
+            $sqladdfootresult->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
 
         if ($sqladdfootresult->execute()) {
             $error[0] = "Your Footnote has been added in Footnotes.";
@@ -216,7 +216,7 @@ if(isset($_POST['update'])) {
     try {
 
         $sqladdfoot = "UPDATE Footnotes SET FOOTNOTE_ACAD_YEAR = :aystring, FOOTNOTE_APPLIC_UNITS = :oustring, FOOTNOTE_TOPIC = :bptopicstring,
-        FOOTNOTE_DESC = :footnotetopic, FOOTNOTE_NARRATIVE = :narrative, FOOTNOTE_STATUS = 'Approved', MOD_BY = :author, MOD_TIMESTAMP = :time where ID_FOOTNOTE = :elemid;";
+        FOOTNOTE_DESC = :footnotetopic, FOOTNOTE_NARRATIVE = :narrative, FOOTNOTE_STATUS = 'Approved', MOD_BY = :author, MOD_TIMESTAMP = :timeStampmod where ID_FOOTNOTE = :elemid;";
 
         $sqladdfootresult = $connection->prepare($sqladdfoot);
         $sqladdfootresult->bindParam(":aystring", $aystring, PDO::PARAM_STR);
@@ -225,7 +225,7 @@ if(isset($_POST['update'])) {
         $sqladdfootresult->bindParam(":footnotetopic", $footnotetopic, PDO::PARAM_STR);
         $sqladdfootresult->bindParam(":narrative", $narrative, PDO::PARAM_STR);
         $sqladdfootresult->bindParam(":author", $author, PDO::PARAM_STR);
-        $sqladdfootresult->bindParam(":time", $time, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
         $sqladdfootresult->bindParam(":elemid", $elemid, PDO::PARAM_STR);
 
         if($sqladdfootresult->execute()) {

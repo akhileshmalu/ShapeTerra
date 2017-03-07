@@ -4,6 +4,8 @@ require_once("../Resources/Includes/Initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 $connection = $initalize->connection;
+$mysqli = $initalize->mysqli;
+
 
 $message = array();
 $errorflag = 0;
@@ -35,14 +37,15 @@ try
 {
     $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON
 PermittedUsers.ID_STATUS =IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id ;";
-    $resultfucontent = $connection->prepare($sqlfucontent)->execute(['content_id'=> $content_id]);
+    $resultfucontent = $connection->prepare($sqlfucontent);
+    $resultfucontent->execute(['content_id'=> $content_id]);
 }
 catch (PDOException $e)
 {
     //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     error_log($e->getMessage());
 }
-$rowsfucontent = $resultfucontent ->fetch(4);
+$rowsfucontent = $resultfucontent->fetch(4);
 $tablename = $rowsfucontent['NAME_UPLOADFILE'];
 
 // Display Of Values in validation from IR_AC_DiversityStudent Table of Database
@@ -146,32 +149,32 @@ if (isset($_POST['upload'])) {
                                     $tablevalue[$row][$i - 1] = "'" . $author . "'" . ',';
                                 } elseif ($i == 4) {
                                     $tablevalue[$row][$i - 1] = "'" . $time . "'" . ',';
-                                } elseif ($i == 10) {
+                                } elseif ($i == 15) {
                                     $tablevalue[$row][$i - 1] = "'" . $sumtenurefac[$row - 1] . "'" . ',';
-                                } elseif ($i == 14) {
-                                    $tablevalue[$row][$i - 1] = "'" . $sumresearchfac[$row - 1] . "'" . ',';
                                 } elseif ($i == 19) {
+                                    $tablevalue[$row][$i - 1] = "'" . $sumresearchfac[$row - 1] . "'" . ',';
+                                } elseif ($i == 24) {
                                     $tablevalue[$row][$i - 1] = "'" . $sumclinicfac[$row - 1] . "'" . ',';
-                                } elseif ($i == 22) {
+                                } elseif ($i == 27) {
                                     $tablevalue[$row][$i - 1] = "'" . $sumotherfac[$row - 1] . "'" . ',';
                                 } else {
                                     $tablevalue[$row][$i - 1] = "'" . $csv[$row][$colindex] . "'" . ',';
                                 }
 
-                                //Validation check of Undergraduate Male + Female with comparision to composition of UGrad Sudents
-                                if ($i == 5 or $i == 6 or $i == 7 or $i == 8 or $i == 9) {
+                                //Total of Faculty
+                                if ($i >= 5 and $i<=14) {
                                     $sumtenurefac[$row - 1] += intval($csv[$row][$colindex]);
                                 }
-                                if ($i == 11 or $i == 12 or $i == 13) {
+                                if ($i >= 16 and $i <= 18) {
                                     $sumresearchfac[$row - 1] += intval($csv[$row][$colindex]);
                                 }
 
                                 //Validation check of Graduate Male + Female with comparision to composition of Graduate Sudents
-                                if ($i == 15 or $i == 16 or $i == 17 or $i == 18) {
+                                if ($i >= 20 and $i <= 23) {
                                     $sumclinicfac[$row - 1] += intval($csv[$row][$colindex]);
 
                                 }
-                                if ($i == 20 or $i == 21) {
+                                if ($i == 25 or $i == 26) {
                                     $sumotherfac[$row - 1] += intval($csv[$row][$colindex]);
                                 }
 

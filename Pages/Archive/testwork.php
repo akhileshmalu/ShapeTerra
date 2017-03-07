@@ -1,20 +1,24 @@
 <?php
 
-require_once ("../Resources/Includes/connect.php");
+//require_once ("../Resources/Includes/connect.php");
+//
+//if(isset($_POST['ok'])) {
+//    $data = $_POST['text1'];
+//    $data = trim($data);
+//    echo $data . "<br>";
+//    $data = htmlspecialchars($data, ENT_QUOTES, 'ISO-8859-1', true);
+//    echo $data . "<br>";
+//    $data = htmlentities($data, ENT_QUOTES, 'ISO-8859-1', true);
+//    echo $data . "<br>";
+//
+//    echo htmlspecialchars_decode($data);
+//
+//
+//
+//}
 
-if(isset($_POST['ok'])) {
-    $data = $_POST['text1'];
-    $data = trim($data);
-    echo $data . "<br>";
-    $data = htmlspecialchars($data, ENT_QUOTES, 'ISO-8859-1', true);
-    echo $data . "<br>";
-    $data = htmlentities($data, ENT_QUOTES, 'ISO-8859-1', true);
-    echo $data . "<br>";
+echo phpinfo();
 
-    echo htmlspecialchars_decode($data);
-}
-
-//echo phpinfo();
 ?>
 
 <!DOCTYPE html>
