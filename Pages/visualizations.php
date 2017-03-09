@@ -82,7 +82,6 @@
   require_once("../Resources/Includes/menu.php");
 
 ?>
-<link rel="stylesheet" href="../Resources/Library/css/VisualData.css" media="screen">
 <script src="../Resources/Library/js/chart.min.js"></script>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
@@ -105,7 +104,6 @@
       <h1 id="title">Data Visualizations</h1>
   </div>
   <div id="main-box" class="col-xs-10 col-xs-offset-1">
-    <h5>Filter By</h5>
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation" class="active"><a href="#student-positions" role="tab" data-toggle="tab">Student Enrollements</a></li>
       <li role="presentation"><a href="#student-diversity" role="tab" data-toggle="tab">Student Diversity</a></li>
@@ -116,47 +114,54 @@
       <div role="tabpanel" class="tab-pane active" id="student-positions">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-3">
-              <h5>Select filter by year</h5>
-              <?php $ChartVisualizations->getAcademicYears(); ?>
-            </div>
-            <div class="col-md-9">
-              <div id="academic-chart">
-              </div>
+            <div class="col-md-12">
+              <?php $ChartVisualizations->chartEnrollements(); ?>
+              <div class="p-a-3"></div>
+              <?php $ChartVisualizations->chartEnrollementsAll(); ?>
             </div>
           </div>
         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="student-diversity">
-        <div class="col-md-3">
-          <h5>Select filter by year</h5>
-          <?php $ChartVisualizations->getDiversityStudentYears(); ?>
-        </div>
-        <div class="col-md-9">
-          <div id="student-diversity-chart">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+              <?php $ChartVisualizations->chartDiversityStudent(); ?>
+              <div class="p-a-3"></div>
+              <?php $ChartVisualizations->chartDiversityStudentAll(); ?>
+            </div>
           </div>
         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="faculty-positions">
-        <div class="col-md-3">
-          <h5>Select filter by year</h5>
-          <?php $ChartVisualizations->getFacultyYears(); ?>
-        </div>
-        <div class="col-md-9">
-          <div id="faculty-chart">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-12">
+                <?php $ChartVisualizations->chartFaculty(); ?>
+                <div class="p-a-3"></div>
+                <?php $ChartVisualizations->chartFacultyAll(); ?>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="faculty-diversity">
-        <h5>Select filter by year</h5>
-        <?php $ChartVisualizations->getDiversityFacultyYears(); ?>
-        <div id="faculty-diversity-chart">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-12">
+                <?php $ChartVisualizations->chartDiversityPersonnel(); ?>
+                <div class="p-a-3"></div>
+                <?php $ChartVisualizations->chartDiversityPersonnelAll(); ?>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
-<script src="../Resources/Library/js/visualData.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
 <?php require_once("../Resources/Includes/footer.php"); ?>

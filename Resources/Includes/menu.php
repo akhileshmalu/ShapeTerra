@@ -58,8 +58,7 @@ $menu = array(
 	array("Edit Academic Year", "../$navdir"."Pages/editay.php", "" ,"main","provost", true),
 	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "" ,"main","provost", false),
 	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe04e" ,"admin","basic", false),
-	array("Deactivate Users", "../$navdir"."Pages/delete.php", "" ,"admin","basic", false),
-	array("Data Visuals", "../$navdir"."Pages/visualizations.php", "" ,"main","basic", false)
+	array("Deactivate Users", "../$navdir"."Pages/delete.php", "" ,"admin","basic", false)
 //	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
 	);
 

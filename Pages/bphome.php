@@ -159,7 +159,10 @@ require_once("../Resources/Includes/menu.php");
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
 
-        <div class="col-xs-4">
+        <div class="col-xs-2">
+            <a href="visualizations.php" target="_Blank" class="btn-primary">Data Visuals</a>
+        </div>
+        <div class="col-xs-2">
             <a href="../Resources/Includes/fpdf_extended.php" target="_Blank" class="btn-primary">View PDF</a>
         </div>
     </div>
