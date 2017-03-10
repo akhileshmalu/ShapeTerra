@@ -120,31 +120,38 @@ Class Data
       $ouAbbrev = $_SESSION['login_ouabbrev'];
 
     }
+
+    $viewPoint = array("Looking Back","Real Time","Looking Ahead");
     $zeroCheck = 0;
 
-    $getCurrentOrder = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ? AND ID_SORT != ? ORDER BY ID_SORT ASC");
-    $getCurrentOrder->bindParam(1, $ouAbbrev, PDO::PARAM_STR);
-    $getCurrentOrder->bindParam(2, $selectedYear, PDO::PARAM_STR);
-    $getCurrentOrder->bindParam(3, $zeroCheck, PDO::PARAM_STR);
-    $getCurrentOrder->execute();
-    $rowsGetCurrentOrder = $getCurrentOrder->rowCount();
+    for ($i = 0; $i < count($viewPoint); $i++){
 
-    $getNewOrder = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ? AND ID_SORT = ?");
-    $getNewOrder->bindParam(1, $ouAbbrev, PDO::PARAM_STR);
-    $getNewOrder->bindParam(2, $selectedYear, PDO::PARAM_STR);
-    $getNewOrder->bindParam(3, $zeroCheck, PDO::PARAM_STR);
-    $getNewOrder->execute();
+      $getCurrentOrder = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ? AND ID_SORT != ? AND GOAL_VIEWPOINT = ? ORDER BY ID_SORT ASC");
+      $getCurrentOrder->bindParam(1, $ouAbbrev, PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(2, $selectedYear, PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(3, $zeroCheck, PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(4, $viewPoint[$i], PDO::PARAM_STR);
+      $getCurrentOrder->execute();
+      $rowsGetCurrentOrder = $getCurrentOrder->rowCount();
 
-    while ($data = $getNewOrder->fetch()) {
+      $getNewOrder = $this->connection->prepare("SELECT * FROM `BP_UnitGoals` WHERE OU_ABBREV = ? AND UNIT_GOAL_AY = ? AND ID_SORT = ? AND GOAL_VIEWPOINT = ?");
+      $getNewOrder->bindParam(1, $ouAbbrev, PDO::PARAM_STR);
+      $getNewOrder->bindParam(2, $selectedYear, PDO::PARAM_STR);
+      $getNewOrder->bindParam(3, $zeroCheck, PDO::PARAM_STR);
+      $getNewOrder->bindParam(4, $viewPoint[$i], PDO::PARAM_STR);
+      $getNewOrder->execute();
 
-      if ($data["ID_SORT"] == 0 || $data["ID_SORT"] == NULL) {
+      while ($data = $getNewOrder->fetch()) {
 
-        $rowsGetCurrentOrder++;
+        if ($data["ID_SORT"] == 0 || $data["ID_SORT"] == NULL) {
 
-        $updateItem = $this->connection->prepare("UPDATE `BP_UnitGoals` SET ID_SORT = ? WHERE ID_UNIT_GOAL = ?");
-        $updateItem->bindParam(1, $rowsGetCurrentOrder, PDO::PARAM_INT);
-        $updateItem->bindParam(2, $data["ID_UNIT_GOAL"], PDO::PARAM_INT);
-        $updateItem->execute();
+          $updateItem = $this->connection->prepare("UPDATE `BP_UnitGoals` SET ID_SORT = ? WHERE ID_UNIT_GOAL = ? AND GOAL_VIEWPOINT = ?");
+          $updateItem->bindParam(1, $rowsGetCurrentOrder, PDO::PARAM_INT);
+          $updateItem->bindParam(2, $data["ID_UNIT_GOAL"], PDO::PARAM_INT);
+          $updateItem->bindPAram(3, $viewPoint[$i], PDO::PARAM_STR);
+          $updateItem->execute();
+
+        }
 
       }
 
@@ -195,7 +202,6 @@ Class Data
 
     for ($i = 0; count($itemData) > $i; $i++) {
 
-      echo $itemData[$i][7] . "=" . $i . "<br />";
       $counter = $i + 1;
 
       $updateList = $this->connection->prepare("UPDATE `BP_UnitGoals` SET ID_SORT = ? WHERE ID_UNIT_GOAL = ?");
@@ -291,34 +297,43 @@ Class Data
       $ouAbbrev = $_SESSION['login_ouabbrev'];
 
     }
+
     $zeroCheck = 0;
     $null = null;
+    $viewPoint = array("Service","Research","Teaching","Other");
 
-    $getCurrentOrder = $this->connection->prepare("SELECT * FROM `AC_FacultyAwards` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ? AND ID_SORT != ? OR ID_SORT != ? ORDER BY ID_SORT ASC");
-    $getCurrentOrder->bindParam(1, $ouAbbrev, PDO::PARAM_STR);
-    $getCurrentOrder->bindParam(2, $selectedYear, PDO::PARAM_STR);
-    $getCurrentOrder->bindParam(3, $zeroCheck, PDO::PARAM_INT);
-    $getCurrentOrder->bindParam(4, $null, PDO::PARAM_STR);
-    $getCurrentOrder->execute();
-    $rowsGetCurrentOrder = $getCurrentOrder->rowCount();
+    for ($i = 0; $i < count($viewPoint); $i++){
 
-    $getNewOrder = $this->connection->prepare("SELECT * FROM `AC_FacultyAwards` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ? AND ID_SORT = ? OR ID_SORT = ?");
-    $getNewOrder->bindParam(1, $ouAbbrev, PDO::PARAM_STR);
-    $getNewOrder->bindParam(2, $selectedYear, PDO::PARAM_STR);
-    $getNewOrder->bindParam(3, $zeroCheck, PDO::PARAM_INT);
-    $getNewOrder->bindParam(4, $null, PDO::PARAM_STR);
-    $getNewOrder->execute();
+      $getCurrentOrder = $this->connection->prepare("SELECT * FROM `AC_FacultyAwards` WHERE AWARD_TYPE = ? AND OU_ABBREV = ? AND OUTCOMES_AY = ? AND ID_SORT != ? OR ID_SORT != ? ORDER BY ID_SORT ASC");
+      $getCurrentOrder->bindParam(1, $viewPoint[$i], PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(2, $ouAbbrev, PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(3, $selectedYear, PDO::PARAM_STR);
+      $getCurrentOrder->bindParam(4, $zeroCheck, PDO::PARAM_INT);
+      $getCurrentOrder->bindParam(5, $null, PDO::PARAM_STR);
+      $getCurrentOrder->execute();
+      $rowsGetCurrentOrder = $getCurrentOrder->rowCount();
 
-    while ($data = $getNewOrder->fetch()) {
+      $getNewOrder = $this->connection->prepare("SELECT * FROM `AC_FacultyAwards` WHERE AWARD_TYPE = ? AND OU_ABBREV = ? AND OUTCOMES_AY = ? AND ID_SORT = ? OR ID_SORT = ?");
+      $getNewOrder->bindParam(1, $viewPoint[$i], PDO::PARAM_STR);
+      $getNewOrder->bindParam(2, $ouAbbrev, PDO::PARAM_STR);
+      $getNewOrder->bindParam(3, $selectedYear, PDO::PARAM_STR);
+      $getNewOrder->bindParam(4, $zeroCheck, PDO::PARAM_INT);
+      $getNewOrder->bindParam(5, $null, PDO::PARAM_STR);
+      $getNewOrder->execute();
 
-      if ($data["ID_SORT"] == 0 || $data["ID_SORT"] == NULL) {
+      while ($data = $getNewOrder->fetch()) {
 
-        $rowsGetCurrentOrder++;
+        if ($data["ID_SORT"] == 0 || $data["ID_SORT"] == NULL) {
 
-        $updateItem = $this->connection->prepare("UPDATE `AC_FacultyAwards` SET ID_SORT = ? WHERE ID_FACULTY_AWARDS = ?");
-        $updateItem->bindParam(1, $rowsGetCurrentOrder, PDO::PARAM_INT);
-        $updateItem->bindParam(2, $data["ID_FACULTY_AWARDS"], PDO::PARAM_INT);
-        $updateItem->execute();
+          $rowsGetCurrentOrder++;
+
+          $updateItem = $this->connection->prepare("UPDATE `AC_FacultyAwards` SET ID_SORT = ? WHERE ID_FACULTY_AWARDS = ? AND AWARD_TYPE = ?");
+          $updateItem->bindParam(1, $rowsGetCurrentOrder, PDO::PARAM_INT);
+          $updateItem->bindParam(2, $data["ID_FACULTY_AWARDS"], PDO::PARAM_INT);
+          $updateItem->bindParam(3, $viewPoint[$i], PDO::PARAM_STR);
+          $updateItem->execute();
+
+        }
 
       }
 

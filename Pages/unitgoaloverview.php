@@ -222,12 +222,12 @@ require_once("../Resources/Includes/menu.php");
                 }
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=5", function(peopleArray) {
+              $.post("../Resources/Includes/Data.php?functionNum=5", function(peopleArray) {
                 if (peopleArray != ""){
                   peopleArray = $.parseJSON(peopleArray);
                 }
 
-                $.post("../Resources/Includes/data.php?functionNum=1&viewpoint=back", function(data) {
+                $.post("../Resources/Includes/Data.php?functionNum=1&viewpoint=back", function(data) {
                   data = $.parseJSON(data);
                   $("#jsGridBack").jsGrid({
                     width: "100%",
@@ -271,7 +271,7 @@ require_once("../Resources/Includes/menu.php");
                           var items = $.map($gridData.find("tr"), function(row) {
                               return $(row).data("JSGridItem");
                           });
-                          $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
+                          $.post("../Resources/Includes/Data.php?functionNum=2",{'data':items,'indexes':indexes,'viewpoint':'back'},function(){
 
                           })
                         }
@@ -281,12 +281,12 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=5", function(peopleArray) {
+              $.post("../Resources/Includes/Data.php?functionNum=5", function(peopleArray) {
                 if (peopleArray != ""){
                   peopleArray = $.parseJSON(peopleArray);
                 }
 
-                $.post("../Resources/Includes/data.php?functionNum=1&viewpoint=real", function(data) {
+                $.post("../Resources/Includes/Data.php?functionNum=1&viewpoint=real", function(data) {
                   data = $.parseJSON(data);
                   $("#jsGridReal").jsGrid({
                     width: "100%",
@@ -330,7 +330,7 @@ require_once("../Resources/Includes/menu.php");
                           var items = $.map($gridData.find("tr"), function(row) {
                               return $(row).data("JSGridItem");
                           });
-                          $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
+                          $.post("../Resources/Includes/Data.php?functionNum=2",{'data':items,'indexes':indexes,'viewpoint':'real'},function(){
 
                           })
                         }
@@ -340,12 +340,12 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=5", function(peopleArray) {
+              $.post("../Resources/Includes/Data.php?functionNum=5", function(peopleArray) {
                 if (peopleArray != ""){
                   peopleArray = $.parseJSON(peopleArray);
                 }
 
-                $.post("../Resources/Includes/data.php?functionNum=1&viewpoint=ahead", function(data) {
+                $.post("../Resources/Includes/Data.php?functionNum=1&viewpoint=ahead", function(data) {
                   data = $.parseJSON(data);
                   $("#jsGridAhead").jsGrid({
                     width: "100%",
@@ -389,7 +389,7 @@ require_once("../Resources/Includes/menu.php");
                           var items = $.map($gridData.find("tr"), function(row) {
                               return $(row).data("JSGridItem");
                           });
-                          $.post("../Resources/Includes/data.php?functionNum=2",{'data':items,'indexes':indexes},function(){
+                          $.post("../Resources/Includes/Data.php?functionNum=2",{'data':items,'indexes':indexes,'viewpoint':'ahead'},function(){
 
                           })
                         }

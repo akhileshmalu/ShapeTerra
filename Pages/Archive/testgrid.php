@@ -27,7 +27,7 @@
     <div id="table-status"></div>
     <script>
 
-      $.post("../Resources/Includes/data.php?functionNum=1", function(data) {
+      $.post("../Resources/Includes/Data.php?functionNum=1", function(data) {
         data = $.parseJSON(data);
         $("#jsGrid").jsGrid({
           width: "100%",
@@ -63,7 +63,7 @@
                 var items = $.map($gridData.find("tr"), function(row) {
                     return $(row).data("JSGridItem");
                 });
-                $.post("../Resources/Includes/data.php?functionNum=2",{'data':items},function(){
+                $.post("../Resources/Includes/Data.php?functionNum=2",{'data':items},function(){
                   $("#table-status").html("Table Saved.");
                 })
               }

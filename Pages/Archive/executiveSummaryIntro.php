@@ -8,7 +8,7 @@ $connection = $initalize->connection;
   require_once("../Resources/Includes/header.php");
   require_once("../Resources/Includes/menu.php");
 
-  require("../Resources/Includes/data.php");
+  require("../Resources/Includes/Data.php");
   $Data = new Data;
   $Data->saveExecutiveSummaryIntro();
   $executiveSummaryData = $Data->getExecutiveSummary();

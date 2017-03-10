@@ -7,7 +7,7 @@ $initalize = new Initialize();
 $initalize->checkSessionStatus();
 $connection = $initalize->connection;
 
-require_once ("../Resources/Includes/data.php");
+require_once ("../Resources/Includes/Data.php");
 require_once ("../Resources/Includes/BpContents.php");
 // This Page controls Faculty Awards Screen.
 
@@ -269,7 +269,7 @@ require_once("../Resources/Includes/menu.php");
                 }
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Research", function(data) {
+              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Research", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridResearch").jsGrid({
                   width: "100%",
@@ -309,7 +309,7 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
 
                         })
                       }
@@ -318,7 +318,7 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Service", function(data) {
+              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Service", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridService").jsGrid({
                   width: "100%",
@@ -358,7 +358,7 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
 
                         })
                       }
@@ -367,7 +367,7 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Teaching", function(data) {
+              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Teaching", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridTeaching").jsGrid({
                   width: "100%",
@@ -407,7 +407,7 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
 
                         })
                       }
@@ -416,7 +416,7 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Other", function(data) {
+              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Other", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridOther").jsGrid({
                   width: "100%",
@@ -456,7 +456,7 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
 
                         })
                       }
