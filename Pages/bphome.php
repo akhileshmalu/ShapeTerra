@@ -163,7 +163,7 @@ require_once("../Resources/Includes/menu.php");
             <a href="visualizations.php" target="_Blank" class="btn-primary">Data Visuals</a>
         </div>
         <div class="col-xs-2">
-            <a href="../Resources/Includes/fpdf_extended.php" target="_Blank" class="btn-primary">View PDF</a>
+            <a href="../Resources/Includes/FPDFExtended.php" target="_Blank" class="btn-primary">View PDF</a>
         </div>
     </div>
 
