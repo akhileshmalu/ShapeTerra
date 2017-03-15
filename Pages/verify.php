@@ -1,8 +1,8 @@
 <?php
 require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
+$diversityStudent = new Initialize();
+$diversityStudent->checkSessionStatus();
+$connection = $diversityStudent->connection;
 
 $error = array();
 
@@ -15,7 +15,7 @@ if(isset($_GET['email']) && !empty($_GET['email']) AND isset($_GET['hash']) && !
     //Activation from First time user
     if ($_GET['type'] == 1) {
 
-        $email = $initalize->test_input($_GET['email']);
+        $email = $diversityStudent->test_input($_GET['email']);
         $hash = $_GET['hash'];
         $sql = "Select * from PermittedUsers where NETWORK_USERNAME = '$email' and HASH ='$hash' ";
         $result = $mysqli->query($sql);
@@ -36,7 +36,7 @@ if(isset($_GET['email']) && !empty($_GET['email']) AND isset($_GET['hash']) && !
 
     // Activation from Lost your Password
     if ($_GET['type'] == 0) {
-        $email = $initalize->test_input($_GET['email']);
+        $email = $diversityStudent->test_input($_GET['email']);
         $hash = $_GET['hash'];
 
         $sql = "select * FROM PermittedUsers where NETWORK_USERNAME = '$email' and hash ='$hash'";

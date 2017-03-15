@@ -5,14 +5,12 @@
  * This Page controls Faculty Awards Screen.
  */
 
-/*
- * Session & Error control Initialization.
- */
 
-require_once ("../Resources/Includes/initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
+require_once ("../Resources/Includes/BpContents.php");
+//$UnitGoalDetail = new UNITGOALDETAIL();
+$Bpcontent = new BPCONTENTS();
+$Bpcontent->checkSessionStatus();
+$connection = $Bpcontent->connection;
 
 $message = array();
 $errorflag =0;
@@ -22,7 +20,7 @@ $BackToGoal = true;
 
  * Connection to DataBase.
  */
-require_once ("../Resources/Includes/BpContents.php");
+
 
 /*
  * Local & Session variable Initialization
@@ -42,14 +40,13 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-//$UnitGoalDetail = new UNITGOALDETAIL();
-$Bpcontent = new BPCONTENTS();
+
 
 //  Blueprint Status information on title box
 $resultbroad = $Bpcontent->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
-$mysqli = $Bpcontent->mysqli;
+//$mysqli = $Bpcontent->mysqli;
 /*
  * SQL for pre-existing Goal Value
  */
@@ -128,16 +125,16 @@ GOAL_ACTION_PLAN = :goalaction, GOAL_NOTES = :goalnotes  WHERE ID_UNIT_GOAL = :g
 
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
             $sqlunitgoal .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
-            MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
+            MOD_TIMESTAMP = :timeStampmod WHERE ID_CONTENT =:contentlink_id ;";
 
             $sqlunitgoal .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
-BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timeStampmod WHERE ID_BROADCAST = :bpid ; ";
         }
 
         $resultunitgoal = $Bpcontent->connection->prepare($sqlunitgoal);
 
         $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
-        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timeStampmod", $Bpcontent->time, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goaltitle", $goaltitle, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":unigoallinkname", $unigoallinkname, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goalview", $goalview, PDO::PARAM_STR);
@@ -150,10 +147,10 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
 
             $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
-            $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(":timeStampmod", $Bpcontent->time, PDO::PARAM_STR);
             $resultunitgoal->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
             $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
-            $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(":timeStampmod", $Bpcontent->time, PDO::PARAM_STR);
             $resultunitgoal->bindParam(':bpid', $Bpcontent->bpid, PDO::PARAM_STR);
         }
 
@@ -222,7 +219,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
             $resultunitgoal->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
             $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
             $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
-            $resultunitgoal->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
+            $resultunitgoal->bindParam(':bpid', $Bpcontent->bpid, PDO::PARAM_STR);
         }
 
         if ($resultunitgoal->execute()) {
@@ -253,10 +250,10 @@ if(isset($_POST['submit_for_approval'])) {
         $resultunitgoal = $Bpcontent->connection->prepare($sqlunitgoal);
 
         $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
-        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timeStampmod", $Bpcontent->time, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
         $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
-        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timeStampmod", $Bpcontent->time, PDO::PARAM_STR);
         $resultunitgoal->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
 
         if ($resultunitgoal->execute()) {
@@ -278,7 +275,8 @@ if(isset($_POST['approve'])) {
 
     try {
 
-        $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Approved', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
+        $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Approved', 
+GOAL_AUTHOR = :author, MOD_TIMESTAMP = :timeStampmod  where ID_UNIT_GOAL =:goal_id; ";
 
         //check if goal is last goal to approve which should change status of goal overview module to "dean approved".
         $sqlgoalchk .= "AND GOAL_STATUS = 'Dean Approved';";
@@ -290,13 +288,14 @@ if(isset($_POST['approve'])) {
         $numrowapprove = $resultgoalchk->rowCount();
 
         if ($numrow-1 == $numrowapprove) {
-            $sqlunitgoal .= "Update `BpContents` set CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
+            $sqlunitgoal .= "Update `BpContents` set CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= :author,
+            MOD_TIMESTAMP =:timeStampmod  where ID_CONTENT =:contentlink_id;";
         }
 
         $resultunitgoal = $Bpcontent->connection->prepare($sqlunitgoal);
 
         $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
-        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timeStampmod", $Bpcontent->time, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
 
         if ($numrow-1 == $numrowapprove) {
@@ -322,12 +321,13 @@ if(isset($_POST['reject'])) {
     $goal_id = $_GET['goal_id'];
 
     try {
-        $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Rejected', GOAL_AUTHOR = '$author', MOD_TIMESTAMP ='$time'  where ID_UNIT_GOAL ='$goal_id'; ";
+        $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_STATUS = 'Dean Rejected', GOAL_AUTHOR = :author, 
+        MOD_TIMESTAMP =:timeStampmod  where ID_UNIT_GOAL =:goal_id; ";
 
         $resultunitgoal = $Bpcontent->connection->prepare($sqlunitgoal);
 
         $resultunitgoal->bindParam(":author", $Bpcontent->author, PDO::PARAM_STR);
-        $resultunitgoal->bindParam(":timestampmod", $Bpcontent->time, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":timeStampmod", $Bpcontent->time, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
 
         if ($resultunitgoal->execute()) {
@@ -394,7 +394,7 @@ require_once("../Resources/Includes/menu.php");
                 </p>
 <!--                <input type="text" class="form-control form-indent wordCount" style="width: 90%" name="goaltitle" id="goaltitle" maxlength="150"-->
 <!--                       value="--><?php //echo $rowsexvalue['UNIT_GOAL_TITLE'] ?><!--" required>-->
-                <textarea  class="form-control form-indent wordCount" rows="2" col="50" style="width: 95%" name="goaltitle" id="goaltitle" maxlength="150" required><?php echo $initalize->mybr2nl($rowsexvalue['UNIT_GOAL_TITLE']); ?></textarea>
+                <textarea  class="form-control form-indent wordCount" rows="2" col="50" style="width: 95%" name="goaltitle" id="goaltitle" maxlength="150" required><?php echo $Bpcontent->mybr2nl($rowsexvalue['UNIT_GOAL_TITLE']); ?></textarea>
             </div>
             <div class="form-group">
                 <h3>Linked to University Goals (select all that apply)</h3>
@@ -487,6 +487,8 @@ require_once("../Resources/Includes/menu.php");
                 </div>
 
             </div>
+
+<!--            Edit control (Specific to Page) -->
 
             <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') { ?>
                 <input type="submit" id="goalbtn" name="<?php if ($goal_id != 0) {

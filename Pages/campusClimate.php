@@ -1,21 +1,12 @@
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
-
-/*
- * This Page controls Initiatives & Observations.
- */
-
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
+require_once ("../Resources/Includes/BpContents.php");
+$Collaboration = new CAMPUSCLIMATE();
+$Collaboration->checkSessionStatus();
 
 $message = array();
 $errorflag =0;
 $BackToDashboard = true;
-
-require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
@@ -30,7 +21,7 @@ if ($ouid == 4) {
 }
 
 //Object for Campus Climate Table
-$Collaboration = new CAMPUSCLIMATE();
+
 
 // Blueprint Status information on title box
 $resultbroad = $Collaboration->BlueprintStatusDisplay();
@@ -49,6 +40,8 @@ if (isset($_POST['savedraft'])) {
 }
 
 if(isset($_POST['submit_approve'])) {
+
+    $message[0] = $Collaboration->SaveDraft();
     $message[0] = "Campus & Climate";
     $message[0].= $Collaboration->SubmitApproval();
 }
@@ -106,7 +99,7 @@ require_once("../Resources/Includes/menu.php");
                     have extensive information or narrative to include, please provide a brief synopsis here, and upload
                     a Supplemental Info PDF in the provided space below.</p>
                 <textarea name="climate" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo $initalize->mybr2nl($rowsExValue['CLIMATE_INCLUSION']); ?></textarea>
+                          required><?php echo $Collaboration->mybr2nl($rowsExValue['CLIMATE_INCLUSION']); ?></textarea>
                 <div class="checkbox">
                     <label for="optionalCheck">
                         <input type="checkbox" name="optionalCheck" id="climate"/> No response to this item
@@ -126,29 +119,7 @@ require_once("../Resources/Includes/menu.php");
             </div>
 
             <!--                      Edit Control-->
-
-            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
-                <button id="save" type="submit" name="savedraft"
-                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                    Save Draft
-                </button>
-                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                <button type="submit" id="submit_approve" name="submit_approve"
-                        class="btn-primary pull-right">Submit For Approval
-                </button>
-
-            <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-
-                <button id="save" type="submit" name="savedraft"
-                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                    Save Draft
-                </button>
-
-                <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                    <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                    <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                <?php endif;
-            } ?>
+            <?php require_once ("../Resources/Includes/control.php"); ?>
 
         </form>
     </div>

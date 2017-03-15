@@ -1,18 +1,15 @@
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
-
 /*
  * This Page controls Intiation of Academic BluePrint module.
  */
 
  require_once("../Resources/Includes/Initialize.php");
- $initalize = new Initialize();
- $initalize->checkSessionStatus();
- $connection = $initalize->connection;
+ $diversityPersonnel = new Initialize();
+ $diversityPersonnel->checkSessionStatus();
+ $connection = $diversityPersonnel->connection;
 
-$time  = date('Y-m-d H:i:s');
+$time = date('Y-m-d H:i:s');
 $message = array();
 $errorflag =0;
 
@@ -60,7 +57,7 @@ $alumniDeveopment = array(
     array("Collaborations","collaborations.php"),
     array("Campus Climate & Inclusion","campusClimate.php"),
     array("Concluding Remarks","concludingRemarks.php"),
-    
+    array("Community Engagement","communityEngagement.php"),
     
 );
 

@@ -16,8 +16,19 @@
 //
 //
 //}
+//require_once ("../../Resources/Includes/Initialize.php");
+//
+//$initialized = new Initialize();
 
 echo phpinfo();
+//$site  = "Shapeterra";
+//echo $_SERVER['DOCUMENT_ROOT'];
+//$target_dir = $_SERVER['DOCUMENT_ROOT']."/".$_SESSION['site']."/uploads/communityEngagement/";
+//echo $target_dir;
+//if (!file_exists($target_dir)) {
+//    mkdir($target_dir, 0777);
+//    echo "<p>Folder created</p>";
+//} else echo "Folder Exist";
 
 ?>
 

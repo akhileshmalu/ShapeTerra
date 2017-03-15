@@ -20,10 +20,11 @@ if(isset($_POST['submit'])) {
         $errorflag = 1;
     }
 
-    if($errorflag!=1){
-        $startdate = $_POST['startdate'];
-        $enddate = $_POST['enddate'];
-        $censusdate = $_POST['censusdate'];
+    if($errorflag!=1) {
+        $startdate = date("Y-m-d", strtotime($_POST['startdate']));
+        $enddate = date("Y-m-d", strtotime($_POST['enddate']));
+        $censusdate = date("Y-m-d", strtotime($_POST['censusdate']));
+
 
         $id = $initalize->stringdatestoid($startdate,$enddate);
         $desc = $initalize->idtostring($id);

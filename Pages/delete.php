@@ -1,9 +1,9 @@
 <?php
 
 require_once ("../Resources/Includes/initalize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
+$Initiatives = new Initialize();
+$Initiatives->checkSessionStatus();
+$connection = $Initiatives->connection;
 
 $message =array();
 

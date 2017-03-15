@@ -20,11 +20,11 @@ if (isset($_POST['login'])) {
         $message[0] = "Invalid Email Address or password";
     } else {
         require_once("../Resources/Includes/Initialize.php");
-        $initalize = new Initialize();
-        $connection = $initalize->connection;        
+        $concludingRemark = new Initialize();
+        $connection = $concludingRemark->connection;
 
-        $email = $initalize->test_input($_POST['email']);                       // Secured Input
-        $password = md5($initalize->test_input($_POST['password']));
+        $email = $concludingRemark->test_input($_POST['email']);                       // Secured Input
+        $password = md5($concludingRemark->test_input($_POST['password']));
 
         //Query into database for record check
         $sql = "SELECT * FROM PermittedUsers where NETWORK_USERNAME =:email AND PW_DEV =:password ";

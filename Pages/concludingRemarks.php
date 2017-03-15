@@ -1,27 +1,19 @@
-<!-- __________________________________________ -->
-<!-- __________________________________________ -->
-<!-- Copied From Collaboration page as template -->
-<!-- __________________________________________ -->
-<!-- __________________________________________ -->
 
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
-
 /*
- * This Page controls Initiatives & Observations.
+ * This Page controls Concluding Remarks.
  */
 
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
+require_once ("../Resources/Includes/BpContents.php");
+
+$concludingRemark = new CONCLUDINGREMARKS();
+$concludingRemark->checkSessionStatus();
 
 $message = array();
 $errorflag = 0;
 $BackToDashboard = true;
 
-require_once ("../Resources/Includes/BpContents.php");
 
 $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
@@ -36,39 +28,38 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-//Object for Campus Climate Table
-$BpContent = new COLLABORATION();
 
 //  Blueprint Status information on title box
-$resultbroad = $BpContent->BlueprintStatusDisplay();
+$resultbroad = $concludingRemark->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
 
 // Values for placeholders
-$resultexvalue = $BpContent->PlaceHolderValue();
+$resultexvalue = $concludingRemark->PlaceHolderValue();
 $rowsExValue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
-$resultbpstatus = $BpContent->GetStatus();
+$resultbpstatus = $concludingRemark->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 if (isset($_POST['savedraft'])) {
-    $message[0] = $BpContent->SaveDraft();
+    $message[0] = $concludingRemark->SaveDraft();
 }
 
 if(isset($_POST['submit_approve'])) {
-    $message[0] = "Collaboration";
-    $message[0].= $BpContent->SubmitApproval();
+    $message[0] = $concludingRemark->SaveDraft();
+    $message[0] = "Concluding Remarks";
+    $message[0].= $concludingRemark->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
-    $message[0] = "Collaboration";
-    $message[0].= $BpContent->Approve();
+    $message[0] = "Concluding Remarks";
+    $message[0].= $concludingRemark->Approve();
 }
 
 if(isset($_POST['reject'])) {
-    $message[0] = "Collaboration";
-    $message[0].= $BpContent->Reject();
+    $message[0] = "Concluding Remarks";
+    $message[0].= $concludingRemark->Reject();
 }
 
 
@@ -106,12 +97,12 @@ require_once("../Resources/Includes/menu.php");
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Concluding Remarks</h1>
-        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST">
             <h3>Quantitative Outcomes </h3>
             <div class="form-group form-indent">
                 <p class="status">Explain any surprises with regard to data provided in the quantitative outcomes modules throughout this report. </p>
                 <textarea name="quantOutcomes" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_INTERNAL']); ?></textarea>
+                          required><?php echo $concludingRemark->mybr2nl($rowsExValue['REMARKS_QUANT_OUTCOMES']); ?></textarea>
                 <div class="checkbox">
                     <label for="optionalCheck">
                         <input type="checkbox" name="optionalCheck" id="quantOutcomes"/> No response to this item
@@ -120,43 +111,19 @@ require_once("../Resources/Includes/menu.php");
             </div>
             <h3>Cool Stuff</h3>
             <div class="form-group form-indent">
-                <p class="status">Describe innovations, happy accidents, good news, etc. that occurred within your unit not noted elsewhere in your reporting.</p>
-                <textarea name="coolStuff" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_EXTERNAL']); ?></textarea>
+                <p class="status">Describe innovations, happy accidents, good news, etc. that occurred within your unit
+                    not noted elsewhere in your reporting.</p>
+                <textarea name="coolStuff" rows="6" cols="25" wrap="hard" class="form-control"
+                ><?php echo $concludingRemark->mybr2nl($rowsExValue['REMARKS_COOLSTUFF']); ?></textarea>
                 <div class="checkbox">
                     <label for="optionalCheck">
                         <input type="checkbox" name="optionalCheck" id="coolStuff"/> No response to this item
                     </label>
                 </div>
             </div>
-            
 
             <!--                      Edit Control-->
-
-            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
-                <button id="save" type="submit" name="savedraft"
-                        onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                    Save Draft
-                </button>
-                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                <button type="submit" id="submit_approve" name="submit_approve"
-                        class="btn-primary pull-right">Submit For Approval
-                </button>
-
-            <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-
-                <button id="save" type="submit" name="savedraft"
-                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                    Save Draft
-                </button>
-
-                <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                    <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                    <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                <?php endif;
-            } ?>
-
+            <?php require_once ("../Resources/Includes/control.php"); ?>
         </form>
     </div>
 </div>
@@ -173,22 +140,6 @@ require_once("../Resources/Includes/footer.php");
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     });
-    function selectorfile(selected) {
-
-        var doc, image;
-        var filename = $(selected).val();
-        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
-        var allowedext = ['pdf'];
-
-        if (filename.length > 0) {
-            if (allowedext.indexOf(extention) !== -1) {
-                alert(filename.substr(12) + " is selected.");
-            } else {
-                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
-                $(selected).val('');
-            }
-        }
-    }
 </script>
 <script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>

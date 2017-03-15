@@ -8,7 +8,7 @@ $pagename = "bphome";
 
 require_once("../Resources/Includes/BpContents.php");
 
-$facultyNominations = new FACULTYAWARDS();
+$facultyNominations = new FACULTYNOMINATIONS();
 $facultyNominations->checkSessionStatus();
 $connection = $facultyNominations->connection;
 
@@ -122,7 +122,7 @@ require_once("../Resources/Includes/menu.php");
                     <?php while ($rowsaward = $resultaward->fetch(2)): { ?>
                         <option
                             value="<?php echo $rowsaward['AWARD_TYPE']; ?>"
-                        <?php if($rowsaward['AWARD_TYPE'] == $rowsexvalue['AWARD_TYPE']) echo " selected = selected"; ?>>
+                            <?php if($rowsaward['AWARD_TYPE'] == $rowsexvalue['AWARD_TYPE']) echo " selected = selected"; ?>>
                             <?php echo $rowsaward['AWARD_TYPE']; ?> </option>
                     <?php } endwhile; ?>
                 </select>
@@ -136,10 +136,10 @@ require_once("../Resources/Includes/menu.php");
                     <?php } endwhile; ?>
                 </select>
 
-                <label for="recipLname">Recipient Last Name:</label>
+                <label for="recipLname">Nominee Last Name:</label>
                 <input type="text" class="form-control" name="recipLname" value="<?php echo $rowsexvalue['RECIPIENT_NAME_LAST'] ?>" id="recipLname" required>
 
-                <label for="recipFname">Recipient First Name:</label>
+                <label for="recipFname">Nominee First Name:</label>
                 <input type="text" class="form-control" name="recipFname" value="<?php echo $rowsexvalue['RECIPIENT_NAME_FIRST'] ?>" id="recipFname" required>
 
                 <label for="awardtitle">Award Title / Name:</label>
@@ -148,12 +148,10 @@ require_once("../Resources/Includes/menu.php");
                 <label for="awardOrg">Awarding Organization:</label>
                 <input type="text" class="form-control" name="awardOrg" value="<?php echo $rowsexvalue['AWARDING_ORG'] ?>" id="awardOrg" required>
 
-                <label for="datetimepicker3">Date Awarded:</label>
+                <label for="datetimepicker3">Date Nominated:</label>
                 <div class='input-group date' id='datetimepicker3'>
-                    <input type='text' name="dateAward" value="<?php
-                    if(!empty($rowsexvalue['DATE_AWARDED']))
-                    echo date("m/d/Y", strtotime($rowsexvalue['DATE_AWARDED']));
-                    ?>" class="form-control" required>
+                    <input type='text' name="dateNominated" value="<?php echo $rowsexvalue['DATE_NOMINATED'] ?>"
+                           class="form-control" required>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -165,7 +163,7 @@ require_once("../Resources/Includes/menu.php");
                         OR $rowsbpstatus['CONTENT_STATUS']=='Not Started'
                     )
                 ): ?>
-                <input type="submit" id="awardbtn" name="award_submit" value="Save" class="btn-primary">
+                    <input type="submit" id="awardbtn" name="award_submit" value="Save" class="btn-primary">
                 <?php endif; ?>
 
             </div>

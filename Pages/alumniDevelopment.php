@@ -1,9 +1,9 @@
 <?php
 
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
 require_once ("../Resources/Includes/BpContents.php");
+$alumniDeveopment = new ALUMNIDEVELOPMENT();
+$alumniDeveopment->checkSessionStatus();
+
 
 $message = array();
 $errorflag = 0;
@@ -24,7 +24,6 @@ if ($ouid == 4) {
 }
 
 //object for Alumni Dev Table
-$alumniDeveopment = new ALUMNIDEVELOPMENT();
 
 // Blueprint Status information on title box
 $resultbroad = $alumniDeveopment->BlueprintStatusDisplay();
@@ -36,7 +35,6 @@ $rowsExValue = $resultExValue->fetch(2);
 
 
 //  SQL check Status of Blueprint Content for Edit restrictions
-
 $resultbpstatus = $alumniDeveopment->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
@@ -46,6 +44,8 @@ if (isset($_POST['savedraft'])) {
 }
 
 if(isset($_POST['submit_approve'])) {
+
+    $message[0] = $alumniDeveopment->SaveDraft();
     $message[0] = "Alumni Development";
     $message[0].= $alumniDeveopment->SubmitApproval();
 }
@@ -101,38 +101,15 @@ require_once("../Resources/Includes/menu.php");
                     during the Academic Year. Focus should be on relationships and activities with alumni; development
                     with non-alumni and fundraising are collected separately. </p>
                 <textarea name="alumni" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo $initalize->mybr2nl($rowsExValue['AC_UNIT_ALUMNI']); ?></textarea>
+                          required><?php echo $alumniDeveopment->mybr2nl($rowsExValue['AC_UNIT_ALUMNI']); ?></textarea>
             </div>
-            <h3>Development<span
+            <h3>Development, Fundraising, and Gifts<span
                         style="color: red"><sup>*</sup></span></h3>
             <div class="form-group form-indent">
                 <p class="status">Describe your unit's substantial development initiatives and outcomes during the
-                    Academic Year, excluding alumni, fundraising, and gifts.</p>
+                    Academic Year.</p>
                 <textarea name="development" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['AC_UNIT_DEVELOPMENT']); ?></textarea>
-            </div>
-            <h3>Fundraising<span
-                        style="color: red"><sup>*</sup></span></h3>
-            <div class="form-group form-indent">
-                <p class="status">
-                    <small>Describe your unit's major fundraising goals, initiatives, and outcomes during the Academic
-                        Year. Include a calculation of all monetary funds actually received, excluding all other forms
-                        of donations, gifts, and planning.
-                    </small>
-                </p>
-                <textarea name="fundraising" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['AC_UNIT_FUNDRAISING']); ?></textarea>
-            </div>
-            <h3>Gifts<span
-                        style="color: red"><sup>*</sup></span></h3>
-            <div class="form-group form-indent">
-                <p class="status">
-                    <small>Describe major gifts, campaigns, and planning activities, exclusive of actual monetary
-                        fundraising, during the Academic Year.
-                    </small>
-                </p>
-                <textarea name="gifts" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['AC_UNIT_GIFTS']); ?></textarea>
+                          class="form-control"><?php echo $alumniDeveopment->mybr2nl($rowsExValue['AC_UNIT_DEVT_FUND_GIFTS']); ?></textarea>
             </div>
             <h3>Supplemental Info</h3>
             <div id="suppinfo" class="form-group form-indent">
@@ -146,28 +123,7 @@ require_once("../Resources/Includes/menu.php");
             </div>
 
             <!--                      Edit Control-->
-
-            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND
-                ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected'
-                    OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
-                <button id="save" type="submit" name="savedraft"
-                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                    Save Draft
-                </button>
-                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                <button type="submit" id="submit_approve" name="submit_approve"
-                        class="btn-primary pull-right">Submit For Approval
-                </button>
-            <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-                <button id="save" type="submit" name="savedraft"
-                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                    Save Draft
-                </button>
-                <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                    <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                    <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                <?php endif;
-            } ?>
+            <?php require_once ("../Resources/Includes/control.php"); ?>
         </form>
     </div>
 </div>

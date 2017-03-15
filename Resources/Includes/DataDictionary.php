@@ -1,15 +1,16 @@
 <?php
-
-Class DATADICTIONARY
+include_once "Initialize.php";
+Class DATADICTIONARY extends Initialize
 {
-    protected $connection;
+//    protected $connection;
     public $elemId, $ouid, $date, $time, $author, $message;
 
     function __construct()
     {
         //getting the connection object
-        $this->connection = new PDO(sprintf('mysql:host=%s;dbname=%s', HOSTNAME, DB), USERNAME, PASSCODE);
-        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        parent::__construct ();
+//        $this->connection = new PDO(sprintf('mysql:host=%s;dbname=%s', HOSTNAME, DB), USERNAME, PASSCODE);
+//        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->elemId = $_GET['elem_id'];
         $this->ouid = $_SESSION['login_ouid'];
         $this->date = date("Y-m-d");
@@ -117,28 +118,28 @@ Class DATADICTIONARY
         $this->time = date('Y-m-d H:i:s');
         try
         {
-            $funcname = mynl2br($_POST['functionalname']);
-            $techname = mynl2br($_POST['technicalname']);
-            $syslabel = mynl2br($_POST['syslabel']);
+            $funcname = Initialize::mynl2br($_POST['functionalname']);
+            $techname = Initialize::mynl2br($_POST['technicalname']);
+            $syslabel = Initialize::mynl2br($_POST['syslabel']);
             $printlabel = $_POST['printlabel'];
             $dataclass = $_POST['dataclass'];
-            $basicmean = mynl2br($_POST['basicmean']);
-            $userinst = mynl2br($_POST['userinstr']);
+            $basicmean = Initialize::mynl2br($_POST['basicmean']);
+            $userinst = Initialize::mynl2br($_POST['userinstr']);
             $timebasis = $_POST['timebasis'];
             $bptopic = $_POST['bptopic'];
             foreach ($bptopic as $item){
                 $bptopicstring .=$item.',';
             }
-            $usage = mynl2br($_POST['usage']);
-            $datasource = mynl2br($_POST['datasource']);
+            $usage = Initialize::mynl2br($_POST['usage']);
+            $datasource = Initialize::mynl2br($_POST['datasource']);
             $resparty = $_POST['resparty'];
             $contact = $_POST['contactperson'];
             $datatype = $_POST['datatype'];
-            $datatrans = mynl2br($_POST['datatrans']);
-            $valuemand = mynl2br($_POST['valuemand']);
-            $permitvalue = mynl2br($_POST['permitvalue']);
-            $constraint = mynl2br($_POST['constraint']);
-            $notes = mynl2br($_POST['notes']);
+            $datatrans = Initialize::mynl2br($_POST['datatrans']);
+            $valuemand = Initialize::mynl2br($_POST['valuemand']);
+            $permitvalue = Initialize::mynl2br($_POST['permitvalue']);
+            $constraint = Initialize::mynl2br($_POST['constraint']);
+            $notes = Initialize::mynl2br($_POST['notes']);
             $defauthorfname = $_POST['defauthorfname'];
             $defauthorlname = $_POST['defauthorlname'];
 
@@ -205,28 +206,28 @@ Class DATADICTIONARY
         $this->time = date('Y-m-d H:i:s');
         try
         {
-            $funcname = mynl2br($_POST['functionalname']);
-            $techname = mynl2br($_POST['technicalname']);
-            $syslabel = mynl2br($_POST['syslabel']);
+            $funcname = Initialize::mynl2br($_POST['functionalname']);
+            $techname = Initialize::mynl2br($_POST['technicalname']);
+            $syslabel = Initialize::mynl2br($_POST['syslabel']);
             $printlabel = $_POST['printlabel'];
             $dataclass = $_POST['dataclass'];
-            $basicmean = mynl2br($_POST['basicmean']);
-            $userinst = mynl2br($_POST['userinstr']);
+            $basicmean = Initialize::mynl2br($_POST['basicmean']);
+            $userinst = Initialize::mynl2br($_POST['userinstr']);
             $timebasis = $_POST['timebasis'];
             $bptopic = $_POST['bptopic'];
             foreach ($bptopic as $item){
                 $bptopicstring .=$item.',';
             }
-            $usage = mynl2br($_POST['usage']);
-            $datasource = mynl2br($_POST['datasource']);
+            $usage = Initialize::mynl2br($_POST['usage']);
+            $datasource = Initialize::mynl2br($_POST['datasource']);
             $resparty = $_POST['resparty'];
             $contact = $_POST['contactperson'];
             $datatype = $_POST['datatype'];
-            $datatrans = mynl2br($_POST['datatrans']);
-            $valuemand = mynl2br($_POST['valuemand']);
-            $permitvalue = mynl2br($_POST['permitvalue']);
-            $constraint = mynl2br($_POST['constraint']);
-            $notes = mynl2br($_POST['notes']);
+            $datatrans = Initialize::mynl2br($_POST['datatrans']);
+            $valuemand = Initialize::mynl2br($_POST['valuemand']);
+            $permitvalue = Initialize::mynl2br($_POST['permitvalue']);
+            $constraint = Initialize::mynl2br($_POST['constraint']);
+            $notes = Initialize::mynl2br($_POST['notes']);
             $defauthorfname = $_POST['defauthorfname'];
             $defauthorlname = $_POST['defauthorlname'];
 

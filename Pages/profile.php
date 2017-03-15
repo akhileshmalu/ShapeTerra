@@ -1,9 +1,9 @@
 <?php
 
 require_once ("../Resources/Includes/initalize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
+$facultyAward = new Initialize();
+$facultyAward->checkSessionStatus();
+$connection = $facultyAward->connection;
 
 $error = array();                                               //Error Array Created
 $errorflag = 0;                                                 //Flag Create
@@ -25,8 +25,8 @@ if(isset($_POST['submit'])) {
     }
     if($errorflag == 0){
 
-        $fname = $initalize->test_input($_POST['fname']);                  //Secured Input
-        $lname = $initalize->test_input($_POST['lname']);
+        $fname = $facultyAward->test_input($_POST['fname']);                  //Secured Input
+        $lname = $facultyAward->test_input($_POST['lname']);
         $email = $_SESSION['login_email'];
 
 
