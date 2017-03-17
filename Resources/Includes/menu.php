@@ -14,18 +14,14 @@
 */
 
 
-//require_once ("initialize.php");
-$initalize = new Initialize();
-//$connection = $initalize->connection;
-$menucon = $initalize->connection;
+$fileupload = new Initialize();
+$menucon = $fileupload->connection;
 
 
 // Local variables for Dev Environment only
-$site = "localhost:8888/shapeterra";
-$navdir = "Shapeterra/";
 
+$navdir = $_SESSION['site'];
 
-// require_once ("../Resources/Includes/connect.php");
 $email = $_SESSION['login_email'];
 try {
 	$sqlmenu = "select USER_ROLE,OU_NAME,USER_RIGHT,SYS_USER_ROLE,SYS_USER_RIGHT, OU_ABBREV,FNAME,LNAME ,USER_OU_MEMBERSHIP,OU_TYPE from PermittedUsers inner join UserRights on PermittedUsers.SYS_USER_RIGHT = UserRights.ID_USER_RIGHT
@@ -49,27 +45,22 @@ $_SESSION['login_role'] = $rowsmenu['SYS_USER_ROLE'];
 $ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
 
 
+/*
+ * Menu Hub ; All menu items are loaded here and controlled by pages.
+ */
+
 $menu = array(
-//	array("Upload OIRAA Data", "../$navdir"."Pages/fileuploadhome.php", "" ,"main","service", true),
-	array("Data Dictionary", "../$navdir"."Pages/datadicthome.php", "" ,"main","basic", true),
-    array("Footnotes", "../$navdir"."Pages/footnotehome.php", "" ,"main","basic", true),
-	//array("Approve BluePrint", "../$navdir"."Pages/approvebp.php", "&#xe04e;" ,"main","approver", true),
-	array("Add Academic Year", "../$navdir"."Pages/adday.php", "" ,"main","provost", true),
-	array("Edit Academic Year", "../$navdir"."Pages/editay.php", "" ,"main","provost", true),
-	array("Initiate Academic BluePrint", "../$navdir"."Pages/initiatebp.php", "" ,"main","provost", false),
-	array("Approve Request", "../$navdir"."Pages/updateaccess.php", "&#xe04e" ,"admin","basic", false),
-	array("Deactivate Users", "../$navdir"."Pages/delete.php", "" ,"admin","basic", false)
-//	array("Request privilege", "../$navdir"."Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
+//	array("Upload OIRAA Data", "../$navdir"."/Pages/fileuploadhome.php", "" ,"main","service", true),
+	array("Data Dictionary", "../$navdir"."/Pages/datadicthome.php", "" ,"main","basic", true),
+    array("Footnotes", "../$navdir"."/Pages/footnotehome.php", "" ,"main","basic", true),
+	//array("Approve BluePrint", "../$navdir"."/Pages/approvebp.php", "" ,"main","approver", true),
+	array("Add Academic Year", "../$navdir"."/Pages/adday.php", "" ,"main","provost", true),
+	array("Edit Academic Year", "../$navdir"."/Pages/editay.php", "" ,"main","provost", true),
+	array("Initiate Academic BluePrint", "../$navdir"."/Pages/initiatebp.php", "" ,"main","provost", false),
+	array("Approve Request", "../$navdir"."/Pages/updateaccess.php", "" ,"admin","basic", false),
+	array("Deactivate Users", "../$navdir"."/Pages/delete.php", "" ,"admin","basic", false)
+//	array("Request privilege", "../$navdir"."/Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
 	);
-
-//variable Initialization back to button
-//$BackToDashboard = null;
-//$BackToFileUploadHome = null;
-//$BackToDataDictHome = null;
-//$BackTofootnoteHome = null;
-//$BackToGoalOutHome = null;
-//$BackToGoal = null;
-
 
 // Function to download templates for csv formats
 function download($filename){
@@ -144,12 +135,10 @@ function download($filename){
 
 		   <li role="separator" class="divider"></li>
 
-
 		  <li><a href="../Pages/profile.php"><span class="icon">&#xe058;</span>Profile</a></li>
-		  <li><a href="../Pages/resetpassword.php"><span class="icon">&#xe014;</span>Reset Password</a></li>
-		  <li role="separator" class="divider"></li>
 
-			<!-- User Specific Menu under Drop Down-->
+
+			<!-- User Specific Menu under Drop Down - Right most-->
 		  <?php
 		  switch ($rowsmenu['SYS_USER_ROLE'])
 		  {
@@ -191,8 +180,10 @@ Generate PDF button currently disabled.
 	</button>
 -->
 </div>
-	<!--
-	Menu
+
+
+<!--
+	Left Navigation Menu
 	-->
 
 <nav class="col-xs-2" id="menu">
@@ -249,7 +240,7 @@ Generate PDF button currently disabled.
             if ($rowsmenu['OU_TYPE'] == 'Service Unit') {
                 if ($menu[$i][3] == "main" && ($menu[$i][4] == 'service'or $menu[$i][4] == "basic")) {
                     echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " ' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
-										echo "<li><a id ='" . $menu[$i][3] . "' class = '" . ($menu[$i][4] ? "selected" : "") . " ' href='../../Pages/" . $menu[$i][1] . "'><span class='icon'>" . $menu[$i][2] . "</span>" . $menu[$i][0] . "</a></li>";
+
                 }
                 continue;
             }

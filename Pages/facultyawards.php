@@ -462,7 +462,7 @@ require_once("../Resources/Includes/menu.php");
 
             </script>
         </div>
-        <form action="<?php echo "facultyawards.php?linkid=".$contentlink_id ?>" method="POST" >
+        <form action="<?php echo $_SERVER["PHP_SELF"]."?linkid=".$contentlink_id ?>" method="POST" >
 
             <!--                        Edit Control-->
             <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>

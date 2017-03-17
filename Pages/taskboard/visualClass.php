@@ -1,47 +1,7 @@
 <?php
 
-/*TODO restrict by user's college*/
-
-error_reporting(1);
-@ini_set('display_errors', 1);
-
-if (isset($_POST['functionNum']))
-    $function = $_POST['functionNum'];
-
-if (isset($_GET['functionNum']))
-    $function = $_GET['functionNum'];
-
-if (!empty($function)) {
-    $ChartVisualizations = new ChartVisualizations;
-}
-
-switch ($function) {
-    case 1:
-        $yearDescription = $_GET["yearDescription"];
-        $ChartVisualizations->chartEnrollements($yearDescription);
-        break;
-    case 2:
-        $yearDescription = $_GET["yearDescription"];
-        $ChartVisualizations->chartFaculty($yearDescription);
-        break;
-    case 3:
-        $yearDescription = $_GET["yearDescription"];
-        $ChartVisualizations->chartDiversityStudent($yearDescription);
-        break;
-    case 4:
-        $yearDescription = $_GET["yearDescription"];
-        $ChartVisualizations->chartDiversityPersonnel($yearDescription);
-        break;
-    case 5:
-        $ChartVisualizations->exportToPng($_POST["imagebase"], $_POST["name"]);
-        break;
-    default:
-        break;
-}
-
-
-require_once("Initialize.php");
-Class ChartVisualizations extends Initialize
+require_once("../../Resources/Includes/Initialize.php");
+class visualClass extends Initialize
 {
 
 //    private $connection;
@@ -56,16 +16,6 @@ Class ChartVisualizations extends Initialize
 
         $this->ouid = $_SESSION['login_ouid'];
         $this->year = $_SESSION['bpayname'];
-
-//        if ($this->ouid == 4) {
-//
-//            $this->college = $_SESSION['bpouabbrev'];
-//
-//        } else {
-//
-//            $this->college = $_SESSION['login_ouabbrev'];
-//
-//        }
 
         if ($_SESSION['login_outype'] <> 'Service Unit') {
             if ($this->ouid == 4) {
@@ -82,13 +32,14 @@ Class ChartVisualizations extends Initialize
             $this->year = $_GET['yearDescription'];
         }
 
+
     }
 
     public function chartEnrollements()
     {
 
         $getAcademicEnrollements = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND 
-      OU_ABBREV = ?");
+      OU_ABBREV = ?;");
         $getAcademicEnrollements->bindParam(1, $this->year, PDO::PARAM_STR);
         $getAcademicEnrollements->bindParam(2, $this->college, PDO::PARAM_STR);
         $getAcademicEnrollements->execute();
@@ -215,7 +166,8 @@ Class ChartVisualizations extends Initialize
                     },
                     animation: {
                       onComplete: function(){
-                        $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-" . $this->year . "', functionNum: '5'});
+                        $.post('../Pages/taskboard/visualclass.php',{imagebase: myChart.toBase64Image(), 
+                        name:'student-enrollements-" . $this->year . "', functionNum: '5'});
                       }
                     }
                   }
@@ -2495,8 +2447,5 @@ Class ChartVisualizations extends Initialize
 
     }
 
+
 }
-
-
-
-?>

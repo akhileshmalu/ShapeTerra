@@ -5,7 +5,9 @@ $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 $FUayname = $_SESSION['FUayname'];
 
-require_once("../../Resources/Includes/connect.php");
+require_once("../../Resources/Includes/Initialize.php");
+$initialize = new Initialize();
+$mysqli = $initialize->mysqli;
 
 require_once("grid.php");
 

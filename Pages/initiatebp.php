@@ -4,17 +4,17 @@
  * This Page controls Intiation of Academic BluePrint module.
  */
 
- require_once("../Resources/Includes/Initialize.php");
- $diversityPersonnel = new Initialize();
- $diversityPersonnel->checkSessionStatus();
- $connection = $diversityPersonnel->connection;
+require_once("../Resources/Includes/Initialize.php");
+$diversityPersonnel = new Initialize();
+$diversityPersonnel->checkSessionStatus();
+$connection = $diversityPersonnel->connection;
 
 $time = date('Y-m-d H:i:s');
 $message = array();
-$errorflag =0;
+$errorflag = 0;
 
-$sqlbroad ="";
-$ou=array();
+$sqlbroad = "";
+$ou = array();
 $broad_id = 0;
 $author = $_SESSION['login_userid'];
 $first = TRUE;
@@ -22,7 +22,7 @@ $first = TRUE;
 /*
  * Query to show Non terminated Organization Unit as on date.
  */
-$sqlou = "Select * from Hierarchy where OU_ABBREV != 'UNAFFIL' and OU_DATE_END IS NULL and OU_TYPE ='Academic Unit';";
+$sqlou = "SELECT * FROM Hierarchy WHERE OU_ABBREV != 'UNAFFIL' AND OU_DATE_END IS NULL AND OU_TYPE ='Academic Unit';";
 $resultou = $connection->prepare($sqlou);
 $resultou->execute();
 
@@ -31,7 +31,7 @@ $resultou->execute();
  * Query to show Academic years for Initiating Blue Print.
  */
 
-$sqlay = "Select * from AcademicYears ORDER BY ID_ACAD_YEAR ASC;";
+$sqlay = "SELECT * FROM AcademicYears ORDER BY ID_ACAD_YEAR ASC;";
 $resultay = $connection->prepare($sqlay);
 $resultay->execute();
 
@@ -40,25 +40,24 @@ $resultay->execute();
  */
 
 $alumniDeveopment = array(
-    array("Executive Summary","executivesum.php"),
-    array("Mission, Vision & Values","mvv.php"),
-    array("Unit Goals Management","unitgoaloverview.php"),
+    array("Executive Summary", "executivesum.php"),
+    array("Mission, Vision & Values", "mvv.php"),
+    array("Unit Goals Management", "unitgoaloverview.php"),
 
+    array("Goal Outcomes", "goaloutcomeshome.php"),
+    array("Academic Programs", "academicPrograms.php"),
+    array("Academic Initiatives", "initiatives.php"),
+    array("Faculty Information", "facultyInfo.php"),
+    array("Teaching", "teaching.php"),
+    array("Student Recruiting & Retention", "recruitReten.php"),
+    array("Faculty Awards", "facultyawards.php"),
+    array("Faculty Awards Nominations", "facultyNominations.php"),
+    array("Alumni Engagement & Fundraising", "alumniDevelopment.php"),
+    array("Collaborations", "collaborations.php"),
+    array("Campus Climate & Inclusion", "campusClimate.php"),
+    array("Concluding Remarks", "concludingRemarks.php"),
+    array("Community Engagement", "communityEngagement.php"),
 
-    array("Goal Outcomes","goaloutcomeshome.php"),
-    array("Academic Programs","academicPrograms.php"),
-    array("Academic Initiatives","initiatives.php"),
-    array("Faculty Information","facultyInfo.php"),
-    array("Teaching","teaching.php"),
-    array("Student Recruiting & Retention","recruitReten.php"),
-    array("Faculty Awards","facultyawards.php"),
-    array("Faculty Awards Nominations","facultyNominations.php"),
-    array("Alumni Engagement & Fundraising","alumniDevelopment.php"),
-    array("Collaborations","collaborations.php"),
-    array("Campus Climate & Inclusion","campusClimate.php"),
-    array("Concluding Remarks","concludingRemarks.php"),
-    array("Community Engagement","communityEngagement.php"),
-    
 );
 
 
@@ -66,11 +65,11 @@ $alumniDeveopment = array(
  * File Upload Section
  */
 $uploaddatafiles = array(
-    array("IR_AC_DiversityPersonnel","ac_diversitypersonnel.php"),
-    array("IR_AC_DiversityStudent","ac_diversitystudent.php"),
-    array("IR_AC_Enrollments","uploadfile.php"),
+    array("IR_AC_DiversityPersonnel", "ac_diversitypersonnel.php"),
+    array("IR_AC_DiversityStudent", "ac_diversitystudent.php"),
+    array("IR_AC_Enrollments", "uploadfile.php"),
 //    array("IR_AC_Facilities","uploadfile.php"),
-    array("IR_AC_FacultyPop","ac_facultypop.php"),
+    array("IR_AC_FacultyPop", "ac_facultypop.php"),
 //    array("IR_AC_Transfers","uploadfile.php"),
 //    array("IR_AC_AdmTestScores","uploadfile.php"),
 );
@@ -108,11 +107,11 @@ if (isset($_POST['submit'])) {
         foreach ($ou as $value) {
             list($ouid, $ouabbrev) = explode(",", $value);
 
-            $sqlbroadcheck = "select * from broadcast where BROADCAST_AY=:ay and find_in_set(:ouid,BROADCAST_OU)>0; ";
+            $sqlbroadcheck = "SELECT * FROM broadcast WHERE BROADCAST_AY=:ay AND find_in_set(:ouid,BROADCAST_OU)>0; ";
             $resultbroadcheck = $connection->prepare($sqlbroadcheck);
             $resultbroadcheck->bindParam(":ay", $ay, PDO::PARAM_STR);
             $resultbroadcheck->bindParam(":ouid", $ouid, PDO::PARAM_INT);
-            $resultbroadcheck -> execute();
+            $resultbroadcheck->execute();
             $rowbroadcheck = $resultbroadcheck->rowCount();
             if ($rowbroadcheck >= 1) {
                 $message[1] = "You have already Initiated BluePrint for Org Unit: " . $ouabbrev . " for year : " . $ay;
@@ -149,7 +148,7 @@ if (isset($_POST['submit'])) {
                     $topicdesc = $alumniDeveopment[$j][0];
                     $topiclink = $alumniDeveopment[$j][1];
 
-                    $srno = $j+1;
+                    $srno = $j + 1;
                     $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','$srno');";
 
                 }
@@ -184,7 +183,7 @@ require_once("../Resources/Includes/menu.php");
 ?>
 
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
-<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
+<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
 
 <div class="overlay hidden"></div>
 <?php if (isset($_POST['submit'])) { ?>
@@ -192,7 +191,7 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
-        <button type="button" redirect="<?php echo "account.php";?>"  class="end btn-primary">Close</button>
+        <button type="button" redirect="<?php echo "account.php"; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 
@@ -204,27 +203,29 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <form action="" method="POST" >
+        <form action="" method="POST">
             <h2>1. Select Academic Year <span class="icon" data-toggle="tooltip" data-placement="top"
-            title="Tooltip on top">&#xe009;</span></h2>
-                <div class="col-xs-3">
-                    <select  name="AY" class="col-xs-4 form-control" id="AYname" style="padding: 0px !important; background-color: #fff !important;">
-                        <option value=""></option>
-                        <?php while ($rowsay = $resultay->fetch(4)): { ?>
-                            <option value="<?php echo $rowsay[1]; ?>"><?php echo $rowsay[1]; ?></option>
-                        <?php } endwhile; ?>
-                    </select>
-                </div>
-                <br />
+                                              title="Tooltip on top">&#xe009;</span></h2>
+            <div class="col-xs-3">
+                <select name="AY" class="col-xs-4 form-control" id="AYname"
+                        style="padding: 0px !important; background-color: #fff !important;">
+                    <option value=""></option>
+                    <?php while ($rowsay = $resultay->fetch(4)): { ?>
+                        <option value="<?php echo $rowsay[1]; ?>"><?php echo $rowsay[1]; ?></option>
+                    <?php } endwhile; ?>
+                </select>
+            </div>
+            <br/>
             <h2>2. Select Organization Unit <span class="icon" data-toggle="tooltip" data-placement="top"
-            title="Tooltip on top">&#xe009;</span></h2>
+                                                  title="Tooltip on top">&#xe009;</span></h2>
             <div class="checkbox" id="ouname">
-                <label><input type="checkbox" id="ckbCheckAll" >All Active Academic Units </label>
+                <label><input type="checkbox" id="ckbCheckAll">All Active Academic Units </label>
             </div>
             <?php while ($rowsou = $resultou->fetch(4)): { ?>
                 <div class="checkbox" id="ouname">
                     <label><input type="checkbox" name="ou_name[]"
-                              class="checkBoxClass" value="<?php echo $rowsou[0].",".$rowsou[2]; ?>"><?php echo $rowsou[1]; ?></label>
+                                  class="checkBoxClass"
+                                  value="<?php echo $rowsou[0] . "," . $rowsou[2]; ?>"><?php echo $rowsou[1]; ?></label>
                 </div>
             <?php } endwhile; ?>
             <input type="submit" name="submit" value="Submit" class="btn-primary pull-right col-xs-3">

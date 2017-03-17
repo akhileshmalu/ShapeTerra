@@ -5,17 +5,12 @@
  * This Page controls Data Element Add Screen.
  */
 
-/*
- * Session & Error control Initialization.
- */
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once ("../Resources/Includes/DataDictionary.php");
+$DataDictionary = new DATADICTIONARY();
+$DataDictionary->checkSessionStatus();
 
-$error = array();
-$errorflag =0;
+$message = array();
+$errorflag = 0;
 $notBackToDashboard = true;
 $elemid = $_GET['elem_id'];
 $elemstatus = $_GET['status'];
@@ -23,236 +18,94 @@ $BackToDataDictHome = true;
 $bptopic =array();
 $bptopicstring = null;
 
+// Set of valid Values
+
 $timebasisoutcome = array (
     'Academic Years only - final: Aug 16- Aug 15',
-	'Academic Years -final + Recent Fall -preliminary',
-	'Fall Terms only -final',
-	'Fiscal Year : July 1-June 30',
-	'Calendar Year',
-	'Not applicable',
-	'Other - explain in Interpretation & Usage Notes'
+    'Academic Years -final + Recent Fall -preliminary',
+    'Fall Terms only -final',
+    'Fiscal Year : July 1-June 30',
+    'Calendar Year',
+    'Not applicable',
+    'Other - explain in Interpretation & Usage Notes'
 );
 
 $datatypeset = array(
     'Text - simple (alpha, or alphanumeric)',
-	'Text - paragraph',
-	'Numeric',
-	'Date or Date-Time',
-	'Currency',
+    'Text - paragraph',
+    'Numeric',
+    'Date or Date-Time',
+    'Currency',
     'Unknown',
 );
 
 $respartyset = array(
     'Dean',
-	'Contributor (each College/School)',
-	'Human Resources',
-	'OIRAA',
-	'Provost Office',
-	'Reviewer',
-	'Team Lead',
-	'University Registrar',
-	'System Administrator',
-	'System Developer',
-	'System-generated Value'
+    'Contributor (each College/School)',
+    'Human Resources',
+    'OIRAA',
+    'Provost Office',
+    'Reviewer',
+    'Team Lead',
+    'University Registrar',
+    'System Administrator',
+    'System Developer',
+    'System-generated Value'
 );
 
 $valuemandset = array(
     'Required',
-	'Conditional',
-	'Optional',
-	'Unknown'
+    'Conditional',
+    'Optional',
+    'Unknown'
 );
 
-/*
- * Connection to DataBase.
- */
-require_once ("../Resources/Includes/connect.php");
 
-/*
- * Local & Session variable Initialization
- */
 
+// Local & Session variable Initialization
 $ouid = $_SESSION['login_ouid'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-/*
- * SQL Existing Data Element Value
- */
-$sqldataelem = "SELECT * FROM DataDictionary WHERE ID_DATA_ELEMENT='$elemid'; ";
-$resultdataelem = $mysqli -> query($sqldataelem);
-$rowsdataelem = $resultdataelem -> fetch_assoc();
-
-/*
- * Data Classification Value
- */
-$sqldataclass = "SELECT * FROM DataClassification;";
-$resultdataclass = $mysqli -> query($sqldataclass);
 
 
 
-/*
- * Blueprint TopicAreas Value
- */
-$sqltopicareas = "SELECT * FROM TopicAreas where TOPIC_FOR_DICTIONARY = 'Y';";
-$resulttopicareas = $mysqli -> query($sqltopicareas);
 
+// SQL Existing Data Element Value
+$resultdataelem = $DataDictionary->ElementExValue();
+$rowsdataelem = $resultdataelem -> fetch(2);
+
+
+// Data Classification Value
+$resultdataclass = $DataDictionary->GetDataClassification();
+
+
+// Blueprint TopicAreas Value
+$resulttopicareas = $DataDictionary->GetTopicAreas();
 
 
 if(isset($_POST['save'])) {
-
-    $funcname = mynl2br($_POST['functionalname']);
-    $techname = mynl2br($_POST['technicalname']);
-    $syslabel = mynl2br($_POST['syslabel']);
-    $printlabel = $_POST['printlabel'];
-    $dataclass = $_POST['dataclass'];
-    $basicmean = mynl2br($_POST['basicmean']);
-    $userinst = mynl2br($_POST['userinstr']);
-    $timebasis = $_POST['timebasis'];
-    $bptopic = $_POST['bptopic'];
-    foreach ($bptopic as $item){
-        $bptopicstring .=$item.',';
-    }
-    $usage = mynl2br($_POST['usage']);
-    $datasource = mynl2br($_POST['datasource']);
-    $resparty = $_POST['resparty'];
-    $contact = $_POST['contactperson'];
-    $datatype = $_POST['datatype'];
-    $datatrans = mynl2br($_POST['datatrans']);
-    $valuemand = mynl2br($_POST['valuemand']);
-    $permitvalue = mynl2br($_POST['permitvalue']);
-    $constraint = mynl2br($_POST['constraint']);
-    $notes = mynl2br($_POST['notes']);
-    $defauthorfname = $_POST['defauthorfname'];
-    $defauthorlname = $_POST['defauthorlname'];
-
-    $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,LABEL_SYSTEM,LABEL_PRINT, BASIC_MEANING,USER_INSTRCTN, TIME_BASIS_OUTCOME, 
-INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON, 
-VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','$syslabel','$printlabel',
-'$basicmean','$userinst','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
-'$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
-
-    if($mysqli->query($sqladdelem)) {
-        $error[0] = "Your Data Element has been submitted for review.This will be accepted in data dictionary post approval.";
-    } else {
-        $error[0] = "Data Element could not be submitted.";
-    }
-
-
+    $message[0] = $DataDictionary->SaveWithReview();
 }
 
 if(isset($_POST['directsave'])) {
-
-    $funcname = mynl2br($_POST['functionalname']);
-    $techname = mynl2br($_POST['technicalname']);
-    $syslabel = mynl2br($_POST['syslabel']);
-    $printlabel = $_POST['printlabel'];
-    $dataclass = $_POST['dataclass'];
-    $basicmean = mynl2br($_POST['basicmean']);
-    $userinst = mynl2br($_POST['userinstr']);
-    $timebasis = $_POST['timebasis'];
-    $bptopic = $_POST['bptopic'];
-    foreach ($bptopic as $item){
-        $bptopicstring .=$item.',';
-    }
-    $usage = mynl2br($_POST['usage']);
-    $datasource = mynl2br($_POST['datasource']);
-    $resparty = $_POST['resparty'];
-    $contact = $_POST['contactperson'];
-    $datatype = $_POST['datatype'];
-    $datatrans = mynl2br($_POST['datatrans']);
-    $valuemand = mynl2br($_POST['valuemand']);
-    $permitvalue = mynl2br($_POST['permitvalue']);
-    $constraint = mynl2br($_POST['constraint']);
-    $notes = mynl2br($_POST['notes']);
-    $defauthorfname = $_POST['defauthorfname'];
-    $defauthorlname = $_POST['defauthorlname'];
-
-
-    $sqladdelem = "INSERT INTO DataDictionary (DATA_ELMNT_FUNC_NAME, DATA_ELEMENT_TECH_NAME,LABEL_SYSTEM,LABEL_PRINT,STATUS, BASIC_MEANING,USER_INSTRCTN, TIME_BASIS_OUTCOME, 
-INTERP_USAGE, DATA_CLASSIFICATION, DATA_SOURCE, DATA_TYPE, DATA_TRANSFORM, BP_TOPIC, RESPONSIBLE_PARTY, CONTACT_PERSON, 
-VALUES_MANDATORY, VALUES_PERMITTED, VALUES_CONSTRAINTS, NOTES_DATA_ELEMENT, AUTHOR_FNAME,AUTHOR_LNAME, MOD_BY, MOD_TIMESTAMP) VALUES ('$funcname','$techname','$syslabel','$printlabel','Approved',
-'$basicmean','$userinst','$timebasis','$usage','$dataclass','$datasource','$datatype','$datatrans','$bptopicstring','$resparty','$contact',
-'$valuemand','$permitvalue','$constraint','$notes','$defauthorfname','$defauthorlname','$author','$time');";
-
-    if($mysqli->query($sqladdelem)) {
-        $error[0] = "Your Data Element has been added in Data Dictionary.";
-    } else {
-        $error[0] = "Data Element could not be added.";
-    }
-
-
+    $message[0] = $DataDictionary->SaveWithReview('Approved');
 }
 
 if(isset($_POST['update'])) {
 
-    $funcname = mynl2br($_POST['functionalname']);
-    $techname = mynl2br($_POST['technicalname']);
-    $syslabel = mynl2br($_POST['syslabel']);
-    $printlabel = $_POST['printlabel'];
-    $dataclass = $_POST['dataclass'];
-    $basicmean = mynl2br($_POST['basicmean']);
-    $userinst = mynl2br($_POST['userinstr']);
-    $timebasis = $_POST['timebasis'];
-    $bptopic = $_POST['bptopic'];
-    foreach ($bptopic as $item){
-        $bptopicstring .=$item.',';
-    }
-    $usage = mynl2br($_POST['usage']);
-    $datasource = mynl2br($_POST['datasource']);
-    $resparty = $_POST['resparty'];
-    $contact = $_POST['contactperson'];
-    $datatype = $_POST['datatype'];
-    $datatrans = mynl2br($_POST['datatrans']);
-    $valuemand = mynl2br($_POST['valuemand']);
-    $permitvalue = mynl2br($_POST['permitvalue']);
-    $constraint = mynl2br($_POST['constraint']);
-    $notes = mynl2br($_POST['notes']);
-    $defauthorfname = $_POST['defauthorfname'];
-    $defauthorlname = $_POST['defauthorlname'];
-
-
-    $sqladdelem = "Update DataDictionary  SET DATA_ELMNT_FUNC_NAME = '$funcname', DATA_ELEMENT_TECH_NAME= '$techname',LABEL_SYSTEM = '$syslabel', LABEL_PRINT = '$printlabel', BASIC_MEANING = '$basicmean',
- USER_INSTRCTN = '$userinst',TIME_BASIS_OUTCOME = '$timebasis', INTERP_USAGE = '$usage', DATA_CLASSIFICATION = '$dataclass', DATA_SOURCE = '$datasource',
-  DATA_TYPE = '$datatype', DATA_TRANSFORM = '$datatrans', BP_TOPIC ='$bptopicstring', RESPONSIBLE_PARTY ='$resparty', 
-  CONTACT_PERSON = '$contact', VALUES_MANDATORY = '$valuemand', VALUES_PERMITTED = '$permitvalue', VALUES_CONSTRAINTS = '$constraint', 
-  NOTES_DATA_ELEMENT = '$notes', AUTHOR_FNAME = '$defauthorfname',AUTHOR_LNAME = '$defauthorlname', MOD_BY = '$author', MOD_TIMESTAMP = '$time' where ID_DATA_ELEMENT = $elemid;";
-
-    if($mysqli->query($sqladdelem)) {
-        $error[0] = "Your Data Element has been updated in Data Dictionary.";
-    } else {
-        $error[0] = "Data Element could not be updated.";
-    }
-
-
+    $message[0] = $DataDictionary->Update();
 }
 
 
 if(isset($_POST['approve'])) {
-
-
-    $sqladdelem = "update DataDictionary SET STATUS = 'Approved' where ID_DATA_ELEMENT = '$elemid';";
-
-    if($mysqli->query($sqladdelem)) {
-        $error[0] = "Data Element has been approved & included in Data Dictionary.";
-    } else {
-        $error[0] = "Data Element could not be approved.";
-    }
-
+    $message[0] = $DataDictionary->Approve();
 }
 
 if(isset($_POST['discard'])) {
 
-
-    $sqladdelem = "update DataDictionary SET STATUS = 'Archived' where ID_DATA_ELEMENT = '$elemid';";
-
-    if($mysqli->query($sqladdelem)) {
-        $error[0] = "Data Element has been Archived & excluded from Data Dictionary.";
-    } else {
-        $error[0] = "Data Element could not be Archived.";
-    }
-
+    $message[0] = $DataDictionary->Reject();
 }
 
 
@@ -273,7 +126,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="<?php echo "datadicthome.php";?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
@@ -362,7 +215,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <select type="text" name="dataclass" class="form-control">
                             <option value=""></option>
-                            <?php while ($rowsdataclass = $resultdataclass->fetch_assoc()) {
+                            <?php while ($rowsdataclass = $resultdataclass->fetch(2)) {
                                 echo "<option value=" . $rowsdataclass['ID_DATA_CLASS'];
                                 if ($rowsdataelem['DATA_CLASSIFICATION'] == $rowsdataclass['ID_DATA_CLASS']) {
                                     echo " selected = selected";
@@ -380,7 +233,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="basicmean" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
                     </div>
 
                     <h3>User Instructions</h3>
@@ -391,7 +244,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="3" name="userinstr" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['USER_INSTRCTN']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['USER_INSTRCTN']); ?></textarea>
                     </div>
 
                     <h3>Time Basis for Outcome <span style="color: red"><sup>*</sup></span></h3>
@@ -423,20 +276,21 @@ require_once("../Resources/Includes/menu.php");
 
                         $i = 0;
                         $columns = 3;
-                        while ($rowstopicareas = $resulttopicareas->fetch_assoc()) {
-                            if ($i % $column == 0) {
-                                echo "<div class='col-xs-6 chcekbox'><label>";
+                        while ($rowstopicareas = $resulttopicareas->fetch(2)) {
+                            if ($i % $columns == 0) {
+                                echo "<div class='col-xs-6'><label>";
                             }
-                            echo "<input type='checkbox' name='bptopic[]' value='" . $rowstopicareas['ID_TOPIC'] . "'";
+                            echo "<div><input type='checkbox' name='bptopic[]' value='" . $rowstopicareas['ID_TOPIC'] .
+                                "'";
                             $topicitem = explode(',', $rowsdataelem['BP_TOPIC']);
                             foreach ($topicitem as $top) {
                                 if ($top == $rowstopicareas['ID_TOPIC']) {
                                     echo " checked";
                                 }
                             }
-                            echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'];
+                            echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC']."</div>";
                             $i++;
-                            if ($i % $column == 0) {
+                            if ($i % $columns == 0) {
                                 echo "</label></div>";
                             }
                         }
@@ -456,7 +310,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="usage" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['INTERP_USAGE']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['INTERP_USAGE']); ?></textarea>
                     </div>
 
                     <button id="next-tab" type="button"
@@ -482,7 +336,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <textarea rows="4" name="datasource" cols="25" wrap="hard"
                                   class="form-control"
-                                  required><?php echo mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
+                                  required><?php echo $DataDictionary->mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
                     </div>
 
                     <h3>Responsible Party <span
@@ -548,7 +402,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="datatrans" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['DATA_TRANSFORM']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['DATA_TRANSFORM']); ?></textarea>
                     </div>
 
                     <h3>Values Mandatory <span
@@ -581,7 +435,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="permitvalue" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_PERMITTED']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['VALUES_PERMITTED']); ?></textarea>
                     </div>
 
                     <h3>Constraints on Values </h3>
@@ -598,7 +452,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="constraint" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['VALUES_CONSTRAINTS']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['VALUES_CONSTRAINTS']); ?></textarea>
                     </div>
 
                     <h3>Notes / Misc </h3>
@@ -609,7 +463,7 @@ require_once("../Resources/Includes/menu.php");
                             <small>Any miscellaneous notes that do not fit elsewhere.</small>
                         </p>
                         <textarea rows="4" name="notes" cols="25" wrap="hard"
-                                  class="form-control"><?php echo mybr2nl($rowsdataelem['NOTES_DATA_ELEMENT']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['NOTES_DATA_ELEMENT']); ?></textarea>
                     </div>
 
                     <!--                    <button id="next-tab" type="button"-->
@@ -634,14 +488,14 @@ require_once("../Resources/Includes/menu.php");
                             <small>Name of the individual who defined this data element initially.</small>
                         </p>
                         <div class="col-lg-6">
-                            <label for="fname">First Name</label>
-                            <input id="fname" type="text" name="defauthorfname" maxlength="25" class="form-control"
-                                   value="<?php echo $rowsdataelem['AUTHOR_FNAME']; ?>" required>
-                        </div>
-                        <div class="col-lg-6">
                             <label for="lname">Last Name</label>
                             <input id="lname" type="text" name="defauthorlname" maxlength="25" class="form-control"
                                    value="<?php echo $rowsdataelem['AUTHOR_LNAME']; ?>" required>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="fname">First Name</label>
+                            <input id="fname" type="text" name="defauthorfname" maxlength="25" class="form-control"
+                                   value="<?php echo $rowsdataelem['AUTHOR_FNAME']; ?>" required>
                         </div>
                     </div>
 
@@ -717,4 +571,3 @@ require_once("../Resources/Includes/footer.php");
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
-

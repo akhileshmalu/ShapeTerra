@@ -36,7 +36,6 @@
       define("USERNAME", "root");
       define("PASSCODE", "root");
       define("DB", "TESTDB");
-//        define("SITE", "Shapeterra");
 
 
         //Temporary objects for mysqli in order to run old code
