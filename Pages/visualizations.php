@@ -105,9 +105,8 @@
   </div>
   <div id="main-box" class="col-xs-10 col-xs-offset-1">
     <ul class="nav nav-tabs" role="tablist">
-      <li role="presentation" class="active"><a href="#student-positions" role="tab" data-toggle="tab">Student Enrollements</a></li>
+      <li role="presentation" class="active"><a href="#student-positions" role="tab" data-toggle="tab">Student Enrollments</a></li>
       <li role="presentation"><a href="#student-diversity" role="tab" data-toggle="tab">Student Diversity</a></li>
-      <li role="presentation"><a href="#faculty-positions" role="tab" data-toggle="tab">Faculty Positions</a></li>
       <li role="presentation"><a href="#faculty-diversity" role="tab" data-toggle="tab">Faculty Diversity</a></li>
     </ul>
     <div class="tab-content">
@@ -115,9 +114,7 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12">
-              <?php $ChartVisualizations->chartEnrollements(); ?>
-              <div class="p-a-3"></div>
-              <?php $ChartVisualizations->chartEnrollementsAll(); ?>
+              <?php $ChartVisualizations->chartEnrollementStudent(); ?>
             </div>
           </div>
         </div>
@@ -127,21 +124,6 @@
           <div class="row">
             <div class="col-md-12">
               <?php $ChartVisualizations->chartDiversityStudent(); ?>
-              <div class="p-a-3"></div>
-              <?php $ChartVisualizations->chartDiversityStudentAll(); ?>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div role="tabpanel" class="tab-pane" id="faculty-positions">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="col-md-12">
-                <?php $ChartVisualizations->chartFaculty(); ?>
-                <div class="p-a-3"></div>
-                <?php $ChartVisualizations->chartFacultyAll(); ?>
-              </div>
             </div>
           </div>
         </div>
@@ -151,9 +133,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="col-md-12">
-                <?php $ChartVisualizations->chartDiversityPersonnel(); ?>
-                <div class="p-a-3"></div>
-                <?php $ChartVisualizations->chartDiversityPersonnelAll(); ?>
+                <?php $ChartVisualizations->chartDiversityFaculty(); ?>
               </div>
             </div>
           </div>
