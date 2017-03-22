@@ -1741,302 +1741,1465 @@
 
     }
 
-    public function chartEnrollementStudentByYear($ayYear){
+    public function chartFaculty()
+    {
 
-      $getAcademicEnrollements = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getAcademicEnrollements->bindParam(1,$ayYear,PDO::PARAM_STR);
-      $getAcademicEnrollements->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getAcademicEnrollements->execute();
-      $rowsAcademicEnrollements = $getAcademicEnrollements->rowCount();
+      $getFacultyData = $this->connection->prepare("SELECT * FROM `IR_AC_FacultyPop` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getFacultyData->bindParam(1,$this->year,PDO::PARAM_STR);
+      $getFacultyData->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getFacultyData->execute();
+      $rowsGetFacultyData = $getFacultyData->rowCount();
 
-      if ($rowsAcademicEnrollements > 0){
+      if ($rowsGetFacultyData > 0){
 
-        while ($data = $getAcademicEnrollements->fetch()){
+        while($data = $getFacultyData->fetch()){
 
-          $freshman = $data["ENROLL_HC_FRESH"];
-          $sophmore = $data["ENROLL_HC_SOPH"];
-          $junior = $data["ENROLL_HC_JUNR"];
-          $seniors = $data["ENROLL_HC_SENR"];
-          $masters = $data["ENROLL_HC_MASTERS"];
-          $doctorial = $data["ENROLL_HC_DOCTORAL"];
-          $medicine = $data["ENROLL_HC_MEDICINE"];
-          $law = $data["ENROLL_HC_LAW"];
-          $pharm = $data["ENROLL_HC_PHARMD"];
-          $cert = $data["ENROLL_HC_GRAD_CERT"];
-
-        }
+          $professorTenur = $data["TTF_FTE_PROF_TNR"];
+          $assistantProfessorTenur = $data["TTF_FTE_ASSOC_PROF_TNR"];
+          $professor = $data["TTF_FTE_PROF"];
+          $associateProfessor = $data["TTF_FTE_ASSOC_PROF"];
+          $assistantProfessor = $data["TTF_FTE_ASSIST_PROF"];
+          $tenurTrackFaculty = $data["TTF_FTE_ALL"];
+          $researchProfessor = $data["RSRCH_FTE_PROF"];
+          $associateResearchProfessor = $data["RSRCH_FTE_ASSOC_PROF"];
+          $assistantResearchProfessor = $data["RSRCH_FTE_ASSIST_PROF"];
+          $researchFaculty = $data["RSRCH_FTE_ALL"];
+          $clinicalProfessor = $data["CIF_FTE_CLNCL_PROF"];
+          $clinicalAssociateProfessor = $data["CIF_FTE_CLNCL_ASSOC_PROF"];
+          $clinicalAssitantProfessor = $data["CIF_FTE_CLNCL_ASSIST_PROF"];
+          $instructorLecturer = $data["CIF_FTE_INSTR_LCTR"];
+          $clinicalInstructionFaculty = $data["CIF_FTE_ALL"];
+          $adjunctFaculty = $data["OTHRFAC_PT_ADJUNCT"];
+          $otherFaculty = $data["OTHRFAC_PT_OTHER"];
+          $otherFacultyTotal = $data["OTHRFAC_ALL"];
+          $studentFacultyRatio = $data["STUDENT_FACULTY_RATIO"];
 
       }
 
-      $currentUndergraduate = $freshman + $sophmore + $junior + $seniors;
-      $currentGraduate = $masters + $doctorial + $medicine + $law + $pharm + $cert;
-
-      echo "
-        <div class='container-fluid'>
-          <div class='row'>
-            <h2 class='text-center'>".$this->college." Enrollments Data Undergraduate</h2>
-            <div class='col-md-4'>
-              <div class='table-responsive'>
-                <table class='table table-condensed'>
-                  <thead>
-                    <tr>
-                      <th>Data Year</th>
-                      <th>$ayYear</th>
-                    </tr>
-                    <tr>
-                      <th><b>Undergraduate</b></th>
-                      <th><b>$currentUndergraduate</b></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Freshman</td>
-                      <td>$freshman</td>
-                    </tr>
-                    <tr>
-                      <td>Sophmore</td>
-                      <td>$sophmore</td>
-                    </tr>
-                    <tr>
-                      <td>Junior</td>
-                      <td>$junior</td>
-                    </tr>
-                    <tr>
-                      <td>Senior</td>
-                      <td>$seniors</td>
-                    </tr>
-                  </tbody>
-                </table>
+        echo "
+          <div class='container-fluid'>
+            <h2 class='text-center'>".$this->college." Data (Regular Professor Positions)</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th># of Regular Professors</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Professor Tenure</td>
+                        <td>$professorTenur</td>
+                      </tr>
+                      <tr>
+                        <td>Associate Professor /w Tenure</td>
+                        <td>$assistantProfessorTenur</td>
+                      </tr>
+                      <tr>
+                        <td>Professor</td>
+                        <td>$professor</td>
+                      </tr>
+                      <tr>
+                        <td>Associate Professor</td>
+                        <td>$associateProfessor</td>
+                      </tr>
+                      <tr>
+                        <td>Assistant Professor</td>
+                        <td>$assistantProfessor</td>
+                      </tr>
+                      <tr>
+                        <td>Tenure-Track Faculty</td>
+                        <td>$tenurTrackFaculty</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart3' width='300' height='300'></canvas>
               </div>
             </div>
-            <div class='col-md-8'>
-              <canvas id='chartEnrollementStudentUnderByYear' height='220'></canvas>
-            </div>
-          </div>
-          <div class='row'>
-            <h2 class='text-center'>".$this->college." Enrollments Data Graduate</h2>
-            <div class='col-md-4'>
-              <div class='table-responsive'>
-                <table class='table table-condensed'>
-                  <thead>
-                    <tr>
-                      <th>Data Year</th>
-                      <th>$ayYear</th>
-                    </tr>
-                    <tr>
-                      <th><b>Graduate</b></th>
-                      <th><b>$currentGraduate</b></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Masters</td>
-                      <td>$masters</td>
-                    </tr>
-                    <tr>
-                      <td>Doctorial</td>
-                      <td>$doctorial</td>
-                    </tr>
-                    <tr>
-                      <td>Graduate Certificate</td>
-                      <td>$cert</td>
-                    </tr>
-                  </tbody>
-                </table>
+            <h2 class='text-center'>".$this->college." Data (Research Professor Positions)</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th># of Research Professors</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Research Professor</td>
+                        <td>$researchProfessor</td>
+                      </tr>
+                      <tr>
+                        <td>Associate Research Professor</td>
+                        <td>$associateResearchProfessor</td>
+                      </tr>
+                      <tr>
+                        <td>Assistant Research Professor</td>
+                        <td>$assistantResearchProfessor</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart4' width='300' height='300'></canvas>
               </div>
             </div>
-            <div class='col-md-8'>
-              <canvas id='chartEnrollementStudentGradByYear' height='220'></canvas>
-            </div>
-          </div>
-          <div class='row'>
-            <h2 class='text-center'>".$this->college." Enrollments Data All</h2>
-            <div class='col-md-5'>
-              <div class='table-responsive'>
-                <table class='table table-condensed'>
-                  <thead>
-                    <tr>
-                      <th>Data Year</th>
-                      <th>$ayYear</th>
-                    </tr>
-                    <th><b>Undergraduate</b></th>
-                    <th><b>$currentUndergraduate</b></th>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Freshman</td>
-                      <td>$freshman</td>
-                    </tr>
-                    <tr>
-                      <td>Sophmore</td>
-                      <td>$sophmore</td>
-                    </tr>
-                    <tr>
-                      <td>Junior</td>
-                      <td>$junior</td>
-                    </tr>
-                    <tr>
-                      <td>Senior</td>
-                      <td>$seniors</td>
-                    </tr>
-                    <tr>
-                      <th><b>Graduate</b></th>
-                      <th><b>$currentGraduate</b></th>
-                    </tr>
-                    <tr>
-                      <td>Masters</td>
-                      <td>$masters</td>
-                    </tr>
-                    <tr>
-                      <td>Doctorial</td>
-                      <td>$doctorial</td>
-                    </tr>
-                    <tr>
-                      <td>Graduate Certificate</td>
-                      <td>$cert</td>
-                    </tr>
-                  </tbody>
-                </table>
+            <h2 class='text-center'>".$this->college." Data (Clinical Professor Positions)</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th># of Clinical Professors</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Clinical Professor</td>
+                        <td>$clinicalProfessor</td>
+                      </tr>
+                      <tr>
+                        <td>Associate Clinical Professor</td>
+                        <td>$clinicalAssociateProfessor</td>
+                      </tr>
+                      <tr>
+                        <td>Assistant Clinical Professor</td>
+                        <td>$clinicalAssitantProfessor</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart5' width='300' height='300'></canvas>
               </div>
             </div>
-            <div class='col-md-7'>
-              <canvas id='chartEnrollementStudentAllByYear' height='220'></canvas>
+            <h2 class='text-center'>".$this->college." Data (Other Professor Positions)</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th># of Other Professors</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Instructor/Lecturer</td>
+                        <td>$instructorLecturer</td>
+                      </tr>
+                      <tr>
+                        <td>Clinical Instructor</td>
+                        <td>$clinicalInstructionFaculty</td>
+                      </tr>
+                      <tr>
+                        <td>Adjunct Faculty</td>
+                        <td>$adjunctFaculty</td>
+                      </tr>
+                      <tr>
+                        <td>Other Faculty</td>
+                        <td>$otherFaculty</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart6' width='300' height='300'></canvas>
+              </div>
             </div>
           </div>
-        </div>
-        <script>
-          var ctx = document.getElementById('chartEnrollementStudentAllByYear');
-          var chartEnrollementStudentAllByYear = new Chart(ctx, {
-            type: 'bar',
-            labels: ['Freshman', 'Sophmore', 'Junior', 'Senior', 'Masters', 'Doctorial', 'Certification'],
-            datasets: [{
-              label: 'My First dataset',
-              backgroundColor: [
-                'rgba(116, 0, 11, 0.5)',
-                'rgba(120, 50, 0, 0.5)',
-                'rgba(17, 100, 0, 0.5)',
-                'rgba(0, 75, 65, 0.5)',
-                'rgba(33, 120, 108, 0.5)',
-                'rgba(43, 0, 4, 0.5)',
-                'rgba(6, 37, 0, 0.5)'
-              ],
-              borderWidth: 1,
-              data: [$freshman, $sophmore, $junior, $senior, $masters, $doctorial, $certification],
-            }
-          ],
-          options: {
-            responsive: true,
-            legend: {
-              display: true
-            },
-            animation: {
-              onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-all-".$this->college."', functionNum: '5'});
+          <script>
+            var ctx = document.getElementById('chart3');
+            var chart3 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Professor Tenure', 'Associate Professor /w Tenure', 'Professor', 'Associate Professor', 'Assistant Professor', 'Tenure-Track Faculty',],
+                datasets: [{
+                  label: 'School Population',
+                  data: [$professorTenur, $associateProfessor, $professor, $associatePRofessor, $assistantProfessor, $tenurTrackFaculty],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart3.toBase64Image(), name: 'faculty-regular-".$this->college."', functionNum: '5'});
+                  }
+                }
               }
-            },tooltips: {
-              enabled: true
-            }
-          }
-        });
+            });
 
-        var ctx = document.getElementById('chartEnrollementStudentUnderByYear');
-        var chartEnrollementStudentAllByYear = new Chart(ctx, {
-          type: 'bar',
-          labels: ['Freshman', 'Sophmore', 'Junior', 'Senior'],
-          datasets: [{
-            backgroundColor: [
-              'rgba(116, 0, 11, 0.5)',
-              'rgba(120, 50, 0, 0.5)',
-              'rgba(17, 100, 0, 0.5)',
-              'rgba(0, 75, 65, 0.5)',
-            ],
-            borderWidth: 1,
-            data: [$freshman, $sophmore, $junior, $senior],
-          }
-        ],
-        options: {
-          responsive: true,
-          legend: {
-            display: true
-          },
-          animation: {
-            onComplete: function(){
-              $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-all-".$this->college."', functionNum: '5'});
-            }
-          },tooltips: {
-            enabled: true
-          }
-        }
-      });
+            var ctx = document.getElementById('chart4');
+            var chart4 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Research Professor', 'Associate Research Professor', 'Assistant Research Professor'],
+                datasets: [{
+                  label: 'School Population',
+                  data: [$researchProfessor, $associateResearchProfessor, $assistantResearchProfessor],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart4.toBase64Image(), name: 'faculty-research-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
 
-      var ctx = document.getElementById('chartEnrollementStudentGrad');
-      var myChart = new Chart(ctx, {
-        type: 'horizontalBar',
-        data: {
-          labels: ['2014', '2015', '2016'],
-          datasets: [{
-            data: [$masters20142015,$masters20152016,$masters20162017],
-            backgroundColor: 'rgba(116, 0, 11, 0.5)',
-            label: 'Masters'
-          },{
-            data: [$doctorial20142015,$doctorial20152016,$doctorial20162017],
-            backgroundColor: 'rgba(120, 50, 0, 0.5)',
-            label: 'Doctorial'
-          },{
-            data: [$cert20142015,$cert20152016,$cert20162017],
-            backgroundColor: 'rgba(17, 100, 0, 0.5)',
-            label: 'Graduate Certificate'
-          }],
-          borderWidth: 1
-      },
-      options: {
-        responsive: true,
-        legend: {
-          display: true
-        },
-        animation: {
-          onComplete: function(){
-            $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-under-".$this->college."', functionNum: '5'});
-          }
-        },
-        scaleLabel:{
-            display:false
-        },
-        scales: {
-          xAxes: [{
-            ticks: {
-                beginAtZero:true,
-                fontSize:11
-            },
-            scaleLabel:{
-                display:false
-            },
-            gridLines: {
-            },
-            stacked: true
-          }],
-          yAxes: [{
-            stacked: true,
-            gridLines: {
-                display:false,
-                color: '#fff',
-                zeroLineColor: '#fff',
-                zeroLineWidth: 0
-            },
-            ticks: {
-              fontSize:11
-            },
-          }]
-        },tooltips: {
-          enabled: true
-        },
-        hover :{
-            animationDuration:0
-        }
-        }
-      });
-        </script>
+            var ctx = document.getElementById('chart5');
+            var chart5 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Clinical Professor', 'Associate Clinical Professor', 'Assistant Clinical Professor'],
+                datasets: [{
+                  label: 'Population',
+                  data: [$clinicalProfessor, $clinicalAssociateProfessor, $clinicalAssitantProfessor],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart5.toBase64Image(), name: 'faculty-clinical-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+            var ctx = document.getElementById('chart6');
+            var chart6 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Instructor/Lecturer', 'Clinical Instructor', 'Adjunct Faculty','Other Faculty'],
+                datasets: [{
+                  label: 'Population',
+                  data: [$instructorLecturer, $clinicalInstructionFaculty, $adjunctFaculty,$otherFaculty],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart6.toBase64Image(), name: 'faculty-other-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+          </script>
         ";
+
+      }else{
+
+        echo "<h5>There is no data.</h5>";
+
+      }
+
+    }
+
+    public function chartDiversityStudentAll()
+    {
+
+      $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ?");
+      $getDiversityData->bindParam(1,$this->year,PDO::PARAM_STR);
+      $getDiversityData->execute();
+      $rowsGetDiversityData = $getDiversityData->rowCount();
+
+      if ($rowsGetDiversityData > 0){
+
+        while($data = $getDiversityData->fetch()){
+
+          //first chart
+          $underGradFemale += $data["UGRAD_FEMALE"];
+          $underGradMale += $data["UGRAD_MALE"];
+
+          //second chart
+          $underGradAlaskaNative += $data["UGRAD_AMERIND_ALASKNAT"];
+          $underGradAsian += $data["UGRAD_ASIAN"];
+          $underGradBlack += $data["UGRAD_BLACK"];
+          $underGradHispanic += $data["UGRAD_HISPANIC"];
+
+          //third chart
+          $gradAlaskaNativePacific += $data["GRAD_HI_PAC_ISL"];
+          $gradAliens += $data["GRAD_NONRESIDENT_ALIEN"];
+          $gradDoubleRace += $data["GRAD_TWO_OR_MORE"];
+          $gradUnknown += $data["GRAD_UNKNOWN_RACE_ETHNCTY"];
+          $gradWhite += $data["GRAD_WHITE"];
+
+        }
+
+        echo "
+          <div class='container-fluid'>
+            <h2 class='text-center'>USCAAU Data (Undergrad Gender)</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Undergrad Gender</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Female</td>
+                        <td>$underGradFemale</td>
+                      </tr>
+                      <tr>
+                        <td>Male</td>
+                        <td>$underGradMale</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart25' width='300' height='300'></canvas>
+              </div>
+            </div>
+            <h2 class='text-center'>".$this->college." Data (Undergrad Race)</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Undergrad Race</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Alaskian/Native</td>
+                        <td>$underGradAlaskaNative</td>
+                      </tr>
+                      <tr>
+                        <td>Asian</td>
+                        <td>$underGradAsian</td>
+                      </tr>
+                      <tr>
+                        <td>Black</td>
+                        <td>$underGradBlack</td>
+                      </tr>
+                      <tr>
+                        <td>Hispanic</td>
+                        <td>$underGradHispanic</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart26' width='300' height='300'></canvas>
+              </div>
+            </div>
+            <h2 class='text-center'>".$this->college." Data (Grad Race)</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Grad Race</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Graduate Alaskian/Native/Pacific</td>
+                        <td>$gradAlaskaNativePacific</td>
+                      </tr>
+                      <tr>
+                        <td>Graduate Alien</td>
+                        <td>$gradAliens</td>
+                      </tr>
+                      <tr>
+                        <td>Graduate Two Or More Races</td>
+                        <td>$gradDoubleRace</td>
+                      </tr>
+                      <tr>
+                        <td>Graduate Unknown</td>
+                        <td>$gradUnknown</td>
+                      </tr>
+                      <tr>
+                        <td>Graduate White</td>
+                        <td>$gradWhite</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart27' width='300' height='300'></canvas>
+              </div>
+            </div>
+          </div>
+          <script>
+            var ctx = document.getElementById('chart25');
+            var chart25 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                  label: 'Gender',
+                  data: [$underGradFemale,$underGradMale],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+            var ctx = document.getElementById('chart26');
+            var chart26 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Undergrad Alaskian/Native', 'Undergrad Asian', 'Undergrad Black', 'Undergrad Hispanic'],
+                datasets: [{
+                  label: 'Gender',
+                  data: [$underGradAlaskaNative,$underGradAsian,$underGradBlack,$underGradHispanic],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart8.toBase64Image(), name: 'student-diversity-race-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+            var ctx = document.getElementById('chart27');
+            var chart27 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Graduate Alaskian/Native/Pacific', 'Graduate Alien', 'Graduate Two Or More Races', 'Graduate Unknown','Graduate White'],
+                datasets: [{
+                  label: 'Gender',
+                  data: [$gradAlaskaNativePacific, $gradAliens, $gradDoubleRace, $gradUnknown, $gradWhite],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart9.toBase64Image(), name: 'student-diversity-race-grad-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+          </script>
+        ";
+
+      }else{
+
+        echo "<h5>There is no data.</h5>";
+
+      }
+
+    }
+
+    public function chartDiversityPersonnel()
+    {
+
+      $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getDiversityData->bindParam(1,$this->year,PDO::PARAM_STR);
+      $getDiversityData->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getDiversityData->execute();
+      $rowsGetDiversityData = $getDiversityData->rowCount();
+
+      if ($rowsGetDiversityData > 0){
+
+        while($data = $getDiversityData->fetch()){
+
+          //chart 1
+          $facultyMale = $data["FAC_MALE"];
+          $facultyFemale = $data["FAC_FEMALE"];
+
+          //chart 2
+          $facultyAlaskaNative = $data["FAC_AMERIND_ALASKNAT"];
+          $facultyAsian = $data["FAC_ASIAN"];
+          $facultyBlack = $data["FAC_BLACK"];
+          $facultyHispanic = $data["FAC_HISPANIC"];
+          $facultyHawaiiPacific = $data["FAC_HI_PAC_ISL"];
+          $facultyAlien = $data["FAC_NONRESIDENT_ALIEN"];
+          $facultyDoubleRace = $data["FAC_TWO_OR_MORE"];
+          $facultyUnknown = $data["FAC_UNKNOWN_RACE_ETHNCTY"];
+          $facultyWhite = $data["FAC_WHITE"];
+
+          //chart 3
+          $staffFemale = $data["STAFF_FEMALE"];
+          $staffMale = $data["STAFF_MALE"];
+
+          //chart4
+          $staffAlaskaNative = $data["STAFF_AMERIND_ALASKNAT"];
+          $staffAsian = $data["STAFF_ASIAN"];
+          $staffBlack = $data["STAFF_BLACK"];
+          $staffHispanic = $data["STAFF_HISPANIC"];
+          $staffHawaiiPacific = $data["STAFF_HI_PAC_ISL"];
+          $staffAlien = $data["STAFF_NONRESIDENT_ALIEN"];
+          $staffDoubleRace = $data["STAFF_TWO_OR_MORE"];
+          $staffUnknown = $data["STAFF_UNKNOWN_RACE_ETHNCTY"];
+          $staffWhite = $data["STAFF_WHITE"];
+
+        }
+
+        echo "
+          <div class='container-fluid'>
+            <h2 class='text-center'>".$this->college." Faculty Gender Data</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Faculty Gender</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Female</td>
+                        <td>$facultyFemale</td>
+                      </tr>
+                      <tr>
+                        <td>Male</td>
+                        <td>$facultyMale</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart10' width='300' height='300'></canvas>
+              </div>
+            </div>
+            <h2 class='text-center'>".$this->college." Faculty Race Data</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Faculty Race</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Faculty Alaskian/Native</td>
+                        <td>$facultyAlaskaNative</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Alien</td>
+                        <td>$facultyAlien</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Asian</td>
+                        <td>$facultyAsian</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Black</td>
+                        <td>$facultyBlack</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Hispanic</td>
+                        <td>$facultyHispanic</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty/Hawaii/Pacific</td>
+                        <td>$facultyHawaiiPacific</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Two Or More Races</td>
+                        <td>$facultyDoubleRace</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Unknown</td>
+                        <td>$facultyUnknown</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty White</td>
+                        <td>$facultyWhite</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart11' width='300' height='300'></canvas>
+              </div>
+            </div>
+            <h2 class='text-center'>".$this->college." Staff Gender</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Faculty Gender</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Female</td>
+                        <td>$staffFemale</td>
+                      </tr>
+                      <tr>
+                        <td>Male</td>
+                        <td>$staffMale</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart12' width='300' height='300'></canvas>
+              </div>
+            </div>
+            <h2 class='text-center'>".$this->college." Staff Race</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Faculty Race</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Staff Alaskian/Native</td>
+                        <td>$staffAlaskaNative</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Alien</td>
+                        <td>$staffAlien</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Asian</td>
+                        <td>$staffAsian</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Black</td>
+                        <td>$facultyBlack</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Hispanic</td>
+                        <td>$staffHispanic</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Hawaii/Pacific</td>
+                        <td>$staffHawaiiPacific</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Two Or More Races</td>
+                        <td>$staffDoubleRace</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Unknown</td>
+                        <td>$staffUnknown</td>
+                      </tr>
+                      <tr>
+                        <td>Staff White</td>
+                        <td>$staffWhite</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart13' width='300' height='300'></canvas>
+              </div>
+            </div>
+          </div>
+          <script>
+            var ctx = document.getElementById('chart10');
+            var chart10 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                  label: 'Gender',
+                  data: [$facultyMale, $facultyFemale],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart10.toBase64Image(), name: 'faculty-diversity-gender-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+            var ctx = document.getElementById('chart11');
+            var chart11 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Faculty Alaskian/Native', 'Faculty Alien', 'Faculty Asian', 'Faculty Black', 'Faculty Hispanic', 'Faculty/Hawaii/Pacific', 'Faculty Two Or More Races', 'Faculty Unknown','Faculty White'],
+                datasets: [{
+                  label: 'Race',
+                  data: [$facultyAlaskaNative, $facultyAlien, $facultyAsian, $facultyBlack, $facultyHispanic, $facultyHawaiiPacific, $facultyDoubleRace, $facultyUnknown, $facultyWhite],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart11.toBase64Image(), name: 'faculty-diversity-race-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+            var ctx = document.getElementById('chart12');
+            var chart12 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                  label: 'Gender',
+                  data: [$staffMale, $staffFemale],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart12.toBase64Image(), name: 'staff-diversity-gender-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+            var ctx = document.getElementById('chart13');
+            var chart13 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Staff Alaskian/Native', 'Staff Alien', 'Staff Asian', 'Staff Black', 'Staff Hispanic', 'Staff/Hawaii/Pacific', 'Staff Two Or More Races', 'Staff Unknown','Staff White'],
+                datasets: [{
+                  label: 'Race',
+                  data: [$staffAlaskaNative, $staffAlien, $staffAsian, $staffBlack, $staffHispanic, $staffHawaiiPacific, $staffDoubleRace, $staffUnknown, $staffWhite],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart13.toBase64Image(), name: 'staff-diversity-race-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+          </script>
+        ";
+
+      }else{
+
+        echo "<h5>There is no data.</h5>";
+
+      }
+
+    }
+
+    public function chartDiversityPersonnelAll()
+    {
+
+      $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ?");
+      $getDiversityData->bindParam(1,$this->year,PDO::PARAM_STR);
+      $getDiversityData->execute();
+      $rowsGetDiversityData = $getDiversityData->rowCount();
+
+      if ($rowsGetDiversityData > 0){
+
+        while($data = $getDiversityData->fetch()){
+
+          //chart 1
+          $facultyMale += $data["FAC_MALE"];
+          $facultyFemale += $data["FAC_FEMALE"];
+
+          //chart 2
+          $facultyAlaskaNative += $data["FAC_AMERIND_ALASKNAT"];
+          $facultyAsian += $data["FAC_ASIAN"];
+          $facultyBlack += $data["FAC_BLACK"];
+          $facultyHispanic += $data["FAC_HISPANIC"];
+          $facultyHawaiiPacific += $data["FAC_HI_PAC_ISL"];
+          $facultyAlien += $data["FAC_NONRESIDENT_ALIEN"];
+          $facultyDoubleRace += $data["FAC_TWO_OR_MORE"];
+          $facultyUnknown += $data["FAC_UNKNOWN_RACE_ETHNCTY"];
+          $facultyWhite += $data["FAC_WHITE"];
+
+          //chart 3
+          $staffFemale += $data["STAFF_FEMALE"];
+          $staffMale += $data["STAFF_MALE"];
+
+          //chart4
+          $staffAlaskaNative += $data["STAFF_AMERIND_ALASKNAT"];
+          $staffAsian += $data["STAFF_ASIAN"];
+          $staffBlack += $data["STAFF_BLACK"];
+          $staffHispanic += $data["STAFF_HISPANIC"];
+          $staffHawaiiPacific += $data["STAFF_HI_PAC_ISL"];
+          $staffAlien += $data["STAFF_NONRESIDENT_ALIEN"];
+          $staffDoubleRace += $data["STAFF_TWO_OR_MORE"];
+          $staffUnknown += $data["STAFF_UNKNOWN_RACE_ETHNCTY"];
+          $staffWhite += $data["STAFF_WHITE"];
+
+        }
+
+        echo "
+          <div class='container-fluid'>
+            <h2 class='text-center'>USCAAU Faculty Gender Data</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Faculty Gender</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Female</td>
+                        <td>$facultyFemale</td>
+                      </tr>
+                      <tr>
+                        <td>Male</td>
+                        <td>$facultyMale</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart31' width='300' height='300'></canvas>
+              </div>
+            </div>
+            <h2 class='text-center'>USCAAU Faculty Race Data</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Faculty Race</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Faculty Alaskian/Native</td>
+                        <td>$facultyAlaskaNative</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Alien</td>
+                        <td>$facultyAlien</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Asian</td>
+                        <td>$facultyAsian</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Black</td>
+                        <td>$facultyBlack</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Hispanic</td>
+                        <td>$facultyHispanic</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty/Hawaii/Pacific</td>
+                        <td>$facultyHawaiiPacific</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Two Or More Races</td>
+                        <td>$facultyDoubleRace</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty Unknown</td>
+                        <td>$facultyUnknown</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty White</td>
+                        <td>$facultyWhite</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart32' width='300' height='300'></canvas>
+              </div>
+            </div>
+            <h2 class='text-center'>USCAAU Staff Gender</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Faculty Gender</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Female</td>
+                        <td>$staffFemale</td>
+                      </tr>
+                      <tr>
+                        <td>Male</td>
+                        <td>$staffMale</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart33' width='300' height='300'></canvas>
+              </div>
+            </div>
+            <h2 class='text-center'>USCAAU Staff Race</h2>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class='table-responsive'>
+                  <table class='table table-condensed'>
+                    <thead>
+                      <tr>
+                        <th>Data Type</th>
+                        <th>Faculty Race</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Staff Alaskian/Native</td>
+                        <td>$staffAlaskaNative</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Alien</td>
+                        <td>$staffAlien</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Asian</td>
+                        <td>$staffAsian</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Black</td>
+                        <td>$facultyBlack</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Hispanic</td>
+                        <td>$staffHispanic</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Hawaii/Pacific</td>
+                        <td>$staffHawaiiPacific</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Two Or More Races</td>
+                        <td>$staffDoubleRace</td>
+                      </tr>
+                      <tr>
+                        <td>Staff Unknown</td>
+                        <td>$staffUnknown</td>
+                      </tr>
+                      <tr>
+                        <td>Staff White</td>
+                        <td>$staffWhite</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <canvas id='chart34' width='300' height='300'></canvas>
+              </div>
+            </div>
+          </div>
+          <script>
+            var ctx = document.getElementById('chart31');
+            var chart31 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                  label: 'Gender',
+                  data: [$facultyMale, $facultyFemale],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart10.toBase64Image(), name: 'faculty-diversity-gender-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+            var ctx = document.getElementById('chart32');
+            var chart32 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Faculty Alaskian/Native', 'Faculty Alien', 'Faculty Asian', 'Faculty Black', 'Faculty Hispanic', 'Faculty/Hawaii/Pacific', 'Faculty Two Or More Races', 'Faculty Unknown','Faculty White'],
+                datasets: [{
+                  label: 'Race',
+                  data: [$facultyAlaskaNative, $facultyAlien, $facultyAsian, $facultyBlack, $facultyHispanic, $facultyHawaiiPacific, $facultyDoubleRace, $facultyUnknown, $facultyWhite],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart11.toBase64Image(), name: 'faculty-diversity-race-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+            var ctx = document.getElementById('chart33');
+            var chart33 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                  label: 'Gender',
+                  data: [$staffMale, $staffFemale],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart12.toBase64Image(), name: 'staff-diversity-gender-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+            var ctx = document.getElementById('chart34');
+            var chart34 = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Staff Alaskian/Native', 'Staff Alien', 'Staff Asian', 'Staff Black', 'Staff Hispanic', 'Staff/Hawaii/Pacific', 'Staff Two Or More Races', 'Staff Unknown','Staff White'],
+                datasets: [{
+                  label: 'Race',
+                  data: [$staffAlaskaNative, $staffAlien, $staffAsian, $staffBlack, $staffHispanic, $staffHawaiiPacific, $staffDoubleRace, $staffUnknown, $staffWhite],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                  ]
+                }]
+              },
+              options: {
+                responsive: false,
+                legend: {
+                  display: false
+                },
+                animation: {
+                  onComplete: function(){
+                    $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart13.toBase64Image(), name: 'staff-diversity-race-".$this->college."', functionNum: '5'});
+                  }
+                }
+              }
+            });
+
+          </script>
+        ";
+
+      }else{
+
+        echo "<h5>There is no data.</h5>";
+
+      }
 
     }
 

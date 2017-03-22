@@ -1,26 +1,44 @@
 <?php
-/*
- * This Page controls Data Dictionary Home Screen.
- */
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
 
-// Local & Session variable Initialization
-$message = array();
-$errorflag =0;
+
+/*
+ * This Page controls Faculty Awards Screen.
+ */
+
+/*
+ * Session & Error control Initialization.
+ */
+session_start();
+if(!$_SESSION['isLogged']) {
+    header("location:login.php");
+    die();
+}
+$error = array();
+$errorflag = 0;
+$notBackToDashboard = true;
+
+/*
+ * Connection to DataBase.
+ */
+require_once ("../Resources/Includes/DataDictionary.php");
+
+$dataDict = new DATADICTIONARY();
+$dataDict->checkSessionStatus();
+/*
+ * Local & Session variable Initialization
+ */
+
 $ouid = $_SESSION['login_ouid'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
-
-$notBackToDashboard = true;
 
 if ($ouid == 4) {
     $ouabbrev = $_SESSION['bpouabbrev'];
 } else {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
+
 
 require_once("../Resources/Includes/header.php");
 
@@ -41,31 +59,34 @@ require_once("../Resources/Includes/menu.php");
     }
 </style>
 
+
+
 <div class="hr"></div>
 
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
         <h1 id="title">Data Dictionary Home</h1>
     </div>
+
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Hello <?php echo $_SESSION['login_fname']; ?>! </h1>
         <p class="status"><span>Org Unit Name: </span> <?php echo $_SESSION['login_ouname']; ?></p>
         <p class="status"><span>User role: </span> <?php echo $rowsmenu['USER_RIGHT']; ?></p>
     </div>
+
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
+<!--        <div id="addnew" class="">-->
             <a id="add-datadict" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-right"
                href="dataelement.php?id=0&status=new"><span class="icon">&#xe035;</span> Add Element Definition
             </a>
+<!--        </div>-->
         <h1 class="box-title">Data Dictionary</h1>
         <p>This dictionary is the authoritative guide to data contained in the Academic Blueprint System.
-            You may find a specific data element using the Search box, or sort/filter using the columns.
-            Click item name for detailed information..</p>
+            You may find a specific data element using the Search box, or sort/filter using the columns. Click item name for detailed information..</p>
         <div id="taskboard" style="margin-top: 10px;" >
             <table class="datadict" action="taskboard/datadictajax.php" title="Data Dictionary">
                 <tr>
-                    <th col="DATA_ELMNT_FUNC_NAME" width="380" href="<?php
-                    echo "dataelement.php?elem_id={{columns.ID_DATA_ELEMENT}}&status={{columns.STATUS}}";?>"
-                        type="text">Data Element</th>
+                    <th col="DATA_ELMNT_FUNC_NAME" width="380" href="<?php echo "../Pages/dataelement.php?elem_id={{columns.ID_DATA_ELEMENT}}&status={{columns.STATUS}}";?>"  type="text">Data Element</th>
                     <!--                        Provost add Element Def Button Control-->
 <!--                    --><?php //if ($_SESSION['login_right'] == 7): ?>
                         <th col="STATUS" width="100" type="text">Status</th>
@@ -76,6 +97,9 @@ require_once("../Resources/Includes/menu.php");
                 </tr>
             </table>
         </div>
+
+
+
     </div>
 </div>
 

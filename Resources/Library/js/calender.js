@@ -21,17 +21,17 @@ $('#AYgoal').on('change',function (e) {
 
 $('#datetimepicker1').datetimepicker({
     viewMode: 'years',
-    format: 'YYYY-MM-DD'
+    format: 'MM/DD/YYYY'
 });
 
 $('#datetimepicker2').datetimepicker({
     viewMode: 'years',
-    format: 'YYYY-MM-DD'
+    format: 'MM/DD/YYYY'
 });
 
 
 $('#datetimepicker3').datetimepicker({
     viewMode: 'years',
-    format: 'YYYY-MM-DD'
+    format: 'MM/DD/YYYY'
 });
 

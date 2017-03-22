@@ -1,14 +1,14 @@
 <?php
 
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
+require_once("../Resources/Includes/FILEUPLOAD.php");
+$diversityStudent = new FILEUPLOAD();
+$diversityStudent->checkSessionStatus();
+$connection = $diversityStudent->connection;
 
 $message = array();
 $discardid = array();
 $csv = array();
-$tablefileds = array();
+$tablefields = array();
 $tablevalue = array();
 $sqlupload =null;
 $sumUgrad = array();
@@ -35,70 +35,15 @@ $notBackToDashboard =true;
 
 
 // File Upload Status & Details.
-try
-{
-    $sqlfucontent = "SELECT * FROM `IR_SU_UploadStatus` LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS=
-    IR_SU_UploadStatus.LAST_MODIFIED_BY where IR_SU_UploadStatus.ID_UPLOADFILE= :content_id;";
-    $resultfucontent = $connection->prepare($sqlfucontent);
-    $resultfucontent->execute([':content_id'=> $content_id]);
-}
-catch (PDOException $e)
-{
-//    SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
-    error_log($e->getMessage());
-}
-$rowsfucontent = $resultfucontent ->fetch(4);
+$resultfucontent = $diversityStudent->GetStatus();
+$rowsfucontent = $resultfucontent->fetch(2);
 $tablename = $rowsfucontent['NAME_UPLOADFILE'];
 
 
-// Display Of Values in validation from IR_AC_DiversityStudent Table of Database
-
-try
-{
-    $sqldatadisplay = "SELECT * FROM IR_AC_DiversityStudent WHERE OU_ABBREV='USCAAU' AND ID_IR_AC_DIVERSITY_STUDENTS IN
-    (select max(ID_IR_AC_DIVERSITY_STUDENTS) FROM IR_AC_DiversityStudent WHERE OUTCOMES_AY = :FUayname GROUP BY
-    OU_ABBREV)";
-    $resultdatadisplay = $connection->prepare($sqldatadisplay);
-    $resultdatadisplay->execute(['FUayname' => $FUayname]);
-}
-catch (PDOException $e)
-{
-//    SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
-    error_log($e->getMessage());
-}
-
-
-$dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
-$fieldcnt = $resultdatadisplay->columnCount();
-$num_records = $resultdatadisplay->rowCount();
-
-
-while($meta = $resultdatadisplay->getColumnMeta($colCount)) {
-    $datavalues[0][$i] = $meta[name];
-    $i++;
-    $colCount++;
-}
-
-while($rowsdatadisplay = $resultdatadisplay ->fetch(4)) {
-    for($col = 0;$col<$fieldcnt;$col++) {
-        $datavalues[$count][$col] = $rowsdatadisplay[$col];
-    }
-$count++;
-}
-
-for ($j = 1; $j < $fieldcnt; $j++) {
-    for ($i = 0; $i <= $num_records; $i++) {
-        if($i == 0)    {
-            $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-        } else {
-            $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-        }
-
-        }
-    $dynamictable .= "</tr>";
-}
-$dynamictable .= '</table>';
-
+// Display Of Values on Screen
+// Option to provide specific Unit only Values. IF all unit require, dont pass $option or Null it.
+$option = "OU_ABBREV ='USCAAU' AND ";
+$dynamictable = $diversityStudent->HTMLtable("IR_AC_DiversityStudent","ID_IR_AC_DIVERSITY_STUDENTS",$option);
 
 if(isset($_POST['upload'])) {
 
@@ -139,17 +84,17 @@ if(isset($_POST['upload'])) {
 
                             if ($row == 0) {
                                 // Fields of Table
-                                $tablefileds[$i] = $csv[$row][$colindex] . ',';
+                                $tablefields[$i] = $csv[$row][$colindex] . ',';
                             } else {
 
                                 // Manual Author & Modified Time entry into SQL with row values of file
                                 if ($i == 3) {
-                                    $tablevalue[$row][$i - 1] = "'" . $author . "'" . ',';
+                                    $tablevalue[$row][$i - 1] =  $author;
                                 } else {
                                     if ($i == 4) {
-                                        $tablevalue[$row][$i - 1] = "'" . $time . "'" . ',';
+                                        $tablevalue[$row][$i - 1] = $time;
                                     } else {
-                                        $tablevalue[$row][$i - 1] = "'" . $csv[$row][$colindex] . "'" . ',';
+                                        $tablevalue[$row][$i - 1] = $csv[$row][$colindex];
                                     }
                                 }
 
@@ -178,9 +123,9 @@ if(isset($_POST['upload'])) {
                         } else {
                             // terminal values should not have (,) in SQL Query.
                             if ($row == 0) {
-                                $tablefileds[$i] = $csv[$row][$colindex];
+                                $tablefields[$i] = $csv[$row][$colindex];
                             } else {
-                                $tablevalue[$row][$i - 1] = "'" . $csv[$row][$colindex] . "'";
+                                $tablevalue[$row][$i - 1] = $csv[$row][$colindex];
 
                                 //Terminal Values of record reside here
                                 if($i == 26) {
@@ -192,22 +137,6 @@ if(isset($_POST['upload'])) {
                     // inc the row
                     $row++;
                 }
-
-
-                for ($j = 1; $j < $row; $j++) {
-                    $sqlupload .= "INSERT INTO $tablename ( ";
-                    foreach ($tablefileds as $fields) {
-                        $sqlupload .= $fields;
-                    }
-                    $sqlupload .= " ) Values (";
-                    foreach ($tablevalue[$j] as $fieldvalue) {
-                        $sqlupload .= $fieldvalue;
-                    }
-                    $sqlupload .= ");";
-                }
-
-                $sqlupload .= "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='Pending Validation', LAST_MODIFIED_BY
-                 ='$author',LAST_MODIFIED_ON ='$time' WHERE  IR_SU_UploadStatus.ID_UPLOADFILE = '$content_id'; ";
 
                 for ($checkug = 0;$checkug < count($sumUgrad);$checkug++) {
                     if($sumUgrad[$checkug] != 0) {
@@ -225,21 +154,78 @@ if(isset($_POST['upload'])) {
 
                 if ($errorflag == 0) {
 
-                    if ($mysqli->multi_query($sqlupload)) {
+                    // Create SQL for All ORG Units
+                    $sqlupload = "INSERT INTO IR_AC_DiversityStudent (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
+ MOD_TIMESTAMP, UGRAD_FEMALE, UGRAD_MALE, UGRAD_AMERIND_ALASKNAT, UGRAD_ASIAN, UGRAD_BLACK, UGRAD_HISPANIC, 
+ UGRAD_HI_PAC_ISL, UGRAD_NONRESIDENT_ALIEN, UGRAD_TWO_OR_MORE, UGRAD_UNKNOWN_RACE_ETHNCTY, UGRAD_WHITE, GRAD_FEMALE,
+  GRAD_MALE, GRAD_AMERIND_ALASKNAT, GRAD_ASIAN, GRAD_BLACK, GRAD_HISPANIC, GRAD_HI_PAC_ISL, GRAD_NONRESIDENT_ALIEN, 
+  GRAD_TWO_OR_MORE, GRAD_UNKNOWN_RACE_ETHNCTY, GRAD_WHITE) VALUES (";
+
+                    for ($i = 0; $i < count($tablefields); $i++) {
+
+                        $sqlupload .= ($i == count($tablefields) - 1) ? '?' : '?,';
+                    }
+                    $sqlupload .= ");";
+
+                    ;
+                    // Prepare Sql Query
+                    $result = $connection->prepare($sqlupload);
+
+                    // binding Variables
+                    for ($j = 1; $j < $row; $j++) {
+                        for ($i = 0; $i < count($tablevalue[$j]); $i++) {
+                            $result->bindParam($i + 1, $tablevalue[$j][$i], 2);
+                        }
+                        $result->execute();
+                    }
+
+
+                    $sqlupload = "UPDATE IR_SU_UploadStatus SET STATUS_UPLOADFILE ='Pending Validation',
+                LAST_MODIFIED_BY = :author, LAST_MODIFIED_ON = :timeStampmod WHERE 
+                IR_SU_UploadStatus.ID_UPLOADFILE =:content_id; ";
+
+                    $result = $connection->prepare($sqlupload);
+                    $result->bindParam(':author', $author, 2);
+                    $result->bindParam(':timeStampmod', $time, 2);
+                    $result->bindParam(':content_id', $content_id, 2);
+
+                    if ($result->execute()) {
 
                         //USCALLAU USC ALL Academic Units Aggregator record creation . Also includes the idea to let
-                        // user update more units in future Below query group all discrete units and resolve
+                        // user update more units in future. Below query group all discrete units and resolve
                         // collusion basis latest (max) ID value and then sum the records and constitute USCAAU
 
-                        $sqlupload = "INSERT INTO IR_AC_DiversityStudent (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, UGRAD_FEMALE, UGRAD_MALE, UGRAD_AMERIND_ALASKNAT, UGRAD_ASIAN, UGRAD_BLACK, UGRAD_HISPANIC, UGRAD_HI_PAC_ISL, UGRAD_NONRESIDENT_ALIEN, UGRAD_TWO_OR_MORE, UGRAD_UNKNOWN_RACE_ETHNCTY, UGRAD_WHITE, GRAD_FEMALE, GRAD_MALE, GRAD_AMERIND_ALASKNAT, GRAD_ASIAN, GRAD_BLACK, GRAD_HISPANIC, GRAD_HI_PAC_ISL, GRAD_NONRESIDENT_ALIEN, GRAD_TWO_OR_MORE, GRAD_UNKNOWN_RACE_ETHNCTY, GRAD_WHITE)
-SELECT 'USCAAU' AS OU,'$FUayname' AS AY,'$author' AS AUTHOR,'$time' AS MOD_Time,sum(UGRAD_FEMALE), sum(UGRAD_MALE), sum(UGRAD_AMERIND_ALASKNAT), sum(UGRAD_ASIAN), sum(UGRAD_BLACK), sum(UGRAD_HISPANIC), sum(UGRAD_HI_PAC_ISL), sum(UGRAD_NONRESIDENT_ALIEN), sum(UGRAD_TWO_OR_MORE), sum(UGRAD_UNKNOWN_RACE_ETHNCTY), sum(UGRAD_WHITE), sum(GRAD_FEMALE), sum(GRAD_MALE), sum(GRAD_AMERIND_ALASKNAT), sum(GRAD_ASIAN), sum(GRAD_BLACK), sum(GRAD_HISPANIC), sum(GRAD_HI_PAC_ISL), sum(GRAD_NONRESIDENT_ALIEN), sum(GRAD_TWO_OR_MORE),
- sum(GRAD_UNKNOWN_RACE_ETHNCTY), sum(GRAD_WHITE) FROM IR_AC_DiversityStudent where ID_IR_AC_DIVERSITY_STUDENTS in (select max(ID_IR_AC_DIVERSITY_STUDENTS) from IR_AC_DiversityStudent where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
-                        $mysqli->query($sqlupload);
+                        try {
 
-                        $message[0] = "Data Uploaded Successfully.";
-                    } else {
+                            $sqlupload = "INSERT INTO IR_AC_DiversityStudent (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, 
+MOD_TIMESTAMP, UGRAD_FEMALE, UGRAD_MALE, UGRAD_AMERIND_ALASKNAT, UGRAD_ASIAN, UGRAD_BLACK, UGRAD_HISPANIC, 
+UGRAD_HI_PAC_ISL, UGRAD_NONRESIDENT_ALIEN, UGRAD_TWO_OR_MORE, UGRAD_UNKNOWN_RACE_ETHNCTY, UGRAD_WHITE, GRAD_FEMALE, 
+GRAD_MALE, GRAD_AMERIND_ALASKNAT, GRAD_ASIAN, GRAD_BLACK, GRAD_HISPANIC, GRAD_HI_PAC_ISL, GRAD_NONRESIDENT_ALIEN, 
+GRAD_TWO_OR_MORE, GRAD_UNKNOWN_RACE_ETHNCTY, GRAD_WHITE) SELECT 'USCAAU' AS OU,:FUayname AS AY,:authorName AS AUTHOR,
+:timeCurrent AS MOD_Time,sum(UGRAD_FEMALE), sum(UGRAD_MALE), sum(UGRAD_AMERIND_ALASKNAT), sum(UGRAD_ASIAN), 
+sum(UGRAD_BLACK), sum(UGRAD_HISPANIC), sum(UGRAD_HI_PAC_ISL), sum(UGRAD_NONRESIDENT_ALIEN), sum(UGRAD_TWO_OR_MORE), 
+ sum(UGRAD_UNKNOWN_RACE_ETHNCTY), sum(UGRAD_WHITE), sum(GRAD_FEMALE), sum(GRAD_MALE), sum(GRAD_AMERIND_ALASKNAT), 
+ sum(GRAD_ASIAN), sum(GRAD_BLACK), sum(GRAD_HISPANIC), sum(GRAD_HI_PAC_ISL), sum(GRAD_NONRESIDENT_ALIEN), 
+ sum(GRAD_TWO_OR_MORE), sum(GRAD_UNKNOWN_RACE_ETHNCTY), sum(GRAD_WHITE) FROM IR_AC_DiversityStudent
+  where ID_IR_AC_DIVERSITY_STUDENTS in (select max(ID_IR_AC_DIVERSITY_STUDENTS) from IR_AC_DiversityStudent 
+  where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
 
-                        $message[0] = "Error in Data. Upload Failed.";
+                            $resultupload = $connection->prepare($sqlupload);
+                            $resultupload->bindParam(':FUayname', $FUayname, 2);
+                            $resultupload->bindParam(':authorName', $author, 2);
+                            $resultupload->bindParam(':timeCurrent', $time, 2);
+
+                            if ($resultupload->execute()) {
+                                $message[0] = "Data Uploaded Successfully.";
+                            } else {
+                                $message[0] = "Error in Data. Upload Failed.";
+                            }
+
+
+                        } catch (PDOException $e) {
+                            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+                            error_log($e->getMessage());
+                        }
 
                     }
 
@@ -260,53 +246,11 @@ SELECT 'USCAAU' AS OU,'$FUayname' AS AY,'$author' AS AUTHOR,'$time' AS MOD_Time,
 
 }
 
-if(isset($_POST['save'])) {
-
-    try {
-        $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE = 'Complete', LAST_MODIFIED_BY = :author,
-        LAST_MODIFIED_ON = :timeCurrent WHERE IR_SU_UploadStatus.ID_UPLOADFILE = :content_id;";
-
-        if ($connection->prepare($sqlupload)->execute(['author'=> $author, 'timeCurrent' => $time, 'content_id' =>
-            $content_id])) {
-            $message[0] = "Data Validated Successfully.";
-        } else {
-            $message[0] = "Error in Data validation.Process Failed.";
-        }
-    }
-    catch (PDOException $e)
-    {
-//        SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-        error_log($e->getMessage());
-    }
+if(isset($_POST['validate'])) {
+    $message[0] = $diversityStudent->Validate();
 }
 if(isset($_POST['error'])) {
-
-    $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='No File Provided',LAST_MODIFIED_BY ='$author',
-    LAST_MODIFIED_ON ='$time'  where  IR_SU_UploadStatus.ID_UPLOADFILE = '$content_id'; ";
-
-    if ($mysqli->query($sqlupload)) {
-        $sqlupload = "SELECT ID_IR_AC_DIVERSITY_STUDENTS from IR_AC_DiversityStudent where OUTCOMES_AY = '$FUayname'; ";
-        $resultsqlupload = $mysqli->query($sqlupload);
-
-        while ($rowssqlupload = $resultsqlupload->fetch_assoc()) {
-            $discardid[$index] = $rowssqlupload['ID_IR_AC_DIVERSITY_STUDENTS'];
-            $index++;
-        }
-
-        foreach ($discardid as $delete) {
-            $sqldel .= "DELETE FROM IR_AC_DiversityStudent WHERE ID_IR_AC_DIVERSITY_STUDENTS = '$delete'; ";
-        }
-
-        if ($mysqli->multi_query($sqldel)) {
-            $message[0] = "Data Deprecated.Please Reload the File";
-        } else {
-            $message[0] = "Error in Data Deprecation.Process Failed.";
-        }
-
-    } else {
-        $message[0] = "Action Failed. Please Retry.";
-    }
-
+    $message[0] = $diversityStudent->Error("IR_AC_DiversityStudent","ID_IR_AC_DIVERSITY_STUDENTS");
 }
 
 
@@ -318,7 +262,7 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['upload']) || isset($_POST['save']) || isset($_POST['error'])) { ?>
+<?php if (isset($_POST['upload']) || isset($_POST['validate']) || isset($_POST['error'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
@@ -338,13 +282,16 @@ require_once("../Resources/Includes/menu.php");
         <p class="status"><span>Data Table Name:</span> <?php echo $rowsfucontent['NAME_UPLOADFILE']; ?></p>
         <p class="status"><span>File Status:</span> <?php echo $rowsfucontent['STATUS_UPLOADFILE']; ?></p>
         <p class="status">
-            <span>Last Modified:</span> <?php if($rowsfucontent['LAST_MODIFIED_ON'] != "") { echo date("F j, Y, g:i a", strtotime($rowsfucontent['LAST_MODIFIED_ON'])); } ?>
+            <span>Last Modified:</span> <?php
+            if($rowsfucontent['LAST_MODIFIED_ON'] != "") {
+                echo date("F j, Y, g:i a", strtotime($rowsfucontent['LAST_MODIFIED_ON']));
+            } ?>
         </p>
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-    <?php echo $rowsdatadisplay['ENROLL_HC_FRESH']; ?>
+<!--    --><?php //echo $rowsdatadisplay['ENROLL_HC_FRESH']; ?>
         <?php if ($rowsfucontent['STATUS_UPLOADFILE'] == 'No File Provided') { ?>
-            <form action="<?php echo "ac_diversitystudent.php?linkid=" . $content_id ?>" method="post" class=""
+            <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=" . $content_id ?>" method="post" class=""
                   enctype="multipart/form-data">
                 <div id="" style="margin-top: 10px;">
                     <div id="suppfacinfo" class="form-group">
@@ -359,8 +306,7 @@ require_once("../Resources/Includes/menu.php");
                 </div>
             </form>
         <?php } else{ ?>
-            <form action="<?php echo "ac_diversitystudent.php?linkid=" . $content_id ?>" method="post"
-                  enctype="multipart/form-data">
+            <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=" . $content_id ?>" method="post">
                 <div id="" style="margin-top: 10px;">
                     <label for="validitychk">
                         <small><em>Please review the data table below to confirm values appear as intended.
@@ -373,7 +319,7 @@ require_once("../Resources/Includes/menu.php");
                             <?php echo $dynamictable; ?>
                             <p>Please Select <strong>Validation Confirmed</strong> to Confirm Uploading If Below Data is Correct.</p>
                         </div>
-                        <input type="submit" name="save" id="save" class="btn-primary pull-right"
+                        <input type="submit" name="validate" id="save" class="btn-primary pull-right"
                                value="Validation Confirmed">
                         <input type="submit" name="error" id="error" class="btn-primary pull-right"
                                value="Error Detected">

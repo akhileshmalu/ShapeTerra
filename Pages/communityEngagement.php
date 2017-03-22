@@ -1,21 +1,25 @@
 <?php
+
 /*
- * This Page controls Collaboration - OUTPUT Report.
+ * This Page controls Community & Enaggements.
  */
 
+require_once("../Resources/Includes/Initialize.php");
 require_once ("../Resources/Includes/BpContents.php");
-$BpContent = new COLLABORATION();
-$BpContent->checkSessionStatus();
+
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
 
 $message = array();
 $errorflag = 0;
 $BackToDashboard = true;
 
-$bpid = $_SESSION['bpid'];
+
+$bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
-$bpayname = $_SESSION['bpayname'];
+$bpayname= $_SESSION['bpayname'];
 
 
 if ($ouid == 4) {
@@ -25,39 +29,39 @@ if ($ouid == 4) {
 }
 
 //Object for Campus Climate Table
-
+$communityEngage = new COMMUNITYENGAGEMENT();
 
 //  Blueprint Status information on title box
-$resultbroad = $BpContent->BlueprintStatusDisplay();
+$resultbroad = $communityEngage->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
 
 // Values for placeholders
-$resultexvalue = $BpContent->PlaceHolderValue();
-$rowsExValue = $resultexvalue->fetch(4);
+$resultexvalue = $communityEngage->PlaceHolderValue();
+$rowsExValue1 = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
-$resultbpstatus = $BpContent->GetStatus();
+$resultbpstatus = $communityEngage->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 if (isset($_POST['savedraft'])) {
-    $message[0] = $BpContent->SaveDraft();
+    $message[0] = $communityEngage->SaveDraft();
 }
 
 if(isset($_POST['submit_approve'])) {
-    $message[0] = $BpContent->SaveDraft();
-    $message[0] = "Collaboration";
-    $message[0].= $BpContent->SubmitApproval();
+    $message[0] = $communityEngage->SaveDraft();
+    $message[0] = "Community Engagement";
+    $message[0].= $communityEngage->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
-    $message[0] = "Collaboration";
-    $message[0].= $BpContent->Approve();
+    $message[0] = "Community Engagement";
+    $message[0].= $communityEngage->Approve();
 }
 
 if(isset($_POST['reject'])) {
-    $message[0] = "Collaboration";
-    $message[0].= $BpContent->Reject();
+    $message[0] = "Community Engagement";
+    $message[0].= $communityEngage->Reject();
 }
 
 
@@ -94,54 +98,40 @@ require_once("../Resources/Includes/menu.php");
         </div>
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Collaborations</h1>
+        <h1 class="box-title">Community Engagement</h1>
         <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST" enctype="multipart/form-data">
-            <h3>Internal Collaborations </h3>
+            <h3>Community Engagements and Community-based Activities</h3>
             <div class="form-group form-indent">
-                <p class="status">List your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are internal to the University.  Details should be omitted; list by name only. </p>
-                <textarea name="internalcollaborators" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo $BpContent->mybr2nl($rowsExValue['COLLAB_INTERNAL']); ?></textarea>
-                <div class="checkbox">
-                    <label for="optionalCheck">
-                        <input type="checkbox" name="optionalCheck" id="internalcollaborators"/> No response to this item
-                    </label>
-                </div>
+                <p class="status">Describe the community engagement and community based research, scholarship, outreach, service or volunteerism your unit conducted this Academic Year which would include the following:  local, state, regional, national and international.
+                    Please provide responses in order of significance beginning with most significant. Please note: based on the specific activity, it is acceptable to list an activity in this response as well as the response below.</p>
+                <textarea name="cmmtyEngage" rows="6" cols="25" wrap="hard" class="form-control"
+                          required><?php echo $initalize->mybr2nl($rowsExValue1['CMMTY_ENGMNT_ACTVTY']); ?></textarea>
             </div>
-            <h3>External Collaborations</h3>
+            <h3>Community Perceptions</h3>
             <div class="form-group form-indent">
-                <p class="status">List your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are external to the University.  Details should be omitted; list by name only. </p>
-                <textarea name="externalcollaborators" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo $BpContent->mybr2nl($rowsExValue['COLLAB_EXTERNAL']); ?></textarea>
-                <div class="checkbox">
-                    <label for="optionalCheck">
-                        <input type="checkbox" name="optionalCheck" id="externalcollaborators"/> No response to this item
-                    </label>
-                </div>
+                <p class="status">Describe how your unit assesses community perceptions of your engagement, and how the unit assesses the impact of community engagement on students, faculty, community, and the institution.  Provide specific findings.</p>
+                <textarea name="cmmtyPerception" rows="6" cols="25" wrap="hard"
+                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue1['ENGAGE_CMMTY_PERCEPTIONS']); ?></textarea>
             </div>
-            <h3>Other Collaborations</h3>
+            <h3>Incentivizing Faculty Engagement</h3>
             <div class="form-group form-indent">
                 <p class="status">
-                    <small>List your Academic Unit's most significant academic collaborations and multidisciplinary efforts that are not otherwise accounted for as Internal or External Collaborations. Details should be omitted; list by name only.
+                    <small>Describe your unit's policies and practices for incentivizing and recognizing community engagement in teaching and learning, research, and creative activity.  Limit to 3,000 characters.
                     </small>
                 </p>
-                <textarea name="othercollaborators" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo $BpContent->mybr2nl($rowsExValue['COLLAB_OTHER']); ?></textarea>
-                <div class="checkbox">
-                    <label for="optionalCheck">
-                        <input type="checkbox" name="optionalCheck" id="othercollaborators"/> No response to this item
-                    </label>
-                </div>
+                <textarea name="facultyEngagement" rows="6" cols="25" wrap="hard" maxlength="3000"
+                          class="form-control wordCount"><?php echo $initalize->mybr2nl
+                    ($rowsExValue1['ENGAGE_FACULTY_INCTV']); ?></textarea>
             </div>
 
             <h3>Supplemental Info</h3>
             <div id="suppfacinfo" class="form-group form-indent">
-                <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Collaborations for the Academic Year.</small></p>
+                <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Community Engagement for the Academic Year.</small></p>
                 <input id="supinfo" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
             </div>
 
             <!--                      Edit Control-->
-
-            <?php require_once ("../Resources/Includes/control.php"); ?>
+            <?php require_once ("../Resources/Includes/control.php") ?>
 
         </form>
     </div>

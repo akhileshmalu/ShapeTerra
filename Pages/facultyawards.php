@@ -1,15 +1,13 @@
 <?php
 
-$pagename = "bphome";
-
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
-
-require_once ("../Resources/Includes/Data.php");
-require_once ("../Resources/Includes/BpContents.php");
 // This Page controls Faculty Awards Screen.
+require_once ("../Resources/Includes/BpContents.php");
+
+$facultyAward = new BPCONTENTS();
+$facultyAward->checkSessionStatus();
+$connection = $facultyAward->connection;
+
+require_once ("../Resources/Includes/data.php");
 
 $message = array();
 $errorflag = 0;
@@ -31,23 +29,20 @@ $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-$BpContent = new BPCONTENTS();
-//$connection = $BpContent->connection;
-
 //  Blueprint Status information on title box
-$resultbroad = $BpContent->BlueprintStatusDisplay();
+$resultbroad = $facultyAward->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
-$resultbpstatus = $BpContent->GetStatus();
+$resultbpstatus = $facultyAward->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 /*
  * New award modal Input values : Award type
  */
 try {
-    $sqlaward = "select * from `AwardType` ; ";
-    $resultaward = $BpContent->connection->prepare($sqlaward);
+    $sqlaward = "SELECT * FROM `AwardType` WHERE ELIGIBLE_RECIPIENTS = 'Faculty' ; ";
+    $resultaward = $facultyAward->connection->prepare($sqlaward);
     $resultaward->execute();
 
 } catch (PDOException $e) {
@@ -57,7 +52,7 @@ try {
 
 try {
     $sqlawardLoc = "SELECT * from `AwardLocation` ; ";
-    $resultawardLoc = $BpContent->connection->prepare($sqlawardLoc);
+    $resultawardLoc = $facultyAward->connection->prepare($sqlawardLoc);
     $resultawardLoc->execute();
 
 } catch (PDOException $e) {
@@ -71,36 +66,36 @@ try {
 
 if(isset($_POST['award_submit'])) {
 
-
     $awardType = $_POST['awardType'];
     $awardLoc = $_POST['awardLoc'];
     $recipLname = $_POST['recipLname'];
     $recipFname = $_POST['recipFname'];
     $awardTitle = $_POST['awardTitle'];
     $awardOrg = $_POST['awardOrg'];
-    $dateAward = $_POST['dateAward'];
+    $dateAward = date("Y-m-d", strtotime($_POST['dateAward']));
     $contentlink_id = $_GET['linkid'];
 
     try {
 
       $sqlAcFacAward = " INSERT INTO `AC_FacultyAwards` (OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,
       AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST, RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED,
-      ID_SORT) VALUES (:ouabbrev, :bpayname, :author,:timeStampmod, :awardType,:awardLoc, :recipLname,
-      :recipFname, :awardTitle,:awardOrg,:dateAward,'0');";
+      ID_SORT) VALUES (:ouabbrev, :bpayname, :author, :timeStampmod, :awardType, :awardLoc, :recipLname,
+      :recipFname, :awardTitle, :awardOrg, :dateAward, '0');";
 
       if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
           $sqlAcFacAward .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
-          MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
+          MOD_TIMESTAMP = :timeStampmod WHERE ID_CONTENT =:contentlink_id ;";
 
           $sqlAcFacAward .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
-      BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+      BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timeStampmod WHERE ID_BROADCAST = 
+      :bpid ; ";
       }
-        $resultaward = $BpContent->connection->prepare($sqlAcFacAward);
+        $resultaward = $facultyAward->connection->prepare($sqlAcFacAward);
 
         $resultaward->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
         $resultaward->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
         $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
-        $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
+        $resultaward->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
         $resultaward->bindParam(':awardType', $awardType, PDO::PARAM_STR );
         $resultaward->bindParam(':awardLoc', $awardLoc, PDO::PARAM_STR );
         $resultaward->bindParam(':recipLname', $recipLname, PDO::PARAM_STR );
@@ -112,20 +107,20 @@ if(isset($_POST['award_submit'])) {
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
 
             $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
-            $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
+            $resultaward->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
             $resultaward->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
             $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
-            $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
+            $resultaward->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
             $resultaward->bindParam(':bpid', $bpid, PDO::PARAM_STR);
         }
 
         if($resultaward->execute()) {
-            $Data = new Data($BpContent->connection);
+            $Data = new Data($facultyAward->connection);
             $Data->initOrderFacultyAwards();
-            $error[0] = "Award Added Succesfully.";
+            $message[0] = "Award added successfully.";
 
         } else {
-            $error[0] = "Award Could not be Added.";
+            $message[0] = "Award Could not be Added.";
 
         }
     } catch (PDOException $e) {
@@ -139,21 +134,20 @@ if(isset($_POST['award_submit'])) {
 if(isset($_POST['submit_approve'])) {
 
     $message[0] = "Faculty Awards";
-    $message[0].= $BpContent->SubmitApproval();
+    $message[0].= $facultyAward->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
 
     $message[0] = "Faculty Awards";
-    $message[0].= $BpContent->Approve();
+    $message[0].= $facultyAward->Approve();
 
 }
 
 if(isset($_POST['reject'])) {
 
-
     $message[0] = "Faculty Awards";
-    $message[0].= $BpContent->Reject();
+    $message[0].= $facultyAward->Reject();
 }
 
 require_once("../Resources/Includes/header.php");
@@ -214,10 +208,6 @@ require_once("../Resources/Includes/menu.php");
             <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
-
-<!--        <div class="col-xs-4">-->
-<!--            <a href="#" class="btn-primary">Preview</a>-->
-<!--        </div>-->
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
@@ -225,7 +215,12 @@ require_once("../Resources/Includes/menu.php");
 
 
 
-        <?php if ($_SESSION['login_right'] != 1): ?>
+        <?php if ($_SESSION['login_right'] != 1
+            AND (  $rowsbpstatus['CONTENT_STATUS']=='In Progress'
+                OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected'
+                OR $rowsbpstatus['CONTENT_STATUS']=='Not Started'
+            )
+        ): ?>
 
             <div id="addnew" class="">
                 <button id="add-mission" type="button" class="btn-secondary col-lg-3 col-md-7 col-sm-8 pull-right"
@@ -269,7 +264,7 @@ require_once("../Resources/Includes/menu.php");
                 }
               });
 
-              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Research", function(data) {
+              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Research", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridResearch").jsGrid({
                   width: "100%",
@@ -309,7 +304,7 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
 
                         })
                       }
@@ -318,7 +313,7 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Service", function(data) {
+              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Service", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridService").jsGrid({
                   width: "100%",
@@ -358,7 +353,7 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
 
                         })
                       }
@@ -367,7 +362,7 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Teaching", function(data) {
+              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Teaching", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridTeaching").jsGrid({
                   width: "100%",
@@ -407,7 +402,7 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
 
                         })
                       }
@@ -416,7 +411,7 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Other", function(data) {
+              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Other", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridOther").jsGrid({
                   width: "100%",
@@ -456,7 +451,7 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
 
                         })
                       }
@@ -467,7 +462,7 @@ require_once("../Resources/Includes/menu.php");
 
             </script>
         </div>
-        <form action="<?php echo "facultyawards.php?linkid=".$contentlink_id ?>" method="POST" >
+        <form action="<?php echo $_SERVER["PHP_SELF"]."?linkid=".$contentlink_id ?>" method="POST" >
 
             <!--                        Edit Control-->
             <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
@@ -499,7 +494,7 @@ require_once("../Resources/Includes/menu.php");
             <h4 class="modal-title" id="myModalLabel">Add Faculty Awards</h4>
         </div>
         <div class="modal-body">
-            <form method="POST" action="<?php echo "facultyawards.php?linkid=".$contentlink_id; ?>">
+            <form method="POST" action="<?php echo $_SERVER['PHP_SELF']."?linkid=".$contentlink_id; ?>">
                 <div class="form-group">
                     <label for="awardtype">Select Award Type:<span
                         style="color: red"><sup>*</sup></span></label>

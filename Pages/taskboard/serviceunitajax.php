@@ -6,20 +6,18 @@ $outype = $_SESSION['login_outype'];
 
 require_once("../../Resources/Includes/Initialize.php");
 $initialize = new Initialize();
-$mysqli = $initialize->mysqli;
 
-// require our class
+// require grid class
 require_once("grid.php");
 
 
 // load grid with Service Upload Years
-$grid = new Grid("AcademicYears", $mysqli, array(
+$grid = new Grid("AcademicYears", $initialize->mysqli, array(
 
     "save" => false,
 
     "delete" => false,
-
-
+//
 //
 //    "fields" => array(
 //
@@ -36,10 +34,3 @@ $grid = new Grid("AcademicYears", $mysqli, array(
 //    ),
 // "select" => 'selectFunction'
 ));
-
-
-
-
-?>
-
-

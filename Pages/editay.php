@@ -40,9 +40,10 @@ if (isset($_POST['submit'])) {
 
         if ($errorflag != 1) {
             $ayid = $_POST['AY'];
-            $startdate = $_POST['startdate'];
-            $enddate = $_POST['enddate'];
-            $censusdate = $_POST['censusdate'];
+            $startdate = date("Y-m-d", strtotime($_POST['startdate']));
+            $enddate = date("Y-m-d", strtotime($_POST['enddate']));
+            $censusdate = date("Y-m-d", strtotime($_POST['censusdate']));
+
 
             $sqlEditAy = "UPDATE `AcademicYears` SET ACAD_YEAR_DATE_BEGIN = :startdate, ACAD_YEAR_DATE_END = :enddate,
             DATE_CENSUS = :censusdate WHERE ID_ACAD_YEAR = :ayid ";
@@ -107,7 +108,11 @@ require_once("../Resources/Includes/menu.php");
                     <select name="AY" class="form-control" id="AYgoal" required>
                         <option value=""></option>
                         <?php while ($rowsay = $resultay->fetch(4)): { ?>
-                            <option value="<?php echo $rowsay[0]; ?>" dummy1="<?php echo $rowsay[2]; ?>" dummy2="<?php echo $rowsay[3];?>" dummy3="<?php echo $rowsay[4]; ?>" > <?php echo $rowsay[1]; ?> </option>
+                            <option value="<?php echo $rowsay[0]; ?>" dummy1="<?php echo date("m/d/Y", strtotime
+                            ($rowsay[2])); ?>"
+                                    dummy2="<?php echo date("m/d/Y", strtotime($rowsay[3]));?>"
+                                    dummy3="<?php echo date("m/d/Y", strtotime($rowsay[4])); ?>"
+                            > <?php echo $rowsay[1]; ?> </option>
                         <?php } endwhile; ?>
                     </select>
                 </div>

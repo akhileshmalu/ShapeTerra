@@ -1,11 +1,9 @@
 <?php
 
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
-$mysqli = $initalize->mysqli;
-
+require_once("../Resources/Includes/FILEUPLOAD.php");
+$facultyPop = new FILEUPLOAD();
+$facultyPop->checkSessionStatus();
+$connection = $facultyPop->connection;
 
 $message = array();
 $errorflag = 0;
@@ -13,7 +11,7 @@ $i = 0;
 $index = 0;
 $count = 1;
 $csv = array();
-$tablefileds = array();
+$tablefields = array();
 $tablevalue = array();
 $sqlupload = null;
 $notBackToDashboard = true;
@@ -33,70 +31,45 @@ $BackToFileUploadHome = true;
 $discardid = array();
 
 // File Upload Status & Details.
-try
-{
-    $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON
-PermittedUsers.ID_STATUS =IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id ;";
-    $resultfucontent = $connection->prepare($sqlfucontent);
-    $resultfucontent->execute(['content_id'=> $content_id]);
-}
-catch (PDOException $e)
-{
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    error_log($e->getMessage());
-}
-$rowsfucontent = $resultfucontent->fetch(4);
+$resultfucontent = $facultyPop->GetStatus();
+$rowsfucontent = $resultfucontent->fetch(2);
+
 $tablename = $rowsfucontent['NAME_UPLOADFILE'];
 
+
 // Display Of Values in validation from IR_AC_DiversityStudent Table of Database
-try
-{
-    $sqldatadisplay = "SELECT * FROM IR_AC_FacultyPop WHERE ID_AC_FACULTY_POPULATION IN
- (SELECT MAX(ID_AC_FACULTY_POPULATION) FROM IR_AC_FacultyPop WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
-    $resultdatadisplay = $connection->prepare($sqldatadisplay);
-    $resultdatadisplay->execute(['FUayname' => $FUayname]);
-}
-catch (PDOException $e)
-{
-    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-    error_log($e->getMessage());
-}
+$resultdatadisplay = $facultyPop->DataDisplay("IR_AC_FacultyPop", "ID_AC_FACULTY_POPULATION");
+
+// File Upload Status & Details.
+//try
+//{
+//    $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON
+//PermittedUsers.ID_STATUS =IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id ;";
+//    $resultfucontent = $connection->prepare($sqlfucontent);
+//    $resultfucontent->execute(['content_id'=> $content_id]);
+//}
+//catch (PDOException $e)
+//{
+//    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+//    error_log($e->getMessage());
+//}
+//$rowsfucontent = $resultfucontent->fetch(4);
+//$tablename = $rowsfucontent['NAME_UPLOADFILE'];
+//
+//// Display Of Values in validation from IR_AC_DiversityStudent Table of Database
+//try
+//{
+//    $sqldatadisplay = "SELECT * FROM IR_AC_FacultyPop WHERE ID_AC_FACULTY_POPULATION IN
+// (SELECT MAX(ID_AC_FACULTY_POPULATION) FROM IR_AC_FacultyPop WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
+//    $resultdatadisplay = $connection->prepare($sqldatadisplay);
+//    $resultdatadisplay->execute(['FUayname' => $FUayname]);
+//}
+//catch (PDOException $e)
+//{
+//    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+//    error_log($e->getMessage());
+//}
 $rowsdatadisplay = $resultdatadisplay->fetch(4);
-
-
-//$dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
-//$fieldcnt = $resultdatadisplay->field_count;
-//
-//
-//
-//$num_records = $resultdatadisplay->num_rows;
-//
-//
-//while($meta = $resultdatadisplay->fetch_field()) {
-//    $datavalues[0][$i]=$meta->name;
-//    $i++;
-//}
-//
-//
-//while($rowsdatadisplay = $resultdatadisplay ->fetch_array(MYSQLI_NUM)) {
-//    for($col = 0;$col<$fieldcnt;$col++) {
-//        $datavalues[$count][$col] = $rowsdatadisplay[$col];
-//    }
-//    $count++;
-//}
-
-// for ($j = 1; $j < $fieldcnt; $j++) {
-//     for ($i = 0; $i <= $num_records; $i++) {
-//         if($i == 0)    {
-//             $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-//         } else {
-//             $dynamictable .= "<td>" . $datavalues[$i][$j] . "</td>";
-//         }
-
-//     }
-//     $dynamictable .= "</tr>";
-// }
-// $dynamictable .= '</table>';
 
 
 if (isset($_POST['upload'])) {
@@ -104,8 +77,7 @@ if (isset($_POST['upload'])) {
     $tablename = $rowsfucontent['NAME_UPLOADFILE'];
     //$ayname = $_POST['ay'];
 
-
-// check there are no errors
+    // check there are no errors
     if ($_FILES['csv']['error'] == 0) {
 
         $name = $_FILES['csv']['name'];
@@ -119,14 +91,8 @@ if (isset($_POST['upload'])) {
             if (($handle = fopen($tmpName, 'r')) !== FALSE) {
                 // necessary if a large csv file
                 set_time_limit(0);
-
                 $row = 0;
-
                 while (($data = fgetcsv($handle, 1000, ',')) !== FALSE) {
-
-
-                    // number of fields in the csv
-//                $col_count = count($data);
 
                     // get the values from the csv
                     for ($i = 1; $i <= count($data); $i++) {
@@ -140,41 +106,43 @@ if (isset($_POST['upload'])) {
 
                             if ($row == 0) {
 
-                                $tablefileds[$i] = $csv[$row][$colindex] . ',';
+                                $tablefields[$i] = $csv[$row][$colindex] . ',';
 
                             } else {
 
                                 // Manual Author & Modified Time entry into SQL with row values of file
                                 if ($i == 3) {
-                                    $tablevalue[$row][$i - 1] = "'" . $author . "'" . ',';
+                                    $tablevalue[$row][$i - 1] = $author;
                                 } elseif ($i == 4) {
-                                    $tablevalue[$row][$i - 1] = "'" . $time . "'" . ',';
-                                } elseif ($i == 15) {
-                                    $tablevalue[$row][$i - 1] = "'" . $sumtenurefac[$row - 1] . "'" . ',';
-                                } elseif ($i == 19) {
-                                    $tablevalue[$row][$i - 1] = "'" . $sumresearchfac[$row - 1] . "'" . ',';
-                                } elseif ($i == 24) {
-                                    $tablevalue[$row][$i - 1] = "'" . $sumclinicfac[$row - 1] . "'" . ',';
-                                } elseif ($i == 27) {
-                                    $tablevalue[$row][$i - 1] = "'" . $sumotherfac[$row - 1] . "'" . ',';
-                                } else {
-                                    $tablevalue[$row][$i - 1] = "'" . $csv[$row][$colindex] . "'" . ',';
+                                    $tablevalue[$row][$i - 1] = $time;
+                                } elseif ($i == 13) {
+                                    $tablevalue[$row][$i - 1] = $sumtenurefac[$row - 1];
+                                } elseif ($i == 17) {
+                                    $tablevalue[$row][$i - 1] = $sumresearchfac[$row - 1];
+                                } elseif ($i == 22) {
+                                    $tablevalue[$row][$i - 1] = $sumclinicfac[$row - 1];
+                                }
+//                                elseif ($i == 25) {
+//                                    $tablevalue[$row][$i - 1] = $sumotherfac[$row - 1];
+//                                }
+                                else {
+                                    $tablevalue[$row][$i - 1] = $csv[$row][$colindex];
                                 }
 
                                 //Total of Faculty
-                                if ($i >= 5 and $i<=14) {
+                                if ($i >= 5 and $i <= 12) {
                                     $sumtenurefac[$row - 1] += intval($csv[$row][$colindex]);
                                 }
-                                if ($i >= 16 and $i <= 18) {
+                                if ($i >= 14 and $i <= 16) {
                                     $sumresearchfac[$row - 1] += intval($csv[$row][$colindex]);
                                 }
 
                                 //Validation check of Graduate Male + Female with comparision to composition of Graduate Sudents
-                                if ($i >= 20 and $i <= 23) {
+                                if ($i >= 18 and $i <= 21) {
                                     $sumclinicfac[$row - 1] += intval($csv[$row][$colindex]);
 
                                 }
-                                if ($i == 25 or $i == 26) {
+                                if ($i == 23 or $i == 24) {
                                     $sumotherfac[$row - 1] += intval($csv[$row][$colindex]);
                                 }
 
@@ -183,14 +151,13 @@ if (isset($_POST['upload'])) {
                         } else {
                             // terminal values should not have (,) in SQL Query.
                             if ($row == 0) {
-                                $tablefileds[$i] = $csv[$row][$colindex];
+                                $tablefields[$i] = $csv[$row][$colindex];
                             } else {
-                                $tablevalue[$row][$i - 1] = "'" . $csv[$row][$colindex] . "'";
+                                // Last Column needs sum of previous 2 fields (i = 23,24).
+                                $tablevalue[$row][$i - 1] = $sumotherfac[$row - 1];;
 
                             }
                         }
-
-
                     }
 
                     // inc the row
@@ -198,48 +165,85 @@ if (isset($_POST['upload'])) {
                 }
 
 
-                for ($j = 1; $j < $row; $j++) {
-                    $sqlupload .= "INSERT INTO $tablename ( ";
-                    foreach ($tablefileds as $fields) {
-                        $sqlupload .= $fields;
-                    }
-                    $sqlupload .= " ) Values (";
-                    foreach ($tablevalue[$j] as $fieldvalue) {
-                        $sqlupload .= $fieldvalue;
-                    }
-                    $sqlupload .= ");";
-                }
-
-                $sqlupload .= "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE ='Pending Validation',
- LAST_MODIFIED_BY = '$author', LAST_MODIFIED_ON = '$time' where IR_SU_UploadStatus.ID_UPLOADFILE = '$content_id'; ";
-
                 if ($errorflag == 0) {
 
-                    if ($mysqli->multi_query($sqlupload)) {
+                    // Create SQL for All ORG Units
+                    $sqlupload = "INSERT INTO IR_AC_FacultyPop (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP,
+ TTF_FTE_PROF_TNR, TTF_FTE_ASSOC_PROF_TNR, TTF_FTE_PROF, TTF_FTE_ASSOC_PROF, TTF_FTE_ASSIST_PROF, TTF_FTE_LIBR_TNR,
+   TTF_FTE_LIBR, TTF_FTE_ASSIST_LIBR, TTF_FTE_ALL, RSRCH_FTE_PROF, RSRCH_FTE_ASSOC_PROF, RSRCH_FTE_ASSIST_PROF, 
+   RSRCH_FTE_ALL, CIF_FTE_CLNCL_PROF, CIF_FTE_CLNCL_ASSOC_PROF, CIF_FTE_CLNCL_ASSIST_PROF, CIF_FTE_INSTR_LCTR, 
+   CIF_FTE_ALL, OTHRFAC_PT_ADJUNCT, OTHRFAC_PT_OTHER, OTHRFAC_ALL) VALUES (";
 
-                        //USCALLAU USC ALL Academic Units Aggregator record creation . Also includes the idea to let user update more units in future
-                        // Below query group all discrete units and resolve collusion basis latest (max) ID value and then sum the records and constitute USCAAU
+                    for ($i = 0; $i < count($tablefields); $i++) {
 
-                        $sqlupload = "INSERT INTO IR_AC_FacultyPop (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, TTF_FTE_ALL, TTF_FTE_PROF_TNR, TTF_FTE_ASSOC_PROF_TNR, TTF_FTE_PROF, TTF_FTE_ASSOC_PROF, TTF_FTE_ASSIST_PROF, RSRCH_FTE_ALL, RSRCH_FTE_PROF, RSRCH_FTE_ASSOC_PROF, RSRCH_FTE_ASSIST_PROF, CIF_FTE_ALL, CIF_FTE_CLNCL_PROF, CIF_FTE_CLNCL_ASSOC_PROF, CIF_FTE_CLNCL_ASSIST_PROF, CIF_FTE_INSTR_LCTR, OTHRFAC_ALL, OTHRFAC_PT_ADJUNCT, OTHRFAC_PT_OTHER, STUDENT_FACULTY_RATIO)
-SELECT 'USCAAU' AS OU,'$FUayname' AS AY,'$author' AS AUTHOR,'$time' AS MOD_Time,sum(TTF_FTE_ALL), sum(TTF_FTE_PROF_TNR), sum(TTF_FTE_ASSOC_PROF_TNR), sum(TTF_FTE_PROF), sum(TTF_FTE_ASSOC_PROF), sum(TTF_FTE_ASSIST_PROF), sum(RSRCH_FTE_ALL), sum(RSRCH_FTE_PROF), sum(RSRCH_FTE_ASSOC_PROF), sum(RSRCH_FTE_ASSIST_PROF), sum(CIF_FTE_ALL), sum(CIF_FTE_CLNCL_PROF), sum(CIF_FTE_CLNCL_ASSOC_PROF), sum(CIF_FTE_CLNCL_ASSIST_PROF), sum(CIF_FTE_INSTR_LCTR), sum(OTHRFAC_ALL), sum(OTHRFAC_PT_ADJUNCT), sum(OTHRFAC_PT_OTHER),
-, 'NA' FROM IR_AC_FacultyPop where ID_AC_FACULTY_POPULATION in (select max(ID_AC_FACULTY_POPULATION) from IR_AC_FacultyPop where OUTCOMES_AY = '$FUayname' group by OU_ABBREV );";
-                        $mysqli->query($sqlupload);
+                        $sqlupload .= ($i == count($tablefields) - 1) ? '?' : '?,';
+                    }
+                    $sqlupload .= ");";;
+                    // Prepare Sql Query
+                    $result = $connection->prepare($sqlupload);
+
+                    // binding Variables
+                    for ($j = 1; $j < $row; $j++) {
+                        for ($i = 0; $i < count($tablevalue[$j]); $i++) {
+                            $result->bindParam($i + 1, $tablevalue[$j][$i], 2);
+                        }
+                        $result->execute();
+                    }
 
 
-                        $message[0] = "Data Uploaded Successfully.";
+                    $sqlupload = "UPDATE IR_SU_UploadStatus SET STATUS_UPLOADFILE ='Pending Validation',
+                LAST_MODIFIED_BY = :author, LAST_MODIFIED_ON = :timeStampmod WHERE 
+                IR_SU_UploadStatus.ID_UPLOADFILE =:content_id; ";
 
-                    } else {
+                    $result = $connection->prepare($sqlupload);
+                    $result->bindParam(':author', $author, 2);
+                    $result->bindParam(':timeStampmod', $time, 2);
+                    $result->bindParam(':content_id', $content_id, 2);
 
-                        $message[0] = "Error in Data. Upload Failed.";
+
+                    if ($result->execute()) {
+
+                        //USCALLAU USC ALL Academic Units Aggregator record creation . Also includes the idea to let
+                        // user update more units in future. Below query group all discrete units and resolve
+                        // collusion basis latest (max) ID value and then sum the records and constitute USCAAU
+
+                        try {
+                            $sqlupload = "INSERT INTO IR_AC_FacultyPop (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, 
+MOD_TIMESTAMP, TTF_FTE_PROF_TNR, TTF_FTE_ASSOC_PROF_TNR, TTF_FTE_PROF, TTF_FTE_ASSOC_PROF, TTF_FTE_ASSIST_PROF,
+ TTF_FTE_LIBR_TNR, TTF_FTE_LIBR, TTF_FTE_ASSIST_LIBR, TTF_FTE_ALL, RSRCH_FTE_PROF, RSRCH_FTE_ASSOC_PROF, 
+ RSRCH_FTE_ASSIST_PROF, RSRCH_FTE_ALL, CIF_FTE_CLNCL_PROF, CIF_FTE_CLNCL_ASSOC_PROF, CIF_FTE_CLNCL_ASSIST_PROF,
+  CIF_FTE_INSTR_LCTR, CIF_FTE_ALL, OTHRFAC_PT_ADJUNCT, OTHRFAC_PT_OTHER, OTHRFAC_ALL) 
+  SELECT 'USCAAU' AS OU,:FUayname AS AY, :authorName AS AUTHOR,:timeCurrent AS MOD_Time,  sum(TTF_FTE_PROF_TNR), 
+  sum(TTF_FTE_ASSOC_PROF_TNR), sum(TTF_FTE_PROF), sum(TTF_FTE_ASSOC_PROF), sum(TTF_FTE_ASSIST_PROF), 
+  sum(TTF_FTE_LIBR_TNR), sum(TTF_FTE_LIBR),sum(TTF_FTE_ASSIST_LIBR), sum(TTF_FTE_ALL),sum(RSRCH_FTE_PROF), 
+  sum(RSRCH_FTE_ASSOC_PROF), sum(RSRCH_FTE_ASSIST_PROF), sum(RSRCH_FTE_ALL), sum(CIF_FTE_CLNCL_PROF), 
+  sum(CIF_FTE_CLNCL_ASSOC_PROF), sum(CIF_FTE_CLNCL_ASSIST_PROF), sum(CIF_FTE_INSTR_LCTR),sum(CIF_FTE_ALL),
+  sum(OTHRFAC_PT_ADJUNCT), sum(OTHRFAC_PT_OTHER), sum(OTHRFAC_ALL) FROM IR_AC_FacultyPop 
+WHERE ID_AC_FACULTY_POPULATION IN (SELECT max(ID_AC_FACULTY_POPULATION) FROM IR_AC_FacultyPop 
+WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
+
+                            $resultupload = $connection->prepare($sqlupload);
+                            $resultupload->bindParam(':FUayname', $FUayname, 2);
+                            $resultupload->bindParam(':authorName', $author, 2);
+                            $resultupload->bindParam(':timeCurrent', $time, 2);
+
+                            if ($resultupload->execute()) {
+                                $message[0] = "Data Uploaded Successfully.";
+                            } else {
+                                $message[0] = "Error in Data. Upload Failed.";
+                            }
+
+
+                        } catch (PDOException $e) {
+                            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+                            error_log($e->getMessage());
+                        }
 
                     }
 
                 } else {
-
-                    $message[0] = "Faculty Data Composition does not match. Please check data & reload.";
-
+                    $message[0] = "Faculty Population Data  does not match. Please check data & reload.";
                 }
-
                 fclose($handle);
             }
         } else {
@@ -248,57 +252,14 @@ SELECT 'USCAAU' AS OU,'$FUayname' AS AY,'$author' AS AUTHOR,'$time' AS MOD_Time,
     } else {
         $message[0] = "Error in Uploading File. ";
     }
-
 }
 
-if(isset($_POST['save'])) {
 
-    try
-    {
-        $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='Complete',LAST_MODIFIED_BY =:author,
-        LAST_MODIFIED_ON =:timeCurrent WHERE IR_SU_UploadStatus.ID_UPLOADFILE = :content_id;";
-
-        if ($connection->prepare($sqlupload)->execute(['author'=> $author, 'timeCurrent' => $time, 'content_id' =>
-            $content_id])) {
-            $message[0] = "Data Validated Successfully.";
-        } else {
-            $message[0] = "Error in Data validation.Process Failed.";
-        }
-    }
-    catch (PDOException $e)
-    {
-//        SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-        error_log($e->getMessage());
-    }
-
+if (isset($_POST['validate'])) {
+    $message[0] = $facultyPop->Validate();
 }
-if(isset($_POST['error'])) {
-
-    $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE='No File Provided',LAST_MODIFIED_BY ='$author',LAST_MODIFIED_ON ='$time'  where  IR_SU_UploadStatus.ID_UPLOADFILE = '$content_id'; ";
-
-    if ($mysqli->query($sqlupload)) {
-        $sqlupload = "SELECT ID_AC_FACULTY_POPULATION from IR_AC_FacultyPop where OUTCOMES_AY = '$FUayname'; ";
-        $resultsqlupload = $mysqli->query($sqlupload);
-
-        while ($rowssqlupload = $resultsqlupload->fetch_assoc()) {
-            $discardid[$index] = $rowssqlupload['ID_AC_FACULTY_POPULATION'];
-            $index++;
-        }
-
-        foreach ($discardid as $delete) {
-            $sqldel .= "delete from IR_AC_FacultyPop where ID_AC_FACULTY_POPULATION = '$delete'; ";
-        }
-
-        if ($mysqli->multi_query($sqldel)) {
-            $message[0] = "Data Deprecated.Please Reload the File";
-        } else {
-            $message[0] = "Error in Data Deprecation.Process Failed.";
-        }
-
-    } else {
-        $message[0] = "Action Failed. Please Retry.";
-    }
-
+if (isset($_POST['error'])) {
+    $message[0] = $facultyPop->Error("IR_AC_FacultyPop", "ID_AC_FACULTY_POPULATION");
 }
 
 
@@ -310,7 +271,7 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['upload']) || isset($_POST['save']) || isset($_POST['error'])) { ?>
+<?php if (isset($_POST['upload']) || isset($_POST['validate']) || isset($_POST['error'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
@@ -377,9 +338,11 @@ require_once("../Resources/Includes/menu.php");
                         </form>
                         <div id="display" class="col-xs-12">
                             <h2 class="data-display">Display Data - Table Name: <?php echo $tablename; ?></h2>
-                            <p><b class="garnet">Academic Year:</b>2001</p>
-                            <p><b class="garnet">College/School:</b>CEC</p>
-                            <p><b class="garnet">Outcomes Author:</b>Blake Finn</p>
+                            <p><b class="garnet">Academic Year: </b><?php echo $rowsdatadisplay['OUTCOMES_AY'];?></p>
+                            <p><b class="garnet">College/School: </b><?php echo $rowsdatadisplay['OU_ABBREV'];?></p>
+                            <p><b class="garnet">Outcomes Author: </b><?php
+                                echo $facultyPop->getUserName($rowsdatadisplay['OUTCOMES_AUTHOR']);
+                                ?></p>
                             <p><b class="garnet">Last Modified:</b> <?php echo $rowsdatadisplay['TTF_FTE_PROF_TNR']; ?> </p>
 
 
@@ -473,17 +436,12 @@ require_once("../Resources/Includes/menu.php");
                                 <td><b class="garnet">Total - Other Faculty:</b></td>
                                 <td><?php echo $rowsdatadisplay['OTHRFAC_ALL']; ?>  </td>
                             </tr>
-                            <tr><td><h2 class="data-display">Student Faculty Ratio</h2></td></tr>
 
-                            <tr class="indent">
-                                <td><b class="garnet">Student Faculty Ratio</b></td>
-                                <td><?php echo $rowsdatadisplay['STUDENT_FACULTY_RATIO']; ?> </td>
-                            </tr>
                             <p>Please Select <strong>Validation Confirmed</strong> to Confirm Uploading If Below Data is Correct.</p>
                             </table>
                         </div>
 
-                        <input type="submit" name="save" id="save" class="btn-primary pull-right"
+                        <input type="submit" name="validate" id="save" class="btn-primary pull-right"
                                value="Validation Confirmed">
                         <input type="submit" name="error" id="error" class="btn-primary pull-right"
                                value="Error Detected">

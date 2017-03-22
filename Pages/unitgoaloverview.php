@@ -3,9 +3,9 @@
 /*
  * Session & Error control Initialization.
  */
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
+require_once ("../Resources/Includes/BpContents.php");
+$goaloutcomehome = new BPCONTENTS();
+$goaloutcomehome->checkSessionStatus();
 
 $message = array();
 $errorflag =0;
@@ -14,7 +14,7 @@ $BackToDashboard = true;
 /*
  * Connection to DataBase.
  */
-require_once ("../Resources/Includes/BpContents.php");
+
 
 /*
  * Local & Session variable Initialization
@@ -33,7 +33,7 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-$goaloutcomehome = new BPCONTENTS();
+
 
 // Blueprint Status information on title box
 $resultbroad = $goaloutcomehome->BlueprintStatusDisplay();

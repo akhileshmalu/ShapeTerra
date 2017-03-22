@@ -1,13 +1,9 @@
 <?php
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
-/*
- * This Page controls Academic BluePrint Home.
- */
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
+
+require_once("../Resources/Includes/FILEUPLOAD.php");
+$fileupload = new FILEUPLOAD();
+$fileupload->checkSessionStatus();
+$connection = $fileupload->connection;
 
 $message = array();
 $errorflag =0;
@@ -16,19 +12,21 @@ $FUayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 $_SESSION['FUayname'] = $FUayname;
-$notBackToDashboard = true;
+
+
 
 $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU =:ouid; ";
 $resultbroad = $connection->prepare($sqlbroad);
 $resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_INT);
 $resultbroad->execute();
-
 $rowbroad = $resultbroad->fetch(4);
-
 
 //Menu control for back to dashboard button
 //true: Dont show button
 //false: show button
+$notBackToDashboard = true;
+
+
 require_once("../Resources/Includes/header.php");
 // Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
@@ -77,7 +75,8 @@ require_once("../Resources/Includes/menu.php");
             <table class="fileupload" action="taskboard/fileuploadstatusajax.php" title="File Upload Contents">
                 <tr>
 
-                    <th col="NAME_UPLOADFILE" href="{{columns.LINK_UPLOADFILE}}?linkid={{columns.ID_UPLOADFILE}}"  width="225" type="text">Section</th>
+                    <th col="NAME_UPLOADFILE" href="uploadfile.php?linkid={{columns.ID_UPLOADFILE}}"  width="225"
+                        type="text">Section</th>
                     <th col="STATUS_UPLOADFILE" width="125" type="text">Status</th>
                     <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
                     <th col="FILE_AUTHOR"  width="130" type="text">Last Modified By</th>

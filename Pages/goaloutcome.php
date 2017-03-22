@@ -3,21 +3,17 @@
  * This Page controls Goal Outcomes.
  */
 
- require_once ("../Resources/Includes/initialize.php");
- $initalize = new Initialize();
- $initalize->checkSessionStatus();
-
-
-//require_once ("../Resources/Includes/connect.php");
-require_once ("../Resources/Includes/BpContents.php");
+require_once("../Resources/Includes/BpContents.php");
+$goaloutcome = new GOALOUTCOME();
+$goaloutcome->checkSessionStatus();
 
 $message = array();
-$errorflag =0;
+$errorflag = 0;
 $BackToGoalOutHome = true;
 $bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
-$goal_id=$_GET['goal_id'];
-$bpayname =$_SESSION['bpayname'];
+$goal_id = $_GET['goal_id'];
+$bpayname = $_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 
 if ($ouid == 4) {
@@ -31,12 +27,9 @@ $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
 
-$goaloutcome = new GOALOUTCOME();
-
 // Blueprint Status information on title box
 $resultbroad = $goaloutcome->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
-
 
 
 /*
@@ -45,20 +38,6 @@ $rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
 $resultexgoalout = $goaloutcome->OutcomePlaceholders();
 $rowsexgoalout = $resultexgoalout->fetch(4);
 
-/*
- * values to show for goals, If exist.
- */
-// try {
-//     $sqlunitgoal = "select * from BP_UnitGoals where ID_UNIT_GOAL = :goal_id ";
-//     $resultunitgoal = $connection -> prepare($sqlunitgoal);
-//     $resultunitgoal -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
-//     $resultunitgoal -> execute();
-
-//     $rowsunitgoal = $resultunitgoal->fetch(4);
-// } catch(PDOException $e) {
-//     error_log($e->getMessage());
-//     //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-// }
 
 $resultunitgoal = $goaloutcome->PlaceHolderValue();
 $rowsunitgoal = $resultunitgoal->fetch(4);
@@ -75,35 +54,33 @@ $goalviewpoint = array(
  * Add Modal Record Addition
  */
 
-if(isset($_POST['savedraft'])) {
+if (isset($_POST['savedraft'])) {
 
     $message[0] = $goaloutcome->SaveDraft();
 
 }
 
-if(isset($_POST['submit_approve'])) {
+if (isset($_POST['submit_approve'])) {
 
+    $message[0] = $goaloutcome->SaveDraft();
     $message[0] = "Goal Outcome";
-    $message[0].= $goaloutcome->SubmitApproval();
+    $message[0] .= $goaloutcome->SubmitApproval();
 
 }
 
 //Dean Approve or Reject
 
-if(isset($_POST['approve'])) {
+if (isset($_POST['approve'])) {
 
     $message[0] = "Goal Outcome";
-    $message[0].= $goaloutcome->Approve();
-
+    $message[0] .= $goaloutcome->Approve();
 }
 
-if(isset($_POST['reject'])) {
+if (isset($_POST['reject'])) {
 
     $message[0] = "Goal Outcome";
-    $message[0].= $goaloutcome->Reject();
-
+    $message[0] .= $goaloutcome->Reject();
 }
-
 
 
 require_once("../Resources/Includes/header.php");
@@ -116,13 +93,15 @@ require_once("../Resources/Includes/menu.php");
 <!--<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />-->
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['savedraft']) OR isset($_POST['submit_approve']) OR isset($_POST['approve']) OR isset($_POST['reject']) ) { ?>
+<?php if (isset($_POST['savedraft']) OR isset($_POST['submit_approve']) OR isset($_POST['approve']) OR isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" onclick="$redirect = $('.alert button').attr('redirect');
-		$(window).attr('location',$redirect)" redirect="<?php echo "goaloutcomeshome.php?linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
+		$(window).attr('location',$redirect)" redirect="<?php echo "goaloutcomeshome.php?linkid=" . $contentlink_id; ?>"
+                class="end btn-primary">Close
+        </button>
     </div>
 <?php } ?>
 
@@ -146,20 +125,18 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Goal : <?php echo $rowsunitgoal['UNIT_GOAL_TITLE']; ?></h1>
         <div id="" style="margin-top: 30px;">
-
-
-
             <form action="<?php echo "goaloutcome.php?goal_id=" . $goal_id . "&linkid=" . $contentlink_id; ?>"
-                onsubmit="if($('#goalstlist').val() == 0) { alert('Please select Goal Status'); return false; }"  method="POST">
+                  onsubmit="if($('#goalstlist').val() == 0) { alert('Please select Goal Status'); return false; }"
+                  method="POST">
 
                 <div class="form-group">
                     <label for="goallink"><h3>Linked to University Goal(s)</h3></label>
 
                     <?php
-                    $sqlug = "Select * from BP_UnitGoals A   join UniversityGoals B where find_in_set(ID_UNIV_GOAL,LINK_UNIV_GOAL)>0 and A.ID_UNIT_GOAL = :goal_id; ";
+                    $sqlug = "SELECT * FROM BP_UnitGoals A   JOIN UniversityGoals B WHERE find_in_set(ID_UNIV_GOAL,LINK_UNIV_GOAL)>0 AND A.ID_UNIT_GOAL = :goal_id; ";
 
                     $resultug = $goaloutcome->connection->prepare($sqlug);
-                    $resultug -> bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+                    $resultug->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
 
                     $resultug->execute();
                     while ($rowsug = $resultug->fetch(4)): { ?>
@@ -172,82 +149,91 @@ require_once("../Resources/Includes/menu.php");
 
                 </div>
 
-
                 <div id="goalstate" class="form-group col-xs-12">
                     <h3>Goal Statement </h3>
-                    <textarea  rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled readonly><?php echo $initalize->mybr2nl($rowsunitgoal['GOAL_STATEMENT']);?></textarea>
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled
+                              readonly><?php echo $goaloutcome->mybr2nl($rowsunitgoal['GOAL_STATEMENT']); ?></textarea>
                 </div>
-
 
                 <div id="goalalign" class="form-group col-xs-12">
                     <h3>Goal Alignment</h3>
-                    <textarea   rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled readonly><?php echo $initalize->mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled
+                              readonly><?php echo $goaloutcome->mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
-<!--                <label for ="goalview" ></label>-->
+                <!--                <label for ="goalview" ></label>-->
                 <div id="goalview" class="form-group col-xs-12">
                     <h3>Goal Viewpoint in Report</h3>
-                    <input type="text" class="form-control form-indent" value="<?php echo $rowsunitgoal['GOAL_VIEWPOINT']; ?>" readonly disabled>
+                    <input type="text" class="form-control form-indent"
+                           value="<?php echo $rowsunitgoal['GOAL_VIEWPOINT']; ?>" readonly disabled>
                 </div>
 
-<!--                <label for ="goalstatus" ></label>-->
+                <!--                <label for ="goalstatus" ></label>-->
                 <div id="goalstatus" class="form-group col-xs-3">
                     <h3>Goal Status</h3>
-                    <select id="goalstlist" name="goal_status"  class="form-control form-indent" style="padding: 0px; background-color: #fff !important;">
-                        <option value="0"> -- select an option -- </option>
+                    <select id="goalstlist" name="goal_status" class="form-control form-indent"
+                            style="padding: 0px; background-color: #fff !important;">
+                        <option value="0"> -- select an option --</option>
                         <?php $selectedViewPoint = $rowsunitgoal['GOAL_VIEWPOINT'];
                         try {
-                            $sqlgoalstatus ="select * from GoalStatus where STATUS_VIEWPOINT = :selectedViewPoint; ";
+                            $sqlgoalstatus = "SELECT * FROM GoalStatus WHERE STATUS_VIEWPOINT = :selectedViewPoint; ";
                             $resultgoalstatus = $goaloutcome->connection->prepare($sqlgoalstatus);
-                            $resultgoalstatus->bindParam(':selectedViewPoint', $selectedViewPoint,2);
+                            $resultgoalstatus->bindParam(':selectedViewPoint', $selectedViewPoint, 2);
                             $resultgoalstatus->execute();
-                        } catch(PDOException $e) {
+                        } catch (PDOException $e) {
                             error_log($e->getMessage());
                         }
-                    while($rowsgoalstatus = $resultgoalstatus -> fetch(2)) :?>
-                        <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"
-                            <?php if($rowsgoalstatus['ID_STATUS'] == $rowsexgoalout['GOAL_STATUS']) echo " selected = selected"; ?>> <?php echo $rowsgoalstatus['STATUS']; ?> </option>
-                        <?php  endwhile; ?>
+                        while ($rowsgoalstatus = $resultgoalstatus->fetch(2)) :?>
+                            <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"
+                                <?php if ($rowsgoalstatus['ID_STATUS'] == $rowsexgoalout['GOAL_STATUS']) echo " selected = selected"; ?>> <?php echo $rowsgoalstatus['STATUS']; ?> </option>
+                        <?php endwhile; ?>
                     </select>
                 </div>
-<!--                <label for ="goalach" ></label>-->
+                <!--                <label for ="goalach" ></label>-->
                 <div id="goalachcont" class="form-group col-xs-12 hidden">
                     <h3>Goal Achievement </h3>
-                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
+                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
                 </div>
 
-<!--                <label for ="goalresutil" ></label>-->
+                <!--                <label for ="goalresutil" ></label>-->
                 <div id="goalresutilcont" class="form-group col-xs-12 hidden">
                     <h3>Resources Utilized </h3>
-                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
+                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
                 </div>
 
-<!--                <label id ="goalcontilable" ></label>-->
+                <!--                <label id ="goalcontilable" ></label>-->
                 <div id="goalconticont" class="form-group col-xs-12 hidden">
                     <h3>Goal Continuation </h3>
-                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
+                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
                 </div>
 
-<!--                <label for ="goalplanincomp" ></label>-->
+                <!--                <label for ="goalplanincomp" ></label>-->
                 <div id="goalincompcont" class="form-group col-xs-12 hidden">
                     <h3>Goal Plans for Incomplete Goal</h3>
-                    <textarea id="goalincomptext" name="goal_plan_incomp" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_PLAN_INCOMPLT']); ?></textarea>
+                    <textarea id="goalincomptext" name="goal_plan_incomp" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_PLAN_INCOMPLT']); ?></textarea>
                 </div>
 
-<!--                <label for ="goalplanupcom" ></label>-->
+                <!--                <label for ="goalplanupcom" ></label>-->
                 <div id="goalupcomincont" class="form-group col-xs-12 hidden">
                     <h3>Goal Upcoming Plans </h3>
-                    <textarea id="goalupcomintext" name="goal_plan_upcoming" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_UPCOMING_PLAN']); ?></textarea>
+                    <textarea id="goalupcomintext" name="goal_plan_upcoming" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_UPCOMING_PLAN']); ?></textarea>
                 </div>
 
-<!--                <label id = "resoneedlable" ></label>-->
+                <!--                <label id = "resoneedlable" ></label>-->
                 <div id="resoneedcont" class="form-group col-xs-12 hidden">
                     <h3>Resource Needed </h3>
-                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control form-indent" ><?php echo $initalize->mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
+                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
                 </div>
 
 
                 <!--                      Edit Control-->
+                <div class="col-xs-12"></div>
 
                 <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') { ?>
 

@@ -11,7 +11,11 @@
       //error logging set to 0 for prod
       error_reporting(1);
       @ini_set('display_errors', 1);
+<<<<<<< HEAD
       @ini_set('always_populate_raw_post_data', '-1');
+=======
+        ini_set('always_populate_raw_post_data', '-1');
+>>>>>>> b8c53b2cf194266cb96dc02a0e7fe20044c78540
 
       //Setting Default Time
       date_default_timezone_set('America/New_York');
@@ -21,6 +25,8 @@
       header("X-Frame-Options: SAMEORIGIN");
 
       $this->connection = $this->connectToDB();
+
+        $_SESSION['site'] = "Shapeterra";
 
       //Global Email Variable
       $headers = "MIME-Version: 1.0" . "\r\n";
@@ -33,7 +39,7 @@
     {
       define('HOSTNAME', "localhost");
       define("USERNAME", "root");
-      define("PASSCODE", "");
+      define("PASSCODE", "root");
       define("DB", "TESTDB");
 
 
@@ -128,6 +134,22 @@
     public function mybr2nl($text)
     {
         return strtr($text, array("<br />" => "\r\n", "&#39;" => "'", "&#59;" => ";"));
+    }
+
+    public function getUserName($author){
+        try {
+            $sql = "SELECT FNAME,LNAME FROM PermittedUsers WHERE ID_STATUS = :author;";
+            $result = $this->connection->prepare($sql);
+            $result->bindParam(':author', $author, 1);
+            $result->execute();
+
+        } catch (PDOException $e) {
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+            error_log($e->getMessage());
+        }
+
+        $rows = $result->fetch(2);
+        return $rows['FNAME']." ".$rows['LNAME'];
     }
 
   }

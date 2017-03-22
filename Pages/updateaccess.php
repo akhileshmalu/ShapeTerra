@@ -1,8 +1,8 @@
 <?php
 require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
+$recruitNretention = new Initialize();
+$recruitNretention->checkSessionStatus();
+$connection = $recruitNretention->connection;
 
 $error =array();
 $fname = $_SESSION['login_fname'];

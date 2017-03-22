@@ -1,10 +1,9 @@
 <?php
-session_start();
 
 require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-$connection = $initalize->connection;
+$account = new Initialize();
+$account->checkSessionStatus();
+$connection = $account->connection;
 
 $email = $_SESSION['login_email'];
 

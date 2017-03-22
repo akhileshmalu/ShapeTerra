@@ -3,21 +3,15 @@
 /*
  * This Page controls Mission Vision & Value Screen.
  */
-
-require_once ("../Resources/Includes/initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
+require_once ("../Resources/Includes/BpContents.php");
+$mvv = new MVV();
+$mvv->checkSessionStatus();
 
 $message = array();
 $errorflag = 0;
 $BackToDashboard = true;
 
 
-/*
- * Connection to DataBase.
- */
-
-  require_once ("../Resources/Includes/BpContents.php");
 
 /*
  * Local & Session variable Initialization
@@ -26,8 +20,8 @@ $bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $bpayname = $_SESSION['bpayname'];
 
-$prevbpid = $initalize->stringtoid($bpayname);
-$prevbpayname = $initalize->idtostring($prevbpid - 101);
+$prevbpid = $mvv->stringtoid($bpayname);
+$prevbpayname = $mvv->idtostring($prevbpid - 101);
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 
@@ -42,11 +36,6 @@ if ($outype == "Administration" OR $outype == "Service Unit" ) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-
-//Object for executive Summary Table
-$mvv = new MVV();
-
-
 //  Blueprint Status information on title box
 $resultbroad = $mvv->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
@@ -59,13 +48,14 @@ $rowsmission = $resultexvalue->fetch(4);
 $resultbpstatus = $mvv->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
-if (isset($_POST['submit'])) {
-
+if (isset($_POST['savedraft'])) {
     $message[0] = $mvv->SaveDraft();
-
 }
 
 if (isset($_POST['submit_approve'])) {
+
+    // Also Save current changes and then send for approval.
+    $message[0] = $mvv->SaveDraft();
     $message[0] = "Mission, Vision, & Values";
     $message[0].= $mvv->SubmitApproval();
 
@@ -98,7 +88,7 @@ require_once("../Resources/Includes/menu.php");
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
 
-<?php if (isset($_POST['submit']) || isset($_POST['submit_approve']) || isset($_POST['approve'])  ) { ?>
+<?php if (isset($_POST['savedraft']) || isset($_POST['submit_approve']) || isset($_POST['approve'])  ) { ?>
     <div class="overlay hidden"></div>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
@@ -147,7 +137,12 @@ require_once("../Resources/Includes/menu.php");
                         style="color: red"><sup>*</sup></span></h3>
                 <div class="form-group col-xs-12 form-indent">
                     <div class='input-group date col-xs-4' id='datetimepicker1'>
-                        <input type='text' name="misupdate" value="<?php echo $rowsmission['MISSION_UPDATE_DATE']; ?>" class="form-control" required>
+                        <input type='text' name="misupdate"
+                               value="<?php
+                               if(!empty($rowsmission['MISSION_UPDATE_DATE']))
+                               echo date("m/d/Y", strtotime($rowsmission['MISSION_UPDATE_DATE']));
+                               ?>"
+                               class="form-control" required>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -167,7 +162,12 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Last Updated:</h3>
                 <div class="form-group col-xs-12 form-indent">
                     <div class='input-group date col-xs-4' id='datetimepicker2'>
-                        <input type='text' name="visupdate" value="<?php echo $rowsmission['VISION_UPDATE_DATE']; ?>" class="form-control">
+                        <input type='text' name="visupdate"
+                               value="<?php
+                               if(!empty($rowsmission['VISION_UPDATE_DATE']))
+                               echo date("m/d/Y", strtotime($rowsmission['VISION_UPDATE_DATE']));
+                               ?>"
+                               class="form-control">
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -188,7 +188,12 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Last Updated:</h3>
                 <div class="col-xs-12 form-indent">
                     <div class='input-group date col-xs-4' id='datetimepicker3'>
-                        <input type='text' name="valupdate" value="<?php echo $rowsmission['VALUE_UPADTE_DATE']; ?>" class="form-control">
+                        <input type='text' name="valupdate"
+                               value="<?php
+                               if(!empty($rowsmission['VALUE_UPDATE_DATE']))
+                               echo date("m/d/Y", strtotime($rowsmission['VALUE_UPDATE_DATE']));
+                               ?>"
+                               class="form-control">
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -197,25 +202,8 @@ require_once("../Resources/Includes/menu.php");
 
 
                 <!--Edit Control-->
-                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
-                    <button id="save" type="submit" name="submit"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-                    <button type="submit" id="submit_approve" name="submit_approve" <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Not Started') echo 'disabled'; ?> class="btn-primary pull-right">
-                        Submit For Approval
-                    </button>
-                <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-                    <button id="save" type="submit" name="submit"
-                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-                    <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                        <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                        <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                    <?php endif;
-                } ?>
+                <?php require_once ("../Resources/Includes/control.php") ?>
+
             </form>
         </div>
     </div>

@@ -3,12 +3,11 @@
 /*
  * This Page controls Initiatives & Observations.
  */
-
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
-
 require_once ("../Resources/Includes/BpContents.php");
+$executiveSummary = new EXECUTIVESUMCLASS();
+$executiveSummary->checkSessionStatus();
+
+
 
 $message = array();
 $errorflag = 0;
@@ -25,45 +24,42 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-//Object for executive Summary Table
-$CampusClimate = new EXECUTIVESUMCLASS();
-
-
 //  Blueprint Status information on title box
-$resultbroad = $CampusClimate->BlueprintStatusDisplay();
+$resultbroad = $executiveSummary->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
-
 // Values for placeholders
-$resultexvalue = $CampusClimate->PlaceHolderValue();
+$resultexvalue = $executiveSummary->PlaceHolderValue();
 $rowsExValue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
-$resultbpstatus = $CampusClimate->GetStatus();
-
+$resultbpstatus = $executiveSummary->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 
 if (isset($_POST['savedraft'])) {
 
-    $message[0] = $CampusClimate->SaveDraft();
+    $message[0] = $executiveSummary->SaveDraft();
 
 }
 
 if (isset($_POST['submit_approve'])) {
+
+    // Also Save current changes & submit for approval.
+    $message[0] = $executiveSummary->SaveDraft();
     $message[0] = "Executive Summary";
-    $message[0].= $CampusClimate->SubmitApproval();
+    $message[0].= $executiveSummary->SubmitApproval();
 
 }
 
 if (isset($_POST['approve'])) {
     $message[0] = "Executive Summary";
-    $message[0].= $CampusClimate->Approve();
+    $message[0].= $executiveSummary->Approve();
 }
 
 if (isset($_POST['reject'])) {
     $message[0] = "Executive Summary";
-    $message[0].= $CampusClimate->Reject();
+    $message[0].= $executiveSummary->Reject();
 
 
 }
@@ -197,7 +193,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <textarea rows="5" cols="25" maxlength="725" id="introduction-input" name="introduction-input"
                                   type="textarea" class="form-control wordCount"
-                                  required><?php echo $initalize->mybr2nl($rowsExValue["INTRODUCTION"]); ?></textarea>
+                                  required><?php echo $executiveSummary->mybr2nl($rowsExValue["INTRODUCTION"]); ?></textarea>
                     </div>
                     <h3>Highlights</h3>
                     <div id="highlights" class="form-group form-indent">
@@ -210,39 +206,13 @@ require_once("../Resources/Includes/menu.php");
                         <textarea rows="5" cols="25" maxlength="525" id="highlights-input" name="highlights-input"
                                   type="textarea"
                                   class="form-control wordCount"
-                        ><?php echo $initalize->mybr2nl($rowsExValue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
+                        ><?php echo $executiveSummary->mybr2nl($rowsExValue["HIGHLIGHTS_NARRATIVE"]); ?></textarea>
                     </div>
 
                     <!--                      Edit Control-->
 
-                    <?php
+                    <?php require_once ("../Resources/Includes/control.php") ?>
 
-                    if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND
-                        ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean
-                         Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
-                        <button id="save" type="submit" name="savedraft" class="btn-primary  pull-right">
-                            Save Draft
-                        </button>
-                        <input type="button" id="cancelbtn" value="Cancel & Discard"
-                               class="btn-primary cancelbox pull-left">
-                        <button type="submit" id="submit_approve" name="submit_approve" class="btn-primary pull-right">
-                            Submit For Approval
-                        </button>
-
-                    <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-
-                        <button id="save" type="submit" name="savedraft" class="btn-primary  pull-right">
-                            Save Draft
-                        </button>
-                        <input type="button" id="cancelbtn" value="Cancel & Discard"
-                               class="btn-primary cancelbox pull-left">
-                        <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                            <input type="submit" id="approve" name="approve" value="Approve"
-                                   class="btn-primary pull-right">
-                            <input type="submit" id="reject" name="reject" value="Reject"
-                                   class="btn-primary pull-right">
-                        <?php endif;
-                    } ?>
                 </div>
             </div>
         </form>

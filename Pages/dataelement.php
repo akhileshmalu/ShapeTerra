@@ -5,11 +5,9 @@
  * This Page controls Data Element Add Screen.
  */
 
-require_once("../Resources/Includes/Initialize.php");
 require_once ("../Resources/Includes/DataDictionary.php");
-
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
+$DataDictionary = new DATADICTIONARY();
+$DataDictionary->checkSessionStatus();
 
 $message = array();
 $errorflag = 0;
@@ -24,42 +22,42 @@ $bptopicstring = null;
 
 $timebasisoutcome = array (
     'Academic Years only - final: Aug 16- Aug 15',
-	'Academic Years -final + Recent Fall -preliminary',
-	'Fall Terms only -final',
-	'Fiscal Year : July 1-June 30',
-	'Calendar Year',
-	'Not applicable',
-	'Other - explain in Interpretation & Usage Notes'
+    'Academic Years -final + Recent Fall -preliminary',
+    'Fall Terms only -final',
+    'Fiscal Year : July 1-June 30',
+    'Calendar Year',
+    'Not applicable',
+    'Other - explain in Interpretation & Usage Notes'
 );
 
 $datatypeset = array(
     'Text - simple (alpha, or alphanumeric)',
-	'Text - paragraph',
-	'Numeric',
-	'Date or Date-Time',
-	'Currency',
+    'Text - paragraph',
+    'Numeric',
+    'Date or Date-Time',
+    'Currency',
     'Unknown',
 );
 
 $respartyset = array(
     'Dean',
-	'Contributor (each College/School)',
-	'Human Resources',
-	'OIRAA',
-	'Provost Office',
-	'Reviewer',
-	'Team Lead',
-	'University Registrar',
-	'System Administrator',
-	'System Developer',
-	'System-generated Value'
+    'Contributor (each College/School)',
+    'Human Resources',
+    'OIRAA',
+    'Provost Office',
+    'Reviewer',
+    'Team Lead',
+    'University Registrar',
+    'System Administrator',
+    'System Developer',
+    'System-generated Value'
 );
 
 $valuemandset = array(
     'Required',
-	'Conditional',
-	'Optional',
-	'Unknown'
+    'Conditional',
+    'Optional',
+    'Unknown'
 );
 
 
@@ -71,7 +69,7 @@ $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
 
-$DataDictionary = new DATADICTIONARY();
+
 
 
 // SQL Existing Data Element Value
@@ -235,7 +233,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="basicmean" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['BASIC_MEANING']); ?></textarea>
                     </div>
 
                     <h3>User Instructions</h3>
@@ -246,7 +244,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="3" name="userinstr" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['USER_INSTRCTN']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['USER_INSTRCTN']); ?></textarea>
                     </div>
 
                     <h3>Time Basis for Outcome <span style="color: red"><sup>*</sup></span></h3>
@@ -312,7 +310,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="usage" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['INTERP_USAGE']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['INTERP_USAGE']); ?></textarea>
                     </div>
 
                     <button id="next-tab" type="button"
@@ -338,7 +336,7 @@ require_once("../Resources/Includes/menu.php");
                         </p>
                         <textarea rows="4" name="datasource" cols="25" wrap="hard"
                                   class="form-control"
-                                  required><?php echo $initalize->mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
+                                  required><?php echo $DataDictionary->mybr2nl($rowsdataelem['DATA_SOURCE']); ?></textarea>
                     </div>
 
                     <h3>Responsible Party <span
@@ -404,7 +402,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="datatrans" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['DATA_TRANSFORM']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['DATA_TRANSFORM']); ?></textarea>
                     </div>
 
                     <h3>Values Mandatory <span
@@ -437,7 +435,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="permitvalue" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['VALUES_PERMITTED']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['VALUES_PERMITTED']); ?></textarea>
                     </div>
 
                     <h3>Constraints on Values </h3>
@@ -454,7 +452,7 @@ require_once("../Resources/Includes/menu.php");
                             </small>
                         </p>
                         <textarea rows="4" name="constraint" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['VALUES_CONSTRAINTS']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['VALUES_CONSTRAINTS']); ?></textarea>
                     </div>
 
                     <h3>Notes / Misc </h3>
@@ -465,7 +463,7 @@ require_once("../Resources/Includes/menu.php");
                             <small>Any miscellaneous notes that do not fit elsewhere.</small>
                         </p>
                         <textarea rows="4" name="notes" cols="25" wrap="hard"
-                                  class="form-control"><?php echo $initalize->mybr2nl($rowsdataelem['NOTES_DATA_ELEMENT']); ?></textarea>
+                                  class="form-control"><?php echo $DataDictionary->mybr2nl($rowsdataelem['NOTES_DATA_ELEMENT']); ?></textarea>
                     </div>
 
                     <!--                    <button id="next-tab" type="button"-->

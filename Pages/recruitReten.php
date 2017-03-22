@@ -1,33 +1,22 @@
-<!-- ___________________________________________ -->
-<!-- ___________________________________________ -->
-<!-- Copied From collaborations page as template -->
-<!-- ___________________________________________ -->
-<!-- ___________________________________________ -->
 
 <?php
-
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
 
 /*
  * This Page controls Initiatives & Observations.
  */
-
-require_once("../Resources/Includes/Initialize.php");
-$initalize = new Initialize();
-$initalize->checkSessionStatus();
+require_once ("../Resources/Includes/BpContents.php");
+$recruitNretention = new RECRUITRETENTION();
+$recruitNretention->checkSessionStatus();
 
 $message = array();
 $errorflag = 0;
 $BackToDashboard = true;
 
-require_once ("../Resources/Includes/BpContents.php");
-
 $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
-$bpayname= $_SESSION['bpayname'];
+$bpayname = $_SESSION['bpayname'];
 
 
 if ($ouid == 4) {
@@ -36,39 +25,36 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-//Object for Campus Climate Table
-$BpContent = new COLLABORATION();
-
 //  Blueprint Status information on title box
-$resultbroad = $BpContent->BlueprintStatusDisplay();
+$resultbroad = $recruitNretention->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(4);
 
 
 // Values for placeholders
-$resultexvalue = $BpContent->PlaceHolderValue();
+$resultexvalue = $recruitNretention->PlaceHolderValue();
 $rowsExValue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
-$resultbpstatus = $BpContent->GetStatus();
+$resultbpstatus = $recruitNretention->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
 
 if (isset($_POST['savedraft'])) {
-    $message[0] = $BpContent->SaveDraft();
+    $message[0] = $recruitNretention->SaveDraft();
 }
 
 if(isset($_POST['submit_approve'])) {
-    $message[0] = "Collaboration";
-    $message[0].= $BpContent->SubmitApproval();
+    $message[0] = "Recruitment and retention";
+    $message[0].= $recruitNretention->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
-    $message[0] = "Collaboration";
-    $message[0].= $BpContent->Approve();
+    $message[0] = "Recruitment and retention";
+    $message[0].= $recruitNretention->Approve();
 }
 
 if(isset($_POST['reject'])) {
-    $message[0] = "Collaboration";
-    $message[0].= $BpContent->Reject();
+    $message[0] = "Recruitment and retention";
+    $message[0].= $recruitNretention->Reject();
 }
 
 
@@ -106,14 +92,14 @@ require_once("../Resources/Includes/menu.php");
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Recruit Retention</h1>
-        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST">
             
             <h3>Student Recruitment Efforts<span
                         style="color: red"><sup>*</sup></span></h3>
             <div class="form-group form-indent">
                 <p class="status">List and describe your unit's efforts at recruiting students into your programs.  Please provide specific actions. </p>
-                <textarea name="Recruitment" rows="6" cols="25" wrap="hard"
-                          class="form-control" required><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_EXTERNAL']); ?></textarea>
+                <textarea name="recruitment" rows="6" cols="25" wrap="hard"
+                          class="form-control" required><?php echo $recruitNretention->mybr2nl($rowsExValue['STUDENT_RECRUITMENT_EFFORTS']); ?></textarea>
             </div>
             <h3>Student Retention Efforts<span
                         style="color: red"><sup>*</sup></span></h3>
@@ -122,36 +108,13 @@ require_once("../Resources/Includes/menu.php");
                     <small>List and describe your unit's efforts at retaining the current students in your programs.  Please provide specific actions.
                     </small>
                 </p>
-                <textarea name="Retention" rows="6" cols="25" wrap="hard"
-                          class="form-control" required><?php echo $initalize->mybr2nl($rowsExValue['COLLAB_OTHER']); ?></textarea>
+                <textarea name="retention" rows="6" cols="25" wrap="hard"
+                          class="form-control" required><?php echo $recruitNretention->mybr2nl($rowsExValue['STUDENT_RETENTION_EFFORTS']); ?></textarea>
                 
             </div>
 
             <!--                      Edit Control-->
-
-            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
-                <button id="save" type="submit" name="savedraft"
-                        onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                    Save Draft
-                </button>
-                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                <button type="submit" id="submit_approve" name="submit_approve"
-                        class="btn-primary pull-right">Submit For Approval
-                </button>
-
-            <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-
-                <button id="save" type="submit" name="savedraft"
-                        class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                    Save Draft
-                </button>
-
-                <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                    <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                    <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                <?php endif;
-            } ?>
+            <?php require_once ("../Resources/Includes/control.php"); ?>
 
         </form>
     </div>
@@ -169,22 +132,6 @@ require_once("../Resources/Includes/footer.php");
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     });
-    function selectorfile(selected) {
-
-        var doc, image;
-        var filename = $(selected).val();
-        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
-        var allowedext = ['pdf'];
-
-        if (filename.length > 0) {
-            if (allowedext.indexOf(extention) !== -1) {
-                alert(filename.substr(12) + " is selected.");
-            } else {
-                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
-                $(selected).val('');
-            }
-        }
-    }
 </script>
 <script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>

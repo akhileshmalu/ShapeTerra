@@ -1,5 +1,6 @@
 <?php
 
+
 require_once("../Resources/Includes/Initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
@@ -178,17 +179,17 @@ require_once("../Resources/Includes/menu.php");
             </ul>
             <!-- Start the loop to pull from database here -->
             <?php while($rowsbpcontent = $resultbpcontent->fetch(2)) :
-                if ($rowsbpcontent['Sr_No'] == '4') { ?>
-            </div>
+            if ($rowsbpcontent['Sr_No'] == '4') { ?>
+        </div>
         <h1 class="box-title" style="margin-top: 50px;">Outcomes</h1>
-            <div id="list">
-                <ul class="list-nav">
-                    <li class="col-xs-4">Section</li>
-                    <li class="col-xs-3">Last Edited By</li>
-                    <li class="col-xs-2">Last Edited On</li>
-                    <li class="col-xs-3">Status</li>
-                </ul>
-        <?php } ?>
+        <div id="list">
+            <ul class="list-nav">
+                <li class="col-xs-4">Section</li>
+                <li class="col-xs-3">Last Edited By</li>
+                <li class="col-xs-2">Last Edited On</li>
+                <li class="col-xs-3">Status</li>
+            </ul>
+            <?php } ?>
             <a href="<?php echo $rowsbpcontent['CONTENT_LINK'].'?linkid='.$rowsbpcontent['ID_CONTENT'] ?>">
                 <ul class="items">
                     <li class="col-xs-4"><?php echo $rowsbpcontent['CONTENT_BRIEF_DESC'] ?></li>
@@ -198,7 +199,7 @@ require_once("../Resources/Includes/menu.php");
                 </ul>
             </a>
             <?php endwhile; ?>
-            </div>
+        </div>
 
 
         <!--
@@ -220,22 +221,22 @@ require_once("../Resources/Includes/menu.php");
 
         <form action="<?php echo "bphome.php?ayname=$bpayname&ou_abbrev=$ouabbrev&id=$bpid"; ?>" method="POST">
             <?php if ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-            <div>
-            <input type="submit" name="submit_bp" value="Submit BluePrint"
-                <?php
-                $sqlbpcontent .= " AND CONTENT_STATUS = 'Dean Approved' ;";
-                $resultcontent = $connection->prepare($sqlbpcontent);
-                $resultcontent->bindParam(':ouabbrev', $ouabbrev, 2);
-                $resultcontent->bindParam(':bpayname', $bpayname, 2);
-                $resultcontent->execute();
+                <div>
+                    <input type="submit" name="submit_bp" value="Submit BluePrint"
+                        <?php
+                        $sqlbpcontent .= " AND CONTENT_STATUS = 'Dean Approved' ;";
+                        $resultcontent = $connection->prepare($sqlbpcontent);
+                        $resultcontent->bindParam(':ouabbrev', $ouabbrev, 2);
+                        $resultcontent->bindParam(':bpayname', $bpayname, 2);
+                        $resultcontent->execute();
 
-                $numrow = $resultcontent->rowCount();
-                if ($numrow < $numbpcontent) { echo 'disabled'; } ?>
-                   class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-            </div>
+                        $numrow = $resultcontent->rowCount();
+                        if ($numrow < $numbpcontent) { echo 'disabled'; } ?>
+                           class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                </div>
             <?php } elseif ($_SESSION['login_role'] == 'provost' &&
                 $rowbroad['BROADCAST_STATUS'] == 'Submitted Draft') { ?>
-<!--                Provost Controls-->
+                <!--                Provost Controls-->
                 <div>
                     <input type="submit" name="approve" value="Approve BluePrint"
                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-left">

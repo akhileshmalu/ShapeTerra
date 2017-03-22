@@ -1,14 +1,8 @@
-<!-- ___________________________________________ -->
-<!-- ___________________________________________ -->
-<!-- Copied From faculty awards page as template -->
-<!-- ___________________________________________ -->
-<!-- ___________________________________________ -->
-
 <?php
 
 $pagename = "bphome";
 
-require_once ("../Resources/Includes/Data.php");
+require_once ("../Resources/Includes/data.php");
 require_once ("../Resources/Includes/BpContents.php");
 // This Page controls Faculty Awards Screen.
 
@@ -47,7 +41,7 @@ $rowsbpstatus = $resultbpstatus->fetch(2);
  * New award modal Input values : Award type
  */
 try {
-    $sqlaward = "select * from `AwardType` ; ";
+    $sqlaward = "SELECT * FROM `AwardType` WHERE ELIGIBLE_RECIPIENTS = 'Faculty' ; ";
     $resultaward = $BpContent->connection->prepare($sqlaward);
     $resultaward->execute();
 
@@ -79,54 +73,55 @@ if(isset($_POST['award_submit'])) {
     $recipFname = $_POST['recipFname'];
     $awardTitle = $_POST['awardTitle'];
     $awardOrg = $_POST['awardOrg'];
-    $dateAward = $_POST['dateAward'];
+    $dateNominated = $_POST['dateNominated'];
     $contentlink_id = $_GET['linkid'];
 
     try {
 
-      $sqlAcFacAward = " INSERT INTO `AC_FacultyAwards` (OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,
-      AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST, RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_AWARDED,
+      $sqlAcFacAward = " INSERT INTO `AC_FacultyNominations` (OU_ABBREV,OUTCOMES_AY,OUTCOMES_AUTHOR,MOD_TIMESTAMP,
+      AWARD_TYPE,AWARD_LOCATION,RECIPIENT_NAME_LAST, RECIPIENT_NAME_FIRST,AWARD_TITLE,AWARDING_ORG,DATE_NOMINATED,
       ID_SORT) VALUES (:ouabbrev, :bpayname, :author,:timeStampmod, :awardType,:awardLoc, :recipLname,
-      :recipFname, :awardTitle,:awardOrg,:dateAward,'0');";
+      :recipFname, :awardTitle,:awardOrg,:dateNominated,'0');";
 
       if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
           $sqlAcFacAward .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
-          MOD_TIMESTAMP = :timestampmod WHERE ID_CONTENT =:contentlink_id ;";
+          MOD_TIMESTAMP = :timeStampmod WHERE ID_CONTENT =:contentlink_id ;";
 
           $sqlAcFacAward .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
-      BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timestampmod WHERE ID_BROADCAST = :bpid ; ";
+      BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timeStampmod WHERE ID_BROADCAST = 
+      :bpid ; ";
       }
         $resultaward = $BpContent->connection->prepare($sqlAcFacAward);
 
         $resultaward->bindParam(":ouabbrev", $ouabbrev, PDO::PARAM_STR);
         $resultaward->bindParam(":bpayname", $bpayname, PDO::PARAM_STR);
         $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
-        $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
+        $resultaward->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
         $resultaward->bindParam(':awardType', $awardType, PDO::PARAM_STR );
         $resultaward->bindParam(':awardLoc', $awardLoc, PDO::PARAM_STR );
         $resultaward->bindParam(':recipLname', $recipLname, PDO::PARAM_STR );
         $resultaward->bindParam(':recipFname', $recipFname, PDO::PARAM_STR );
         $resultaward->bindParam(':awardTitle', $awardTitle, PDO::PARAM_STR );
         $resultaward->bindParam(':awardOrg', $awardOrg, PDO::PARAM_STR );
-        $resultaward->bindParam(':dateAward', $dateAward, PDO::PARAM_STR );
+        $resultaward->bindParam(':dateNominated', $dateNominated, PDO::PARAM_STR );
 
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
 
             $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
-            $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
+            $resultaward->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
             $resultaward->bindParam(':contentlink_id', $contentlink_id, PDO::PARAM_STR);
             $resultaward->bindParam(":author", $author, PDO::PARAM_STR);
-            $resultaward->bindParam(":timestampmod", $time, PDO::PARAM_STR);
+            $resultaward->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
             $resultaward->bindParam(':bpid', $bpid, PDO::PARAM_STR);
         }
 
         if($resultaward->execute()) {
             $Data = new Data($BpContent->connection);
             $Data->initOrderFacultyAwards();
-            $error[0] = "Award Added Succesfully.";
+            $error[0] = "Faculty nomination added successfully.";
 
         } else {
-            $error[0] = "Award Could not be Added.";
+            $error[0] = "Faculty nomination Could not be added.";
 
         }
     } catch (PDOException $e) {
@@ -139,21 +134,20 @@ if(isset($_POST['award_submit'])) {
 
 if(isset($_POST['submit_approve'])) {
 
-    $message[0] = "Faculty Awards";
+    $message[0] = "Faculty Nominations";
     $message[0].= $BpContent->SubmitApproval();
 }
 
 if(isset($_POST['approve'])) {
 
-    $message[0] = "Faculty Awards";
+    $message[0] = "Faculty Nominations";
     $message[0].= $BpContent->Approve();
 
 }
 
 if(isset($_POST['reject'])) {
 
-
-    $message[0] = "Faculty Awards";
+    $message[0] = "Faculty Nominations";
     $message[0].= $BpContent->Reject();
 }
 
@@ -215,18 +209,17 @@ require_once("../Resources/Includes/menu.php");
             <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
-
-<!--        <div class="col-xs-4">-->
-<!--            <a href="#" class="btn-primary">Preview</a>-->
-<!--        </div>-->
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <!--                        Reviewer Edit Control-->
 
-
-
-        <?php if ($_SESSION['login_right'] != 1): ?>
+        <?php if ($_SESSION['login_right'] != 1
+            AND (  $rowsbpstatus['CONTENT_STATUS']=='In Progress'
+                OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected'
+                OR $rowsbpstatus['CONTENT_STATUS']=='Not Started'
+            )
+        ): ?>
 
             <div id="addnew" class="">
                 <button id="add-mission" type="button" class="btn-secondary col-lg-3 col-md-7 col-sm-8 pull-right"
@@ -240,27 +233,13 @@ require_once("../Resources/Includes/menu.php");
                 <input type="text" class="form-control" class="col-xs-4" id="search-box-award" placeholder="Search"
                        aria-describedby="basic-addon1">
             </div>
-        <div id="taskboard" style="margin-top: 10px;">
-            <!--<table class="grid" action="taskboard/facultyajax.php" title="Faculty Awards">
-                <tr>
-                    <th col="AWARD_TYPE" width="100" type="text">Type</th>
-                    <th col="AWARD_TITLE" href="<?php echo "facultyawards_detail.php?linkid=".$contentlink_id."&award_id="?>{{columns.ID_FACULTY_AWARDS}}" width="300" type="text">Award</th>
-                    <th col="RECIPIENT_NAME" width="200" type="text">Recipient(s)</th>
-                                       <th col="" type="text">Actions</th>
-                </tr>
-            </table>-->
 
-            <h3 style="padding: 5px;">Research Awards</h3>
-            <div id="jsGridResearch"></div>
-            <h3 style="padding: 5px;">Service Awards</h3>
-            <div id="jsGridService"></div>
-            <h3 style="padding: 5px;">Teaching Awards</h3>
-            <div id="jsGridTeaching"></div>
-            <h3 style="padding: 5px;">Other Awards</h3>
-            <div id="jsGridOther"></div>
+            <div id="jsGrid"></div>
+            <div id="table-status"></div>
             <script>
 
               var status;
+
 
               $.extend({
                 getUrlVars: function(){
@@ -279,14 +258,14 @@ require_once("../Resources/Includes/menu.php");
                 }
               });
 
-              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Research", function(data) {
+              $.post("../Resources/Includes/data.php?functionNum=6", function(data) {
                 data = $.parseJSON(data);
-                $("#jsGridResearch").jsGrid({
+                $("#jsGrid").jsGrid({
                   width: "100%",
                   height: "400px",
                   sorting: true,
                   paging: true,
-
+                  
                   data: data,
                   rowClass: function(item, itemIndex) {
                     return "client-" + itemIndex;
@@ -300,16 +279,17 @@ require_once("../Resources/Includes/menu.php");
                     { name: "ID_SORT", title: "#", type: "text", width: "20px" },
                     { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
                     { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
-                      return $("<a>").attr("href", "../Pages/facultyawards_detail.php?award_id="+item.ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
+                      return $("<a>").attr("href", "../Pages/facultyNominations_detail.php?award_id="+item
+                              .ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
                     }, type:"text", width: "auto" },
                     { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
                       return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
                     }, type:"text", width: "auto"},
                     { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
-
+                    
                   ],
                   onRefreshed: function() {
-                    var $gridData = $("#jsGridResearch .jsgrid-grid-body tbody");
+                    var $gridData = $("#jsGrid .jsgrid-grid-body tbody");
                     $gridData.sortable({
                       update: function(e, ui) {
                         var clientIndexRegExp = /\s*client-(\d+)\s*/;
@@ -319,7 +299,7 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
 
                         })
                       }
@@ -327,160 +307,15 @@ require_once("../Resources/Includes/menu.php");
                   }
                 });
               });
-
-              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Service", function(data) {
-                data = $.parseJSON(data);
-                $("#jsGridService").jsGrid({
-                  width: "100%",
-                  height: "400px",
-                  sorting: true,
-                  paging: true,
-
-                  data: data,
-                  rowClass: function(item, itemIndex) {
-                    return "client-" + itemIndex;
-                  },
-                  controller: {
-                    loadData: function() {
-                      return db.clients.slice(0, 15);
-                    }
-                  },
-                  fields: [
-                    { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                    { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
-                    { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
-                      return $("<a>").attr("href", "../Pages/facultyawards_detail.php?award_id="+item.ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
-                    }, type:"text", width: "auto" },
-                    { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
-                      return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
-                    }, type:"text", width: "auto"},
-                    { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
-
-                  ],
-                  onRefreshed: function() {
-                    var $gridData = $("#jsGridService .jsgrid-grid-body tbody");
-                    $gridData.sortable({
-                      update: function(e, ui) {
-                        var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                        var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                            return clientIndexRegExp.exec(classes)[1];
-                        });
-                        var items = $.map($gridData.find("tr"), function(row) {
-                            return $(row).data("JSGridItem");
-                        });
-                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
-
-                        })
-                      }
-                    });
-                  }
-                });
-              });
-
-              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Teaching", function(data) {
-                data = $.parseJSON(data);
-                $("#jsGridTeaching").jsGrid({
-                  width: "100%",
-                  height: "400px",
-                  sorting: true,
-                  paging: true,
-
-                  data: data,
-                  rowClass: function(item, itemIndex) {
-                    return "client-" + itemIndex;
-                  },
-                  controller: {
-                    loadData: function() {
-                      return db.clients.slice(0, 15);
-                    }
-                  },
-                  fields: [
-                    { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                    { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
-                    { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
-                      return $("<a>").attr("href", "../Pages/facultyawards_detail.php?award_id="+item.ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
-                    }, type:"text", width: "auto" },
-                    { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
-                      return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
-                    }, type:"text", width: "auto"},
-                    { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
-
-                  ],
-                  onRefreshed: function() {
-                    var $gridData = $("#jsGridTeaching .jsgrid-grid-body tbody");
-                    $gridData.sortable({
-                      update: function(e, ui) {
-                        var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                        var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                            return clientIndexRegExp.exec(classes)[1];
-                        });
-                        var items = $.map($gridData.find("tr"), function(row) {
-                            return $(row).data("JSGridItem");
-                        });
-                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
-
-                        })
-                      }
-                    });
-                  }
-                });
-              });
-
-              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Other", function(data) {
-                data = $.parseJSON(data);
-                $("#jsGridOther").jsGrid({
-                  width: "100%",
-                  height: "400px",
-                  sorting: true,
-                  paging: true,
-
-                  data: data,
-                  rowClass: function(item, itemIndex) {
-                    return "client-" + itemIndex;
-                  },
-                  controller: {
-                    loadData: function() {
-                      return db.clients.slice(0, 15);
-                    }
-                  },
-                  fields: [
-                    { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                    { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
-                    { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
-                      return $("<a>").attr("href", "../Pages/facultyawards_detail.php?award_id="+item.ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
-                    }, type:"text", width: "auto" },
-                    { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
-                      return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
-                    }, type:"text", width: "auto"},
-                    { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
-
-                  ],
-                  onRefreshed: function() {
-                    var $gridData = $("#jsGridOther .jsgrid-grid-body tbody");
-                    $gridData.sortable({
-                      update: function(e, ui) {
-                        var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                        var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                            return clientIndexRegExp.exec(classes)[1];
-                        });
-                        var items = $.map($gridData.find("tr"), function(row) {
-                            return $(row).data("JSGridItem");
-                        });
-                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
-
-                        })
-                      }
-                    });
-                  }
-                });
-              });
-
             </script>
         </div>
-        <form action="<?php echo "facultyawards.php?linkid=".$contentlink_id ?>" method="POST" >
+        <form action="<?php echo $_SERVER["PHP_SELF"]."?linkid=".$contentlink_id ?>" method="POST" >
 
             <!--                        Edit Control-->
-            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+            <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' )
+                AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress'
+                    OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected'
+                    OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
 
                 <input type="submit" id="approve" name="submit_approve" value="Submit For Approval" class="btn-primary pull-right" >
 
@@ -548,7 +383,7 @@ require_once("../Resources/Includes/menu.php");
                      <label for="datetimepicker3">Date Nominated:<span
                         style="color: red"><sup>*</sup></span></label>
                     <div class='input-group date col-xs-3' id='datetimepicker3'>
-                        <input type='text' name="dateAward" class="form-control" required>
+                        <input type='text' name="dateNominated" class="form-control" required>
                         <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                         </span>
