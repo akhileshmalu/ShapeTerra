@@ -91,7 +91,7 @@ below headers for task board OpenJsGrid
 require_once("../Resources/Includes/menu.php");
 ?>
 
-<div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
+<div id="main-content" class="col-lg-10 col-xs-9">
     <div id="title-header">
         <h1 id="title" class="">Home</h1>
     </div>
@@ -122,20 +122,20 @@ require_once("../Resources/Includes/menu.php");
                 <a href="<?php echo 'bphome.php?ayname='.$rowsbpunit['BROADCAST_AY'].'&ou_abbrev='.
                     $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>">
                     <div id="" class="col-xs-10 col-xs-offset-1 card">
-                        <div id="ay-year" class="col-xs-3">
+                        <div id="ay-year" class="col-md-3 col-xs-4">
                             <h1><?php echo $rowsbpunit['BROADCAST_AY']; ?></h1>
                             <p><?php echo $rowsbpunit['BROADCAST_DESC']; ?></p>
                         </div>
-                        <div class="col-xs-4 text-center">
+                        <div class="col-md-4 col-xs-4 text-center">
                             <p>Last Edited By</p>
                             <h3><?php echo $rowsbpunit['LNAME'] . ", " . $rowsbpunit['FNAME']; ?></h3>
                         </div>
-                        <div class="col-xs-2 text-center">
+                        <div class="col-md-2 hidden-xs hidden-sm text-center">
                             <p>Last Edited on</p>
                             <h3><?php echo date("m/d/Y", strtotime($rowsbpunit['LastModified'])); ?></h3>
                         </div>
 
-                        <div class="col-xs-3 text-center">
+                        <div class="col-md-3 col-xs-4 text-center">
                             <p>Status</p>
                             <h3><?php echo $rowsbpunit['BROADCAST_STATUS_OTHERS']; ?></h3>
                         </div>
@@ -153,21 +153,21 @@ require_once("../Resources/Includes/menu.php");
 
                 <a href="#" onclick="return false;">
                     <div id="<?php echo $rowsdistinctay['BROADCAST_AY']; ?>"
-                         class="col-xs-11 col-xs-offset-0 card provost-card">
-                        <div class="col-xs-4">
+                         class="col-xs-12 col-xs-offset-0 card provost-card">
+                        <div class="col-xs-12">
                             <h1><?php echo $rowsdistinctay['BROADCAST_AY']; ?><span id="open" class="icon">T</span>
                                 <span id="close" class="icon hidden">W</span></h1>
                         </div>
                     </div>
                 </a>
                 <div id="<?php echo $rowsdistinctay['BROADCAST_AY'] ?>"
-                     class="col-xs-10 col-xs-offset-1 provost-dropdown noDisplay">
+                     class="col-xs-11 col-xs-offset-1 provost-dropdown noDisplay">
                     <div id="list">
                         <ul class="list-nav">
-                            <li class="col-xs-4">Section</li>
-                            <li class="col-xs-3">Last Edited By</li>
-                            <li class="col-xs-2">Last Edited On</li>
-                            <li class="col-xs-3">Status</li>
+                            <li class="col-xs-5 col-md-4">Section</li>
+                            <li class="col-md-3 col-xs-4">Last Edited By</li>
+                            <li class="col-lg-2 col-md-3 hidden-sm hidden-xs">Last Edited</li>
+                            <li class="col-lg-3 col-md-2 col-xs-2">Status</li>
                         </ul>
                         <?php
                         try
@@ -189,12 +189,12 @@ require_once("../Resources/Includes/menu.php");
                             <a href="<?php echo '../Pages/bphome.php?ayname=' . $rowsbpunit['BROADCAST_AY'] .
                                 '&ou_abbrev=' . $rowsbpunit['OU_ABBREV'] . '&id=' . $rowsbpunit['ID_BROADCAST']; ?>">
                                 <ul class="items">
-                                    <li class="col-xs-4"><?php echo $rowsbpunit['BROADCAST_DESC']; ?></li>
-                                    <li class="col-xs-3">
+                                    <li class="col-md-4 col-xs-5"><?php echo $rowsbpunit['BROADCAST_DESC']; ?></li>
+                                    <li class="col-md-3 col-xs-4">
                                         <?php echo $rowsbpunit['LNAME'].", ".$rowsbpunit['FNAME']; ?></li>
-                                    <li class="col-xs-2">
+                                    <li class="col-lg-2 col-md-3 hidden-sm hidden-xs">
                                         <?php echo date("m/d/Y", strtotime($rowsbpunit['LastModified']));?></li>
-                                    <li class="col-xs-3"><?php echo $rowsbpunit['BROADCAST_STATUS']; ?></li>
+                                    <li class="col-lg-3 col-md-2 col-xs-2"><?php echo $rowsbpunit['BROADCAST_STATUS']; ?></li>
                                 </ul>
                             </a>
                         <?php } ?>

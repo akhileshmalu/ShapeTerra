@@ -352,6 +352,7 @@ require_once("../Resources/Includes/menu.php");
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.css"/>
 <link rel="stylesheet" href="taskboard/bootstrap/css/bootstrap-responsive.min.css"/>
 
+
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
 <!--<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>-->
 
@@ -524,7 +525,7 @@ require_once("../Resources/Includes/menu.php");
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
-<script src="../Resources/Library/js/alert.js"></script>
+
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 <script type="text/javascript">
     $(function () {
