@@ -13,6 +13,7 @@
 <!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script type="text/javascript" src="../Resources/Library/js/alert.js"></script>
   <link rel="stylesheet" href="../Resources/Library/css/bootstrap.css">
   <link rel="stylesheet" href="../Resources/Library/css/bootstrap-theme.css">
   <link rel="stylesheet" href="../Resources/Library/css/animate.css">

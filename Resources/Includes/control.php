@@ -2,16 +2,22 @@
 
 // For Contributors & Team Leads
 if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') AND ($rowsbpstatus['CONTENT_STATUS'] == 'In Progress' OR $rowsbpstatus['CONTENT_STATUS'] == 'Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS'] == 'Not Started')) { ?>
-    <button id="save" type="submit" name="savedraft"
-            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-        Save Draft
-    </button>
+
     <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
+
     <button type="submit" id="submit_approve" name="submit_approve"
         <?php if ($rowsbpstatus['CONTENT_STATUS'] == 'Not Started') echo 'disabled'; ?>
-            class="btn-primary pull-right">Submit For Approval
+            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">Submit For Approval
     </button>
+
+    <button id="save" type="submit" name="savedraft"
+            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+            class="btn-secondary col-lg-3 col-md-7 col-sm-8">
+        Save Draft
+    </button>
+
+
+    
 
 
 <?php
