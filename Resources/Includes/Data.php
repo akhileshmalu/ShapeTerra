@@ -143,7 +143,7 @@ Class Data
 
       while ($data = $getNewOrder->fetch()) {
 
-        if ($data["ID_SORT"] == 0 || $data["ID_SORT"] == NULL) {
+        if ($data["ID_SORT"] == 0 || $data["ID_SORT"] == NULL || $data["ID_SORT"] == "") {
 
           $updateItem = $this->connection->prepare("UPDATE `BP_UnitGoals` SET ID_SORT = ? WHERE ID_UNIT_GOAL = ? AND GOAL_VIEWPOINT = ?");
           $updateItem->bindParam(1, $rowsGetCurrentOrder, PDO::PARAM_INT);
@@ -323,7 +323,7 @@ Class Data
 
       while ($data = $getNewOrder->fetch()) {
 
-        if ($data["ID_SORT"] == 0 || $data["ID_SORT"] == NULL) {
+        if ($data["ID_SORT"] == 0 || $data["ID_SORT"] == NULL || $data["ID_SORT"] == "") {
 
           $rowsGetCurrentOrder++;
 

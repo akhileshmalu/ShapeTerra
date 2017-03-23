@@ -20,6 +20,15 @@
   }
 
   switch ($function) {
+    case 1:
+      $ChartVisualizations->chartEnrollementStudentByYear($selectedYear);
+      break;
+    case 2:
+      $ChartVisualizations->chartDiversityStudentByYear($selectedYear);
+      break;
+    case 3:
+      $ChartVisualizations->chartDiversityFacultyByYear($selectedYear);
+      break;
     case 5:
       $ChartVisualizations->exportToPng($_POST["imagebase"],$_POST["name"]);
       break;
@@ -881,16 +890,16 @@
               <table>
                 <tr>
                   <td>
-                    <h5 class='text-center'>2014 Undergraduate Gender</h5>
-                    <canvas id='underDiversityGender2014' width='200' height='200'></canvas>
+                    <h5 class='text-center'>2016 Undergraduate Gender</h5>
+                    <canvas id='underDiversityGender2016' width='200' height='200'></canvas>
                   </td>
                   <td>
                     <h5 class='text-center'>2015 Undergraduate Gender</h5>
                     <canvas id='underDiversityGender2015' width='200' height='200'></canvas>
                   </td>
                   <td>
-                    <h5 class='text-center'>2016 Undergraduate Gender</h5>
-                    <canvas id='underDiversityGender2016' width='200' height='200'></canvas>
+                    <h5 class='text-center'>2014 Undergraduate Gender</h5>
+                    <canvas id='underDiversityGender2014' width='200' height='200'></canvas>
                   </td>
                 </tr>
               </table>
@@ -1006,16 +1015,16 @@
             <table>
               <tr>
                 <td>
-                  <h5 class='text-center'>2014 Graduate Gender</h5>
-                  <canvas id='gradGender2014' width='200' height='200'></canvas>
+                  <h5 class='text-center'>2016 Graduate Gender</h5>
+                  <canvas id='gradGender2016' width='200' height='200'></canvas>
                 </td>
                 <td>
                   <h5 class='text-center'>2015 Graduate Gender</h5>
                   <canvas id='gradGender2015' width='200' height='200'></canvas>
                 </td>
                 <td>
-                  <h5 class='text-center'>2016 Graduate Gender</h5>
-                  <canvas id='gradGender2016' width='200' height='200'></canvas>
+                  <h5 class='text-center'>2014 Graduate Gender</h5>
+                  <canvas id='gradGender2014' width='200' height='200'></canvas>
                 </td>
               </tr>
             </table>
@@ -1124,7 +1133,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-under-2014-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-".$this->college."', functionNum: '5'});
                 }
               }
             }
@@ -1155,7 +1164,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-under-2015-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-".$this->college."', functionNum: '5'});
                 }
               }
             }
@@ -1186,7 +1195,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-under-2016-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-".$this->college."', functionNum: '5'});
                 }
               }
             }
@@ -1308,7 +1317,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-under-2014-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-".$this->college."', functionNum: '5'});
                 }
               }
             }
@@ -1339,7 +1348,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-under-2015-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-".$this->college."', functionNum: '5'});
                 }
               }
             }
@@ -1370,7 +1379,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-under-2016-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-".$this->college."', functionNum: '5'});
                 }
               }
             }
@@ -1974,16 +1983,16 @@
               <table>
                 <tr>
                   <td>
-                    <h5 class='text-center'>2014 Undergraduate Gender</h5>
-                    <canvas id='facultyDiversityGender2014' width='200' height='200'></canvas>
+                    <h5 class='text-center'>2016 Undergraduate Gender</h5>
+                    <canvas id='facultyDiversityGender2016' width='200' height='200'></canvas>
                   </td>
                   <td>
                     <h5 class='text-center'>2015 Undergraduate Gender</h5>
                     <canvas id='facultyDiversityGender2015' width='200' height='200'></canvas>
                   </td>
                   <td>
-                    <h5 class='text-center'>2016 Undergraduate Gender</h5>
-                    <canvas id='facultyDiversityGender2016' width='200' height='200'></canvas>
+                    <h5 class='text-center'>2014 Undergraduate Gender</h5>
+                    <canvas id='facultyDiversityGender2014' width='200' height='200'></canvas>
                   </td>
                 </tr>
               </table>
@@ -2004,55 +2013,55 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Undergrad American Indian/Alaskian Native</td>
+                      <td>American Indian/Alaskian Native</td>
                       <td>$alaskaNative20142015</td>
                       <td>$alaskaNative20152016</td>
                       <td>$alaskaNative20162017</td>
                     </tr>
                     <tr>
-                      <td>Undergrad Asian</td>
+                      <td>Asian</td>
                       <td>$asian20142015</td>
                       <td>$asian20152016</td>
                       <td>$asian20162017</td>
                     </tr>
                     <tr>
-                      <td>Undergrad Black</td>
+                      <td>Black</td>
                       <td>$black20142015</td>
                       <td>$black20152016</td>
                       <td>$black20162017</td>
                     </tr>
                     <tr>
-                      <td>Undergrad Hispanic</td>
+                      <td>Hispanic</td>
                       <td>$hispanic20142015</td>
                       <td>$hispanic20152016</td>
                       <td>$hispanic20162017</td>
                     </tr>
                     <tr>
-                      <td>Undergrad Native Hawaiian or Other Pacific Islander</td>
+                      <td>Native Hawaiian or Other Pacific Islander</td>
                       <td>$hawaiiPacificIsland20142015</td>
                       <td>$hawaiiPacificIsland20152016</td>
                       <td>$hawaiiPacificIsland20162017</td>
                     </tr>
                     <tr>
-                      <td>Undergrad Alien</td>
+                      <td>Alien</td>
                       <td>$alien20142015</td>
                       <td>$alien20142015</td>
                       <td>$alien20142015</td>
                     </tr>
                     <tr>
-                      <td>Undergrad Two Or More Races</td>
+                      <td>Two Or More Races</td>
                       <td>$twoOrMore20142015</td>
                       <td>$twoOrMore20152016</td>
                       <td>$twoOrMore20162017</td>
                     </tr>
                     <tr>
-                      <td>Undergrad Unkown Race</td>
+                      <td>Unkown Race</td>
                       <td>$unkown20142015</td>
                       <td>$unkown20142015</td>
                       <td>$unkown20142015</td>
                     </tr>
                     <tr>
-                      <td>Undergrad White</td>
+                      <td>White</td>
                       <td>$white20142015</td>
                       <td>$white20152016</td>
                       <td>$white20162017</td>
@@ -2092,7 +2101,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-under-2014-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-".$this->college."', functionNum: '5'});
                 }
               }
             }
@@ -2123,7 +2132,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-under-2015-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-".$this->college."', functionNum: '5'});
                 }
               }
             }
@@ -2154,7 +2163,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: chart7.toBase64Image(), name: 'student-diversity-gender-under-2016-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-".$this->college."', functionNum: '5'});
                 }
               }
             }
@@ -2547,17 +2556,121 @@
       $currentYear = "2010";
 
       $getStudentOutcomesGradRate2010 = $this->connection->prepare("SELECT * FROM `IR_AC_GraduationRate` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
-      $getStudentOutcomesRetention2010->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2010->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2010->execute();
-      $rowsGetStudentOutcomesRetention2010 = $getStudentOutcomesRetention2012->rowCount();
+      $getStudentOutcomesGradRate2010->bindParam(1,$currentYear,PDO::PARAM_STR);
+      $getStudentOutcomesGradRate2010->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getStudentOutcomesGradRate2010->execute();
+      $rowsGetStudentOutcomesGradRate2010 = $getStudentOutcomesGradRate2010->rowCount();
 
-      if ($rowsGetStudentOutcomesRetention2010){
+      if ($rowsGetStudentOutcomesGradRate2010){
 
-        while($data = $getStudentOutcomesRetention2010->fetch()){
+        while($data = $getStudentOutcomesGradRate2010->fetch()){
 
-          $graduationRateFirstYear2010 = $data["RETENTION_FIRST_YR"];
-          $graduationRateSecondYear2010 = $data["RETENTION_SECOND_YR"];
+          $graduationRateFourYear2010 = $data["GRADUATION_RATE_4YR"];
+          $graduationRateFiveYear2010 = $data["GRADUATION_RATE_5YR"];
+          $graduationRateSixYear2010 = $data["GRADUATION_RATE_6YR"];
+
+        }
+
+      }
+
+      $currentYear = "2009";
+
+      $getStudentOutcomesGradRate2009 = $this->connection->prepare("SELECT * FROM `IR_AC_GraduationRate` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
+      $getStudentOutcomesGradRate2009->bindParam(1,$currentYear,PDO::PARAM_STR);
+      $getStudentOutcomesGradRate2009->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getStudentOutcomesGradRate2009->execute();
+      $rowsGetStudentOutcomesGradRate2009 = $getStudentOutcomesGradRate2009->rowCount();
+
+      if ($rowsGetStudentOutcomesGradRate2009){
+
+        while($data = $getStudentOutcomesGradRate2009->fetch()){
+
+          $graduationRateFourYear2009 = $data["GRADUATION_RATE_4YR"];
+          $graduationRateFiveYear2009 = $data["GRADUATION_RATE_5YR"];
+          $graduationRateSixYear2009 = $data["GRADUATION_RATE_6YR"];
+
+        }
+
+      }
+
+      $currentYear = "2008";
+
+      $getStudentOutcomesGradRate2008 = $this->connection->prepare("SELECT * FROM `IR_AC_GraduationRate` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
+      $getStudentOutcomesGradRate2008->bindParam(1,$currentYear,PDO::PARAM_STR);
+      $getStudentOutcomesGradRate2008->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getStudentOutcomesGradRate2008->execute();
+      $rowsGetStudentOutcomesGradRate2008 = $getStudentOutcomesGradRate2008->rowCount();
+
+      if ($rowsGetStudentOutcomesGradRate2008){
+
+        while($data = $getStudentOutcomesGradRate2008->fetch()){
+
+          $graduationRateFourYear2008 = $data["GRADUATION_RATE_4YR"];
+          $graduationRateFiveYear2008 = $data["GRADUATION_RATE_5YR"];
+          $graduationRateSixYear2008 = $data["GRADUATION_RATE_6YR"];
+
+        }
+
+      }
+
+      $currentYear = "AY2015-2016";
+
+      $getDegreesAwarded20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_DegreesAwarded` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getDegreesAwarded20152016->bindParam(1,$currentYear,PDO::PARAM_STR);
+      $getDegreesAwarded20152016->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getDegreesAwarded20152016->execute();
+      $rowsGetDegreesAwarded20152016 = $getDegreesAwarded20152016->rowCount();
+
+      if ($rowsGetDegreesAwarded20152016){
+
+        while($data = $getDegreesAwarded20152016->fetch()){
+
+          $degreesAwardedBachelorsYear20152016 = $data["DEGREES_AWRD_BACHELORS"];
+          $degreesAwardedMastersYear20152016 = $data["DEGREES_AWRD_MASTERS"];
+          $degreesAwardedDoctoralYear20152016 = $data["DEGREES_AWRD_DOCTORAL"];
+          $degreesAwardedCertYear20152016 = $data["DEGREES_AWRD_GRAD_CERT"];
+
+        }
+
+      }
+
+      $currentYear = "AY2014-2015";
+
+      $getDegreesAwarded20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_DegreesAwarded` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getDegreesAwarded20142015->bindParam(1,$currentYear,PDO::PARAM_STR);
+      $getDegreesAwarded20142015->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getDegreesAwarded20142015->execute();
+      $rowsGetDegreesAwarded20142015 = $getDegreesAwarded20142015->rowCount();
+
+      if ($rowsGetDegreesAwarded20142015){
+
+        while($data = $getDegreesAwarded20142015->fetch()){
+
+          $degreesAwardedBachelorsYear20142015 = $data["DEGREES_AWRD_BACHELORS"];
+          $degreesAwardedMastersYear20142015 = $data["DEGREES_AWRD_MASTERS"];
+          $degreesAwardedDoctoralYear20142015 = $data["DEGREES_AWRD_DOCTORAL"];
+          $degreesAwardedCertYear20142015 = $data["DEGREES_AWRD_GRAD_CERT"];
+
+        }
+
+      }
+
+      $currentYear = "AY2013-2014";
+
+      $getDegreesAwarded20132014 = $this->connection->prepare("SELECT * FROM `IR_AC_DegreesAwarded` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getDegreesAwarded20132014->bindParam(1,$currentYear,PDO::PARAM_STR);
+      $getDegreesAwarded20132014->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getDegreesAwarded20132014->execute();
+      $rowsGetDegreesAwarded20132014 = $getDegreesAwarded20132014->rowCount();
+
+      if ($rowsGetDegreesAwarded20132014){
+
+        while($data = $getDegreesAwarded20132014->fetch()){
+
+          $degreesAwardedBachelorsYear20132014 = $data["DEGREES_AWRD_BACHELORS"];
+          $degreesAwardedMastersYear20132014 = $data["DEGREES_AWRD_MASTERS"];
+          $degreesAwardedDoctoralYear20132014 = $data["DEGREES_AWRD_DOCTORAL"];
+          $degreesAwardedCertYear20132014 = $data["DEGREES_AWRD_GRAD_CERT"];
 
         }
 
@@ -2565,7 +2678,7 @@
 
       echo "
         <div class='container-fluid'>
-          <h2 class='text-center'>".$this->college." Faculty Gender Data</h2>
+          <h2 class='text-center'>".$this->college." Student Retention Rates Data</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -2589,9 +2702,10 @@
                     </tr>
                     <tr>
                       <td>Second Year</td>
-                      <td>$male20142015</td>
-                      <td>$male20152016</td>
-                      <td>$male20162017</td>
+                      <td>$retentionSecondYear2012</td>
+                      <td>$retentionSecondYear2013</td>
+                      <td>$retentionSecondYear2014</td>
+                      <td>$retentionSecondYear2015</td>
                     </tr>
                   </tbody>
                 </table>
@@ -2601,13 +2715,118 @@
               <table>
                 <tr>
                   <td>
-                    <canvas id='retentionRatesFirstYear' width='200' height='200'></canvas>
+                    <h5 class='text-center'>First Year</h5>
+                    <canvas id='retentionRatesFirstYear' height='200'></canvas>
                   </td>
                   <td>
-                    <canvas id='retentionRatesSecondYear' width='200' height='200'></canvas>
+                    <h5 class='text-center'>Second Year</h5>
+                    <canvas id='retentionRatesSecondYear' height='200'></canvas>
                   </td>
                 </tr>
               </table>
+            </div>
+          </div>
+          <h2 class='text-center'>".$this->college." Student Graduation Rates Data</h2>
+          <div class='row'>
+            <div class='col-md-4'>
+              <div class='table-responsive'>
+                <table class='table table-condensed'>
+                  <thead>
+                    <tr>
+                      <th>Data Year</th>
+                      <th>2010</th>
+                      <th>2009</th>
+                      <th>2008</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>4 Year</td>
+                      <td>$graduationRateFourYear2010</td>
+                      <td>$graduationRateFourYear2009</td>
+                      <td>$graduationRateFourYear2008</td>
+                    </tr>
+                    <tr>
+                      <td>5 Year</td>
+                      <td>$graduationRateFiveYear2010</td>
+                      <td>$graduationRateFiveYear2009</td>
+                      <td>$graduationRateFiveYear2008</td>
+                    </tr>
+                    <tr>
+                      <td>6 Year</td>
+                      <td>$graduationRateSixYear2010</td>
+                      <td>$graduationRateSixYear2009</td>
+                      <td>$graduationRateSixYear2008</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class='col-md-8'>
+              <table>
+                <tr>
+                  <td>
+                    <h5 class='text-center'>2010</h5>
+                    <canvas id='graduationRate2010' height='200'></canvas>
+                  </td>
+                  <td>
+                    <h5 class='text-center'>2009</h5>
+                    <canvas id='graduationRate2009' height='200'></canvas>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <h5 class='text-center'>2008</h5>
+                    <canvas id='graduationRate2008' height='200'></canvas>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <h2 class='text-center'>".$this->college." Student Degrees Awarded Data</h2>
+          <div class='row'>
+            <div class='col-md-6'>
+              <div class='table-responsive'>
+                <table class='table table-condensed'>
+                  <thead>
+                    <tr>
+                      <th>Data Year</th>
+                      <th>2015-2016</th>
+                      <th>2014-2015</th>
+                      <th>2013-2014</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Bachelors</td>
+                      <td>$degreesAwardedBachelorsYear20152016</td>
+                      <td>$degreesAwardedBachelorsYear20142015</td>
+                      <td>$degreesAwardedBachelorsYear20132014</td>
+                    </tr>
+                    <tr>
+                      <td>Masters</td>
+                      <td>$degreesAwardedMastersYear20152016</td>
+                      <td>$degreesAwardedMastersYear20142015</td>
+                      <td>$degreesAwardedMastersYear20132014</td>
+                    </tr>
+                    <tr>
+                      <td>Doctoral</td>
+                      <td>$degreesAwardedDoctoralYear20152016</td>
+                      <td>$degreesAwardedDoctoralYear20142015</td>
+                      <td>$degreesAwardedDoctoralYear20132014</td>
+                    </tr>
+                    <tr>
+                      <td>Graduate Certificate</td>
+                      <td>$degreesAwardedCertYear20152016</td>
+                      <td>$degreesAwardedCertYear20142015</td>
+                      <td>$degreesAwardedCertYear20132014</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class='col-md-6'>
+              <canvas id='degreesAwarded' height='200'></canvas>
             </div>
           </div>
         </div>
@@ -2660,6 +2879,143 @@
                 display: false
               }
             }
+          });
+
+          var ctx = document.getElementById('graduationRate2010');
+          var graduationRate2010 = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['4 Year','5 Year','6 Year'],
+              datasets: [{
+                data: [$graduationRateFourYear2010,$graduationRateFiveYear2010,$graduationRateSixYear2010],
+                backgroundColor: [
+                  'rgba(116, 0, 11, 0.5)',
+                  'rgba(43, 0, 4, 0.5)',
+                  'rgba(33, 120, 108, 0.5)',
+                ]
+              }]
+            },
+            options: {
+              responsive: false,
+              legend: {
+                display: false
+              }
+            }
+          });
+
+          var ctx = document.getElementById('graduationRate2009');
+          var graduationRate2009 = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['4 Year','5 Year','6 Year'],
+              datasets: [{
+                label: 'Second Year',
+                data: [$graduationRateFourYear2009,$graduationRateFiveYear2009,$graduationRateSixYear2009],
+                backgroundColor: [
+                  'rgba(116, 0, 11, 0.5)',
+                  'rgba(43, 0, 4, 0.5)',
+                  'rgba(33, 120, 108, 0.5)'
+                ]
+              }]
+            },
+            options: {
+              responsive: false,
+              legend: {
+                display: false
+              }
+            }
+          });
+
+          var ctx = document.getElementById('graduationRate2008');
+          var graduationRate2008 = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['4 Year','5 Year','6 Year'],
+              datasets: [{
+                label: 'Second Year',
+                data: [$graduationRateFourYear2008,$graduationRateFiveYear2008,$graduationRateSixYear2008],
+                backgroundColor: [
+                  'rgba(116, 0, 11, 0.5)',
+                  'rgba(43, 0, 4, 0.5)',
+                  'rgba(33, 120, 108, 0.5)'
+                ]
+              }]
+            },
+            options: {
+              responsive: false,
+              legend: {
+                display: false
+              }
+            }
+          });
+
+          var ctx = document.getElementById('degreesAwarded');
+          var degreesAwarded = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+              labels: ['2015-2016', '2014-2015', '2013-2014'],
+              datasets: [{
+                data: [$degreesAwardedBachelorsYear20152016,$degreesAwardedBachelorsYear20142015,$degreesAwardedBachelorsYear20132014],
+                backgroundColor: 'rgba(116, 0, 11, 0.5)',
+                label: 'Bachelors'
+              },{
+                data: [$degreesAwardedMastersYear20152016,$degreesAwardedMastersYear20142015,$degreesAwardedMastersYear20132014],
+                backgroundColor: 'rgba(120, 50, 0, 0.5)',
+                label: 'Masters'
+              },{
+                data: [$degreesAwardedDoctoralYear20152016,$degreesAwardedDoctoralYear20142015,$degreesAwardedDoctoralYear20132014],
+                backgroundColor: 'rgba(17, 100, 0, 0.5)',
+                label: 'Doctoral'
+              },{
+                data: [$degreesAwardedCertYear20152016,$degreesAwardedCertYear20142015,$degreesAwardedCertYear20132014],
+                backgroundColor: 'rgba(17, 100, 0, 0.5)',
+                label: 'Graduate Certification'
+              }],
+              borderWidth: 1
+          },
+          options: {
+            responsive: true,
+            legend: {
+              display: true
+            },
+            animation: {
+              onComplete: function(){
+                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-".$this->college."', functionNum: '5'});
+              }
+            },
+            scaleLabel:{
+                display:false
+            },
+            scales: {
+              xAxes: [{
+                ticks: {
+                    beginAtZero:true,
+                    fontSize:11
+                },
+                scaleLabel:{
+                    display:false
+                },
+                gridLines: {
+                },
+                stacked: true
+              }],
+              yAxes: [{
+                stacked: true,
+                gridLines: {
+                    display:false,
+                    color: '#fff',
+                    zeroLineColor: '#fff',
+                    zeroLineWidth: 0
+                },
+                ticks: {
+                  fontSize:11
+                },
+              }]
+            },
+            hover :{
+                animationDuration:0
+            }
+          }
           });
         </script>
       ";
