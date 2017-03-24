@@ -195,17 +195,23 @@
     {
 
       $this->introPage();
+      $this->spacerPage();
       $this->executiveSummaryPage();
       $this->tableOfContentsPage();
       $this->foundationPage();
       $this->goalsLookingBackPage();
       $this->goalsRealTimePage();
       $this->goalsLookingAheadPage();
+      $this->academicPrograms();
+      $this->facultyPopulation();
+      $this->facultyInformation();
+      $this->teaching();
+      $this->studentRecruitingRetention();
+      $this->studentEnrollmentPage();
       $this->facultyAwardsPage();
       $this->serviceAwardsPage();
       $this->teachingAwardsPage();
       $this->collaborationsPage();
-      $this->studentEnrollmentPage();
       $this->getUnivLinkedGoal();
       $this->getGoalOutcomes();
       $this->pdf->Output("report_final.pdf","I");
@@ -219,7 +225,7 @@
 
         //header
         $this->pdf->setTextColor(115,0,10);
-        $this->pdf->SetFont('Arial','B',48);
+        $this->pdf->SetFont('Arial','B',60);
         $this->pdf->Cell(80);
         $this->pdf->Cell(20,10,"Outcomes",0,0,'C');
         $this->pdf->Ln(20);
@@ -228,8 +234,8 @@
 
         //current date
         $this->pdf->Ln(20);
-        $this->pdf->setTextColor(0,0,0);
-        $this->pdf->SetFont('Arial','B',26);
+        $this->pdf->setTextColor(0,0,240);
+        $this->pdf->SetFont('Arial','',35);
         date_default_timezone_set('US/Eastern');
         $currentDate = date("m-d-Y");
         $this->pdf->Cell(80);
@@ -243,10 +249,12 @@
         $ouName = $data["OU_NAME"];
 
         //displaying full unit name
+        $this->pdf->Ln(40);
+        $this->pdf->setTextColor(0,0,0);
         $this->pdf->SetWidths(array(250));
         $this->pdf->SetDrawColor(255,255,255);
-        $this->pdf->setX(15);
-        $this->pdf->Row(array($this->pdf->Write(15,$ouName)));
+        $mid_x = $this->pdf->w / 2;
+        $this->pdf->Text($mid_x - ($this->pdf->GetStringWidth($ouName) / 2), 102, $ouName);
 
         //displaying year that has been selected
         $this->pdf->Ln(20);
@@ -255,9 +263,28 @@
         $this->pdf->Cell(80);
         $this->pdf->Cell(20,10,$this->selectedYear,0,0,'C');
 
-        //displaying logo that has been saved?
-        $this->pdf->Ln(50);
-        $this->pdf->Image('fpdfimages/logo.png',60,250,100);
+        $this->pdf->Ln(100);
+        $this->pdf->SetFont('Arial','B',70);
+        $this->pdf->setTextColor(115,0,10);
+        $this->pdf->SetDrawColor(255,255,255);
+        $this->pdf->Cell(80);
+        $this->pdf->Cell(30,10,"Blueprint for",0,0,'C');
+        $this->pdf->Ln(25);
+        $this->pdf->Cell(80);
+        $this->pdf->Cell(30,10,"Academic",0,0,'C');
+        $this->pdf->Ln(25);
+        $this->pdf->Cell(80);
+        $this->pdf->Cell(30,10,"Excellence",0,0,'C');
+
+    }
+
+    public function spacerPage()
+    {
+
+      //displaying logo th at has been saved?
+      $this->pdf->AddPage();
+      $this->pdf->Ln(50);
+      $this->pdf->Image('fpdfimages/logo.png',55,250,100);
 
     }
 
@@ -274,6 +301,12 @@
       $this->pdf->Ln();
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
+
+      $getOUName = $this->connection->prepare("SELECT * FROM `Hierarchy` WHERE OU_ABBREV = ?");
+      $getOUName->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getOUName->execute();
+      $data = $getOUName->fetch();
+      $ouName = $data["OU_NAME"];
 
       //sub header
       $this->pdf->Ln(10);
@@ -316,6 +349,113 @@
 
       }
 
+      switch ($this->ouAbbrev) {
+        case "ASPH":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "CAS":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "CEC":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "CIC":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "COE":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "CON":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "COSW":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "DMSB":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "HRSM":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "LAW":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "MUSC":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "PHAR":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "SCHC":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        case "SOM-C":
+          $deanImage = "fpdfimages/";
+          $unitImage = "fpdfimages/";
+          $signatureImage = "fpdfimages/";
+          $deanName = "";
+          $deanTitle = "";
+          break;
+        default:
+          break;
+      }
+
+      $this->pdf->Ln(146);
+      $this->pdf->setFont("Arial","",11);
+      $this->pdf->setTextColor(0,0,0);
+      $this->pdf->Write(5,"Dean Name, Dean Title");
       $this->pdf->Image('fpdfimages/dean.jpg',140,220,50);
       $this->pdf->Image('fpdfimages/cas.jpg',10,260,85);
       $this->pdf->Image('fpdfimages/signature.png',10,220,65);
@@ -435,11 +575,9 @@
       $this->pdf->setTextColor(0,0,0);
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Mission Statement");
-      $this->pdf->setX(15);
       $this->pdf->SetFont('Arial','',11);
       $this->pdf->Ln(5);
-      $this->pdf->Write(5,$this->initalize->mybr2nl($data["MISSION_STATEMENT"]));
-      $this->pdf->setX(30);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["MISSION_STATEMENT"]));
       $this->pdf->Ln(5);
       $this->pdf->Write(5,$data["MISSION_DATE_UPDATED"]);
 
@@ -448,11 +586,9 @@
       $this->pdf->setTextColor(0,0,0);
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Vision Statement");
-      $this->pdf->setX(15);
       $this->pdf->SetFont('Arial','',11);
       $this->pdf->Ln(5);
-      $this->pdf->Write(5,$this->initalize->mybr2nl($data["VISION_STATEMENT"]));
-      $this->pdf->setX(30);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["VISION_STATEMENT"]));
       $this->pdf->Ln(5);
       $this->pdf->Write(5,$data["VISION_DATE_UPDATED"]);
 
@@ -461,10 +597,9 @@
       $this->pdf->setTextColor(0,0,0);
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Values");
-      $this->pdf->setX(15);
       $this->pdf->SetFont('Arial','',11);
       $this->pdf->Ln(5);
-      $this->pdf->Write(5,$this->initalize->mybr2nl($data["VALUES_STATEMENT"]));
+      $this->pdf->Write(5,str_replace("<br />", "",$data["VALUES_STATEMENT"]));
 
     }
 
@@ -472,6 +607,12 @@
     {
 
       $this->pdf->AddPage();
+
+      $getOUName = $this->connection->prepare("SELECT * FROM `Hierarchy` WHERE OU_ABBREV = ?");
+      $getOUName->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getOUName->execute();
+      $data = $getOUName->fetch();
+      $ouName = $data["OU_NAME"];
 
       //Goals
       //header
@@ -482,8 +623,10 @@
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
       $this->pdf->setFont('Arial','',11);
+      $this->pdf->Ln(10);
+      $this->pdf->Cell(80);
+      $this->pdf->Cell(20,10,"Goals for the $ouName for the previous Academic Year.",0,0,'C');
       $this->pdf->Ln(5);
-      $this->pdf->Write("Goals for the $ouName for the previous Academic Year.");
 
       //goal sub section
       $goalType = "Looking Back";
@@ -504,11 +647,12 @@
 
         $this->pdf->Ln(10);
         $this->pdf->setTextColor(115,0,10);
-        $this->pdf->SetFont('Arial','',12);
+        $this->pdf->SetFont('Arial','B',12);
         $this->pdf->Write(5,"Goal $counter");
         $this->pdf->Ln(5);
         $this->pdf->SetDrawColor(0, 0, 0);
         $this->pdf->setTextColor(0,0,0);
+        $this->pdf->SetFont('Arial','',12);
 
         $this->pdf->Row(array("Goal Statement",$this->initalize->mybr2nl($data["GOAL_STATEMENT"])));
         $this->pdf->Row(array("Linkage to University Goal",$universityGoals));
@@ -536,8 +680,10 @@
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
       $this->pdf->setFont('Arial','',11);
+      $this->pdf->Ln(10);
+      $this->pdf->Cell(80);
+      $this->pdf->Cell(20,10,"Goals for the $ouName that are in progress for $this->selectedYear.",0,0,'C');
       $this->pdf->Ln(5);
-      $this->pdf->Write("Goals for the $ouName that are in progress for $this->selectedYear.");
 
       //goal sub section
       $goalType = "Real Time";
@@ -589,8 +735,10 @@
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
       $this->pdf->setFont('Arial','',11);
+      $this->pdf->Ln(10);
+      $this->pdf->Cell(80);
+      $this->pdf->Cell(20,10,"Goals for the $ouName that are slated for the upcoming year.",0,0,'C');
       $this->pdf->Ln(5);
-      $this->pdf->Write("Goals for the $ouName that are slated for the upcoming year.");
 
       //goal sub section
       $goalType = "Looking Ahead";
@@ -627,6 +775,131 @@
         $this->pdf->Row(array("Plans for upcoming year (if not completed)",$this->initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
 
       }
+
+    }
+
+    public function academicPrograms()
+    {
+
+      $this->pdf->AddPage();
+
+      $this->pdf->setTextColor(0,0,0);
+      $this->pdf->SetFont('Arial','',22);
+      $this->pdf->Cell(10,0,"Academic Programs");
+      $this->pdf->Ln();
+      $this->pdf->SetDrawColor(115,0,10);
+      $this->pdf->Line(195, 15, 11, 15);
+      $this->pdf->Ln(10);
+
+      $this->pdf->SetFont('Arial','B',16);
+      $this->pdf->Write(5,"Program Rankings");
+      $this->pdf->Ln(10);
+
+      $this->pdf->Write(5,"Instructional Modalities");
+      $this->pdf->Ln(10);
+
+      $this->pdf->Write(5,"Program Launches");
+      $this->pdf->Ln(10);
+
+      $this->pdf->Write(5,"Program Terminations");
+      $this->pdf->Ln(10);
+
+      $this->pdf->Write(5,"Supplemental Info - Academic Programs");
+      $this->pdf->Ln(10);
+
+    }
+
+    public function academicInitiatives()
+    {
+
+      $this->pdf->AddPage();
+
+      $this->pdf->setTextColor(0,0,0);
+      $this->pdf->SetFont('Arial','',22);
+      $this->pdf->Cell(10,0,"Academic Initiatives");
+      $this->pdf->Ln();
+      $this->pdf->SetDrawColor(115,0,10);
+      $this->pdf->Line(195, 15, 11, 15);
+      $this->pdf->Ln(10);
+
+      $this->pdf->SetFont('Arial','B',16);
+      $this->pdf->Write(5,"Experiential Learning For Undergraduates");
+      $this->pdf->Ln(10);
+
+      $this->pdf->Write(5,"Experiential Learning For Graduate & Professional Students");
+      $this->pdf->Ln(10);
+
+      $this->pdf->Write(5,"Affordability");
+      $this->pdf->Ln(10);
+
+      $this->pdf->Write(5,"Reputation Enhancement");
+      $this->pdf->Ln(10);
+
+      $this->pdf->Write(5,"Challenges");
+      $this->pdf->Ln(10);
+
+      $this->pdf->Write(5,"Supplemental Info - Initiatives And Observations");
+      $this->pdf->Ln(10);
+
+    }
+
+    public function facultyPopulation()
+    {
+
+      $this->pdf->AddPage();
+
+      $this->pdf->setTextColor(0,0,0);
+      $this->pdf->SetFont('Arial','',22);
+      $this->pdf->Cell(10,0,"Faculty Population");
+      $this->pdf->Ln();
+      $this->pdf->SetDrawColor(115,0,10);
+      $this->pdf->Line(195, 15, 11, 15);
+      $this->pdf->Ln(10);
+
+    }
+
+    public function facultyInformation()
+    {
+
+      $this->pdf->AddPage();
+
+      $this->pdf->setTextColor(0,0,0);
+      $this->pdf->SetFont('Arial','',22);
+      $this->pdf->Cell(10,0,"Faculty Information");
+      $this->pdf->Ln();
+      $this->pdf->SetDrawColor(115,0,10);
+      $this->pdf->Line(195, 15, 11, 15);
+      $this->pdf->Ln(10);
+
+    }
+
+    public function teaching()
+    {
+
+      $this->pdf->AddPage();
+
+      $this->pdf->setTextColor(0,0,0);
+      $this->pdf->SetFont('Arial','',22);
+      $this->pdf->Cell(10,0,"Teaching");
+      $this->pdf->Ln();
+      $this->pdf->SetDrawColor(115,0,10);
+      $this->pdf->Line(195, 15, 11, 15);
+      $this->pdf->Ln(10);
+
+    }
+
+    public function studentRecruitingRetention()
+    {
+
+      $this->pdf->AddPage();
+
+      $this->pdf->setTextColor(0,0,0);
+      $this->pdf->SetFont('Arial','',22);
+      $this->pdf->Cell(10,0,"Student Recruiting and Retention");
+      $this->pdf->Ln();
+      $this->pdf->SetDrawColor(115,0,10);
+      $this->pdf->Line(195, 15, 11, 15);
+      $this->pdf->Ln(10);
 
     }
 

@@ -1,4 +1,4 @@
-function showEnrollmentData() {
+function showVisualData() {
 
   var datatablename = $('#data-table-name').html().substr(30);
   var academicYear = $('#fuayname').html();
@@ -11,16 +11,12 @@ function showEnrollmentData() {
       functionNumber = 1;
       break;
 
-    case "IR_AC_FacultyPop" :
+    case "IR_AC_DiversityStudent":
       functionNumber = 2;
       break;
 
-    case "IR_AC_DiversityStudent":
-      functionNumber = 3;
-      break;
-
-    case "IR_AC_DiversityPersonnel" :
-     functionNumber = 4;
+    case "IR_AC_DiversityPersonnel":
+     functionNumber = 3;
       break;
 
     default :
@@ -29,8 +25,7 @@ function showEnrollmentData() {
   }
 
   // if(!functionNumber)
-  $("#dataValidation").load("taskboard/visualFileUploadController.php?functionNum="+functionNumber+"&yearDescription="+academicYear+"&ouchoice="+ouchoice,function(){
+  $("#dataValidation").load("../Resources/Includes/ChartVisualizations.php?functionNum="+functionNumber+"&yearDescription="+academicYear+"&ouchoice="+ouchoice,function(){
     console.log("successfully loaded data");
   });
 }
-

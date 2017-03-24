@@ -21,13 +21,13 @@
 
   switch ($function) {
     case 1:
-      $ChartVisualizations->chartEnrollementStudentByYear($selectedYear);
+      $ChartVisualizations->chartEnrollementStudentByYear($_GET["yearDescription"],$_GET["ouchoice"]);
       break;
     case 2:
-      $ChartVisualizations->chartDiversityStudentByYear($selectedYear);
+      $ChartVisualizations->chartDiversityStudentByYear($_GET["yearDescription"],$_GET["ouchoice"]);
       break;
     case 3:
-      $ChartVisualizations->chartDiversityFacultyByYear($selectedYear);
+      $ChartVisualizations->chartDiversityFacultyByYear($_GET["yearDescription"],$_GET["ouchoice"]);
       break;
     case 5:
       $ChartVisualizations->exportToPng($_POST["imagebase"],$_POST["name"]);
@@ -585,12 +585,12 @@
 
     }
 
-    public function chartEnrollementStudentByYear($selectedYear)
+    public function chartEnrollementStudentByYear($selectedYear,$ouAbbrev)
     {
 
       $getAcademicEnrollements = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
       $getAcademicEnrollements->bindParam(1,$selectedYear,PDO::PARAM_STR);
-      $getAcademicEnrollements->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getAcademicEnrollements->bindParam(2,$ouAbbrev,PDO::PARAM_STR);
       $getAcademicEnrollements->execute();
       $rowsGetAcademicEncrollements = $getAcademicEnrollements->rowCount();
 
@@ -709,7 +709,7 @@
                   options: {
                     responsive: false,
                     legend: {
-                      display: false
+                      display: true
                     },
                     animation: {
                       onComplete: function(){
@@ -1478,12 +1478,12 @@
 
     }
 
-    public function chartDiversityStudentByYear($selectedYear)
+    public function chartDiversityStudentByYear($selectedYear,$ouAbbrev)
     {
 
       $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
       $getDiversityData->bindParam(1,$selectedYear,PDO::PARAM_STR);
-      $getDiversityData->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getDiversityData->bindParam(2,$ouAbbrev,PDO::PARAM_STR);
       $getDiversityData->execute();
       $rowsGetDiversityData = $getDiversityData->rowCount();
 
@@ -1601,9 +1601,7 @@
                 </table>
               </div>
             </div>
-            <div class='col-md-6'>
-              <canvas id='underDiversityRaceByYear' height='220'></canvas>
-            </div>
+            <canvas id='underDiversityRaceByYear' width='800' height='500'></canvas>
           </div>
           <h2 class='text-center'>".$this->college." Graduate Gender Data</h2>
           <div class='row'>
@@ -1642,7 +1640,7 @@
           </div>
           <h2 class='text-center'>".$this->college." Data Graduate Race</h2>
           <div class='row'>
-            <div class='col-md-4'>
+            <div class='col-md-6'>
               <div class='table-responsive'>
                 <table class='table table-condensed'>
                   <thead>
@@ -1692,10 +1690,8 @@
                 </table>
               </div>
             </div>
-            <div class='col-md-8'>
-              <canvas id='gradDiversityRaceByYear' height='220'></canvas>
-            </div>
           </div>
+          <canvas id='gradDiversityRaceByYear' width='800' height='500'></canvas>
         </div>
         <script>
           var ctx = document.getElementById('underDiversityGenderByYear');
@@ -1705,7 +1701,7 @@
               labels: ['Male', 'Female'],
               datasets: [{
                 label: 'Gender',
-                data: [$underGradFemale,$underGradMale],
+                data: [$underGradMale,$underGradFemale],
                 backgroundColor: [
                   'rgba(116, 0, 11, 0.5)',
                   'rgba(43, 0, 4, 0.5)',
@@ -1744,7 +1740,6 @@
             data: {
               labels: ['American Indian/Alaskian Native', 'Asian','Undergrad Black','Hispanic','Native Hawaiian or Other Pacific Islander','Alien','Two Or More Races','Unknown Race','White'],
               datasets: [{
-                label: 'Gender',
                 data: [$underGradAlaskaNative,$underGradAsian,$underGradBlack,$underGradHispanic,$underGradHawaiiPacificIsland,$underGradAlien,$underGradTwoOrMore,$underGradUnkown,$underGradWhite],
                 backgroundColor: [
                   'rgba(116, 0, 11, 0.5)',
@@ -1785,7 +1780,7 @@
               labels: ['Male', 'Female'],
               datasets: [{
                 label: 'Gender',
-                data: [$underGradFemale,$underGradMale],
+                data: [$gradMale,$gradFemale],
                 backgroundColor: [
                   'rgba(116, 0, 11, 0.5)',
                   'rgba(43, 0, 4, 0.5)',
@@ -1813,7 +1808,7 @@
             options: {
               responsive: false,
               legend: {
-                display: false
+                display: true
               }
             }
           });
@@ -1824,7 +1819,6 @@
             data: {
               labels: ['American Indian/Alaskian Native', 'Asian','Undergrad Black','Hispanic','Native Hawaiian or Other Pacific Islander','Alien','Two Or More Races','Unknown Race','White'],
               datasets: [{
-                label: 'Gender',
                 data: [$underGradAlaskaNative,$underGradAsian,$underGradBlack,$underGradHispanic,$underGradHawaiiPacificIsland,$underGradAlien,$underGradTwoOrMore,$underGradUnkown,$underGradWhite],
                 backgroundColor: [
                   'rgba(116, 0, 11, 0.5)',
@@ -2265,12 +2259,12 @@
 
     }
 
-    public function chartDiversityFacultyByYear($selectedYear)
+    public function chartDiversityFacultyByYear($selectedYear,$ouAbbrev)
     {
 
       $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
       $getDiversityData->bindParam(1,$selectedYear,PDO::PARAM_STR);
-      $getDiversityData->bindParam(2,$this->college,PDO::PARAM_STR);
+      $getDiversityData->bindParam(2,$ouAbbrev,PDO::PARAM_STR);
       $getDiversityData->execute();
       $rowsGetDiversityData = $getDiversityData->rowCount();
 
@@ -2382,21 +2376,17 @@
                 </table>
               </div>
             </div>
-            <div class='col-md-6'>
-              <canvas id='facultyDiversityRaceByYear' height='220'></canvas>
-            </div>
           </div>
+          <canvas id='facultyDiversityRaceByYear' width='800' height='500'></canvas>
         </div>
         <script>
-
-          var ctx = document.getElementById('underDiversityGenderByYear');
-          var underDiversityGenderByYear = new Chart(ctx, {
+          var ctx = document.getElementById('facultyDiversityGenderByYear');
+          var facultyDiversityGenderByYear = new Chart(ctx, {
             type: 'doughnut',
             data: {
               labels: ['Male', 'Female'],
               datasets: [{
-                label: 'Gender',
-                data: [$female,$male],
+                data: [$male,$female],
                 backgroundColor: [
                   'rgba(116, 0, 11, 0.5)',
                   'rgba(43, 0, 4, 0.5)',
@@ -2424,18 +2414,17 @@
             options: {
               responsive: false,
               legend: {
-                display: false
+                display: true
               }
             }
           });
 
-          var ctx = document.getElementById('underDiversityRaceByYear');
-          var underDiversityRaceByYear = new Chart(ctx, {
+          var ctx = document.getElementById('facultyDiversityRaceByYear');
+          var facultyDiversityRaceByYear = new Chart(ctx, {
             type: 'bar',
             data: {
-              labels: ['American Indian/Alaskian Native', 'Asian','Undergrad Black','Hispanic','Native Hawaiian or Other Pacific Islander','Alien','Two Or More Races','Unknown Race','White'],
+              labels: ['American Native', 'Asian','Undergrad Black','Hispanic','Native Hawaiian or Other Pacific Islander','Alien','Two Or More Races','Unknown Race','White'],
               datasets: [{
-                label: 'Gender',
                 data: [$alaskaNative,$asian,$black,$hispanic,$hawaiiPacificIsland,$alien,$twoOrMore,$unknown,$white],
                 backgroundColor: [
                   'rgba(116, 0, 11, 0.5)',
