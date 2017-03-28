@@ -213,7 +213,7 @@ require_once("../Resources/Includes/menu.php");
                                 than permitted by the assigned Classification.
                             </small>
                         </p>
-                        <select type="text" name="dataclass" class="form-control">
+                        <select  name="dataclass" class="form-control">
                             <option value=""></option>
                             <?php while ($rowsdataclass = $resultdataclass->fetch(2)) {
                                 echo "<option value=" . $rowsdataclass['ID_DATA_CLASS'];

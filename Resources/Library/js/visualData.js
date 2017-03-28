@@ -11,7 +11,6 @@ function showVisualData() {
             functionNumber = 1;
             break;
 
-<<<<<<< HEAD
     case "IR_AC_DiversityStudent":
       functionNumber = 2;
       break;
@@ -19,31 +18,18 @@ function showVisualData() {
     case "IR_AC_DiversityPersonnel":
      functionNumber = 3;
       break;
-=======
-        case "IR_AC_FacultyPop" :
-            functionNumber = 2;
-            break;
-
-        case "IR_AC_DiversityStudent":
-            functionNumber = 3;
-            break;
-
-        case "IR_AC_DiversityPersonnel" :
-            functionNumber = 4;
-            break;
->>>>>>> changes after demo Mar24
 
         default :
             functionNumber = 6;
             break;
     }
 
-<<<<<<< HEAD
+
   // if(!functionNumber)
-  $("#dataValidation").load("../Resources/Includes/ChartVisualizations.php?functionNum="+functionNumber+"&yearDescription="+academicYear+"&ouchoice="+ouchoice,function(){
-    console.log("successfully loaded data");
-  });
-=======
+  // $("#dataValidation").load("../Resources/Includes/ChartVisualizations.php?functionNum="+functionNumber+"&yearDescription="+academicYear+"&ouchoice="+ouchoice,function(){
+  //   console.log("successfully loaded data");
+  // });
+
     var query = window.location.search.substring(1);
 
     // if(!functionNumber)
@@ -51,5 +37,4 @@ function showVisualData() {
         + "&yearDescription=" + academicYear + "&ouchoice=" + ouchoice+"&"+query, function () {
         console.log("successfully loaded data");
     });
->>>>>>> changes after demo Mar24
 }

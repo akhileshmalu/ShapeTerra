@@ -317,6 +317,7 @@ require_once("../Resources/Includes/menu.php");
 
               $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Service", function(data) {
                 data = $.parseJSON(data);
+                  console.log(data);
                 $("#jsGridService").jsGrid({
                   width: "100%",
                   height: "400px",
