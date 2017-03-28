@@ -344,7 +344,7 @@ require_once("../Resources/Includes/menu.php");
             <h4 class="modal-title" id="myModalLabel">Add Faculty Awards</h4>
         </div>
         <div class="modal-body">
-            <form method="POST" action="<?php echo "facultyawards.php?linkid=".$contentlink_id; ?>">
+            <form method="POST" action="<?php echo $_SERVER['PHP_SELF']."?linkid=".$contentlink_id; ?>">
                 <div class="form-group">
                     <label for="awardtype">Select Award Type:<span
                         style="color: red"><sup>*</sup></span></label>

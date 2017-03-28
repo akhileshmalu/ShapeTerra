@@ -1,9 +1,10 @@
 <?php
 
-require_once ("../Resources/Includes/initalize.php");
+require_once ("../Resources/Includes/initialize.php");
 $facultyAward = new Initialize();
 $facultyAward->checkSessionStatus();
 $connection = $facultyAward->connection;
+$mysqli = $facultyAward->mysqli;
 
 $error = array();                                               //Error Array Created
 $errorflag = 0;                                                 //Flag Create

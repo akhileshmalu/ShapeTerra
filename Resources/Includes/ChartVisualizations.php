@@ -1,193 +1,193 @@
 <?php
 
-  /*TODO restrict by user's college*/
+/*TODO restrict by user's college*/
 
-  error_reporting(1);
-  @ini_set('display_errors', 1);
-  session_start();
-  ob_start();
+error_reporting(1);
+@ini_set('display_errors', 1);
+session_start();
+ob_start();
 
-  if(isset($_POST['functionNum']))
+if (isset($_POST['functionNum']))
     $function = $_POST['functionNum'];
 
-  if (isset($_GET['functionNum']))
+if (isset($_GET['functionNum']))
     $function = $_GET['functionNum'];
 
-  if (!empty($function)){
 
-    $ChartVisualizations = new ChartVisualizations;
+if (!empty($function)) {
+    $ChartVisualizations = new ChartVisualizations();
+}
 
-  }
-
-  switch ($function) {
+switch ($function) {
     case 1:
-      $ChartVisualizations->chartEnrollementStudentByYear($_GET["yearDescription"],$_GET["ouchoice"]);
-      break;
+        $ChartVisualizations->chartEnrollementStudentByYear($_GET["yearDescription"], $_GET["ouchoice"]);
+        break;
     case 2:
-      $ChartVisualizations->chartDiversityStudentByYear($_GET["yearDescription"],$_GET["ouchoice"]);
-      break;
+        $ChartVisualizations->chartDiversityStudentByYear($_GET["yearDescription"], $_GET["ouchoice"]);
+        break;
     case 3:
-      $ChartVisualizations->chartDiversityFacultyByYear($_GET["yearDescription"],$_GET["ouchoice"]);
-      break;
+        $ChartVisualizations->chartDiversityFacultyByYear($_GET["yearDescription"], $_GET["ouchoice"]);
+        break;
     case 5:
-      $ChartVisualizations->exportToPng($_POST["imagebase"],$_POST["name"]);
-      break;
+        $ChartVisualizations->exportToPng($_POST["imagebase"], $_POST["name"]);
+        break;
     default:
-      break;
-  }
+        break;
+}
 
-  Class ChartVisualizations{
+Class ChartVisualizations
+{
 
-    private $conection;
     public $college, $year, $ouid, $colorArray;
+    private $conection;
 
     function __construct()
     {
 
-      require_once("Initialize.php");
-      $this->initalize = new Initialize();
-      $this->initalize->checkSessionStatus();
+        require_once("Initialize.php");
+        $this->initalize = new Initialize();
+        $this->initalize->checkSessionStatus();
 
-      $this->connection = $this->initalize->connection;
+        $this->connection = $this->initalize->connection;
 
-      $this->ouid = $_SESSION['login_ouid'];
-      $this->year = $_SESSION['bpayname'];
+        $this->ouid = $_SESSION['login_ouid'];
+        $this->year = $_SESSION['bpayname'];
 
-      if ($this->ouid == 4) {
+        if ($this->ouid == 4) {
 
-        $this->college = $_SESSION['bpouabbrev'];
+            $this->college = $_SESSION['bpouabbrev'];
 
-      }else{
+        } else {
 
-        $this->college = $_SESSION['login_ouabbrev'];
+            $this->college = $_SESSION['login_ouabbrev'];
 
-      }
+        }
 
     }
 
     public function chartEnrollementStudent()
     {
 
-      $currentYear = "AY2016-2017";
+        $currentYear = "AY2016-2017";
 
-      $getAcademicEnrollements20162017 = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getAcademicEnrollements20162017->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getAcademicEnrollements20162017->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getAcademicEnrollements20162017->execute();
-      $rowsAcademicEnrollements20162017 = $getAcademicEnrollements20162017->rowCount();
+        $getAcademicEnrollements20162017 = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getAcademicEnrollements20162017->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getAcademicEnrollements20162017->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getAcademicEnrollements20162017->execute();
+        $rowsAcademicEnrollements20162017 = $getAcademicEnrollements20162017->rowCount();
 
-      if ($rowsAcademicEnrollements20162017 > 0){
+        if ($rowsAcademicEnrollements20162017 > 0) {
 
-        while ($data = $getAcademicEnrollements20162017->fetch()){
+            while ($data = $getAcademicEnrollements20162017->fetch()) {
 
-          $freshman20162017 = $data["ENROLL_HC_FRESH"];
-          $sophmore20162017 = $data["ENROLL_HC_SOPH"];
-          $junior20162017 = $data["ENROLL_HC_JUNR"];
-          $seniors20162017 = $data["ENROLL_HC_SENR"];
-          $masters20162017 = $data["ENROLL_HC_MASTERS"];
-          $doctorial20162017 = $data["ENROLL_HC_DOCTORAL"];
-          $medicine20162017 = $data["ENROLL_HC_MEDICINE"];
-          $law20162017 = $data["ENROLL_HC_LAW"];
-          $pharm20162017 = $data["ENROLL_HC_PHARMD"];
-          $cert20162017 = $data["ENROLL_HC_GRAD_CERT"];
+                $freshman20162017 = $data["ENROLL_HC_FRESH"];
+                $sophmore20162017 = $data["ENROLL_HC_SOPH"];
+                $junior20162017 = $data["ENROLL_HC_JUNR"];
+                $seniors20162017 = $data["ENROLL_HC_SENR"];
+                $masters20162017 = $data["ENROLL_HC_MASTERS"];
+                $doctorial20162017 = $data["ENROLL_HC_DOCTORAL"];
+                $medicine20162017 = $data["ENROLL_HC_MEDICINE"];
+                $law20162017 = $data["ENROLL_HC_LAW"];
+                $pharm20162017 = $data["ENROLL_HC_PHARMD"];
+                $cert20162017 = $data["ENROLL_HC_GRAD_CERT"];
 
-        }
-
-      }
-
-      $ayYearBackOne = "AY2015-2016";
-
-      $getAcademicEnrollements20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getAcademicEnrollements20152016->bindParam(1,$ayYearBackOne,PDO::PARAM_STR);
-      $getAcademicEnrollements20152016->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getAcademicEnrollements20152016->execute();
-      $rowsAcademicEnrollements20152016 = $getAcademicEnrollements20152016->rowCount();
-
-      if ($rowsAcademicEnrollements20152016 > 0){
-
-        while ($data = $getAcademicEnrollements20152016->fetch()){
-
-          $freshman20152016 = $data["ENROLL_HC_FRESH"];
-          $sophmore20152016 = $data["ENROLL_HC_SOPH"];
-          $junior20152016 = $data["ENROLL_HC_JUNR"];
-          $seniors20152016 = $data["ENROLL_HC_SENR"];
-          $masters20152016 = $data["ENROLL_HC_MASTERS"];
-          $doctorial20152016 = $data["ENROLL_HC_DOCTORAL"];
-          $medicine20152016 = $data["ENROLL_HC_MEDICINE"];
-          $law20152016 = $data["ENROLL_HC_LAW"];
-          $pharm20152016 = $data["ENROLL_HC_PHARMD"];
-          $cert20152016 = $data["ENROLL_HC_GRAD_CERT"];
+            }
 
         }
 
-      }
+        $ayYearBackOne = "AY2015-2016";
 
-      $ayYearBackTwo = "AY2014-2015";
+        $getAcademicEnrollements20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getAcademicEnrollements20152016->bindParam(1, $ayYearBackOne, PDO::PARAM_STR);
+        $getAcademicEnrollements20152016->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getAcademicEnrollements20152016->execute();
+        $rowsAcademicEnrollements20152016 = $getAcademicEnrollements20152016->rowCount();
 
-      $getAcademicEnrollements20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getAcademicEnrollements20142015->bindParam(1,$ayYearBackTwo,PDO::PARAM_STR);
-      $getAcademicEnrollements20142015->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getAcademicEnrollements20142015->execute();
-      $rowsAcademicEnrollements20142015 = $getAcademicEnrollements20142015->rowCount();
+        if ($rowsAcademicEnrollements20152016 > 0) {
 
-      if ($rowsAcademicEnrollements20142015 > 0){
+            while ($data = $getAcademicEnrollements20152016->fetch()) {
 
-        while ($data = $getAcademicEnrollements20142015->fetch()){
+                $freshman20152016 = $data["ENROLL_HC_FRESH"];
+                $sophmore20152016 = $data["ENROLL_HC_SOPH"];
+                $junior20152016 = $data["ENROLL_HC_JUNR"];
+                $seniors20152016 = $data["ENROLL_HC_SENR"];
+                $masters20152016 = $data["ENROLL_HC_MASTERS"];
+                $doctorial20152016 = $data["ENROLL_HC_DOCTORAL"];
+                $medicine20152016 = $data["ENROLL_HC_MEDICINE"];
+                $law20152016 = $data["ENROLL_HC_LAW"];
+                $pharm20152016 = $data["ENROLL_HC_PHARMD"];
+                $cert20152016 = $data["ENROLL_HC_GRAD_CERT"];
 
-          $freshman20142015 = $data["ENROLL_HC_FRESH"];
-          $sophmore20142015 = $data["ENROLL_HC_SOPH"];
-          $junior20142015 = $data["ENROLL_HC_JUNR"];
-          $seniors20142015 = $data["ENROLL_HC_SENR"];
-          $masters20142015 = $data["ENROLL_HC_MASTERS"];
-          $doctorial20142015 = $data["ENROLL_HC_DOCTORAL"];
-          $medicine20142015 = $data["ENROLL_HC_MEDICINE"];
-          $law20142015 = $data["ENROLL_HC_LAW"];
-          $pharm20142015 = $data["ENROLL_HC_PHARMD"];
-          $cert20142015 = $data["ENROLL_HC_GRAD_CERT"];
-
-        }
-
-      }
-
-      $ayYearBackTwo = "AY2014-2015";
-
-      $getAcademicEnrollements20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getAcademicEnrollements20142015->bindParam(1,$ayYearBackTwo,PDO::PARAM_STR);
-      $getAcademicEnrollements20142015->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getAcademicEnrollements20142015->execute();
-      $rowsAcademicEnrollements20142015 = $getAcademicEnrollements20142015->rowCount();
-
-      if ($rowsAcademicEnrollements20142015 > 0){
-
-        while ($data = $getAcademicEnrollements20142015->fetch()){
-
-          $freshman20142015 = $data["ENROLL_HC_FRESH"];
-          $sophmore20142015 = $data["ENROLL_HC_SOPH"];
-          $junior20142015 = $data["ENROLL_HC_JUNR"];
-          $seniors20142015 = $data["ENROLL_HC_SENR"];
-          $masters20142015 = $data["ENROLL_HC_MASTERS"];
-          $doctorial20142015 = $data["ENROLL_HC_DOCTORAL"];
-          $medicine20142015 = $data["ENROLL_HC_MEDICINE"];
-          $law20142015 = $data["ENROLL_HC_LAW"];
-          $pharm20142015 = $data["ENROLL_HC_PHARMD"];
-          $cert20142015 = $data["ENROLL_HC_GRAD_CERT"];
+            }
 
         }
 
-      }
+        $ayYearBackTwo = "AY2014-2015";
 
-      $total2016Undergraduate = $freshman20162017 + $sophmore20162017 + $junior20162017 + $seniors20162017;
-      $total2015Undergraduate = $freshman20152016 + $sophmore20152016 + $junior20152016 + $seniors20152016;
-      $total2014Undergraduate = $freshman20142015 + $sophmore20142015 + $junior20142015 + $seniors20142015;
+        $getAcademicEnrollements20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getAcademicEnrollements20142015->bindParam(1, $ayYearBackTwo, PDO::PARAM_STR);
+        $getAcademicEnrollements20142015->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getAcademicEnrollements20142015->execute();
+        $rowsAcademicEnrollements20142015 = $getAcademicEnrollements20142015->rowCount();
 
-      $total2016Graduate = $masters20162017 + $doctorial20162017 + $medicine20162017 + $law20162017 + $pharm20162017 + $cert20162017;
-      $total2015Graduate = $masters20152016 + $doctorial20152016 + $medicine20152016 + $law20152016 + $pharm20152016 + $cert20152016;
-      $total2014Graduate = $masters20142015 + $doctorial20142015 + $medicine20142015 + $law20142015 + $pharm20142015 + $cert20142015;
+        if ($rowsAcademicEnrollements20142015 > 0) {
 
-      echo "
+            while ($data = $getAcademicEnrollements20142015->fetch()) {
+
+                $freshman20142015 = $data["ENROLL_HC_FRESH"];
+                $sophmore20142015 = $data["ENROLL_HC_SOPH"];
+                $junior20142015 = $data["ENROLL_HC_JUNR"];
+                $seniors20142015 = $data["ENROLL_HC_SENR"];
+                $masters20142015 = $data["ENROLL_HC_MASTERS"];
+                $doctorial20142015 = $data["ENROLL_HC_DOCTORAL"];
+                $medicine20142015 = $data["ENROLL_HC_MEDICINE"];
+                $law20142015 = $data["ENROLL_HC_LAW"];
+                $pharm20142015 = $data["ENROLL_HC_PHARMD"];
+                $cert20142015 = $data["ENROLL_HC_GRAD_CERT"];
+
+            }
+
+        }
+
+        $ayYearBackTwo = "AY2014-2015";
+
+        $getAcademicEnrollements20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getAcademicEnrollements20142015->bindParam(1, $ayYearBackTwo, PDO::PARAM_STR);
+        $getAcademicEnrollements20142015->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getAcademicEnrollements20142015->execute();
+        $rowsAcademicEnrollements20142015 = $getAcademicEnrollements20142015->rowCount();
+
+        if ($rowsAcademicEnrollements20142015 > 0) {
+
+            while ($data = $getAcademicEnrollements20142015->fetch()) {
+
+                $freshman20142015 = $data["ENROLL_HC_FRESH"];
+                $sophmore20142015 = $data["ENROLL_HC_SOPH"];
+                $junior20142015 = $data["ENROLL_HC_JUNR"];
+                $seniors20142015 = $data["ENROLL_HC_SENR"];
+                $masters20142015 = $data["ENROLL_HC_MASTERS"];
+                $doctorial20142015 = $data["ENROLL_HC_DOCTORAL"];
+                $medicine20142015 = $data["ENROLL_HC_MEDICINE"];
+                $law20142015 = $data["ENROLL_HC_LAW"];
+                $pharm20142015 = $data["ENROLL_HC_PHARMD"];
+                $cert20142015 = $data["ENROLL_HC_GRAD_CERT"];
+
+            }
+
+        }
+
+        $total2016Undergraduate = $freshman20162017 + $sophmore20162017 + $junior20162017 + $seniors20162017;
+        $total2015Undergraduate = $freshman20152016 + $sophmore20152016 + $junior20152016 + $seniors20152016;
+        $total2014Undergraduate = $freshman20142015 + $sophmore20142015 + $junior20142015 + $seniors20142015;
+
+        $total2016Graduate = $masters20162017 + $doctorial20162017 + $medicine20162017 + $law20162017 + $pharm20162017 + $cert20162017;
+        $total2015Graduate = $masters20152016 + $doctorial20152016 + $medicine20152016 + $law20152016 + $pharm20152016 + $cert20152016;
+        $total2014Graduate = $masters20142015 + $doctorial20142015 + $medicine20142015 + $law20142015 + $pharm20142015 + $cert20142015;
+
+        echo "
         <div class='container-fluid'>
           <div class='row'>
-            <h2 class='text-center'>".$this->college." Enrollments Data Undergraduate</h2>
+            <h2 class='text-center'>" . $this->college . " Enrollments Data Undergraduate</h2>
             <div class='col-md-4'>
               <div class='table-responsive'>
                 <table class='table table-condensed'>
@@ -239,7 +239,7 @@
             </div>
           </div>
           <div class='row'>
-            <h2 class='text-center'>".$this->college." Enrollments Data Graduate</h2>
+            <h2 class='text-center'>" . $this->college . " Enrollments Data Graduate</h2>
             <div class='col-md-4'>
               <div class='table-responsive'>
                 <table class='table table-condensed'>
@@ -285,7 +285,7 @@
             </div>
           </div>
           <div class='row'>
-            <h2 class='text-center'>".$this->college." Enrollments Data All</h2>
+            <h2 class='text-center'>" . $this->college . " Enrollments Data All</h2>
             <div class='col-md-5'>
               <div class='table-responsive'>
                 <table class='table table-condensed'>
@@ -403,7 +403,7 @@
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-all-".$this->college."', functionNum: '5'});
+                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-all-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -474,7 +474,7 @@
           },
           animation: {
             onComplete: function(){
-              $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-under-".$this->college."', functionNum: '5'});
+              $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-under-" . $this->college . "', functionNum: '5'});
             }
           },
           scaleLabel:{
@@ -541,7 +541,7 @@
         },
         animation: {
           onComplete: function(){
-            $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-under-".$this->college."', functionNum: '5'});
+            $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-under-" . $this->college . "', functionNum: '5'});
           }
         },
         scaleLabel:{
@@ -585,32 +585,32 @@
 
     }
 
-    public function chartEnrollementStudentByYear($selectedYear,$ouAbbrev)
+    public function chartEnrollementStudentByYear($selectedYear, $ouAbbrev)
     {
 
-      $getAcademicEnrollements = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getAcademicEnrollements->bindParam(1,$selectedYear,PDO::PARAM_STR);
-      $getAcademicEnrollements->bindParam(2,$ouAbbrev,PDO::PARAM_STR);
-      $getAcademicEnrollements->execute();
-      $rowsGetAcademicEncrollements = $getAcademicEnrollements->rowCount();
+        $getAcademicEnrollements = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getAcademicEnrollements->bindParam(1, $selectedYear, PDO::PARAM_STR);
+        $getAcademicEnrollements->bindParam(2, $ouAbbrev, PDO::PARAM_STR);
+        $getAcademicEnrollements->execute();
+        $rowsGetAcademicEncrollements = $getAcademicEnrollements->rowCount();
 
-      if ($rowsGetAcademicEncrollements > 0){
+        if ($rowsGetAcademicEncrollements > 0) {
 
-        while ($data = $getAcademicEnrollements->fetch()){
+            while ($data = $getAcademicEnrollements->fetch()) {
 
-            $freshman = $data["ENROLL_HC_FRESH"];
-            $sophmore = $data["ENROLL_HC_SOPH"];
-            $junior = $data["ENROLL_HC_JUNR"];
-            $seniors = $data["ENROLL_HC_SENR"];
-            $masters = $data["ENROLL_HC_MASTERS"];
-            $doctorial = $data["ENROLL_HC_DOCTORAL"];
-            $medicine = $data["ENROLL_HC_MEDICINE"];
-            $law = $data["ENROLL_HC_LAW"];
-            $pharm = $data["ENROLL_HC_PHARMD"];
-            $cert = $data["ENROLL_HC_GRAD_CERT"];
+                $freshman = $data["ENROLL_HC_FRESH"];
+                $sophmore = $data["ENROLL_HC_SOPH"];
+                $junior = $data["ENROLL_HC_JUNR"];
+                $seniors = $data["ENROLL_HC_SENR"];
+                $masters = $data["ENROLL_HC_MASTERS"];
+                $doctorial = $data["ENROLL_HC_DOCTORAL"];
+                $medicine = $data["ENROLL_HC_MEDICINE"];
+                $law = $data["ENROLL_HC_LAW"];
+                $pharm = $data["ENROLL_HC_PHARMD"];
+                $cert = $data["ENROLL_HC_GRAD_CERT"];
 
-            echo "
-              <h2 class='text-center'>".$this->college." Data</h2>
+                echo "
+              <h2 class='text-center'>" . $this->college . " Data</h2>
               <div class='container-fluid'>
                 <div class='row'>
                   <div class='col-md-6'>
@@ -713,7 +713,7 @@
                     },
                     animation: {
                       onComplete: function(){
-                        $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-".$this->year."', functionNum: '5'});
+                        $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-" . $this->year . "', functionNum: '5'});
                       }
                     }
                   }
@@ -721,142 +721,142 @@
               </script>
             ";
 
+            }
+
+        } else {
+
+            echo "<h5>There is no data.</h5>";
+
         }
-
-      }else{
-
-        echo "<h5>There is no data.</h5>";
-
-      }
 
     }
 
     public function chartDiversityStudent()
     {
 
-      $currentYear = "AY2016-2017";
+        $currentYear = "AY2016-2017";
 
-      $getDiversityData20162017 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDiversityData20162017->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getDiversityData20162017->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getDiversityData20162017->execute();
-      $rowsGetDiversityData20162017 = $getDiversityData20162017->rowCount();
+        $getDiversityData20162017 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDiversityData20162017->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getDiversityData20162017->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getDiversityData20162017->execute();
+        $rowsGetDiversityData20162017 = $getDiversityData20162017->rowCount();
 
-      if ($rowsGetDiversityData20162017 > 0){
+        if ($rowsGetDiversityData20162017 > 0) {
 
-        $data = $getDiversityData20162017->fetch();
+            $data = $getDiversityData20162017->fetch();
 
-        $underGradFemale20162017 = $data["UGRAD_FEMALE"];
-        $underGradMale20162017 = $data["UGRAD_MALE"];
+            $underGradFemale20162017 = $data["UGRAD_FEMALE"];
+            $underGradMale20162017 = $data["UGRAD_MALE"];
 
-        $underGradAlaskaNative20162017 = $data["UGRAD_AMERIND_ALASKNAT"];
-        $underGradAsian20162017 = $data["UGRAD_ASIAN"];
-        $underGradBlack20162017 = $data["UGRAD_BLACK"];
-        $underGradHispanic20162017 = $data["UGRAD_HISPANIC"];
-        $underGradHawaiiPacificIsland20162017 = $data["UGRAD_HI_PAC_ISL"];
-        $underGradAlien20162017 = $data["UGRAD_NONRESIDENT_ALIEN"];
-        $underGradTwoOrMore20162017 = $data["UGRAD_TWO_OR_MORE"];
-        $underGradUnkown20162017 = $data["UGRAD_UNKNOWN_RACE_ETHNCTY"];
-        $underGradWhite20162017 = $data["UGRAD_WHITE"];
+            $underGradAlaskaNative20162017 = $data["UGRAD_AMERIND_ALASKNAT"];
+            $underGradAsian20162017 = $data["UGRAD_ASIAN"];
+            $underGradBlack20162017 = $data["UGRAD_BLACK"];
+            $underGradHispanic20162017 = $data["UGRAD_HISPANIC"];
+            $underGradHawaiiPacificIsland20162017 = $data["UGRAD_HI_PAC_ISL"];
+            $underGradAlien20162017 = $data["UGRAD_NONRESIDENT_ALIEN"];
+            $underGradTwoOrMore20162017 = $data["UGRAD_TWO_OR_MORE"];
+            $underGradUnkown20162017 = $data["UGRAD_UNKNOWN_RACE_ETHNCTY"];
+            $underGradWhite20162017 = $data["UGRAD_WHITE"];
 
-        $gradFemale20162017 = $data["GRAD_FEMALE"];
-        $gradMale20162017 = $data["GRAD_MALE"];
+            $gradFemale20162017 = $data["GRAD_FEMALE"];
+            $gradMale20162017 = $data["GRAD_MALE"];
 
-        $gradAlaskaNative20162017 = $data["GRAD_AMERIND_ALASKNAT"];
-        $gradAsian20162017 = $data["GRAD_ASIAN"];
-        $gradBlack20162017 = $data["GRAD_BLACK"];
-        $gradHispanic20162017 = $data["GRAD_HISPANIC"];
-        $gradHawaiiPacificIsland20162017 = $data["GRAD_HI_PAC_ISL"];
-        $gradAliens20162017 = $data["GRAD_NONRESIDENT_ALIEN"];
-        $gradDoubleRace20162017 = $data["GRAD_TWO_OR_MORE"];
-        $gradUnknown20162017 = $data["GRAD_UNKNOWN_RACE_ETHNCTY"];
-        $gradWhite20162017 = $data["GRAD_WHITE"];
+            $gradAlaskaNative20162017 = $data["GRAD_AMERIND_ALASKNAT"];
+            $gradAsian20162017 = $data["GRAD_ASIAN"];
+            $gradBlack20162017 = $data["GRAD_BLACK"];
+            $gradHispanic20162017 = $data["GRAD_HISPANIC"];
+            $gradHawaiiPacificIsland20162017 = $data["GRAD_HI_PAC_ISL"];
+            $gradAliens20162017 = $data["GRAD_NONRESIDENT_ALIEN"];
+            $gradDoubleRace20162017 = $data["GRAD_TWO_OR_MORE"];
+            $gradUnknown20162017 = $data["GRAD_UNKNOWN_RACE_ETHNCTY"];
+            $gradWhite20162017 = $data["GRAD_WHITE"];
 
-      }
+        }
 
-      $ayYearBackOne = "AY2015-2016";
+        $ayYearBackOne = "AY2015-2016";
 
-      $getDiversityData20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDiversityData20152016->bindParam(1,$ayYearBackOne,PDO::PARAM_STR);
-      $getDiversityData20152016->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getDiversityData20152016->execute();
-      $rowsGetDiversityData20152016 = $getDiversityData20152016->rowCount();
+        $getDiversityData20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDiversityData20152016->bindParam(1, $ayYearBackOne, PDO::PARAM_STR);
+        $getDiversityData20152016->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getDiversityData20152016->execute();
+        $rowsGetDiversityData20152016 = $getDiversityData20152016->rowCount();
 
-      if ($rowsGetDiversityData20152016 > 0){
+        if ($rowsGetDiversityData20152016 > 0) {
 
-        $data = $getDiversityData20152016->fetch();
+            $data = $getDiversityData20152016->fetch();
 
-        $underGradFemale20152016 = $data["UGRAD_FEMALE"];
-        $underGradMale20152016 = $data["UGRAD_MALE"];
+            $underGradFemale20152016 = $data["UGRAD_FEMALE"];
+            $underGradMale20152016 = $data["UGRAD_MALE"];
 
-        $underGradAlaskaNative20152016 = $data["UGRAD_AMERIND_ALASKNAT"];
-        $underGradAsian20152016 = $data["UGRAD_ASIAN"];
-        $underGradBlack20152016 = $data["UGRAD_BLACK"];
-        $underGradHispanic20152016 = $data["UGRAD_HISPANIC"];
-        $underGradHawaiiPacificIsland20152016 = $data["UGRAD_HI_PAC_ISL"];
-        $underGradAlien20152016 = $data["UGRAD_NONRESIDENT_ALIEN"];
-        $underGradTwoOrMore20152016 = $data["UGRAD_TWO_OR_MORE"];
-        $underGradUnkown20152016 = $data["UGRAD_UNKNOWN_RACE_ETHNCTY"];
-        $underGradWhite20152016 = $data["UGRAD_WHITE"];
+            $underGradAlaskaNative20152016 = $data["UGRAD_AMERIND_ALASKNAT"];
+            $underGradAsian20152016 = $data["UGRAD_ASIAN"];
+            $underGradBlack20152016 = $data["UGRAD_BLACK"];
+            $underGradHispanic20152016 = $data["UGRAD_HISPANIC"];
+            $underGradHawaiiPacificIsland20152016 = $data["UGRAD_HI_PAC_ISL"];
+            $underGradAlien20152016 = $data["UGRAD_NONRESIDENT_ALIEN"];
+            $underGradTwoOrMore20152016 = $data["UGRAD_TWO_OR_MORE"];
+            $underGradUnkown20152016 = $data["UGRAD_UNKNOWN_RACE_ETHNCTY"];
+            $underGradWhite20152016 = $data["UGRAD_WHITE"];
 
-        $gradFemale20152016 = $data["GRAD_FEMALE"];
-        $gradMale20152016 = $data["GRAD_MALE"];
+            $gradFemale20152016 = $data["GRAD_FEMALE"];
+            $gradMale20152016 = $data["GRAD_MALE"];
 
-        $gradAlaskaNative20152016 = $data["GRAD_AMERIND_ALASKNAT"];
-        $gradAsian20152016 = $data["GRAD_ASIAN"];
-        $gradBlack20152016 = $data["GRAD_BLACK"];
-        $gradHispanic20152016 = $data["GRAD_HISPANIC"];
-        $gradHawaiiPacificIsland20152016 = $data["GRAD_HI_PAC_ISL"];
-        $gradAliens20152016 = $data["GRAD_NONRESIDENT_ALIEN"];
-        $gradDoubleRace20152016 = $data["GRAD_TWO_OR_MORE"];
-        $gradUnknown20152016 = $data["GRAD_UNKNOWN_RACE_ETHNCTY"];
-        $gradWhite20152016 = $data["GRAD_WHITE"];
+            $gradAlaskaNative20152016 = $data["GRAD_AMERIND_ALASKNAT"];
+            $gradAsian20152016 = $data["GRAD_ASIAN"];
+            $gradBlack20152016 = $data["GRAD_BLACK"];
+            $gradHispanic20152016 = $data["GRAD_HISPANIC"];
+            $gradHawaiiPacificIsland20152016 = $data["GRAD_HI_PAC_ISL"];
+            $gradAliens20152016 = $data["GRAD_NONRESIDENT_ALIEN"];
+            $gradDoubleRace20152016 = $data["GRAD_TWO_OR_MORE"];
+            $gradUnknown20152016 = $data["GRAD_UNKNOWN_RACE_ETHNCTY"];
+            $gradWhite20152016 = $data["GRAD_WHITE"];
 
-      }
+        }
 
-      $ayYearBackTwo = "AY2014-2015";
+        $ayYearBackTwo = "AY2014-2015";
 
-      $getDiversityData20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDiversityData20142015->bindParam(1,$ayYearBackTwo,PDO::PARAM_STR);
-      $getDiversityData20142015->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getDiversityData20142015->execute();
-      $rowsGetDiversityData20142015 = $getDiversityData20142015->rowCount();
+        $getDiversityData20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDiversityData20142015->bindParam(1, $ayYearBackTwo, PDO::PARAM_STR);
+        $getDiversityData20142015->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getDiversityData20142015->execute();
+        $rowsGetDiversityData20142015 = $getDiversityData20142015->rowCount();
 
-      if ($rowsGetDiversityData20142015 > 0){
+        if ($rowsGetDiversityData20142015 > 0) {
 
-        $data = $getDiversityData20142015->fetch();
+            $data = $getDiversityData20142015->fetch();
 
-        $underGradFemale20142015 = $data["UGRAD_FEMALE"];
-        $underGradMale20142015 = $data["UGRAD_MALE"];
+            $underGradFemale20142015 = $data["UGRAD_FEMALE"];
+            $underGradMale20142015 = $data["UGRAD_MALE"];
 
-        $underGradAlaskaNative20142015 = $data["UGRAD_AMERIND_ALASKNAT"];
-        $underGradAsian20142015 = $data["UGRAD_ASIAN"];
-        $underGradBlack20142015 = $data["UGRAD_BLACK"];
-        $underGradHispanic20142015 = $data["UGRAD_HISPANIC"];
-        $underGradHawaiiPacificIsland20142015 = $data["UGRAD_HI_PAC_ISL"];
-        $underGradAlien20142015 = $data["UGRAD_NONRESIDENT_ALIEN"];
-        $underGradTwoOrMore20142015 = $data["UGRAD_TWO_OR_MORE"];
-        $underGradUnkown20142015 = $data["UGRAD_UNKNOWN_RACE_ETHNCTY"];
-        $underGradWhite20142015 = $data["UGRAD_WHITE"];
+            $underGradAlaskaNative20142015 = $data["UGRAD_AMERIND_ALASKNAT"];
+            $underGradAsian20142015 = $data["UGRAD_ASIAN"];
+            $underGradBlack20142015 = $data["UGRAD_BLACK"];
+            $underGradHispanic20142015 = $data["UGRAD_HISPANIC"];
+            $underGradHawaiiPacificIsland20142015 = $data["UGRAD_HI_PAC_ISL"];
+            $underGradAlien20142015 = $data["UGRAD_NONRESIDENT_ALIEN"];
+            $underGradTwoOrMore20142015 = $data["UGRAD_TWO_OR_MORE"];
+            $underGradUnkown20142015 = $data["UGRAD_UNKNOWN_RACE_ETHNCTY"];
+            $underGradWhite20142015 = $data["UGRAD_WHITE"];
 
-        $gradFemale20142015 = $data["GRAD_FEMALE"];
-        $gradMale20142015 = $data["GRAD_MALE"];
+            $gradFemale20142015 = $data["GRAD_FEMALE"];
+            $gradMale20142015 = $data["GRAD_MALE"];
 
-        $gradAlaskaNative20142015 = $data["GRAD_AMERIND_ALASKNAT"];
-        $gradAsian20142015 = $data["GRAD_ASIAN"];
-        $gradBlack20142015 = $data["GRAD_BLACK"];
-        $gradHispanic20142015 = $data["GRAD_HISPANIC"];
-        $gradHawaiiPacificIsland20142015 = $data["GRAD_HI_PAC_ISL"];
-        $gradAliens20142015 = $data["GRAD_NONRESIDENT_ALIEN"];
-        $gradDoubleRace20142015 = $data["GRAD_TWO_OR_MORE"];
-        $gradUnknown20142015 = $data["GRAD_UNKNOWN_RACE_ETHNCTY"];
-        $gradWhite20142015 = $data["GRAD_WHITE"];
+            $gradAlaskaNative20142015 = $data["GRAD_AMERIND_ALASKNAT"];
+            $gradAsian20142015 = $data["GRAD_ASIAN"];
+            $gradBlack20142015 = $data["GRAD_BLACK"];
+            $gradHispanic20142015 = $data["GRAD_HISPANIC"];
+            $gradHawaiiPacificIsland20142015 = $data["GRAD_HI_PAC_ISL"];
+            $gradAliens20142015 = $data["GRAD_NONRESIDENT_ALIEN"];
+            $gradDoubleRace20142015 = $data["GRAD_TWO_OR_MORE"];
+            $gradUnknown20142015 = $data["GRAD_UNKNOWN_RACE_ETHNCTY"];
+            $gradWhite20142015 = $data["GRAD_WHITE"];
 
-      }
+        }
 
-      echo "
+        echo "
         <div class='container-fluid'>
-          <h2 class='text-center'>".$this->college." Undergraduate Gender Data</h2>
+          <h2 class='text-center'>" . $this->college . " Undergraduate Gender Data</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -905,7 +905,7 @@
               </table>
             </div>
           </div>
-          <h2 class='text-center'>".$this->college." Data Undergraduate Race</h2>
+          <h2 class='text-center'>" . $this->college . " Data Undergraduate Race</h2>
           <div class='row'>
             <div class='col-md-6'>
               <div class='table-responsive'>
@@ -981,7 +981,7 @@
               <canvas id='underDiversityRace' height='220'></canvas>
             </div>
           </div>
-          <h2 class='text-center'>".$this->college." Graduate Gender Data</h2>
+          <h2 class='text-center'>" . $this->college . " Graduate Gender Data</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -1030,7 +1030,7 @@
             </table>
             </div>
           </div>
-          <h2 class='text-center'>".$this->college." Data Graduate Race</h2>
+          <h2 class='text-center'>" . $this->college . " Data Graduate Race</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -1133,7 +1133,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1164,7 +1164,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1195,7 +1195,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1252,7 +1252,7 @@
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-".$this->college."', functionNum: '5'});
+                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -1317,7 +1317,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1348,7 +1348,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1379,7 +1379,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1436,7 +1436,7 @@
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-".$this->college."', functionNum: '5'});
+                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -1478,50 +1478,50 @@
 
     }
 
-    public function chartDiversityStudentByYear($selectedYear,$ouAbbrev)
+    public function chartDiversityStudentByYear($selectedYear, $ouAbbrev)
     {
 
-      $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDiversityData->bindParam(1,$selectedYear,PDO::PARAM_STR);
-      $getDiversityData->bindParam(2,$ouAbbrev,PDO::PARAM_STR);
-      $getDiversityData->execute();
-      $rowsGetDiversityData = $getDiversityData->rowCount();
+        $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityStudent` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDiversityData->bindParam(1, $selectedYear, PDO::PARAM_STR);
+        $getDiversityData->bindParam(2, $ouAbbrev, PDO::PARAM_STR);
+        $getDiversityData->execute();
+        $rowsGetDiversityData = $getDiversityData->rowCount();
 
-      if ($rowsGetDiversityData > 0){
+        if ($rowsGetDiversityData > 0) {
 
-        $data = $getDiversityData->fetch();
+            $data = $getDiversityData->fetch();
 
-        $underGradFemale = $data["UGRAD_FEMALE"];
-        $underGradMale = $data["UGRAD_MALE"];
+            $underGradFemale = $data["UGRAD_FEMALE"];
+            $underGradMale = $data["UGRAD_MALE"];
 
-        $underGradAlaskaNative = $data["UGRAD_AMERIND_ALASKNAT"];
-        $underGradAsian = $data["UGRAD_ASIAN"];
-        $underGradBlack = $data["UGRAD_BLACK"];
-        $underGradHispanic = $data["UGRAD_HISPANIC"];
-        $underGradHawaiiPacificIsland = $data["UGRAD_HI_PAC_ISL"];
-        $underGradAlien = $data["UGRAD_NONRESIDENT_ALIEN"];
-        $underGradTwoOrMore = $data["UGRAD_TWO_OR_MORE"];
-        $underGradUnkown = $data["UGRAD_UNKNOWN_RACE_ETHNCTY"];
-        $underGradWhite = $data["UGRAD_WHITE"];
+            $underGradAlaskaNative = $data["UGRAD_AMERIND_ALASKNAT"];
+            $underGradAsian = $data["UGRAD_ASIAN"];
+            $underGradBlack = $data["UGRAD_BLACK"];
+            $underGradHispanic = $data["UGRAD_HISPANIC"];
+            $underGradHawaiiPacificIsland = $data["UGRAD_HI_PAC_ISL"];
+            $underGradAlien = $data["UGRAD_NONRESIDENT_ALIEN"];
+            $underGradTwoOrMore = $data["UGRAD_TWO_OR_MORE"];
+            $underGradUnkown = $data["UGRAD_UNKNOWN_RACE_ETHNCTY"];
+            $underGradWhite = $data["UGRAD_WHITE"];
 
-        $gradFemale = $data["GRAD_FEMALE"];
-        $gradMale = $data["GRAD_MALE"];
+            $gradFemale = $data["GRAD_FEMALE"];
+            $gradMale = $data["GRAD_MALE"];
 
-        $gradAlaskaNative = $data["GRAD_AMERIND_ALASKNAT"];
-        $gradAsian = $data["GRAD_ASIAN"];
-        $gradBlack = $data["GRAD_BLACK"];
-        $gradHispanic = $data["GRAD_HISPANIC"];
-        $gradHawaiiPacificIsland = $data["GRAD_HI_PAC_ISL"];
-        $gradAliens = $data["GRAD_NONRESIDENT_ALIEN"];
-        $gradDoubleRace = $data["GRAD_TWO_OR_MORE"];
-        $gradUnknown = $data["GRAD_UNKNOWN_RACE_ETHNCTY"];
-        $gradWhite = $data["GRAD_WHITE"];
+            $gradAlaskaNative = $data["GRAD_AMERIND_ALASKNAT"];
+            $gradAsian = $data["GRAD_ASIAN"];
+            $gradBlack = $data["GRAD_BLACK"];
+            $gradHispanic = $data["GRAD_HISPANIC"];
+            $gradHawaiiPacificIsland = $data["GRAD_HI_PAC_ISL"];
+            $gradAliens = $data["GRAD_NONRESIDENT_ALIEN"];
+            $gradDoubleRace = $data["GRAD_TWO_OR_MORE"];
+            $gradUnknown = $data["GRAD_UNKNOWN_RACE_ETHNCTY"];
+            $gradWhite = $data["GRAD_WHITE"];
 
-      }
+        }
 
-      echo "
+        echo "
         <div class='container-fluid'>
-          <h2 class='text-center'>".$this->college." Undergraduate Gender Data</h2>
+          <h2 class='text-center'>" . $this->college . " Undergraduate Gender Data</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -1549,7 +1549,7 @@
               <canvas id='underDiversityGenderByYear' width='200' height='200'></canvas>
             </div>
           </div>
-          <h2 class='text-center'>".$this->college." Data Undergraduate Race</h2>
+          <h2 class='text-center'>" . $this->college . " Data Undergraduate Race</h2>
           <div class='row'>
             <div class='col-md-6'>
               <div class='table-responsive'>
@@ -1603,7 +1603,7 @@
             </div>
             <canvas id='underDiversityRaceByYear' width='800' height='500'></canvas>
           </div>
-          <h2 class='text-center'>".$this->college." Graduate Gender Data</h2>
+          <h2 class='text-center'>" . $this->college . " Graduate Gender Data</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -1638,7 +1638,7 @@
             </table>
             </div>
           </div>
-          <h2 class='text-center'>".$this->college." Data Graduate Race</h2>
+          <h2 class='text-center'>" . $this->college . " Data Graduate Race</h2>
           <div class='row'>
             <div class='col-md-6'>
               <div class='table-responsive'>
@@ -1860,90 +1860,90 @@
     public function chartDiversityFaculty()
     {
 
-      $currentYear = "AY2016-2017";
+        $currentYear = "AY2016-2017";
 
-      $getDiversityData20162017 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDiversityData20162017->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getDiversityData20162017->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getDiversityData20162017->execute();
-      $rowsGetDiversityData20162017 = $getDiversityData20162017->rowCount();
+        $getDiversityData20162017 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDiversityData20162017->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getDiversityData20162017->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getDiversityData20162017->execute();
+        $rowsGetDiversityData20162017 = $getDiversityData20162017->rowCount();
 
-      if ($rowsGetDiversityData20162017 > 0){
+        if ($rowsGetDiversityData20162017 > 0) {
 
-        $data = $getDiversityData20162017->fetch();
+            $data = $getDiversityData20162017->fetch();
 
-        $female20162017 = $data["FAC_FEMALE"];
-        $male20162017 = $data["FAC_MALE"];
+            $female20162017 = $data["FAC_FEMALE"];
+            $male20162017 = $data["FAC_MALE"];
 
-        $alaskaNative20162017 = $data["FAC_AMERIND_ALASKNAT"];
-        $asian20162017 = $data["FAC_ASIAN"];
-        $black20162017 = $data["FAC_BLACK"];
-        $hispanic20162017 = $data["FAC_HISPANIC"];
-        $hawaiiPacificIsland20162017 = $data["FAC_HI_PAC_ISL"];
-        $alien20162017 = $data["FAC_NONRESIDENT_ALIEN"];
-        $twoOrMore20162017 = $data["FAC_TWO_OR_MORE"];
-        $unkown20162017 = $data["FAC_UNKNOWN_RACE_ETHNCTY"];
-        $white20162017 = $data["FAC_WHITE"];
+            $alaskaNative20162017 = $data["FAC_AMERIND_ALASKNAT"];
+            $asian20162017 = $data["FAC_ASIAN"];
+            $black20162017 = $data["FAC_BLACK"];
+            $hispanic20162017 = $data["FAC_HISPANIC"];
+            $hawaiiPacificIsland20162017 = $data["FAC_HI_PAC_ISL"];
+            $alien20162017 = $data["FAC_NONRESIDENT_ALIEN"];
+            $twoOrMore20162017 = $data["FAC_TWO_OR_MORE"];
+            $unkown20162017 = $data["FAC_UNKNOWN_RACE_ETHNCTY"];
+            $white20162017 = $data["FAC_WHITE"];
 
-      }
+        }
 
-      $ayYearBackOne = "AY2015-2016";
+        $ayYearBackOne = "AY2015-2016";
 
-      $getDiversityData20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDiversityData20152016->bindParam(1,$ayYearBackOne,PDO::PARAM_STR);
-      $getDiversityData20152016->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getDiversityData20152016->execute();
-      $rowsGetDiversityData20152016 = $getDiversityData20152016->rowCount();
+        $getDiversityData20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDiversityData20152016->bindParam(1, $ayYearBackOne, PDO::PARAM_STR);
+        $getDiversityData20152016->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getDiversityData20152016->execute();
+        $rowsGetDiversityData20152016 = $getDiversityData20152016->rowCount();
 
-      if ($rowsGetDiversityData20152016 > 0){
+        if ($rowsGetDiversityData20152016 > 0) {
 
-        $data = $getDiversityData20152016->fetch();
+            $data = $getDiversityData20152016->fetch();
 
-        $female20152016 = $data["FAC_FEMALE"];
-        $male20152016 = $data["FAC_MALE"];
+            $female20152016 = $data["FAC_FEMALE"];
+            $male20152016 = $data["FAC_MALE"];
 
-        $alaskaNative20152016 = $data["FAC_AMERIND_ALASKNAT"];
-        $asian20152016 = $data["FAC_ASIAN"];
-        $black20152016 = $data["FAC_BLACK"];
-        $hispanic20152016 = $data["FAC_HISPANIC"];
-        $hawaiiPacificIsland20152016 = $data["FAC_HI_PAC_ISL"];
-        $alien20152016 = $data["FAC_NONRESIDENT_ALIEN"];
-        $twoOrMore20152016 = $data["FAC_TWO_OR_MORE"];
-        $unkown20152016 = $data["FAC_UNKNOWN_RACE_ETHNCTY"];
-        $white20152016 = $data["FAC_WHITE"];
+            $alaskaNative20152016 = $data["FAC_AMERIND_ALASKNAT"];
+            $asian20152016 = $data["FAC_ASIAN"];
+            $black20152016 = $data["FAC_BLACK"];
+            $hispanic20152016 = $data["FAC_HISPANIC"];
+            $hawaiiPacificIsland20152016 = $data["FAC_HI_PAC_ISL"];
+            $alien20152016 = $data["FAC_NONRESIDENT_ALIEN"];
+            $twoOrMore20152016 = $data["FAC_TWO_OR_MORE"];
+            $unkown20152016 = $data["FAC_UNKNOWN_RACE_ETHNCTY"];
+            $white20152016 = $data["FAC_WHITE"];
 
-      }
+        }
 
-      $ayYearBackTwo = "AY2014-2015";
+        $ayYearBackTwo = "AY2014-2015";
 
-      $getDiversityData20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDiversityData20142015->bindParam(1,$ayYearBackTwo,PDO::PARAM_STR);
-      $getDiversityData20142015->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getDiversityData20142015->execute();
-      $rowsGetDiversityData20142015 = $getDiversityData20142015->rowCount();
+        $getDiversityData20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDiversityData20142015->bindParam(1, $ayYearBackTwo, PDO::PARAM_STR);
+        $getDiversityData20142015->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getDiversityData20142015->execute();
+        $rowsGetDiversityData20142015 = $getDiversityData20142015->rowCount();
 
-      if ($rowsGetDiversityData20142015 > 0){
+        if ($rowsGetDiversityData20142015 > 0) {
 
-        $data = $getDiversityData20142015->fetch();
+            $data = $getDiversityData20142015->fetch();
 
-        $female20142015 = $data["FAC_FEMALE"];
-        $male20142015 = $data["FAC_MALE"];
+            $female20142015 = $data["FAC_FEMALE"];
+            $male20142015 = $data["FAC_MALE"];
 
-        $alaskaNative20142015 = $data["FAC_AMERIND_ALASKNAT"];
-        $asian20142015 = $data["FAC_ASIAN"];
-        $black20142015 = $data["FAC_BLACK"];
-        $hispanic20142015 = $data["FAC_HISPANIC"];
-        $hawaiiPacificIsland20142015 = $data["FAC_HI_PAC_ISL"];
-        $alien20142015 = $data["FAC_NONRESIDENT_ALIEN"];
-        $twoOrMore20142015 = $data["FAC_TWO_OR_MORE"];
-        $unkown20142015 = $data["FAC_UNKNOWN_RACE_ETHNCTY"];
-        $white20142015 = $data["FAC_WHITE"];
+            $alaskaNative20142015 = $data["FAC_AMERIND_ALASKNAT"];
+            $asian20142015 = $data["FAC_ASIAN"];
+            $black20142015 = $data["FAC_BLACK"];
+            $hispanic20142015 = $data["FAC_HISPANIC"];
+            $hawaiiPacificIsland20142015 = $data["FAC_HI_PAC_ISL"];
+            $alien20142015 = $data["FAC_NONRESIDENT_ALIEN"];
+            $twoOrMore20142015 = $data["FAC_TWO_OR_MORE"];
+            $unkown20142015 = $data["FAC_UNKNOWN_RACE_ETHNCTY"];
+            $white20142015 = $data["FAC_WHITE"];
 
-      }
+        }
 
-      echo "
+        echo "
         <div class='container-fluid'>
-          <h2 class='text-center'>".$this->college." Faculty Gender Data</h2>
+          <h2 class='text-center'>" . $this->college . " Faculty Gender Data</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -1992,7 +1992,7 @@
               </table>
             </div>
           </div>
-          <h2 class='text-center'>".$this->college." Faculty Race Data</h2>
+          <h2 class='text-center'>" . $this->college . " Faculty Race Data</h2>
           <div class='row'>
             <div class='col-md-6'>
               <div class='table-responsive'>
@@ -2095,7 +2095,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -2126,7 +2126,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -2157,7 +2157,7 @@
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-".$this->college."', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -2214,7 +2214,7 @@
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-".$this->college."', functionNum: '5'});
+                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -2259,37 +2259,37 @@
 
     }
 
-    public function chartDiversityFacultyByYear($selectedYear,$ouAbbrev)
+    public function chartDiversityFacultyByYear($selectedYear, $ouAbbrev)
     {
 
-      $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDiversityData->bindParam(1,$selectedYear,PDO::PARAM_STR);
-      $getDiversityData->bindParam(2,$ouAbbrev,PDO::PARAM_STR);
-      $getDiversityData->execute();
-      $rowsGetDiversityData = $getDiversityData->rowCount();
+        $getDiversityData = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDiversityData->bindParam(1, $selectedYear, PDO::PARAM_STR);
+        $getDiversityData->bindParam(2, $ouAbbrev, PDO::PARAM_STR);
+        $getDiversityData->execute();
+        $rowsGetDiversityData = $getDiversityData->rowCount();
 
-      if ($rowsGetDiversityData > 0){
+        if ($rowsGetDiversityData > 0) {
 
-        $data = $getDiversityData->fetch();
+            $data = $getDiversityData->fetch();
 
-        $female = $data["FAC_FEMALE"];
-        $male = $data["FAC_MALE"];
+            $female = $data["FAC_FEMALE"];
+            $male = $data["FAC_MALE"];
 
-        $alaskaNative = $data["FAC_AMERIND_ALASKNAT"];
-        $asian = $data["FAC_ASIAN"];
-        $black = $data["FAC_BLACK"];
-        $hispanic = $data["FAC_HISPANIC"];
-        $hawaiiPacificIsland = $data["FAC_HI_PAC_ISL"];
-        $alien = $data["FAC_NONRESIDENT_ALIEN"];
-        $twoOrMore = $data["FAC_TWO_OR_MORE"];
-        $unkown = $data["FAC_UNKNOWN_RACE_ETHNCTY"];
-        $white = $data["FAC_WHITE"];
+            $alaskaNative = $data["FAC_AMERIND_ALASKNAT"];
+            $asian = $data["FAC_ASIAN"];
+            $black = $data["FAC_BLACK"];
+            $hispanic = $data["FAC_HISPANIC"];
+            $hawaiiPacificIsland = $data["FAC_HI_PAC_ISL"];
+            $alien = $data["FAC_NONRESIDENT_ALIEN"];
+            $twoOrMore = $data["FAC_TWO_OR_MORE"];
+            $unkown = $data["FAC_UNKNOWN_RACE_ETHNCTY"];
+            $white = $data["FAC_WHITE"];
 
-      }
+        }
 
-      echo "
+        echo "
         <div class='container-fluid'>
-          <h2 class='text-center'>".$this->college." Faculty Gender Data</h2>
+          <h2 class='text-center'>" . $this->college . " Faculty Gender Data</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -2324,7 +2324,7 @@
               </table>
             </div>
           </div>
-          <h2 class='text-center'>".$this->college." Faculty Race Data</h2>
+          <h2 class='text-center'>" . $this->college . " Faculty Race Data</h2>
           <div class='row'>
             <div class='col-md-6'>
               <div class='table-responsive'>
@@ -2466,208 +2466,208 @@
     public function chartStudentOutcomes()
     {
 
-      $currentYear = "2015";
+        $currentYear = "2015";
 
-      $getStudentOutcomesRetention2015 = $this->connection->prepare("SELECT * FROM `IR_AC_Retention` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
-      $getStudentOutcomesRetention2015->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2015->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2015->execute();
-      $rowsGetStudentOutcomesRetention2015 = $getStudentOutcomesRetention2015->rowCount();
+        $getStudentOutcomesRetention2015 = $this->connection->prepare("SELECT * FROM `IR_AC_Retention` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
+        $getStudentOutcomesRetention2015->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getStudentOutcomesRetention2015->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getStudentOutcomesRetention2015->execute();
+        $rowsGetStudentOutcomesRetention2015 = $getStudentOutcomesRetention2015->rowCount();
 
-      if ($rowsGetStudentOutcomesRetention2015){
+        if ($rowsGetStudentOutcomesRetention2015) {
 
-        while($data = $getStudentOutcomesRetention2015->fetch()){
+            while ($data = $getStudentOutcomesRetention2015->fetch()) {
 
-          $retentionFirstYear2015 = $data["RETENTION_FIRST_YR"];
-          $retentionSecondYear2015 = $data["RETENTION_SECOND_YR"];
+                $retentionFirstYear2015 = $data["RETENTION_FIRST_YR"];
+                $retentionSecondYear2015 = $data["RETENTION_SECOND_YR"];
 
-        }
-
-      }
-
-      $currentYear = "2014";
-
-      $getStudentOutcomesRetention2014 = $this->connection->prepare("SELECT * FROM `IR_AC_Retention` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
-      $getStudentOutcomesRetention2014->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2014->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2014->execute();
-      $rowsGetStudentOutcomesRetention2014 = $getStudentOutcomesRetention2014->rowCount();
-
-      if ($rowsGetStudentOutcomesRetention2014){
-
-        while($data = $getStudentOutcomesRetention2014->fetch()){
-
-          $retentionFirstYear2014 = $data["RETENTION_FIRST_YR"];
-          $retentionSecondYear2014 = $data["RETENTION_SECOND_YR"];
+            }
 
         }
 
-      }
+        $currentYear = "2014";
 
-      $currentYear = "2013";
+        $getStudentOutcomesRetention2014 = $this->connection->prepare("SELECT * FROM `IR_AC_Retention` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
+        $getStudentOutcomesRetention2014->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getStudentOutcomesRetention2014->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getStudentOutcomesRetention2014->execute();
+        $rowsGetStudentOutcomesRetention2014 = $getStudentOutcomesRetention2014->rowCount();
 
-      $getStudentOutcomesRetention2013 = $this->connection->prepare("SELECT * FROM `IR_AC_Retention` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
-      $getStudentOutcomesRetention2013->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2013->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2013->execute();
-      $rowsGetStudentOutcomesRetention2013 = $getStudentOutcomesRetention2013->rowCount();
+        if ($rowsGetStudentOutcomesRetention2014) {
 
-      if ($rowsGetStudentOutcomesRetention2013){
+            while ($data = $getStudentOutcomesRetention2014->fetch()) {
 
-        while($data = $getStudentOutcomesRetention2013->fetch()){
+                $retentionFirstYear2014 = $data["RETENTION_FIRST_YR"];
+                $retentionSecondYear2014 = $data["RETENTION_SECOND_YR"];
 
-          $retentionFirstYear2013 = $data["RETENTION_FIRST_YR"];
-          $retentionSecondYear2013 = $data["RETENTION_SECOND_YR"];
-
-        }
-
-      }
-
-      $currentYear = "2012";
-
-      $getStudentOutcomesRetention2012 = $this->connection->prepare("SELECT * FROM `IR_AC_Retention` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
-      $getStudentOutcomesRetention2012->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2012->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getStudentOutcomesRetention2012->execute();
-      $rowsGetStudentOutcomesRetention2012 = $getStudentOutcomesRetention2012->rowCount();
-
-      if ($rowsGetStudentOutcomesRetention2012){
-
-        while($data = $getStudentOutcomesRetention2012->fetch()){
-
-          $retentionFirstYear2012 = $data["RETENTION_FIRST_YR"];
-          $retentionSecondYear2012 = $data["RETENTION_SECOND_YR"];
+            }
 
         }
 
-      }
+        $currentYear = "2013";
 
-      $currentYear = "2010";
+        $getStudentOutcomesRetention2013 = $this->connection->prepare("SELECT * FROM `IR_AC_Retention` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
+        $getStudentOutcomesRetention2013->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getStudentOutcomesRetention2013->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getStudentOutcomesRetention2013->execute();
+        $rowsGetStudentOutcomesRetention2013 = $getStudentOutcomesRetention2013->rowCount();
 
-      $getStudentOutcomesGradRate2010 = $this->connection->prepare("SELECT * FROM `IR_AC_GraduationRate` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
-      $getStudentOutcomesGradRate2010->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getStudentOutcomesGradRate2010->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getStudentOutcomesGradRate2010->execute();
-      $rowsGetStudentOutcomesGradRate2010 = $getStudentOutcomesGradRate2010->rowCount();
+        if ($rowsGetStudentOutcomesRetention2013) {
 
-      if ($rowsGetStudentOutcomesGradRate2010){
+            while ($data = $getStudentOutcomesRetention2013->fetch()) {
 
-        while($data = $getStudentOutcomesGradRate2010->fetch()){
+                $retentionFirstYear2013 = $data["RETENTION_FIRST_YR"];
+                $retentionSecondYear2013 = $data["RETENTION_SECOND_YR"];
 
-          $graduationRateFourYear2010 = $data["GRADUATION_RATE_4YR"];
-          $graduationRateFiveYear2010 = $data["GRADUATION_RATE_5YR"];
-          $graduationRateSixYear2010 = $data["GRADUATION_RATE_6YR"];
-
-        }
-
-      }
-
-      $currentYear = "2009";
-
-      $getStudentOutcomesGradRate2009 = $this->connection->prepare("SELECT * FROM `IR_AC_GraduationRate` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
-      $getStudentOutcomesGradRate2009->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getStudentOutcomesGradRate2009->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getStudentOutcomesGradRate2009->execute();
-      $rowsGetStudentOutcomesGradRate2009 = $getStudentOutcomesGradRate2009->rowCount();
-
-      if ($rowsGetStudentOutcomesGradRate2009){
-
-        while($data = $getStudentOutcomesGradRate2009->fetch()){
-
-          $graduationRateFourYear2009 = $data["GRADUATION_RATE_4YR"];
-          $graduationRateFiveYear2009 = $data["GRADUATION_RATE_5YR"];
-          $graduationRateSixYear2009 = $data["GRADUATION_RATE_6YR"];
+            }
 
         }
 
-      }
+        $currentYear = "2012";
 
-      $currentYear = "2008";
+        $getStudentOutcomesRetention2012 = $this->connection->prepare("SELECT * FROM `IR_AC_Retention` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
+        $getStudentOutcomesRetention2012->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getStudentOutcomesRetention2012->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getStudentOutcomesRetention2012->execute();
+        $rowsGetStudentOutcomesRetention2012 = $getStudentOutcomesRetention2012->rowCount();
 
-      $getStudentOutcomesGradRate2008 = $this->connection->prepare("SELECT * FROM `IR_AC_GraduationRate` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
-      $getStudentOutcomesGradRate2008->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getStudentOutcomesGradRate2008->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getStudentOutcomesGradRate2008->execute();
-      $rowsGetStudentOutcomesGradRate2008 = $getStudentOutcomesGradRate2008->rowCount();
+        if ($rowsGetStudentOutcomesRetention2012) {
 
-      if ($rowsGetStudentOutcomesGradRate2008){
+            while ($data = $getStudentOutcomesRetention2012->fetch()) {
 
-        while($data = $getStudentOutcomesGradRate2008->fetch()){
+                $retentionFirstYear2012 = $data["RETENTION_FIRST_YR"];
+                $retentionSecondYear2012 = $data["RETENTION_SECOND_YR"];
 
-          $graduationRateFourYear2008 = $data["GRADUATION_RATE_4YR"];
-          $graduationRateFiveYear2008 = $data["GRADUATION_RATE_5YR"];
-          $graduationRateSixYear2008 = $data["GRADUATION_RATE_6YR"];
-
-        }
-
-      }
-
-      $currentYear = "AY2015-2016";
-
-      $getDegreesAwarded20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_DegreesAwarded` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDegreesAwarded20152016->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getDegreesAwarded20152016->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getDegreesAwarded20152016->execute();
-      $rowsGetDegreesAwarded20152016 = $getDegreesAwarded20152016->rowCount();
-
-      if ($rowsGetDegreesAwarded20152016){
-
-        while($data = $getDegreesAwarded20152016->fetch()){
-
-          $degreesAwardedBachelorsYear20152016 = $data["DEGREES_AWRD_BACHELORS"];
-          $degreesAwardedMastersYear20152016 = $data["DEGREES_AWRD_MASTERS"];
-          $degreesAwardedDoctoralYear20152016 = $data["DEGREES_AWRD_DOCTORAL"];
-          $degreesAwardedCertYear20152016 = $data["DEGREES_AWRD_GRAD_CERT"];
+            }
 
         }
 
-      }
+        $currentYear = "2010";
 
-      $currentYear = "AY2014-2015";
+        $getStudentOutcomesGradRate2010 = $this->connection->prepare("SELECT * FROM `IR_AC_GraduationRate` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
+        $getStudentOutcomesGradRate2010->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getStudentOutcomesGradRate2010->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getStudentOutcomesGradRate2010->execute();
+        $rowsGetStudentOutcomesGradRate2010 = $getStudentOutcomesGradRate2010->rowCount();
 
-      $getDegreesAwarded20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_DegreesAwarded` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDegreesAwarded20142015->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getDegreesAwarded20142015->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getDegreesAwarded20142015->execute();
-      $rowsGetDegreesAwarded20142015 = $getDegreesAwarded20142015->rowCount();
+        if ($rowsGetStudentOutcomesGradRate2010) {
 
-      if ($rowsGetDegreesAwarded20142015){
+            while ($data = $getStudentOutcomesGradRate2010->fetch()) {
 
-        while($data = $getDegreesAwarded20142015->fetch()){
+                $graduationRateFourYear2010 = $data["GRADUATION_RATE_4YR"];
+                $graduationRateFiveYear2010 = $data["GRADUATION_RATE_5YR"];
+                $graduationRateSixYear2010 = $data["GRADUATION_RATE_6YR"];
 
-          $degreesAwardedBachelorsYear20142015 = $data["DEGREES_AWRD_BACHELORS"];
-          $degreesAwardedMastersYear20142015 = $data["DEGREES_AWRD_MASTERS"];
-          $degreesAwardedDoctoralYear20142015 = $data["DEGREES_AWRD_DOCTORAL"];
-          $degreesAwardedCertYear20142015 = $data["DEGREES_AWRD_GRAD_CERT"];
-
-        }
-
-      }
-
-      $currentYear = "AY2013-2014";
-
-      $getDegreesAwarded20132014 = $this->connection->prepare("SELECT * FROM `IR_AC_DegreesAwarded` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
-      $getDegreesAwarded20132014->bindParam(1,$currentYear,PDO::PARAM_STR);
-      $getDegreesAwarded20132014->bindParam(2,$this->college,PDO::PARAM_STR);
-      $getDegreesAwarded20132014->execute();
-      $rowsGetDegreesAwarded20132014 = $getDegreesAwarded20132014->rowCount();
-
-      if ($rowsGetDegreesAwarded20132014){
-
-        while($data = $getDegreesAwarded20132014->fetch()){
-
-          $degreesAwardedBachelorsYear20132014 = $data["DEGREES_AWRD_BACHELORS"];
-          $degreesAwardedMastersYear20132014 = $data["DEGREES_AWRD_MASTERS"];
-          $degreesAwardedDoctoralYear20132014 = $data["DEGREES_AWRD_DOCTORAL"];
-          $degreesAwardedCertYear20132014 = $data["DEGREES_AWRD_GRAD_CERT"];
+            }
 
         }
 
-      }
+        $currentYear = "2009";
 
-      echo "
+        $getStudentOutcomesGradRate2009 = $this->connection->prepare("SELECT * FROM `IR_AC_GraduationRate` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
+        $getStudentOutcomesGradRate2009->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getStudentOutcomesGradRate2009->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getStudentOutcomesGradRate2009->execute();
+        $rowsGetStudentOutcomesGradRate2009 = $getStudentOutcomesGradRate2009->rowCount();
+
+        if ($rowsGetStudentOutcomesGradRate2009) {
+
+            while ($data = $getStudentOutcomesGradRate2009->fetch()) {
+
+                $graduationRateFourYear2009 = $data["GRADUATION_RATE_4YR"];
+                $graduationRateFiveYear2009 = $data["GRADUATION_RATE_5YR"];
+                $graduationRateSixYear2009 = $data["GRADUATION_RATE_6YR"];
+
+            }
+
+        }
+
+        $currentYear = "2008";
+
+        $getStudentOutcomesGradRate2008 = $this->connection->prepare("SELECT * FROM `IR_AC_GraduationRate` WHERE FTFT_COHORT = ? AND OU_ABBREV = ?");
+        $getStudentOutcomesGradRate2008->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getStudentOutcomesGradRate2008->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getStudentOutcomesGradRate2008->execute();
+        $rowsGetStudentOutcomesGradRate2008 = $getStudentOutcomesGradRate2008->rowCount();
+
+        if ($rowsGetStudentOutcomesGradRate2008) {
+
+            while ($data = $getStudentOutcomesGradRate2008->fetch()) {
+
+                $graduationRateFourYear2008 = $data["GRADUATION_RATE_4YR"];
+                $graduationRateFiveYear2008 = $data["GRADUATION_RATE_5YR"];
+                $graduationRateSixYear2008 = $data["GRADUATION_RATE_6YR"];
+
+            }
+
+        }
+
+        $currentYear = "AY2015-2016";
+
+        $getDegreesAwarded20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_DegreesAwarded` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDegreesAwarded20152016->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getDegreesAwarded20152016->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getDegreesAwarded20152016->execute();
+        $rowsGetDegreesAwarded20152016 = $getDegreesAwarded20152016->rowCount();
+
+        if ($rowsGetDegreesAwarded20152016) {
+
+            while ($data = $getDegreesAwarded20152016->fetch()) {
+
+                $degreesAwardedBachelorsYear20152016 = $data["DEGREES_AWRD_BACHELORS"];
+                $degreesAwardedMastersYear20152016 = $data["DEGREES_AWRD_MASTERS"];
+                $degreesAwardedDoctoralYear20152016 = $data["DEGREES_AWRD_DOCTORAL"];
+                $degreesAwardedCertYear20152016 = $data["DEGREES_AWRD_GRAD_CERT"];
+
+            }
+
+        }
+
+        $currentYear = "AY2014-2015";
+
+        $getDegreesAwarded20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_DegreesAwarded` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDegreesAwarded20142015->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getDegreesAwarded20142015->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getDegreesAwarded20142015->execute();
+        $rowsGetDegreesAwarded20142015 = $getDegreesAwarded20142015->rowCount();
+
+        if ($rowsGetDegreesAwarded20142015) {
+
+            while ($data = $getDegreesAwarded20142015->fetch()) {
+
+                $degreesAwardedBachelorsYear20142015 = $data["DEGREES_AWRD_BACHELORS"];
+                $degreesAwardedMastersYear20142015 = $data["DEGREES_AWRD_MASTERS"];
+                $degreesAwardedDoctoralYear20142015 = $data["DEGREES_AWRD_DOCTORAL"];
+                $degreesAwardedCertYear20142015 = $data["DEGREES_AWRD_GRAD_CERT"];
+
+            }
+
+        }
+
+        $currentYear = "AY2013-2014";
+
+        $getDegreesAwarded20132014 = $this->connection->prepare("SELECT * FROM `IR_AC_DegreesAwarded` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+        $getDegreesAwarded20132014->bindParam(1, $currentYear, PDO::PARAM_STR);
+        $getDegreesAwarded20132014->bindParam(2, $this->college, PDO::PARAM_STR);
+        $getDegreesAwarded20132014->execute();
+        $rowsGetDegreesAwarded20132014 = $getDegreesAwarded20132014->rowCount();
+
+        if ($rowsGetDegreesAwarded20132014) {
+
+            while ($data = $getDegreesAwarded20132014->fetch()) {
+
+                $degreesAwardedBachelorsYear20132014 = $data["DEGREES_AWRD_BACHELORS"];
+                $degreesAwardedMastersYear20132014 = $data["DEGREES_AWRD_MASTERS"];
+                $degreesAwardedDoctoralYear20132014 = $data["DEGREES_AWRD_DOCTORAL"];
+                $degreesAwardedCertYear20132014 = $data["DEGREES_AWRD_GRAD_CERT"];
+
+            }
+
+        }
+
+        echo "
         <div class='container-fluid'>
-          <h2 class='text-center'>".$this->college." Student Retention Rates Data</h2>
+          <h2 class='text-center'>" . $this->college . " Student Retention Rates Data</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -2715,7 +2715,7 @@
               </table>
             </div>
           </div>
-          <h2 class='text-center'>".$this->college." Student Graduation Rates Data</h2>
+          <h2 class='text-center'>" . $this->college . " Student Graduation Rates Data</h2>
           <div class='row'>
             <div class='col-md-4'>
               <div class='table-responsive'>
@@ -2772,7 +2772,7 @@
               </table>
             </div>
           </div>
-          <h2 class='text-center'>".$this->college." Student Degrees Awarded Data</h2>
+          <h2 class='text-center'>" . $this->college . " Student Degrees Awarded Data</h2>
           <div class='row'>
             <div class='col-md-6'>
               <div class='table-responsive'>
@@ -2969,7 +2969,7 @@
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-".$this->college."', functionNum: '5'});
+                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -3011,15 +3011,16 @@
 
     }
 
-    public function exportToPng($base64Image,$pngName)
+    public function exportToPng($base64Image, $pngName)
     {
 
-      $data = explode(",", $base64Image);
-      $fileHandler = fopen("../../User/charts/".$pngName.".png","wb");
-      fwrite($fileHandler, base64_decode($data[1]));
-      fclose($fileHandler);
+        $data = explode(",", $base64Image);
+        $fileHandler = fopen("../../User/charts/" . $pngName . ".png", "wb");
+        fwrite($fileHandler, base64_decode($data[1]));
+        fclose($fileHandler);
 
     }
 
-  }
+}
+
 ?>

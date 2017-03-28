@@ -228,16 +228,16 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
                         $this->deansPortraitLogopath = $target_file_port;
 
                     } else {
-                        $this->message[1] = "Sorry, there was an error uploading your file.";
+                        $this->message = "Sorry, there was an error uploading your file.";
                     }
 
                 } else {
-                    $this->message[1] = "Only 250 X 250 pixel files are allowed.";
+                    $this->message = "Only 250 X 250 pixel files are allowed.";
                     $this->errorflag = 1;
                 }
 
             } else {
-                $this->message[1] = "Sorry, only GIF, JPEG or PNG files are allowed.";
+                $this->message = "Sorry, only GIF, JPEG or PNG files are allowed.";
                 $this->errorflag = 1;
             }
 
@@ -263,20 +263,20 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
 
                     } else {
 
-                        $this->message[2] = "Sorry, there was an error uploading your file.";
+                        $this->message = "Sorry, there was an error uploading your file.";
 
                     }
 
                 } else {
 
-                    $this->message[1] = "Only 250 X 75 pixel files are allowed.";
+                    $this->message = "Only 250 X 75 pixel files are allowed.";
                     $this->errorflag = 1;
 
                 }
 
             } else {
 
-                $this->message[1] = "Sorry, only GIF, JPEG or PNG files are allowed.";
+                $this->message = "Sorry, only GIF, JPEG or PNG files are allowed.";
                 $this->errorflag = 1;
 
             }
@@ -298,12 +298,12 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
                 if (move_uploaded_file($_FILES["deans-college-school-logo"]["tmp_name"], $target_file_sch_logo)) {
                     $this->deansSchLogopath = $target_file_sch_logo;
                 } else {
-                    $this->message[3] = "Sorry, there was an error uploading your file.";
+                    $this->message = "Sorry, there was an error uploading your file.";
                 }
 
             } else {
 
-                $this->message[1] = "Sorry, only GIF, JPEG or PNG files are allowed.";
+                $this->message = "Sorry, only GIF, JPEG or PNG files are allowed.";
                 $this->errorflag = 1;
 
             }
@@ -320,7 +320,7 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
               :deansPortraitSignpath,:deansSchLogopath,:introduction,:highlights);";
 
                 if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
-                    $sqlexecsum .= "UPDATE  `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
+                    $sqlexecsum .= "UPDATE  `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR = :author,
 MOD_TIMESTAMP =:timestampmod  WHERE ID_CONTENT =:contentlink_id;";
 
                     $sqlexecsum .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
@@ -350,9 +350,9 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified =:timesta
                 }
 
                 if ($execsum->execute()) {
-                    $this->message[0] = "Executive Summary Info Added Successfully.";
+                    $this->message = "Executive Summary Info Added Successfully.";
                 } else {
-                    $this->message[0] = "Executive Summary Info could not be added.";
+                    $this->message = "Executive Summary Info could not be added.";
                 }
 
             } catch (PDOException $e) {
@@ -656,7 +656,7 @@ Class GOALOUTCOME extends BPCONTENTS
         $goalreportstatus = "Pending Approval";
 
         try {
-            $sqlgoaloutap .= "UPDATE `BP_UnitGoalOutcomes` SET GOAL_REPORT_STATUS = :goalreportstatus WHERE ID_UNIT_GOAL = :goal_id; ";
+            $sqlgoaloutap = "UPDATE `BP_UnitGoalOutcomes` SET GOAL_REPORT_STATUS = :goalreportstatus WHERE ID_UNIT_GOAL = :goal_id; ";
 
             $resultgoaloutap = $this->connection->prepare($sqlgoaloutap);
             $resultgoaloutap->bindParam(":goalreportstatus", $goalreportstatus, PDO::PARAM_STR);
@@ -665,9 +665,9 @@ Class GOALOUTCOME extends BPCONTENTS
             //$sqlgoaloutap .= "Update `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
 
             if ($resultgoaloutap->execute()) {
-                $this->message[1] = "Goal Outcome submitted for Approval.";
+                $this->message = "Goal Outcome submitted for Approval.";
             } else {
-                $this->message[1] = "Goal Outcome could not be Submitted.";
+                $this->message = "Goal Outcome could not be Submitted.";
             }
         } catch (PDOException $e) {
             error_log($e->getMessage());
@@ -1053,11 +1053,16 @@ Class MVV extends BPCONTENTS
         $missionupdatedate = date("Y-m-d", strtotime($_POST['misupdate']));
         $visionstatement = Initialize::mynl2br($_POST['visionstatement']);
         $visionupdatedate = date("Y-m-d", strtotime($_POST['visupdate']));
+        $visNoResp = $_POST['visNoResponse'];
         $valuestatement = Initialize::mynl2br($_POST['valuestatement']);
         $valueupdatedate = date("Y-m-d", strtotime($_POST['valupdate']));
+        $valNoResp = $_POST['valNoResponse'];
 
-        $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, MISSION_STATEMENT, MISSION_UPDATE_DATE, VISION_STATEMENT,VISION_UPDATE_DATE,VALUES_STATEMENT,VALUE_UPADTE_DATE)
-        VALUES (:ouabbrev,:author,:timestampmod,:bpayname,:missionstatement,:missionupdatedate,:visionstatement,:visionupdatedate,:valuestatement,:valueupdatedate);";
+
+        $sqlmission = "INSERT INTO `BP_MissionVisionValues` (OU_ABBREV,MVV_AUTHOR, MOD_TIMESTAMP, UNIT_MVV_AY, 
+MISSION_STATEMENT, MISSION_UPDATE_DATE, VISION_STATEMENT,VISION_UPDATE_DATE,VISION_NO_RESPONSE,VALUES_STATEMENT,
+VALUE_UPADTE_DATE,VALUE_NO_RESPONSE) VALUES (:ouabbrev,:author,:timestampmod,:bpayname,:missionstatement,
+:missionupdatedate,:visionstatement, :visionupdatedate,:visNoResp ,:valuestatement,:valueupdatedate, :valNoResp);";
 
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
             $sqlmission .= "UPDATE  `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author, MOD_TIMESTAMP =:timestampmod  WHERE ID_CONTENT = :contentlink_id; ";
@@ -1075,8 +1080,10 @@ Class MVV extends BPCONTENTS
         $resultmission->bindParam(':missionupdatedate', $missionupdatedate, PDO::PARAM_STR);
         $resultmission->bindParam(':visionstatement', $visionstatement, PDO::PARAM_STR);
         $resultmission->bindParam(':visionupdatedate', $visionupdatedate, PDO::PARAM_STR);
+        $resultmission->bindParam(':visNoResp', $visNoResp, PDO::PARAM_STR);
         $resultmission->bindParam(':valuestatement', $valuestatement, PDO::PARAM_STR);
         $resultmission->bindParam(':valueupdatedate', $valueupdatedate, PDO::PARAM_STR);
+        $resultmission->bindParam(':valNoResp', $valNoResp, PDO::PARAM_STR);
 
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
             $resultmission->bindParam(":author", $this->author, PDO::PARAM_STR);
@@ -1092,6 +1099,7 @@ Class MVV extends BPCONTENTS
         } else {
             $this->message = "Mission, Vission, & Values Could not be Updated. Please Retry.";
         }
+        return $this->message;
     }
 
     public function PlaceHolderValue()

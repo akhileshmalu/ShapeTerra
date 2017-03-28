@@ -103,7 +103,8 @@ if(isset($_POST['approve'])) {
         $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='Final', BROADCAST_STATUS_OTHERS='Final' WHERE
     ID_BROADCAST = :bpid;";
         $resultbroadupdate = $connection->prepare($sqlbroadupdate);
-        if ($resultbroadupdate->execute(['bpid' => $bpid])) {
+        $resultbroadupdate->bindParam(':bpid',$bpid,2);
+        if ($resultbroadupdate->execute()) {
             $message[0] = "Academic BluePrint Draft Submitted Successfully.";
         } else {
             $message[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
@@ -193,9 +194,11 @@ require_once("../Resources/Includes/menu.php");
             <a href="<?php echo $rowsbpcontent['CONTENT_LINK'].'?linkid='.$rowsbpcontent['ID_CONTENT'] ?>">
                 <ul class="items row">
                     <li class="col-xs-4"><?php echo $rowsbpcontent['CONTENT_BRIEF_DESC'] ?></li>
-                    <li class="col-xs-3"><?php echo $rowsbpcontent['LNAME'].', '.$rowsbpcontent['FNAME']; ?></li>
-                    <li class="col-xs-3"><?php echo date("m/d/Y", strtotime($rowsbpcontent['MOD_TIMESTAMP'])); ?></li>
-                    <li class="col-xs-2"><?php echo $rowsbpcontent['CONTENT_STATUS'] ?></li>
+                    <li class="col-xs-3"><?php
+                        echo $initalize->getUserName($rowsbpcontent['BP_AUTHOR']);
+                        ?></li>
+                    <li class="col-xs-2"><?php echo date("m/d/Y", strtotime($rowsbpcontent['MOD_TIMESTAMP'])); ?></li>
+                    <li class="col-xs-3"><?php echo $rowsbpcontent['CONTENT_STATUS'] ?></li>
                 </ul>
             </a>
             <?php endwhile; ?>
