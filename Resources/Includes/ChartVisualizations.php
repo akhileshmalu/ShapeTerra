@@ -1077,8 +1077,8 @@
                     <tr>
                       <td>Graduate Alien</td>
                       <td>$gradAlien20142015</td>
-                      <td>$gradAlien20142015</td>
-                      <td>$gradAlien20142015</td>
+                      <td>$gradAlien20152016</td>
+                      <td>$gradAlien20162017</td>
                     </tr>
                     <tr>
                       <td>Graduate Two Or More Races</td>
@@ -1089,8 +1089,8 @@
                     <tr>
                       <td>Graduate Unkown Race</td>
                       <td>$gradUnkown20142015</td>
-                      <td>$gradUnkown20142015</td>
-                      <td>$gradUnkown20142015</td>
+                      <td>$gradUnkown20152016</td>
+                      <td>$gradUnkown20162017</td>
                     </tr>
                     <tr>
                       <td>Graduate White</td>

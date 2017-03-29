@@ -51,6 +51,7 @@ $ouid = $rowsmenu['USER_OU_MEMBERSHIP'];
 
 $menu = array(
 //	array("Upload OIRAA Data", "../$navdir"."/Pages/fileuploadhome.php", "" ,"main","service", true),
+array("Data Visuals", "../$navdir"."/Pages/visualizations.php", "" ,"main","basic", true),
 	array("Data Dictionary", "../$navdir"."/Pages/datadicthome.php", "" ,"main","basic", true),
     array("Footnotes", "../$navdir"."/Pages/footnotehome.php", "" ,"main","basic", true),
 	//array("Approve BluePrint", "../$navdir"."/Pages/approvebp.php", "" ,"main","approver", true),

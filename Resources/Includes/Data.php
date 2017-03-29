@@ -146,7 +146,7 @@ Class Data
         if ($data["ID_SORT"] == 0 || $data["ID_SORT"] == NULL || $data["ID_SORT"] == "") {
 
           $updateItem = $this->connection->prepare("UPDATE `BP_UnitGoals` SET ID_SORT = ? WHERE ID_UNIT_GOAL = ? AND GOAL_VIEWPOINT = ?");
-          $updateItem->bindParam(1, $rowsGetCurrentOrder, PDO::PARAM_INT);
+          $updateItem->bindParam(1, $rowsGetCurrentOrder+1, PDO::PARAM_INT);
           $updateItem->bindParam(2, $data["ID_UNIT_GOAL"], PDO::PARAM_INT);
           $updateItem->bindPAram(3, $viewPoint[$i], PDO::PARAM_STR);
           $updateItem->execute();
