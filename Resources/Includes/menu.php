@@ -59,6 +59,7 @@ array("Data Visuals", "../$navdir"."/Pages/visualizations.php", "" ,"main","basi
 	array("Edit Academic Year", "../$navdir"."/Pages/editay.php", "" ,"main","provost", true),
 	array("Initiate Academic BluePrint", "../$navdir"."/Pages/initiatebp.php", "" ,"main","provost", false),
 	array("Approve Request", "../$navdir"."/Pages/updateaccess.php", "" ,"admin","basic", false),
+	array("Invite User", "../$navdir"."/Pages/addUser.php", "" ,"admin","basic", false),
 	array("Deactivate Users", "../$navdir"."/Pages/delete.php", "" ,"admin","basic", false)
 //	array("Request privilege", "../$navdir"."/Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
 	);
@@ -130,7 +131,9 @@ function download($filename){
 	  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
 
 		<!-- User info -->
-		  <li><p class="text-muted h6" style="margin-left:20px">Org Unit : <?php echo $rowsmenu['OU_ABBREV']; ?></p></li>
+<!--		  Add User & Modify User Page fetch Org Unit Name from #ouid-->
+		  <li><p id="ouid" class="text-muted h6" style="margin-left:20px">Org Unit : <?php echo $rowsmenu['OU_ABBREV'];
+				  ?></p></li>
 		  <li><p class="text-muted h6" style="margin-left:20px">Role : <?php echo $rowsmenu['SYS_USER_ROLE']; ?></p> </li>
 		  <li><p class="text-muted h6" style="margin-left:20px">Right desc : <?php echo $rowsmenu['USER_RIGHT']; ?></p> </li>
 

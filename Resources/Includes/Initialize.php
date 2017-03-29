@@ -6,16 +6,14 @@
 
     function __construct()
     {
-
-      session_start();
+        if(!isset($_SESSION))
+        {
+            session_start();
+        }
       //error logging set to 0 for prod
       error_reporting(1);
       @ini_set('display_errors', 1);
-<<<<<<< HEAD
-      @ini_set('always_populate_raw_post_data', '-1');
-=======
         ini_set('always_populate_raw_post_data', '-1');
->>>>>>> b8c53b2cf194266cb96dc02a0e7fe20044c78540
 
       //Setting Default Time
       date_default_timezone_set('America/New_York');

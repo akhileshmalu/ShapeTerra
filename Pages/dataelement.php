@@ -146,7 +146,7 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-lg-8 col-xs-offset-1 col-md-8 col-xs-8">
-        <form action="" method="POST">
+        <form action="<?php echo $_SERVER['PHP_SELF'].'?elem_id='.$elemid.'&status='.$elemstatus;?>" method="POST">
             <div class="form-group tab1 active" id="actionlist">
                 <h1>Identification & Meaning</h1>
                 <div class="col-xs-12">
@@ -213,7 +213,7 @@ require_once("../Resources/Includes/menu.php");
                                 than permitted by the assigned Classification.
                             </small>
                         </p>
-                        <select type="text" name="dataclass" class="form-control">
+                        <select  name="dataclass" class="form-control">
                             <option value=""></option>
                             <?php while ($rowsdataclass = $resultdataclass->fetch(2)) {
                                 echo "<option value=" . $rowsdataclass['ID_DATA_CLASS'];
@@ -318,6 +318,10 @@ require_once("../Resources/Includes/menu.php");
                     </button>
                     <button id="cancel" type="button"
                             class="btn-secondary col-lg-3 col-md-5 col-sm-6 pull-left canceldatadictbox">Cancel
+                    </button>
+                    <button type="submit" name="discard"
+                            onclick="return confirm('Are you certain you want to delete the definition?');"
+                            class="btn-primary col-lg-4 col-md-4 col-sm-4 pull-left"> Discard Def
                     </button>
                 </div>
             </div>
@@ -488,12 +492,12 @@ require_once("../Resources/Includes/menu.php");
                             <small>Name of the individual who defined this data element initially.</small>
                         </p>
                         <div class="col-lg-6">
-                            <label for="lname">Last Name</label>
+                            <label for="lname">Last Name<span style="color: red"><sup>*</sup></span></label>
                             <input id="lname" type="text" name="defauthorlname" maxlength="25" class="form-control"
                                    value="<?php echo $rowsdataelem['AUTHOR_LNAME']; ?>" required>
                         </div>
                         <div class="col-lg-6">
-                            <label for="fname">First Name</label>
+                            <label for="fname">First Name<span style="color: red"><sup>*</sup></span></label>
                             <input id="fname" type="text" name="defauthorfname" maxlength="25" class="form-control"
                                    value="<?php echo $rowsdataelem['AUTHOR_FNAME']; ?>" required>
                         </div>

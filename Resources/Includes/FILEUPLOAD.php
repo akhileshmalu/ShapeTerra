@@ -1,6 +1,7 @@
 <?php
 
 require_once "Initialize.php";
+
 class FILEUPLOAD extends Initialize
 {
     public $errorflag, $message, $author, $time, $contentLinkId, $FUayname, $ouabbrev, $outype, $ouid;
@@ -28,20 +29,6 @@ class FILEUPLOAD extends Initialize
         }
     }
 
-    public function GetStatus()
-    {
-        try {
-            $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS =
-  IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id;";
-            $resultfucontent = $this->connection->prepare($sqlfucontent);
-            $resultfucontent->bindParam(':content_id', $this->contentLinkId, 1);
-            $resultfucontent->execute();
-        } catch (PDOException $e) {
-            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
-            error_log($e->getMessage());
-        }
-        return $resultfucontent;
-    }
     public function GetPrimaryKey($tablename)
     {
         try {
@@ -58,15 +45,45 @@ class FILEUPLOAD extends Initialize
         return $fields['Column_name'];
     }
 
+    public function getTableMeta($tablename)
+    {
+        try {
+            $columnnames = array();
+            $count = 1;
+
+            $sql = "SELECT * FROM $tablename ;";
+            $result = $this->connection->prepare($sql);
+            $result->execute();
+
+            while ($meta = $result->getColumnMeta($count)) {
+//                if($count == 0) {
+//                    continue;
+//                }
+                $columnnames[$count-1] = $meta[name];
+                $count++;
+            }
+
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+        }
+        return $columnnames;
+
+    }
+
     public function Validate()
     {
         try {
+
             $sqlupload = "UPDATE IR_SU_UploadStatus SET STATUS_UPLOADFILE='Complete',LAST_MODIFIED_BY =:author,
         LAST_MODIFIED_ON =:timeCurrent WHERE IR_SU_UploadStatus.ID_UPLOADFILE = :content_id;";
 
-            if ($this->connection->prepare($sqlupload)->execute(['author' => $this->author, 'timeCurrent' => $this->time,
-                'content_id' => $this->contentLinkId])
-            ) {
+            $result = $this->connection->prepare($sqlupload);
+            $result->bindParam(':author', $this->author, 2);
+            $result->bindParam(':timeCurrent', $this->time, 2);
+            $result->bindParam(':content_id', $this->contentLinkId, 2);
+
+
+            if ($result->execute()) {
                 $this->message = "Data Validated Successfully.";
             } else {
                 $this->message = "Error in Data validation.Process Failed.";
@@ -80,16 +97,16 @@ class FILEUPLOAD extends Initialize
 
     public function Error($tablename, $primarykey)
     {
-        $sqlupload = "Update IR_SU_UploadStatus SET STATUS_UPLOADFILE ='No File Provided',LAST_MODIFIED_BY =:author,
+        $sqlupload = "UPDATE IR_SU_UploadStatus SET STATUS_UPLOADFILE ='No File Provided',LAST_MODIFIED_BY =:author,
     LAST_MODIFIED_ON =:timeStampmod  WHERE  IR_SU_UploadStatus.ID_UPLOADFILE = :content_id; ";
 
-        $sqlupload .="DELETE FROM $tablename WHERE OUTCOMES_AY =:FUayname AND $primarykey <>0;";
+        $sqlupload .= "DELETE FROM $tablename WHERE OUTCOMES_AY =:FUayname AND $primarykey <>0;";
 
         $result = $this->connection->prepare($sqlupload);
-        $result->bindParam(':author',$this->author,2);
-        $result->bindParam(':timeStampmod',$this->time,2);
-        $result->bindParam(':content_id',$this->contentLinkId,2);
-        $result->bindParam(':FUayname',$this->FUayname,2);
+        $result->bindParam(':author', $this->author, 2);
+        $result->bindParam(':timeStampmod', $this->time, 2);
+        $result->bindParam(':content_id', $this->contentLinkId, 2);
+        $result->bindParam(':FUayname', $this->FUayname, 2);
 
         if ($result->execute()) {
             $this->message = "Data Deprecated.Please Reload the File";
@@ -114,6 +131,8 @@ class FILEUPLOAD extends Initialize
         }
         return $resultdatadisplay;
     }
+
+    // Option should be in syntax = $option = "OU_ABBREV ='USCAAU' AND ";
     public function HTMLtable($tablename, $primarykey, $option = "")
     {
 
@@ -122,7 +141,7 @@ class FILEUPLOAD extends Initialize
         $colCount = 0;
         $i = 0;
         $count = 1;
-        $meta = array();
+//        $meta = array();
 
         // Display Of Values in validation from IR_AC_DiversityStudent Table of Database
         try {
@@ -131,13 +150,12 @@ class FILEUPLOAD extends Initialize
             $resultdatadisplay = $this->connection->prepare($sqldatadisplay);
             $resultdatadisplay->bindParam(':FUayname', $this->FUayname, 2);
             $resultdatadisplay->execute();
-//            echo $sqldatadisplay;
         } catch (PDOException $e) {
             //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
             error_log($e->getMessage());
         }
 
-        $dynamictable = "<table border='1' cellpadding='5' class='table'><tr>";
+        $dynamictable = "<div style='margin-top: 70px;'><table border='1' cellpadding='5' class='table'><tr>";
         $fieldcnt = $resultdatadisplay->columnCount();
         $num_records = $resultdatadisplay->rowCount();
 
@@ -165,7 +183,7 @@ class FILEUPLOAD extends Initialize
             $dynamictable .= "</tr>";
         }
 
-        $dynamictable .= '</table>';
+        $dynamictable .= '</table></div>';
 
         return $dynamictable;
 
@@ -192,15 +210,30 @@ WHERE OUTCOMES_AY = :FUayname;";
         echo "
 <h2 class='data-display'>Select Academic Unit to View</h2>
                             <div class='col-xs-6'>
-                                <select  name='ou' class='form-control' onchange='showEnrollmentData()' id='ou'>";
+                                <select  name='ou' class='form-control' onchange='showVisualData()' id='ou'>";
         echo "<option value=''>--Select Academic Unit --</option>";
-        while($rows = $result->fetch(2)) {
-            echo "<option value='".$rows['OU_ABBREV']."'>".$rows['OU_NAME']."</option>";
+        while ($rows = $result->fetch(2)) {
+            echo "<option value='" . $rows['OU_ABBREV'] . "'>" . $rows['OU_NAME'] . "</option>";
         }
 
         echo '                  </select>
                             </div>';
 
+    }
+
+    public function GetStatus()
+    {
+        try {
+            $sqlfucontent = "SELECT * FROM IR_SU_UploadStatus LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS =
+  IR_SU_UploadStatus.LAST_MODIFIED_BY WHERE IR_SU_UploadStatus.ID_UPLOADFILE= :content_id;";
+            $resultfucontent = $this->connection->prepare($sqlfucontent);
+            $resultfucontent->bindParam(':content_id', $this->contentLinkId, 1);
+            $resultfucontent->execute();
+        } catch (PDOException $e) {
+            //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+            error_log($e->getMessage());
+        }
+        return $resultfucontent;
     }
 
     public function uploadDiversityPersonnel()
@@ -249,11 +282,11 @@ WHERE OUTCOMES_AY = :FUayname;";
 
                                     // Manual Author & Modified Time entry into SQL with row values of file
                                     if ($i == 3) {
-                                        $tablevalue[$row][$i - 1] = $this->author ;
+                                        $tablevalue[$row][$i - 1] = $this->author;
                                     } elseif ($i == 4) {
-                                        $tablevalue[$row][$i - 1] = $this->time ;
+                                        $tablevalue[$row][$i - 1] = $this->time;
                                     } else {
-                                        $tablevalue[$row][$i - 1] =  $csv[$row][$colindex];
+                                        $tablevalue[$row][$i - 1] = $csv[$row][$colindex];
                                     }
 
                                     //Validation check of Faculty Male + Female
@@ -303,7 +336,7 @@ WHERE OUTCOMES_AY = :FUayname;";
                     for ($checkfac = 0; $checkfac < count($sumfac); $checkfac++) {
                         if ($sumfac[$checkfac] != 0) {
                             $message[$checkfac + 1] = "Mismatch in Faculty Composition.Record No: " . ($checkfac + 1) .
-                                "<br>".$sumfac[$checkfac];
+                                "<br>" . $sumfac[$checkfac];
                             $this->errorflag = 1;
                         }
                     }
@@ -328,9 +361,7 @@ WHERE OUTCOMES_AY = :FUayname;";
 
                             $sqlupload .= ($i == count($tablefields) - 1) ? '?' : '?,';
                         }
-                        $sqlupload .= ");";
-
-                        ;
+                        $sqlupload .= ");";;
                         // Prepare Sql Query
                         $result = $this->connection->prepare($sqlupload);
 
@@ -424,7 +455,6 @@ WHERE OUTCOMES_AY = :FUayname;";
         $rowsfucontent = $resultfucontent->fetch(2);
         $tablename = $rowsfucontent['NAME_UPLOADFILE'];
 
-
         // local variables
         $csv = array();
         $tablefields = array();
@@ -498,17 +528,24 @@ WHERE OUTCOMES_AY = :FUayname;";
 
                     if ($this->errorflag == 0) {
 
-                        $sqlupload = "INSERT INTO $tablename ( ";
-                        foreach ($tablefields as $fields) {
-                            $sqlupload .= $fields;
+                        // Getting Fields Name other than Primary ID as we dont have ID in csv file
+                        $tablefields = $this->getTableMeta($tablename);
+                        $i = 0;
+
+                        $sqlupload = "INSERT INTO $tablename (  ";
+
+                        while($i<count($tablefields)-1) {
+                            $sqlupload .= $tablefields[$i].',';
+                            $i++;
                         }
-                        $sqlupload .= " ) Values (";
+                        $sqlupload .= " $tablefields[$i] ) Values (";
 
 
                         for ($i = 0; $i < count($tablefields); $i++) {
                             $sqlupload .= ($i == count($tablefields) - 1) ? '?' : '?,';
                         }
                         $sqlupload .= ");";
+
 
                         // Prepare Sql Query
                         $result = $this->connection->prepare($sqlupload);
@@ -551,7 +588,7 @@ WHERE OUTCOMES_AY = :FUayname;";
             $message[0] = "Error in Uploading File. ";
         }
 
-    return $message;
+        return $message;
     }
 
     public function uploadDiversityStudent()
@@ -605,7 +642,7 @@ WHERE OUTCOMES_AY = :FUayname;";
 
                                     // Manual Author & Modified Time entry into SQL with row values of file
                                     if ($i == 3) {
-                                        $tablevalue[$row][$i - 1] =  $this->author;
+                                        $tablevalue[$row][$i - 1] = $this->author;
                                     } else {
                                         if ($i == 4) {
                                             $tablevalue[$row][$i - 1] = $this->time;
@@ -616,23 +653,25 @@ WHERE OUTCOMES_AY = :FUayname;";
 
                                     //Validation check of Undergraduate Male + Female with comparision to composition of
                                     // UGrad Sudents
-                                    if($i ==5 or $i == 6) {
-                                        $sumUgrad[$row-1] += intval($csv[$row][$colindex]);
+                                    if ($i == 5 or $i == 6) {
+                                        $sumUgrad[$row - 1] += intval($csv[$row][$colindex]);
                                     }
-                                    if($i == 7 or $i ==8 or $i == 9 or $i == 10 or $i == 11 or $i == 12 or $i == 13 or $i
-                                        == 14 or $i == 15) {
-                                        $sumUgrad[$row-1] -= intval($csv[$row][$colindex]);
+                                    if ($i == 7 or $i == 8 or $i == 9 or $i == 10 or $i == 11 or $i == 12 or $i == 13 or $i
+                                        == 14 or $i == 15
+                                    ) {
+                                        $sumUgrad[$row - 1] -= intval($csv[$row][$colindex]);
                                     }
 
                                     //Validation check of Graduate Male + Female with comparision to composition of
                                     // Graduate Sudents
-                                    if($i ==16 or $i == 17) {
-                                        $sumGrad[$row-1] += intval($csv[$row][$colindex]);
+                                    if ($i == 16 or $i == 17) {
+                                        $sumGrad[$row - 1] += intval($csv[$row][$colindex]);
 
                                     }
-                                    if($i == 18 or $i ==19 or $i == 20 or $i == 21 or $i == 22 or $i == 23 or $i == 24 or
-                                        $i == 25) {
-                                        $sumGrad[$row-1] -= intval($csv[$row][$colindex]);
+                                    if ($i == 18 or $i == 19 or $i == 20 or $i == 21 or $i == 22 or $i == 23 or $i == 24 or
+                                        $i == 25
+                                    ) {
+                                        $sumGrad[$row - 1] -= intval($csv[$row][$colindex]);
                                     }
                                 }
 
@@ -644,8 +683,8 @@ WHERE OUTCOMES_AY = :FUayname;";
                                     $tablevalue[$row][$i - 1] = $csv[$row][$colindex];
 
                                     //Terminal Values of record reside here
-                                    if($i == 26) {
-                                        $sumGrad[$row-1] -= intval($csv[$row][$colindex]);
+                                    if ($i == 26) {
+                                        $sumGrad[$row - 1] -= intval($csv[$row][$colindex]);
                                     }
                                 }
                             }
@@ -654,15 +693,15 @@ WHERE OUTCOMES_AY = :FUayname;";
                         $row++;
                     }
 
-                    for ($checkug = 0;$checkug < count($sumUgrad);$checkug++) {
-                        if($sumUgrad[$checkug] != 0) {
-                            $message[$checkug+1] = "Mismatch in UnderGraduates Composition.Record No: ".($checkug+1)."<br>";
+                    for ($checkug = 0; $checkug < count($sumUgrad); $checkug++) {
+                        if ($sumUgrad[$checkug] != 0) {
+                            $message[$checkug + 1] = "Mismatch in UnderGraduates Composition.Record No: " . ($checkug + 1) . "<br>";
                             $this->errorflag = 1;
                         }
                     }
-                    for ($checkgrad = 0; $checkgrad < count($sumGrad);$checkgrad++) {
-                        if($sumGrad[$checkgrad] != 0) {
-                            $message[$checkug+1] = "Mismatch in Graduates Composition.Record No: ".($checkgrad +1)."<br>";
+                    for ($checkgrad = 0; $checkgrad < count($sumGrad); $checkgrad++) {
+                        if ($sumGrad[$checkgrad] != 0) {
+                            $message[$checkug + 1] = "Mismatch in Graduates Composition.Record No: " . ($checkgrad + 1) . "<br>";
                             $this->errorflag = 1;
                             $checkug++;
                         }
@@ -681,9 +720,7 @@ WHERE OUTCOMES_AY = :FUayname;";
 
                             $sqlupload .= ($i == count($tablefields) - 1) ? '?' : '?,';
                         }
-                        $sqlupload .= ");";
-
-                        ;
+                        $sqlupload .= ");";;
                         // Prepare Sql Query
                         $result = $this->connection->prepare($sqlupload);
 
@@ -723,8 +760,8 @@ sum(UGRAD_BLACK), sum(UGRAD_HISPANIC), sum(UGRAD_HI_PAC_ISL), sum(UGRAD_NONRESID
  sum(UGRAD_UNKNOWN_RACE_ETHNCTY), sum(UGRAD_WHITE), sum(GRAD_FEMALE), sum(GRAD_MALE), sum(GRAD_AMERIND_ALASKNAT), 
  sum(GRAD_ASIAN), sum(GRAD_BLACK), sum(GRAD_HISPANIC), sum(GRAD_HI_PAC_ISL), sum(GRAD_NONRESIDENT_ALIEN), 
  sum(GRAD_TWO_OR_MORE), sum(GRAD_UNKNOWN_RACE_ETHNCTY), sum(GRAD_WHITE) FROM IR_AC_DiversityStudent
-  where ID_IR_AC_DIVERSITY_STUDENTS in (select max(ID_IR_AC_DIVERSITY_STUDENTS) from IR_AC_DiversityStudent 
-  where OUTCOMES_AY = :FUayname group by OU_ABBREV );";
+  WHERE ID_IR_AC_DIVERSITY_STUDENTS IN (SELECT max(ID_IR_AC_DIVERSITY_STUDENTS) FROM IR_AC_DiversityStudent 
+  WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
 
                                 $resultupload = $this->connection->prepare($sqlupload);
                                 $resultupload->bindParam(':FUayname', $this->FUayname, 2);
@@ -754,7 +791,7 @@ sum(UGRAD_BLACK), sum(UGRAD_HISPANIC), sum(UGRAD_HI_PAC_ISL), sum(UGRAD_NONRESID
 
                     fclose($handle);
                 }
-            } else{
+            } else {
                 $message[0] = "Please select only csv format File";
             }
         } else {
@@ -815,37 +852,9 @@ sum(UGRAD_BLACK), sum(UGRAD_HISPANIC), sum(UGRAD_HI_PAC_ISL), sum(UGRAD_NONRESID
                                         $tablevalue[$row][$i - 1] = $this->author;
                                     } elseif ($i == 4) {
                                         $tablevalue[$row][$i - 1] = $this->time;
-                                    } elseif ($i == 13) {
-                                        $tablevalue[$row][$i - 1] = $sumtenurefac[$row - 1];
-                                    } elseif ($i == 17) {
-                                        $tablevalue[$row][$i - 1] = $sumresearchfac[$row - 1];
-                                    } elseif ($i == 22) {
-                                        $tablevalue[$row][$i - 1] = $sumclinicfac[$row - 1];
-                                    }
-//                                elseif ($i == 25) {
-//                                    $tablevalue[$row][$i - 1] = $sumotherfac[$row - 1];
-//                                }
-                                    else {
+                                    } else {
                                         $tablevalue[$row][$i - 1] = $csv[$row][$colindex];
                                     }
-
-                                    //Total of Faculty
-                                    if ($i >= 5 and $i <= 12) {
-                                        $sumtenurefac[$row - 1] += intval($csv[$row][$colindex]);
-                                    }
-                                    if ($i >= 14 and $i <= 16) {
-                                        $sumresearchfac[$row - 1] += intval($csv[$row][$colindex]);
-                                    }
-
-                                    //Validation check of Graduate Male + Female with comparision to composition of Graduate Sudents
-                                    if ($i >= 18 and $i <= 21) {
-                                        $sumclinicfac[$row - 1] += intval($csv[$row][$colindex]);
-
-                                    }
-                                    if ($i == 23 or $i == 24) {
-                                        $sumotherfac[$row - 1] += intval($csv[$row][$colindex]);
-                                    }
-
                                 }
 
                             } else {
@@ -853,9 +862,7 @@ sum(UGRAD_BLACK), sum(UGRAD_HISPANIC), sum(UGRAD_HI_PAC_ISL), sum(UGRAD_NONRESID
                                 if ($row == 0) {
                                     $tablefields[$i] = $csv[$row][$colindex];
                                 } else {
-                                    // Last Column needs sum of previous 2 fields (i = 23,24).
-                                    $tablevalue[$row][$i - 1] = $sumotherfac[$row - 1];;
-
+                                    $tablevalue[$row][$i - 1] = $csv[$row][$colindex];
                                 }
                             }
                         }
@@ -870,9 +877,9 @@ sum(UGRAD_BLACK), sum(UGRAD_HISPANIC), sum(UGRAD_HI_PAC_ISL), sum(UGRAD_NONRESID
                         // Create SQL for All ORG Units
                         $sqlupload = "INSERT INTO IR_AC_FacultyPop (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP,
  TTF_FTE_PROF_TNR, TTF_FTE_ASSOC_PROF_TNR, TTF_FTE_PROF, TTF_FTE_ASSOC_PROF, TTF_FTE_ASSIST_PROF, TTF_FTE_LIBR_TNR,
-   TTF_FTE_LIBR, TTF_FTE_ASSIST_LIBR, TTF_FTE_ALL, RSRCH_FTE_PROF, RSRCH_FTE_ASSOC_PROF, RSRCH_FTE_ASSIST_PROF, 
-   RSRCH_FTE_ALL, CIF_FTE_CLNCL_PROF, CIF_FTE_CLNCL_ASSOC_PROF, CIF_FTE_CLNCL_ASSIST_PROF, CIF_FTE_INSTR_LCTR, 
-   CIF_FTE_ALL, OTHRFAC_PT_ADJUNCT, OTHRFAC_PT_OTHER, OTHRFAC_ALL) VALUES (";
+   TTF_FTE_LIBR, TTF_FTE_ASSIST_LIBR, RSRCH_FTE_PROF, RSRCH_FTE_ASSOC_PROF, RSRCH_FTE_ASSIST_PROF, 
+    CIF_FTE_CLNCL_PROF, CIF_FTE_CLNCL_ASSOC_PROF, CIF_FTE_CLNCL_ASSIST_PROF, CIF_FTE_INSTR_LCTR, 
+    OTHRFAC_PT_ADJUNCT) VALUES (";
 
                         for ($i = 0; $i < count($tablefields); $i++) {
 
@@ -910,15 +917,15 @@ sum(UGRAD_BLACK), sum(UGRAD_HISPANIC), sum(UGRAD_HI_PAC_ISL), sum(UGRAD_NONRESID
                             try {
                                 $sqlupload = "INSERT INTO IR_AC_FacultyPop (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, 
 MOD_TIMESTAMP, TTF_FTE_PROF_TNR, TTF_FTE_ASSOC_PROF_TNR, TTF_FTE_PROF, TTF_FTE_ASSOC_PROF, TTF_FTE_ASSIST_PROF,
- TTF_FTE_LIBR_TNR, TTF_FTE_LIBR, TTF_FTE_ASSIST_LIBR, TTF_FTE_ALL, RSRCH_FTE_PROF, RSRCH_FTE_ASSOC_PROF, 
- RSRCH_FTE_ASSIST_PROF, RSRCH_FTE_ALL, CIF_FTE_CLNCL_PROF, CIF_FTE_CLNCL_ASSOC_PROF, CIF_FTE_CLNCL_ASSIST_PROF,
-  CIF_FTE_INSTR_LCTR, CIF_FTE_ALL, OTHRFAC_PT_ADJUNCT, OTHRFAC_PT_OTHER, OTHRFAC_ALL) 
+ TTF_FTE_LIBR_TNR, TTF_FTE_LIBR, TTF_FTE_ASSIST_LIBR,  RSRCH_FTE_PROF, RSRCH_FTE_ASSOC_PROF, 
+ RSRCH_FTE_ASSIST_PROF,  CIF_FTE_CLNCL_PROF, CIF_FTE_CLNCL_ASSOC_PROF, CIF_FTE_CLNCL_ASSIST_PROF,
+  CIF_FTE_INSTR_LCTR,  OTHRFAC_PT_ADJUNCT) 
   SELECT 'USCAAU' AS OU,:FUayname AS AY, :authorName AS AUTHOR,:timeCurrent AS MOD_Time,  sum(TTF_FTE_PROF_TNR), 
   sum(TTF_FTE_ASSOC_PROF_TNR), sum(TTF_FTE_PROF), sum(TTF_FTE_ASSOC_PROF), sum(TTF_FTE_ASSIST_PROF), 
-  sum(TTF_FTE_LIBR_TNR), sum(TTF_FTE_LIBR),sum(TTF_FTE_ASSIST_LIBR), sum(TTF_FTE_ALL),sum(RSRCH_FTE_PROF), 
-  sum(RSRCH_FTE_ASSOC_PROF), sum(RSRCH_FTE_ASSIST_PROF), sum(RSRCH_FTE_ALL), sum(CIF_FTE_CLNCL_PROF), 
-  sum(CIF_FTE_CLNCL_ASSOC_PROF), sum(CIF_FTE_CLNCL_ASSIST_PROF), sum(CIF_FTE_INSTR_LCTR),sum(CIF_FTE_ALL),
-  sum(OTHRFAC_PT_ADJUNCT), sum(OTHRFAC_PT_OTHER), sum(OTHRFAC_ALL) FROM IR_AC_FacultyPop 
+  sum(TTF_FTE_LIBR_TNR), sum(TTF_FTE_LIBR),sum(TTF_FTE_ASSIST_LIBR), sum(RSRCH_FTE_PROF), 
+  sum(RSRCH_FTE_ASSOC_PROF), sum(RSRCH_FTE_ASSIST_PROF), sum(CIF_FTE_CLNCL_PROF), 
+  sum(CIF_FTE_CLNCL_ASSOC_PROF), sum(CIF_FTE_CLNCL_ASSIST_PROF), sum(CIF_FTE_INSTR_LCTR),
+  sum(OTHRFAC_PT_ADJUNCT) FROM IR_AC_FacultyPop 
 WHERE ID_AC_FACULTY_POPULATION IN (SELECT max(ID_AC_FACULTY_POPULATION) FROM IR_AC_FacultyPop 
 WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
 
@@ -1036,7 +1043,8 @@ WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
 
                         $sqlupload = "INSERT INTO `IR_AC_Enrollments` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
  MOD_TIMESTAMP, ENROLL_HC_FRESH, ENROLL_HC_SOPH, ENROLL_HC_JUNR, ENROLL_HC_SENR, ENROLL_HC_MASTERS, ENROLL_HC_DOCTORAL,
-  ENROLL_HC_MEDICINE, ENROLL_HC_LAW, ENROLL_HC_PHARMD, ENROLL_HC_GRAD_CERT) Values ( ";
+  ENROLL_HC_MEDICINE, ENROLL_HC_LAW, ENROLL_HC_PHARMD, ENROLL_HC_GRAD_CERT, ENROLL_UGRAD_FULLTIME, 
+  ENROLL_UGRAD_PARTTIME, ENROLL_GRADPRFSNL_FULLTIME, ENROLL_GRADPRFSNL_PARTTIME) VALUES ( ";
 
                         for ($i = 0; $i < count($tablefields); $i++) {
                             $sqlupload .= ($i == count($tablefields) - 1) ? '?' : '?,';
@@ -1068,12 +1076,14 @@ WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
                             try {
                                 $sqlupload = "INSERT INTO IR_AC_Enrollments (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR,
  MOD_TIMESTAMP, ENROLL_HC_FRESH, ENROLL_HC_SOPH, ENROLL_HC_JUNR, ENROLL_HC_SENR, ENROLL_HC_MASTERS, ENROLL_HC_DOCTORAL,
-  ENROLL_HC_MEDICINE, ENROLL_HC_LAW, ENROLL_HC_PHARMD, ENROLL_HC_GRAD_CERT) 
+  ENROLL_HC_MEDICINE, ENROLL_HC_LAW, ENROLL_HC_PHARMD, ENROLL_HC_GRAD_CERT,ENROLL_UGRAD_FULLTIME, 
+  ENROLL_UGRAD_PARTTIME, ENROLL_GRADPRFSNL_FULLTIME, ENROLL_GRADPRFSNL_PARTTIME) 
   SELECT 'USCAAU' AS OU,:FUayname AS AY, :authorName AS AUTHOR,:timeCurrent AS MOD_Time,  sum(ENROLL_HC_FRESH), 
   sum(ENROLL_HC_SOPH), sum(ENROLL_HC_JUNR), sum(ENROLL_HC_SENR), sum(ENROLL_HC_MASTERS), 
-  sum(ENROLL_HC_DOCTORAL), sum(ENROLL_HC_MEDICINE),sum(ENROLL_HC_LAW), sum(ENROLL_HC_PHARMD),sum(ENROLL_HC_GRAD_CERT) 
-  FROM IR_AC_Enrollments WHERE ID_AC_ENROLLMENTS IN (SELECT max(ID_AC_ENROLLMENTS) FROM IR_AC_Enrollments 
-WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
+  sum(ENROLL_HC_DOCTORAL), sum(ENROLL_HC_MEDICINE),sum(ENROLL_HC_LAW), sum(ENROLL_HC_PHARMD),sum(ENROLL_HC_GRAD_CERT),
+  sum(ENROLL_UGRAD_FULLTIME), sum(ENROLL_UGRAD_PARTTIME), sum(ENROLL_GRADPRFSNL_FULLTIME), 
+  sum(ENROLL_GRADPRFSNL_PARTTIME) FROM IR_AC_Enrollments WHERE ID_AC_ENROLLMENTS IN (SELECT max(ID_AC_ENROLLMENTS) 
+  FROM IR_AC_Enrollments WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
 
                                 $resultupload = $this->connection->prepare($sqlupload);
                                 $resultupload->bindParam(':FUayname', $this->FUayname, 2);
@@ -1114,6 +1124,11 @@ WHERE OUTCOMES_AY = :FUayname GROUP BY OU_ABBREV );";
         }
 
         return $message;
+    }
+
+    public function uploadFacStuRatio()
+    {
+
     }
 
 }

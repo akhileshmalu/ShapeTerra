@@ -79,7 +79,7 @@ require_once("../Resources/Includes/menu.php");
 <script src="../Resources/Library/js/chart.min.js"></script>
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['upload']) || isset($_POST['save']) || isset($_POST['error'])) { ?>
+<?php if (isset($_POST['upload']) || isset($_POST['validate']) || isset($_POST['error'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
@@ -129,44 +129,44 @@ require_once("../Resources/Includes/menu.php");
             </form>
         <?php } else { ?>
 
-        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $content_id ?>" method="post">
+            <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $content_id ?>" method="post">
 
-            <div id="" style="margin-top: 10px;">
+                <div id="" style="margin-top: 10px;">
 
-                <label for="validitychk">
-                    <small><em>Please review the data table below to confirm values appear as intended.
-                            If you observe any errors you may choose to depricate the file from system.If everything
-                            appears as intended, Please Confirm.</em></small>
-                </label>
-                <div id="validitychk" class="form-group">
+                    <label for="validitychk">
+                        <small><em>Please review the data table below to confirm values appear as intended.
+                                If you observe any errors you may choose to depricate the file from system.If everything
+                                appears as intended, Please Confirm.</em></small>
+                    </label>
+                    <div id="validitychk" class="form-group">
 
-                    <div id="display">
-                        <?php $fileUpload->getDistinctCollegeName(); ?>
+                        <div id="display">
+                            <?php $fileUpload->getDistinctCollegeName(); ?>
+                        </div>
+                        <div id="dataValidation">
+                            <!--                            <p><b>Display Data - Table Name: -->
+                            <?php //echo $tablename; ?><!--</b></p>-->
+                            <!--                            --><?php //// Display Of Values in validation from IR_AC_DiversityStudent Table of Database
+                            //                            $dynamictable = $fileUpload->HTMLtable($tablename, $primarykey);
+                            //                            echo $dynamictable;
+                            //                            ?>
+                        </div>
+
+                        <p style="margin-top: 10px;" class="col-xs-12">Please Select <strong>Validation
+                                Confirmed</strong>
+                            to Confirm Uploading If
+                            Above Data is
+                            Correct.</p>
                     </div>
-                    <div id="dataValidation">
-                        <!--                            <p><b>Display Data - Table Name: -->
-                        <?php //echo $tablename; ?><!--</b></p>-->
-                        <!--                            --><?php //// Display Of Values in validation from IR_AC_DiversityStudent Table of Database
-                        //                            $dynamictable = $fileUpload->HTMLtable($tablename, $primarykey);
-                        //                            echo $dynamictable;
-                        //                            ?>
-                    </div>
 
-                    <p style="margin-top: 10px;" class="col-xs-12">Please Select <strong>Validation Confirmed</strong>
-                    to Confirm Uploading If
-                        Above Data is
-                        Correct.</p>
+                    <input type="submit" name="validate" id="save" class="btn-primary pull-right"
+                           value="Validation Confirmed">
+                    <input type="submit" name="error" id="error" class="btn-primary pull-right"
+                           value="Error Detected">
                 </div>
-
-                <input type="submit" name="save" id="save" class="btn-primary pull-right"
-                       value="Validation Confirmed">
-                <input type="submit" name="error" id="error" class="btn-primary pull-right"
-                       value="Error Detected">
-            </div>
+            </form>
+        <?php } ?>
     </div>
-
-    </form>
-    <?php } ?>
 </div>
 
 <?php

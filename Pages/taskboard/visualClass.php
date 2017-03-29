@@ -4,7 +4,6 @@ require_once("../../Resources/Includes/Initialize.php");
 class visualClass extends Initialize
 {
 
-//    private $connection;
     public $college, $year, $ouid;
 
     function __construct()

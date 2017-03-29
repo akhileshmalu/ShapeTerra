@@ -151,10 +151,23 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Vision Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="visionstatement" maxlength="1000"
+                             <?php
+                             if($rowsmission['VISION_NO_RESPONSE']){
+                                 echo ' disabled';
+                             }
+                             ?>
                               id="visiontitle"><?php echo $mvv->mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
                     <div class="checkbox">
                         <label for="optionalCheck">
-                            <input type="checkbox" name="optionalCheck" id="visionstatement"/> No response to this item
+                            <input type="checkbox" name="visNoResponse" class="optionalCheck"
+                                   <?php
+                                   if($rowsmission['VISION_NO_RESPONSE']){
+                                       echo ' checked';
+                                   }
+                                   ?>
+                                   id="visionstatement"/> No
+                            response to
+                            this item
                         </label>
                     </div>
                 </div>
@@ -180,7 +193,10 @@ require_once("../Resources/Includes/menu.php");
                               id="valuetitle"><?php echo $mvv->mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
                     <div class="checkbox">
                         <label for="optionalCheck">
-                            <input type="checkbox" name="optionalCheck" id="valuestatement"/> No response to this item
+                            <input type="checkbox" name="valNoResponse" class="optionalCheck" id="valuestatement"/> No
+                            response
+                            to
+                            this item
                         </label>
                     </div>
                 </div>
@@ -190,7 +206,7 @@ require_once("../Resources/Includes/menu.php");
                     <div class='input-group date col-xs-4' id='datetimepicker3'>
                         <input type='text' name="valupdate"
                                value="<?php
-                               if(!empty($rowsmission['VALUE_UPDATE_DATE']))
+                               if(!empty($rowsmission['VALUE_UPADTE_DATE']))
                                echo date("m/d/Y", strtotime($rowsmission['VALUE_UPDATE_DATE']));
                                ?>"
                                class="form-control">

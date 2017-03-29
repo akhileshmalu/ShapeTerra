@@ -5,9 +5,9 @@
  */
 
 require_once("../Resources/Includes/Initialize.php");
-$diversityPersonnel = new Initialize();
-$diversityPersonnel->checkSessionStatus();
-$connection = $diversityPersonnel->connection;
+$initialize = new Initialize();
+$initialize->checkSessionStatus();
+$connection = $initialize->connection;
 
 $time = date('Y-m-d H:i:s');
 $message = array();
@@ -39,7 +39,7 @@ $resultay->execute();
  * Blue Print Content Items & Details.
  */
 
-$alumniDeveopment = array(
+$blueprintContents = array(
     array("Executive Summary", "executivesum.php"),
     array("Mission, Vision & Values", "mvv.php"),
     array("Unit Goals Management", "unitgoaloverview.php"),
@@ -53,10 +53,10 @@ $alumniDeveopment = array(
     array("Faculty Awards", "facultyawards.php"),
     array("Faculty Awards Nominations", "facultyNominations.php"),
     array("Alumni Engagement & Fundraising", "alumniDevelopment.php"),
+    array("Community Engagement", "communityEngagement.php"),
     array("Collaborations", "collaborations.php"),
     array("Campus Climate & Inclusion", "campusClimate.php"),
     array("Concluding Remarks", "concludingRemarks.php"),
-    array("Community Engagement", "communityEngagement.php"),
 
 );
 
@@ -65,13 +65,15 @@ $alumniDeveopment = array(
  * File Upload Section
  */
 $uploaddatafiles = array(
-    array("IR_AC_DiversityPersonnel", "ac_diversitypersonnel.php"),
-    array("IR_AC_DiversityStudent", "ac_diversitystudent.php"),
-    array("IR_AC_Enrollments", "uploadfile.php"),
-//    array("IR_AC_Facilities","uploadfile.php"),
-    array("IR_AC_FacultyPop", "ac_facultypop.php"),
-//    array("IR_AC_Transfers","uploadfile.php"),
-//    array("IR_AC_AdmTestScores","uploadfile.php"),
+    "IR_AC_DiversityPersonnel",
+    "IR_AC_DiversityStudent",
+    "IR_AC_Enrollments",
+    "IR_AC_FacultyPop",
+    "IR_AC_FacultyStudentRatio",
+    "IR_AC_DegreesAwarded",
+    "IR_AC_Retention",
+    "IR_AC_GraduationRate",
+    "PROV_AC_FacultyAction"
 );
 
 
@@ -107,11 +109,17 @@ if (isset($_POST['submit'])) {
         foreach ($ou as $value) {
             list($ouid, $ouabbrev) = explode(",", $value);
 
-            $sqlbroadcheck = "SELECT * FROM broadcast WHERE BROADCAST_AY=:ay AND find_in_set(:ouid,BROADCAST_OU)>0; ";
-            $resultbroadcheck = $connection->prepare($sqlbroadcheck);
-            $resultbroadcheck->bindParam(":ay", $ay, PDO::PARAM_STR);
-            $resultbroadcheck->bindParam(":ouid", $ouid, PDO::PARAM_INT);
-            $resultbroadcheck->execute();
+            try {
+                $sqlbroadcheck = "SELECT * FROM broadcast WHERE BROADCAST_AY=:ay AND find_in_set(:ouid,BROADCAST_OU)>0; ";
+                $resultbroadcheck = $connection->prepare($sqlbroadcheck);
+                $resultbroadcheck->bindParam(":ay", $ay, PDO::PARAM_STR);
+                $resultbroadcheck->bindParam(":ouid", $ouid, PDO::PARAM_INT);
+                $resultbroadcheck->execute();
+            } catch (PDOException $e) {
+                error_log($e->getMessage());
+                $errorflag = 1;
+            }
+
             $rowbroadcheck = $resultbroadcheck->rowCount();
             if ($rowbroadcheck >= 1) {
                 $message[1] = "You have already Initiated BluePrint for Org Unit: " . $ouabbrev . " for year : " . $ay;
@@ -138,39 +146,81 @@ if (isset($_POST['submit'])) {
                     $broad_id++;
                 }
 
-                $sqlbroad .= "INSERT INTO broadcast(ID_BROADCAST,OU_ABBREV,BROADCAST_OU,BROADCAST_DESC,BROADCAST_STATUS,BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified,AUTHOR) VALUES ('$broad_id','$ouabbrev','$ouid','$broadcastmsg','$broadcaststatus','$ay','$broadcaststatus','$time','$author');";
+                try {
+                    $sqlbroad = "INSERT INTO broadcast(ID_BROADCAST,OU_ABBREV,BROADCAST_OU,BROADCAST_DESC,BROADCAST_STATUS
+,BROADCAST_AY,BROADCAST_STATUS_OTHERS,LastModified,AUTHOR) VALUES (:broad_id,:ouabbrev,:ouid,:broadcastmsg,
+:broadcaststatus,:ay,:broadcaststatus,:timeStampmod,:author);";
+                    $resultbroad = $connection->prepare($sqlbroad);
+                    $resultbroad->bindParam(':broad_id', $broad_id, 1);
+                    $resultbroad->bindParam(':ouabbrev', $ouabbrev, 2);
+                    $resultbroad->bindParam(':ouid', $ouid, 2);
+                    $resultbroad->bindParam(':broadcastmsg', $broadcastmsg, 2);
+                    $resultbroad->bindParam(':broadcaststatus', $broadcaststatus, 2);
+                    $resultbroad->bindParam(':ay', $ay, 2);
+                    $resultbroad->bindParam(':broadcaststatus', $broadcaststatus, 2);
+                    $resultbroad->bindParam(':timeStampmod', $time, 2);
+                    $resultbroad->bindParam(':author', $author, 2);
 
-                /*
-                 * Content Creation per BluePrint
-                 */
+                    $resultbroad->execute();
 
-                for ($j = 0; $j < count($alumniDeveopment); $j++) {
-                    $topicdesc = $alumniDeveopment[$j][0];
-                    $topiclink = $alumniDeveopment[$j][1];
-
-                    $srno = $j + 1;
-                    $sqlbroad .= "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,Sr_No) VALUES ('$broad_id','$topicdesc','$topiclink','$time','$srno');";
-
+                } catch (PDOException $e) {
+                    error_log($e->getMessage());
+                    $errorflag = 1;
                 }
+
+                try {
+                    // Content Creation per BluePrint
+                    $sqlbroad = "INSERT INTO BpContents(Linked_BP_ID,CONTENT_BRIEF_DESC,CONTENT_LINK,MOD_TIMESTAMP,
+Sr_No) VALUES (:broad_id,:topicdesc,:topiclink,:timeStampmod,:srno);";
+                    $resultbroad = $connection->prepare($sqlbroad);
+
+                    for ($j = 0; $j < count($blueprintContents); $j++) {
+                        $topicdesc = $blueprintContents[$j][0];
+                        $topiclink = $blueprintContents[$j][1];
+                        $srno = $j + 1;
+
+                        $resultbroad->bindParam(':broad_id', $broad_id, 1);
+                        $resultbroad->bindParam(':topicdesc', $topicdesc, 2);
+                        $resultbroad->bindParam(':topiclink', $topiclink, 2);
+                        $resultbroad->bindParam(':timeStampmod', $time, 2);
+                        $resultbroad->bindParam(':srno', $srno, 2);
+
+                        $resultbroad->execute();
+
+                    }
+                } catch (PDOException $e) {
+                    error_log($e->getMessage());
+                    $errorflag = 1;
+                }
+
 
             }
         }
-        if ($errorflag != 1) {
+
+        try {
+            $sqlbroad = "INSERT INTO IR_SU_UploadStatus(NAME_UPLOADFILE, OUTCOME_AY, LAST_MODIFIED_BY)
+ VALUES (:filename, :ay, :author);";
+            $resultbroad = $connection->prepare($sqlbroad);
 
             foreach ($uploaddatafiles as $file) {
-                $filename = $file[0];
-                $filelink = $file[1];
-                $sqlbroad .= "INSERT INTO IR_SU_UploadStatus(NAME_UPLOADFILE, LINK_UPLOADFILE, OUTCOME_AY, LAST_MODIFIED_BY) VALUES ('$filename','$filelink','$ay','$author');";
+                $resultbroad->bindParam(':filename', $file, 2);
+                $resultbroad->bindParam(':ay', $ay, 2);
+                $resultbroad->bindParam(':author', $author, 2);
+
+                $resultbroad->execute();
+
             }
-//            echo $sqlbroad;
-            if ($mysqli->multi_query($sqlbroad)) {
 
-                $message[0] = "Academic BluePrint Successfully Initiated.";
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            $errorflag = 1;
+        }
 
+        if ($errorflag == 0) {
+            $message[0] = "Academic BluePrint Successfully Initiated.";
 
-            } else {
-                $message [0] = "Academic BluePrint Could not be initiated.";
-            }
+        } else {
+            $message [0] = "Academic BluePrint Could not be initiated.";
         }
     }
 }

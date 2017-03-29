@@ -94,9 +94,16 @@ Class DATADICTIONARY extends Initialize
     {
         try
         {
-            $sqladdelem = "UPDATE `DataDictionary` SET STATUS = 'Archived' WHERE ID_DATA_ELEMENT = :elemid ;";
+            $this->elemId = $_GET['elem_id'];
+            $funcname = Initialize::mynl2br($_POST['functionalname']."_trashed");
+            $techname = Initialize::mynl2br($_POST['technicalname']."_trashed");
+            $sqladdelem = "UPDATE `DataDictionary` SET STATUS = 'Archived', DATA_ELMNT_FUNC_NAME = :funcname, DATA_ELEMENT_TECH_NAME = :techname WHERE ID_DATA_ELEMENT = :elemid ;";
             $resultaddelem = $this->connection->prepare($sqladdelem);
-            $resultaddelem->bindParam(':elemid', $this->elemId, 1);
+            $resultaddelem->bindParam(':funcname', $funcname, 2);
+            $resultaddelem->bindParam(':techname', $techname, 2);
+            $resultaddelem->bindParam(':elemid', $this->elemId, 2);
+
+// echo $resultaddelem.$this->elemid.$funcname.$techname;
 
             if ($resultaddelem->execute()) {
                 $this->message = "Data Element has been Archived & excluded from Data Dictionary.";
