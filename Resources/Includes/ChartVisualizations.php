@@ -2065,7 +2065,7 @@ Class ChartVisualizations
               </div>
             </div>
             <div class='col-md-6'>
-              <canvas id='facultyDiversityRace' height='220'></canvas>
+              <canvas id='facultyDiversityRace' height='220' width='300'></canvas>
             </div>
           </div>
         </div>
@@ -2095,14 +2095,14 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-" . $this->college . "', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2014.toBase64Image(), name: 'faculty-diversity-gender-2014-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
           });
 
           var ctx = document.getElementById('facultyDiversityGender2015');
-          var underDiversityGender2015 = new Chart(ctx, {
+          var facultyDiversityGender2015 = new Chart(ctx, {
             type: 'doughnut',
             data: {
               labels: ['Male', 'Female'],
@@ -2126,7 +2126,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-" . $this->college . "', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2015.toBase64Image(), name: 'faculty-diversity-gender-2015-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -2157,7 +2157,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-" . $this->college . "', functionNum: '5'});
+                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2016.toBase64Image(), name: 'faculty-diversity-gender-2016-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -2214,7 +2214,7 @@ Class ChartVisualizations
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
+                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityRace.toBase64Image(), name: 'faculty-diversity-race-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{

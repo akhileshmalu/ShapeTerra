@@ -348,6 +348,7 @@
       $this->goalsRealTimePage();
       $this->goalsLookingAheadPage();
       $this->academicPrograms();
+      $this->academicInitiatives();
       $this->facultyPopulation();
       $this->facultyInformation();
       $this->teaching();
@@ -796,6 +797,7 @@
       $getAcademicPrograms->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
       $getAcademicPrograms->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
       $getAcademicPrograms->execute();
+      $data = $getAcademicPrograms->fetch();
 
       $this->pdf->setTextColor(0,0,0);
       $this->pdf->SetFont('Arial','',22);
@@ -808,23 +810,69 @@
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Program Rankings");
       $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Academic programs that were nationally ranked or received external recognition during the Academic Year.");
+      $this->pdf->Ln(10);
+      $this->pdf->setX(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["PROGRAM_RANKINGS"]));
+      $this->pdf->Ln(10);
 
+      $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Instructional Modalities");
       $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Innovations and changes to Instructional Modalities in unit's programmatic and course offerings that were implemented during the Academic Year.");
+      $this->pdf->Ln(10);
+      $this->pdf->setX(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["INSTRUCT_MODALITIES"]));
+      $this->pdf->Ln(10);
 
+      $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Program Launches");
       $this->pdf->Ln(10);
-
-      $this->pdf->Write(5,"Program Terminations");
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Academic Programs that were newly launched during the Academic Year; those that received required approvals but which had not yet enrolled students are not included. ");
+      $this->pdf->Ln(10);
+      $this->pdf->setX(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["PROGRAM_LAUNCHES"]));
       $this->pdf->Ln(10);
 
+      $this->pdf->SetFont('Arial','B',16);
+      $this->pdf->Write(5,"Program Terminations");
+      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Academic Programs that were newly terminated or discontinued during the Academic Year.");
+      $this->pdf->Ln(10);
+      $this->pdf->setX(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["TERMINATIONS"]));
+      $this->pdf->Ln(10);
+
+      $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Supplemental Info - Academic Programs");
+      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Any additional information on Academic Programs appears as Appendix 1, TODO!. ");
       $this->pdf->Ln(10);
 
     }
 
     public function academicInitiatives()
     {
+
+      $getAcademicInitatives = $this->connection->prepare("SELECT * FROM `AC_InitObsrv` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getAcademicInitatives->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getAcademicInitatives->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getAcademicInitatives->execute();
+      $data = $getAcademicInitatives->fetch();
 
       $this->pdf->AddPage();
 
@@ -837,22 +885,74 @@
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
-      $this->pdf->Write(5,"Experiential Learning For Undergraduates");
+      $this->pdf->Write(5,"Experiential Learning for Undergraduates");
+      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Initiatives, improvements, challenges, and progress with Experiential Learning at the Undergraduate level.");
+      $this->pdf->Ln(10);
+      $this->pdf->setX(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["EXPERIENTIAL_LEARNING_UGRAD"]));
       $this->pdf->Ln(10);
 
+      $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Experiential Learning For Graduate & Professional Students");
+      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Initiatives, improvements, challenges, and progress with Experiential Learning at the Graduate or Professional level.");
+      $this->pdf->Ln(10);
+      $this->pdf->setX(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["EXPERIENTIAL_LEARNING_GRAD"]));
       $this->pdf->Ln(10);
 
       $this->pdf->Write(5,"Affordability");
       $this->pdf->Ln(10);
 
+      $this->pdf->SetFont('Arial','B',16);
+      $this->pdf->Write(5,"Affordability");
+      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Assessment of affordability and efforts to address affordability.");
+      $this->pdf->Ln(10);
+      $this->pdf->setX(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["AFFORDABILITY"]));
+      $this->pdf->Ln(10);
+
+      $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Reputation Enhancement");
       $this->pdf->Ln(10);
-
-      $this->pdf->Write(5,"Challenges");
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Contributions and achievements that enhance the reputation of USC Columbia regionally and nationally.");
+      $this->pdf->Ln(10);
+      $this->pdf->setX(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["REPUTATION_ENHANCE"]));
       $this->pdf->Ln(10);
 
+      $this->pdf->SetFont('Arial','B',16);
+      $this->pdf->Write(5,"Challenges");
+      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Challenges and resource needs anticipated for the current and upcoming Academic Years, not noted elsewhere in this report and/or those which merit additional attention.");
+      $this->pdf->Ln(10);
+      $this->pdf->setX(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,str_replace("<br />", "",$data["CHALLENGES"]));
+      $this->pdf->Ln(10);
+
+      $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Write(5,"Supplemental Info - Initiatives And Observations");
+      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->setX(20);
+      $this->pdf->Write(5,"Any additional information on Academic Initiatives appears as Appendix 2, TODO. ");
       $this->pdf->Ln(10);
 
     }
@@ -869,6 +969,189 @@
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
       $this->pdf->Ln(10);
+
+      $currentYear = "AY2016-2017";
+
+      $getPopulationData20162017 = $this->connection->prepare("SELECT * FROM `IR_AC_FacultyPop` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getPopulationData20162017->bindParam(1, $currentYear, PDO::PARAM_STR);
+      $getPopulationData20162017->bindParam(2, $this->ouAbbrev, PDO::PARAM_STR);
+      $getPopulationData20162017->execute();
+      $rowsGetPopulationData20162017 = $getPopulationData20162017->rowCount();
+
+      $ayYearBackOne = "AY2015-2016";
+
+      $getPopulationData20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_FacultyPop` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getPopulationData20152016->bindParam(1, $ayYearBackOne, PDO::PARAM_STR);
+      $getPopulationData20152016->bindParam(2, $this->ouAbbrev, PDO::PARAM_STR);
+      $getPopulationData20152016->execute();
+      $rowsGetPopulationData20152016 = $getPopulationData20152016->rowCount();
+
+      $ayYearBackTwo = "AY2014-2015";
+
+      $getPopulationData20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_FacultyPop` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getPopulationData20142015->bindParam(1, $ayYearBackTwo, PDO::PARAM_STR);
+      $getPopulationData20142015->bindParam(2, $this->ouAbbrev, PDO::PARAM_STR);
+      $getPopulationData20142015->execute();
+      $rowsGetPopulationData20142015 = $getPopulationData20142015->rowCount();
+
+      if ($rowsGetPopulationData20142015 > 0) {
+
+          $data20142015 = $getPopulationData20142015->fetch();
+
+      }
+
+      if ($rowsGetPopulationData20152016 > 0) {
+
+          $data20152016 = $getPopulationData20152016->fetch();
+
+      }
+
+      if ($rowsGetPopulationData20162017 > 0) {
+
+          $data20162017 = $getPopulationData20162017->fetch();
+
+      }
+
+      $this->pdf->SetWidths(array(70,35,35,35));
+      $this->pdf->SetFont('Arial','B',16);
+      $this->pdf->Write(5,"Faculty Employment Summary");
+      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','B',11);
+      $this->pdf->Write(5,"Table 1. Faculty Employment by Track and Title, Fall 2016, Fall 2015, and Fall 2014.");
+      $this->pdf->Ln(5);
+      $this->pdf->SetDrawColor(0,0,0);
+      $this->pdf->Row(array("","Fall 2016","Fall 2015","Fall 2014"));
+      $this->pdf->Row(array("Tenure-track Faculty",$data20162017["TTF_FTE_ALL"],$data20152016["TTF_FTE_ALL"],$data20142015["TTF_FTE_ALL"]));
+      $this->pdf->Row(array("Professor, with tenure",$data20162017["TTF_FTE_PROF_TNR"],$data20152016["TTF_FTE_PROF_TNR"],$data20142015["TTF_FTE_PROF_TNR"]));
+      $this->pdf->Row(array("Associate Professor, with tenure",$data20162017["TTF_FTE_ASSOC_PROF_TNR"],$data20152016["TTF_FTE_ASSOC_PROF_TNR"],$data20142015["TTF_FTE_ASSOC_PROF_TNR"]));
+      $this->pdf->Row(array("Professor",$data20162017["TTF_FTE_PROF"],$data20152016["TTF_FTE_PROF"],$data20142015["TTF_FTE_PROF"]));
+      $this->pdf->Row(array("Associate Professor",$data20162017["TTF_FTE_ASSOC_PROF"],$data20152016["TTF_FTE_ASSOC_PROF"],$data20142015["TTF_FTE_ASSOC_PROF"]));
+      $this->pdf->Row(array("Assistant Professor",$data20162017["TTF_FTE_ASSIST_PROF"],$data20152016["TTF_FTE_ASSIST_PROF"],$data20142015["TTF_FTE_ASSIST_PROF"]));
+      $this->pdf->Row(array("Librarian, with tenure",$data20162017["TTF_FTE_LIBR_TNR"],$data20152016["TTF_FTE_LIBR_TNR"],$data20142015["TTF_FTE_LIBR_TNR"]));
+      $this->pdf->Row(array("Librarian",$data20162017["TTF_FTE_LIBR"],$data20152016["TTF_FTE_LIBR"],$data20142015["TTF_FTE_LIBR"]));
+      $this->pdf->Row(array("Assistant Librarian",$data20162017["TTF_FTE_ASSIST_LIBR"],$data20152016["TTF_FTE_ASSIST_LIBR"],$data20142015["TTF_FTE_ASSIST_LIBR"]));
+      $this->pdf->Row(array("Research Faculty",$data20162017["RSRCH_FTE_ALL"],$data20152016["RSRCH_FTE_ALL"],$data20142015["RSRCH_FTE_ALL"]));
+      $this->pdf->Row(array("Research Professor",$data20162017["RSRCH_FTE_PROF"],$data20152016["RSRCH_FTE_PROF"],$data20142015["RSRCH_FTE_PROF"]));
+      $this->pdf->Row(array("Research Associate Professor",$data20162017["RSRCH_FTE_ASSOC_PROF"],$data20152016["RSRCH_FTE_ASSOC_PROF"],$data20142015["RSRCH_FTE_ASSOC_PROF"]));
+      $this->pdf->Row(array("Research Assistant Professor",$data20162017["RSRCH_FTE_ASSIST_PROF"],$data20152016["RSRCH_FTE_ASSIST_PROF"],$data20142015["RSRCH_FTE_ASSIST_PROF"]));
+      $this->pdf->Row(array("Clinical/instructional Faculty",$data20162017["CIF_FTE_ALL"],$data20152016["CIF_FTE_ALL"],$data20142015["CIF_FTE_ALL"]));
+      $this->pdf->Row(array("Clinical Professor",$data20162017["CIF_FTE_CLNCL_PROF"],$data20152016["CIF_FTE_CLNCL_PROF"],$data20142015["CIF_FTE_CLNCL_PROF"]));
+      $this->pdf->Row(array("Clinical Associate Professor",$data20162017["CIF_FTE_CLNCL_ASSOC_PROF"],$data20152016["CIF_FTE_CLNCL_ASSOC_PROF"],$data20142015["CIF_FTE_CLNCL_ASSOC_PROF"]));
+      $this->pdf->Row(array("Clinical Assistant Professor",$data20162017["CIF_FTE_CLNCL_ASSIST_PROF"],$data20152016["CIF_FTE_CLNCL_ASSIST_PROF"],$data20142015["CIF_FTE_CLNCL_ASSIST_PROF"]));
+      $this->pdf->Row(array("Instructor/Lecturer",$data20162017["CIF_FTE_INSTR_LCTR"],$data20152016["CIF_FTE_INSTR_LCTR"],$data20142015["CIF_FTE_INSTR_LCTR"]));
+      $this->pdf->Row(array("Adjunct Faculty",$data20162017["OTHRFAC_PT_ADJUNCT"],$data20152016["OTHRFAC_PT_ADJUNCT"],$data20142015["OTHRFAC_PT_ADJUNCT"]));
+
+      $currentYear = "AY2016-2017";
+
+      $getDiversityData20162017 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getDiversityData20162017->bindParam(1, $currentYear, PDO::PARAM_STR);
+      $getDiversityData20162017->bindParam(2, $this->ouAbbrev, PDO::PARAM_STR);
+      $getDiversityData20162017->execute();
+      $rowsGetDiversityData20162017 = $getDiversityData20162017->rowCount();
+
+      if ($rowsGetDiversityData20162017 > 0) {
+
+          $data20162017 = $getDiversityData20162017->fetch();
+
+      }
+
+      $ayYearBackOne = "AY2015-2016";
+
+      $getDiversityData20152016 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getDiversityData20152016->bindParam(1, $ayYearBackOne, PDO::PARAM_STR);
+      $getDiversityData20152016->bindParam(2, $this->ouAbbrev, PDO::PARAM_STR);
+      $getDiversityData20152016->execute();
+      $rowsGetDiversityData20152016 = $getDiversityData20152016->rowCount();
+
+      if ($rowsGetDiversityData20152016 > 0) {
+
+          $data20152016 = $getDiversityData20152016->fetch();
+
+      }
+
+      $ayYearBackTwo = "AY2014-2015";
+
+      $getDiversityData20142015 = $this->connection->prepare("SELECT * FROM `IR_AC_DiversityPersonnel` WHERE OUTCOMES_AY = ? AND OU_ABBREV = ?");
+      $getDiversityData20142015->bindParam(1, $ayYearBackTwo, PDO::PARAM_STR);
+      $getDiversityData20142015->bindParam(2, $this->ouAbbrev, PDO::PARAM_STR);
+      $getDiversityData20142015->execute();
+      $rowsGetDiversityData20142015 = $getDiversityData20142015->rowCount();
+
+      if ($rowsGetDiversityData20142015 > 0) {
+
+          $data20142015 = $getDiversityData20142015->fetch();
+
+      }
+
+      $diversityTotal20162017 = $data20162017["FAC_AMERIND_ALASKNAT"] + $data20162017["FAC_ASIAN"] + $data20162017["FAC_BLACK"] + $data20162017["FAC_HISPANIC"] + $data20162017["FAC_HI_PAC_ISL"] + $data20162017["FAC_NONRESIDENT_ALIEN"] + $data20162017["FAC_TWO_OR_MORE"] + $data20162017["FAC_UNKNOWN_RACE_ETHNCTY"] + $data20162017["FAC_WHITE"];
+      $diversityTotal20152016 = $data20152016["FAC_AMERIND_ALASKNAT"] + $data20152016["FAC_ASIAN"] + $data20152016["FAC_BLACK"] + $data20152016["FAC_HISPANIC"] + $data20152016["FAC_HI_PAC_ISL"] + $data20152016["FAC_NONRESIDENT_ALIEN"] + $data20152016["FAC_TWO_OR_MORE"] + $data20152016["FAC_UNKNOWN_RACE_ETHNCTY"] + $data20152016["FAC_WHITE"];
+      $diversityTotal20142015 = $data20142015["FAC_AMERIND_ALASKNAT"] + $data20142015["FAC_ASIAN"] + $data20142015["FAC_BLACK"] + $data20142015["FAC_HISPANIC"] + $data20142015["FAC_HI_PAC_ISL"] + $data20142015["FAC_NONRESIDENT_ALIEN"] + $data20142015["FAC_TWO_OR_MORE"] + $data20142015["FAC_UNKNOWN_RACE_ETHNCTY"] + $data20142015["FAC_WHITE"];
+
+      $this->pdf->SetWidths(array(70,35,35,35));
+      $this->pdf->SetFont('Arial','B',16);
+      $this->pdf->Ln(10);
+      $this->pdf->Write(5,"Faculty Diversity by Gender and Race/Ethnicity");
+      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,"Note: USC follows US Department of Education IPEDS/ National Center for Education Statistics guidance for collecting and reporting race and ethnicity.  See https://nces.ed.gov/ipeds/Section/collecting_re");
+      $this->pdf->SetFont('Arial','B',11);
+      $this->pdf->Ln(5);
+      $this->pdf->Write(5,"Table 2. Faculty Diversity by Gender and Race/Ethnicity, Fall 2016, Fall 2015, and Fall 2014.");
+
+      $this->pdf->SetDrawColor(0,0,0);
+      $this->pdf->Ln(5);
+      $this->pdf->Row(array("","Fall 2016","Fall 2015","Fall 2014"));
+      $this->pdf->Row(array("Gender",$data20162017["FAC_FEMALE"] + $data20162017["FAC_MALE"],$data20152016["FAC_FEMALE"] + $data20152016["FAC_MALE"],$data20142015["FAC_FEMALE"] + $data20142015["FAC_MALE"]));
+      $this->pdf->Row(array("Female",$data20162017["FAC_FEMALE"],$data20152016["FAC_FEMALE"],$data20142015["FAC_FEMALE"]));
+      $this->pdf->Row(array("Male",$data20162017["FAC_MALE"],$data20152016["FAC_MALE"],$data20142015["FAC_MALE"]));
+      $this->pdf->Row(array("Race/Ethnicity",$diversityTotal20162017,$diversityTotal20152016,$diversityTotal20142015));
+      $this->pdf->Row(array("American Indian/Alaska Native",$data20162017["FAC_AMERIND_ALASKNAT"],$data20152016["FAC_AMERIND_ALASKNAT"],$data20142015["FAC_AMERIND_ALASKNAT"]));
+      $this->pdf->Row(array("Asian",$data20162017["FAC_ASIAN"],$data20152016["FAC_ASIAN"],$data20142015["FAC_ASIAN"]));
+      $this->pdf->Row(array("Black or African American",$data20162017["FAC_BLACK"],$data20152016["FAC_BLACK"],$data20142015["FAC_BLACK"]));
+      $this->pdf->Row(array("Hispanic or Latino",$data20162017["FAC_HISPANIC"],$data20152016["FAC_HISPANIC"],$data20142015["FAC_HISPANIC"]));
+      $this->pdf->Row(array("Native Hawaiian or Other Pacific Islander",$data20162017["FAC_HI_PAC_ISL"],$data20152016["FAC_HI_PAC_ISL"],$data20142015["FAC_HI_PAC_ISL"]));
+      $this->pdf->Row(array("Nonresident Alien",$data20162017["FAC_NONRESIDENT_ALIEN"],$data20152016["FAC_NONRESIDENT_ALIEN"],$data20142015["FAC_NONRESIDENT_ALIEN"]));
+      $this->pdf->Row(array("Two or More Races",$data20162017["FAC_TWO_OR_MORE"],$data20152016["FAC_TWO_OR_MORE"],$data20142015["FAC_TWO_OR_MORE"]));
+      $this->pdf->Row(array("Unknown Race/Ethnicity",$data20162017["FAC_UNKNOWN_RACE_ETHNCTY"],$data20152016["FAC_UNKNOWN_RACE_ETHNCTY"],$data20142015["FAC_UNKNOWN_RACE_ETHNCTY"]));
+      $this->pdf->Row(array("White",$data20162017["FAC_WHITE"],$data20152016["FAC_WHITE"],$data20142015["FAC_WHITE"]));
+      $this->pdf->Ln(5);
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write(5,"Illustrations 1 and 2 (below) portray this data visually.");
+
+      /*TODO ADD ACTIONS TABLE TO LOCAL $getFacultyActions = $this->connection->prepare("SELECT * FROM ");
+
+      $this->pdf->SetFont('Arial','B',16);
+      $this->pdf->Ln(10);
+      $this->pdf->Write(5,"Faculty Actions");
+      $this->pdf->SetFont('Arial','B',11);
+      $this->pdf->Ln(5);
+      $this->pdf->Write(5,"Table 3. Faculty Actions, AY2015-2016, AY2014-2015, and AY2013-2014");
+      $this->pdf->SetDrawColor(0,0,0);
+      $this->pdf->Ln(5);
+      $this->pdf->Row(array("","AY2015-2016","AY2014-2015","AY2013-2014"));
+      $this->pdf->Row(array("Depatures",));
+      $this->pdf->Row(array("Hired",$data20162017["FAC_FEMALE"],$data20152016["FAC_FEMALE"],$data20142015["FAC_FEMALE"]));
+      $this->pdf->Row(array("Vacancies",$data20162017["FAC_MALE"],$data20152016["FAC_MALE"],$data20142015["FAC_MALE"]));
+      $this->pdf->Row(array("Retention Packages",$diversityTotal20162017,$diversityTotal20152016,$diversityTotal20142015));*/
+
+      $this->pdf->AddPage();
+      $this->pdf->SetFont('Arial','B',11);
+      $this->pdf->Write(5,"Illustration 1. Faculty Diversity by Gender");
+      $this->pdf->Ln(10);
+
+      $this->pdf->SetDrawColor(255,255,255);
+      $this->pdf->SetWidths(array(70,70,80));
+      $this->pdf->Row(array("2016 Undergraduate Gender","2015 Undergraduate Gender","2014 Undergraduate Gender"));
+      $this->pdf->Image("../../User/charts/faculty-diversity-gender-2016-".$this->ouAbbrev.".png",10,40,50);
+      $this->pdf->Image("../../User/charts/faculty-diversity-gender-2015-".$this->ouAbbrev.".png",80,40,50);
+      $this->pdf->Image("../../User/charts/faculty-diversity-gender-2014-".$this->ouAbbrev.".png",150,40,50);
+
+
+      $this->pdf->Ln(80);
+      $this->pdf->SetFont('Arial','B',11);
+      $this->pdf->Write(5,"Illustration 2. Faculty Diversity by Race & Ethnicity");
+      $this->pdf->Ln(15);
+      $this->pdf->Image("../../User/charts/faculty-diversity-race-".$this->ouAbbrev.".png",50,120,115);
 
     }
 
