@@ -101,15 +101,18 @@
 <div class="hr"></div>
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
   <div id="title-header">
-      <h1 id="title">Data Visualizations</h1>
+      <h1 id="title">Official Data</h1>
   </div>
-  <div id="main-box" class="col-xs-10 col-xs-offset-1">
-    <ul class="nav nav-tabs" role="tablist">
+  
+    <ul class="nav nav-tabs col-xs-10 col-xs-offset-1" role="tablist" style="margin-bottom:-25px;">
       <li role="presentation" class="active"><a href="#student-positions" role="tab" data-toggle="tab">Student Enrollments</a></li>
       <li role="presentation"><a href="#student-diversity" role="tab" data-toggle="tab">Student Diversity</a></li>
       <li role="presentation"><a href="#student-outcomes" role="tab" data-toggle="tab">Student Outcomes</a></li>
       <li role="presentation"><a href="#faculty-diversity" role="tab" data-toggle="tab">Faculty Diversity</a></li>
+      <li role="presentation"><a href="#other-tables" role="tab" data-toggle="tab">Other Tables</a></li>
+      <li role="presentation"><a href="#vpr-report" role="tab" data-toggle="tab">VPR Report</a></li>
     </ul>
+    <div id="main-box" class="col-xs-10 col-xs-offset-1">
     <div class="tab-content">
       <div role="tabpanel" class="tab-pane active" id="student-positions">
         <div class="container-fluid">
@@ -120,6 +123,7 @@
           </div>
         </div>
       </div>
+
       <div role="tabpanel" class="tab-pane" id="student-diversity">
         <div class="container-fluid">
           <div class="row">
@@ -129,6 +133,7 @@
           </div>
         </div>
       </div>
+
       <div role="tabpanel" class="tab-pane" id="student-outcomes">
         <div class="container-fluid">
           <div class="row">
@@ -138,6 +143,7 @@
           </div>
         </div>
       </div>
+
       <div role="tabpanel" class="tab-pane" id="faculty-diversity">
         <div class="container-fluid">
           <div class="row">
@@ -149,6 +155,37 @@
           </div>
         </div>
       </div>
+
+      <div role="tabpanel" class="tab-pane" id="other-tables">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-12">
+                <?php 
+                       $ChartVisualizations->tableFacultyStudentRatio();
+                       $ChartVisualizations->tableFacultyPop();
+                       $ChartVisualizations->tableFacultyActions();
+                       $ChartVisualizations->tableEnrollementbyTime();
+                 ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div role="tabpanel" class="tab-pane" id="vpr-report" style="min-height: 200px;">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-4 col-md-offset-4">
+                <h2 class="text-center">VPR Report</h2>
+                <a class="text-center" style="color:#fff;" <?php echo "href='../uploads/vpr_report/".$ouabbrev."_research_funding_blueprint.pdf'"; ?>><button class="btn-primary pull-left">Click to download the VPR Report</button></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
