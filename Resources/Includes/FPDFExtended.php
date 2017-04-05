@@ -3,8 +3,9 @@
   error_reporting(1);
   @ini_set('display_errors', 1);
   require "../Library/FPDF/fpdf.php";
+require "../Library/FPDI/fpdi.php";
 
-  class Table extends FPDF
+  class Table extends FPDI
   {
 
     var $widths;
@@ -342,25 +343,26 @@
     {
 
       $this->introPage();
-      $this->executiveSummaryPage();
-      $this->foundationPage();
-      $this->goalsLookingBackPage();
-      $this->goalsRealTimePage();
-      $this->goalsLookingAheadPage();
-      $this->academicPrograms();
-      $this->academicInitiatives();
-      $this->facultyPopulation();
-      $this->facultyInformation();
-      $this->teaching();
-      $this->studentRecruitingRetention();
-      $this->studentEnrollmentPage();
-      $this->facultyAwardsPage();
-      $this->serviceAwardsPage();
-      $this->teachingAwardsPage();
-      $this->collaborationsPage();
-      $this->getUnivLinkedGoal();
-      $this->getGoalOutcomes();
-      $this->pdf->insertTOC(3);
+//      $this->executiveSummaryPage();
+//      $this->foundationPage();
+//      $this->goalsLookingBackPage();
+//      $this->goalsRealTimePage();
+//      $this->goalsLookingAheadPage();
+//      $this->academicPrograms();
+//      $this->academicInitiatives();
+//      $this->facultyPopulation();
+//      $this->facultyInformation();
+//      $this->teaching();
+//      $this->studentRecruitingRetention();
+//      $this->studentEnrollmentPage();
+//      $this->facultyAwardsPage();
+//      $this->serviceAwardsPage();
+//      $this->teachingAwardsPage();
+//      $this->collaborationsPage();
+//      $this->getUnivLinkedGoal();
+//      $this->getGoalOutcomes();
+//      $this->pdf->insertTOC(3);
+      $this->getSupplementPdf('../../uploads/facultyInfo/facInfo.pdf');
       $this->pdf->Output("report_final.pdf","I");
 
     }
@@ -1519,6 +1521,35 @@
       }
 
       return $dotString;
+
+    }
+
+    public function getSupplementPdf($filepath)
+    {
+      // get the page count & set pdf to merge
+      $pageCount = $this->pdf->setSourceFile($filepath);
+
+      // iterate through all pages
+      for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+        // import a page
+        $templateId = $this->pdf->importPage($pageNo);
+        // get the size of the imported page
+        $size = $this->pdf->getTemplateSize($templateId);
+
+        //create a page (landscape or portrait depending on the imported page size)
+        if ($size['w'] > $size['h']) {
+          $this->pdf->AddPage('L', array($size['w'], $size['h']));
+        } else {
+          $this->pdf->AddPage('P', array($size['w'], $size['h']));
+        }
+
+        // use the imported page
+        $this->pdf->useTemplate($templateId);
+
+      }
+
+      // Clean might help in setting cursors back to its place . You might need to check that for further input.
+      $this->pdf->cleanUp();
 
     }
 
