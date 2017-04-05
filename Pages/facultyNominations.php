@@ -2,13 +2,17 @@
 
 $pagename = "bphome";
 
-require_once ("../Resources/Includes/data.php");
+require_once ("../Resources/Includes/Data.php");
 require_once ("../Resources/Includes/BpContents.php");
-// This Page controls Faculty Awards Screen.
+
+$BpContent = new BPCONTENTS();
+//$connection = $BpContent->connection;
+
 
 $message = array();
 $errorflag = 0;
 $BackToDashboard = true;
+
 
 // Local & Session variable Initialization
 $bpid = $_SESSION['bpid'];
@@ -26,8 +30,6 @@ $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-$BpContent = new BPCONTENTS();
-//$connection = $BpContent->connection;
 
 //  Blueprint Status information on title box
 $resultbroad = $BpContent->BlueprintStatusDisplay();
@@ -66,15 +68,15 @@ try {
 
 if(isset($_POST['award_submit'])) {
 
-
     $awardType = $_POST['awardType'];
     $awardLoc = $_POST['awardLoc'];
     $recipLname = $_POST['recipLname'];
     $recipFname = $_POST['recipFname'];
     $awardTitle = $_POST['awardTitle'];
     $awardOrg = $_POST['awardOrg'];
-    $dateNominated = $_POST['dateNominated'];
+    $dateNominated = date("Y-m-d", strtotime($_POST['dateNominated']));
     $contentlink_id = $_GET['linkid'];
+
 
     try {
 
@@ -88,8 +90,8 @@ if(isset($_POST['award_submit'])) {
           MOD_TIMESTAMP = :timeStampmod WHERE ID_CONTENT =:contentlink_id ;";
 
           $sqlAcFacAward .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress',
-      BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timeStampmod WHERE ID_BROADCAST = 
-      :bpid ; ";
+      BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timeStampmod WHERE 
+      ID_BROADCAST = :bpid ; ";
       }
         $resultaward = $BpContent->connection->prepare($sqlAcFacAward);
 
@@ -116,17 +118,18 @@ if(isset($_POST['award_submit'])) {
         }
 
         if($resultaward->execute()) {
-            $Data = new Data($BpContent->connection);
-            $Data->initOrderFacultyAwards();
-            $error[0] = "Faculty nomination added successfully.";
+            $Data = new Data();
+            $Data->initOrderFacultyNominationsAwards();
+            $message[0] = "Faculty nomination added successfully.";
 
         } else {
-            $error[0] = "Faculty nomination Could not be added.";
+            $message[0] = "Faculty nomination Could not be added.";
 
         }
     } catch (PDOException $e) {
 
     error_log($e->getMessage());
+
 
   }
 
@@ -234,79 +237,243 @@ require_once("../Resources/Includes/menu.php");
                        aria-describedby="basic-addon1">
             </div>
 
-            <div id="jsGrid"></div>
+<!--            <div id="jsGrid"></div>-->
             <div id="table-status"></div>
+
+        <h3 style="padding: 5px;">Research Awards</h3>
+        <div id="jsGridResearch"></div>
+        <h3 style="padding: 5px;">Service Awards</h3>
+        <div id="jsGridService"></div>
+        <h3 style="padding: 5px;">Teaching Awards</h3>
+        <div id="jsGridTeaching"></div>
+        <h3 style="padding: 5px;">Other Awards</h3>
+        <div id="jsGridOther"></div>
             <script>
 
-              var status;
+                var status;
 
-
-              $.extend({
-                getUrlVars: function(){
-                  var vars = [], hash;
-                  var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-                  for(var i = 0; i < hashes.length; i++)
-                  {
-                    hash = hashes[i].split('=');
-                    vars.push(hash[0]);
-                    vars[hash[0]] = hash[1];
-                  }
-                  return vars;
-                },
-                getUrlVar: function(name){
-                  return $.getUrlVars()[name];
-                }
-              });
-
-              $.post("../Resources/Includes/data.php?functionNum=6", function(data) {
-                data = $.parseJSON(data);
-                $("#jsGrid").jsGrid({
-                  width: "100%",
-                  height: "400px",
-                  sorting: true,
-                  paging: true,
-                  
-                  data: data,
-                  rowClass: function(item, itemIndex) {
-                    return "client-" + itemIndex;
-                  },
-                  controller: {
-                    loadData: function() {
-                      return db.clients.slice(0, 15);
+                $.extend({
+                    getUrlVars: function(){
+                        var vars = [], hash;
+                        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                        for(var i = 0; i < hashes.length; i++)
+                        {
+                            hash = hashes[i].split('=');
+                            vars.push(hash[0]);
+                            vars[hash[0]] = hash[1];
+                        }
+                        return vars;
+                    },
+                    getUrlVar: function(name){
+                        return $.getUrlVars()[name];
                     }
-                  },
-                  fields: [
-                    { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                    { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
-                    { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
-                      return $("<a>").attr("href", "../Pages/facultyNominations_detail.php?award_id="+item
-                              .ID_FACULTY_AWARDS+"&linkid="+$.getUrlVar("linkid")).text(value);
-                    }, type:"text", width: "auto" },
-                    { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
-                      return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
-                    }, type:"text", width: "auto"},
-                    { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
-                    
-                  ],
-                  onRefreshed: function() {
-                    var $gridData = $("#jsGrid .jsgrid-grid-body tbody");
-                    $gridData.sortable({
-                      update: function(e, ui) {
-                        var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                        var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                            return clientIndexRegExp.exec(classes)[1];
-                        });
-                        var items = $.map($gridData.find("tr"), function(row) {
-                            return $(row).data("JSGridItem");
-                        });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
-
-                        })
-                      }
-                    });
-                  }
                 });
-              });
+
+                $.post("../Resources/Includes/Data.php?functionNum=8&viewpoint=Research", function(data) {
+                    data = $.parseJSON(data);
+                    $("#jsGridResearch").jsGrid({
+                        width: "100%",
+                        height: "400px",
+                        sorting: true,
+                        paging: true,
+
+                        data: data,
+                        rowClass: function(item, itemIndex) {
+                            return "client-" + itemIndex;
+                        },
+                        controller: {
+                            loadData: function() {
+                                return db.clients.slice(0, 15);
+                            }
+                        },
+                        fields: [
+                            { name: "ID_SORT", title: "#", type: "text", width: "20px" },
+                            { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
+                            { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
+                                return $("<a>").attr("href", "../Pages/facultyNominations_detail.php?award_id="+item
+                                        .ID_FACULTY_NOMINATIONS+"&linkid="+$.getUrlVar("linkid")).text(value);
+                            }, type:"text", width: "auto" },
+                            { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
+                                return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
+                            }, type:"text", width: "auto"},
+                            { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
+
+                        ],
+                        onRefreshed: function() {
+                            var $gridData = $("#jsGridResearch .jsgrid-grid-body tbody");
+                            $gridData.sortable({
+                                update: function(e, ui) {
+                                    var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                                    var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
+                                        return clientIndexRegExp.exec(classes)[1];
+                                    });
+                                    var items = $.map($gridData.find("tr"), function(row) {
+                                        return $(row).data("JSGridItem");
+                                    });
+                                    $.post("../Resources/Includes/Data.php?functionNum=9",{'data':items,
+                                        'indexes':indexes},function(){
+
+                                    })
+                                }
+                            });
+                        }
+                    });
+                });
+
+                $.post("../Resources/Includes/Data.php?functionNum=8&viewpoint=Service", function(data) {
+                    data = $.parseJSON(data);
+                    console.log(data);
+                    $("#jsGridService").jsGrid({
+                        width: "100%",
+                        height: "400px",
+                        sorting: true,
+                        paging: true,
+
+                        data: data,
+                        rowClass: function(item, itemIndex) {
+                            return "client-" + itemIndex;
+                        },
+                        controller: {
+                            loadData: function() {
+                                return db.clients.slice(0, 15);
+                            }
+                        },
+                        fields: [
+                            { name: "ID_SORT", title: "#", type: "text", width: "20px" },
+                            { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
+                            { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
+                                return $("<a>").attr("href", "../Pages/facultyNominations_detail.php?award_id="+item
+                                        .ID_FACULTY_NOMINATIONS+"&linkid="+$.getUrlVar("linkid")).text(value);
+                            }, type:"text", width: "auto" },
+                            { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
+                                return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
+                            }, type:"text", width: "auto"},
+                            { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
+
+                        ],
+                        onRefreshed: function() {
+                            var $gridData = $("#jsGridService .jsgrid-grid-body tbody");
+                            $gridData.sortable({
+                                update: function(e, ui) {
+                                    var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                                    var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
+                                        return clientIndexRegExp.exec(classes)[1];
+                                    });
+                                    var items = $.map($gridData.find("tr"), function(row) {
+                                        return $(row).data("JSGridItem");
+                                    });
+                                    $.post("../Resources/Includes/Data.php?functionNum=9",{'data':items,
+                                        'indexes':indexes},function(){
+
+                                    })
+                                }
+                            });
+                        }
+                    });
+                });
+
+                $.post("../Resources/Includes/Data.php?functionNum=8&viewpoint=Teaching", function(data) {
+                    data = $.parseJSON(data);
+                    $("#jsGridTeaching").jsGrid({
+                        width: "100%",
+                        height: "400px",
+                        sorting: true,
+                        paging: true,
+
+                        data: data,
+                        rowClass: function(item, itemIndex) {
+                            return "client-" + itemIndex;
+                        },
+                        controller: {
+                            loadData: function() {
+                                return db.clients.slice(0, 15);
+                            }
+                        },
+                        fields: [
+                            { name: "ID_SORT", title: "#", type: "text", width: "20px" },
+                            { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
+                            { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
+                                return $("<a>").attr("href", "../Pages/facultyNominations_detail.php?award_id="+item
+                                        .ID_FACULTY_NOMINATIONS+"&linkid="+$.getUrlVar("linkid")).text(value);
+                            }, type:"text", width: "auto" },
+                            { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
+                                return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
+                            }, type:"text", width: "auto"},
+                            { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
+
+                        ],
+                        onRefreshed: function() {
+                            var $gridData = $("#jsGridTeaching .jsgrid-grid-body tbody");
+                            $gridData.sortable({
+                                update: function(e, ui) {
+                                    var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                                    var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
+                                        return clientIndexRegExp.exec(classes)[1];
+                                    });
+                                    var items = $.map($gridData.find("tr"), function(row) {
+                                        return $(row).data("JSGridItem");
+                                    });
+                                    $.post("../Resources/Includes/Data.php?functionNum=9",{'data':items,
+                                        'indexes':indexes},function(){
+
+                                    })
+                                }
+                            });
+                        }
+                    });
+                });
+
+                $.post("../Resources/Includes/Data.php?functionNum=8&viewpoint=Other", function(data) {
+                    data = $.parseJSON(data);
+                    $("#jsGridOther").jsGrid({
+                        width: "100%",
+                        height: "400px",
+                        sorting: true,
+                        paging: true,
+
+                        data: data,
+                        rowClass: function(item, itemIndex) {
+                            return "client-" + itemIndex;
+                        },
+                        controller: {
+                            loadData: function() {
+                                return db.clients.slice(0, 15);
+                            }
+                        },
+                        fields: [
+                            { name: "ID_SORT", title: "#", type: "text", width: "20px" },
+                            { name: "AWARD_TYPE", title: "Award Type", type: "text", width: "auto"},
+                            { name: "AWARD_TITLE", title: "Award Title", itemTemplate: function(value,item){
+                                return $("<a>").attr("href", "../Pages/facultyNominations_detail.php?award_id="+item
+                                        .ID_FACULTY_NOMINATIONS+"&linkid="+$.getUrlVar("linkid")).text(value);
+                            }, type:"text", width: "auto" },
+                            { name: "RECIPIENT_NAME",  title: "Recipient Name", itemTemplate: function(value,item){
+                                return item.RECIPIENT_NAME_FIRST + " " + item.RECIPIENT_NAME_LAST;
+                            }, type:"text", width: "auto"},
+                            { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" }
+
+                        ],
+                        onRefreshed: function() {
+                            var $gridData = $("#jsGridOther .jsgrid-grid-body tbody");
+                            $gridData.sortable({
+                                update: function(e, ui) {
+                                    var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                                    var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
+                                        return clientIndexRegExp.exec(classes)[1];
+                                    });
+                                    var items = $.map($gridData.find("tr"), function(row) {
+                                        return $(row).data("JSGridItem");
+                                    });
+                                    $.post("../Resources/Includes/Data.php?functionNum=9",{'data':items,
+                                        'indexes':indexes},function(){
+
+                                    })
+                                }
+                            });
+                        }
+                    });
+                });
+
             </script>
         </div>
         <form action="<?php echo $_SERVER["PHP_SELF"]."?linkid=".$contentlink_id ?>" method="POST" >

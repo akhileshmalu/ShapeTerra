@@ -88,7 +88,7 @@ require_once("../Resources/Includes/menu.php");
 <link href="Css/templateTabs.css" rel="stylesheet" type="text/css"/>
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
 
-<?php if (isset($_POST['savedraft']) || isset($_POST['submit_approve']) || isset($_POST['approve'])  ) { ?>
+<?php if (isset($_POST['savedraft']) || isset($_POST['submit_approve']) || isset($_POST['approve']) || isset($_POST['reject'])  ) { ?>
     <div class="overlay hidden"></div>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
@@ -129,7 +129,7 @@ require_once("../Resources/Includes/menu.php");
                         style="color: red"><sup>*</sup></span></h3>
                 <div class="col-xs-12 form-group form-indent">
                     <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="missionstatement"
-                              id="missiontitle" maxlength="1000"
+                              id="missiontitle" maxlength="1025"
                               required><?php echo $mvv->mybr2nl($rowsmission['MISSION_STATEMENT']); ?></textarea>
                 </div>
 
@@ -150,13 +150,8 @@ require_once("../Resources/Includes/menu.php");
                 </div>
                 <h3>Vision Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
-                    <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="visionstatement" maxlength="1000"
-                             <?php
-                             if($rowsmission['VISION_NO_RESPONSE']){
-                                 echo ' disabled';
-                             }
-                             ?>
-                              id="visiontitle"><?php echo $mvv->mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="visionstatement"
+                              maxlength="1025" id="visiontitle"><?php echo $mvv->mybr2nl($rowsmission['VISION_STATEMENT']); ?></textarea>
                     <div class="checkbox">
                         <label for="optionalCheck">
                             <input type="checkbox" name="visNoResponse" class="optionalCheck"
@@ -189,11 +184,18 @@ require_once("../Resources/Includes/menu.php");
                 </div>
                 <h3>Values Statement</h3>
                 <div class="col-xs-12 form-group form-indent">
-                    <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="valuestatement" maxlength="1000"
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control wordCount" name="valuestatement"
+                              maxlength="1025"
                               id="valuetitle"><?php echo $mvv->mybr2nl($rowsmission['VALUES_STATEMENT']); ?></textarea>
                     <div class="checkbox">
                         <label for="optionalCheck">
-                            <input type="checkbox" name="valNoResponse" class="optionalCheck" id="valuestatement"/> No
+                            <input type="checkbox" name="valNoResponse" class="optionalCheck"
+                                <?php
+                                if($rowsmission['VALUE_NO_RESPONSE']){
+                                    echo " checked ";
+                                }
+                                ?>
+                                   id="valuestatement"/> No
                             response
                             to
                             this item

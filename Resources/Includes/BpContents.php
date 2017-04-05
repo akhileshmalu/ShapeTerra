@@ -212,7 +212,12 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0755);
             }
-            $target_file_port = $target_dir . basename($_FILES["deans-portrait-logo"]["name"]);
+
+            $imageFileType = pathinfo(basename($_FILES["deans-portrait-logo"]["name"]), PATHINFO_EXTENSION);
+            $target_file_port = $target_dir . $this->bpayname.$this->ouabbrev.'-deansPortraitLogo.'.$imageFileType;
+ //           $target_file_port = $target_dir . basename($_FILES["deans-portrait-logo"]["name"]);
+
+
             $deansPortraitLogoTmpDir = $_FILES["deans-portrait-logo"]["name"];
             $portsize = getimagesize($_FILES["deans-portrait-logo"]["name"]);
 
@@ -246,7 +251,11 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
         if ($_FILES['deans-signature-logo']['tmp_name'] != "") {
 
             $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/" . $_SESSION['site'] . "/uploads/exec_summary/";
-            $target_file_sign = $target_dir . basename($_FILES["deans-signature-logo"]["name"]);
+
+            $imageFileType = pathinfo(basename($_FILES["deans-signature-logo"]["name"]), PATHINFO_EXTENSION);
+            $target_file_sign = $target_dir . $this->bpayname.$this->ouabbrev.'-deansSignatureLogo.'.$imageFileType;
+
+          //  $target_file_sign = $target_dir . basename($_FILES["deans-signature-logo"]["name"]);
             $deansPortraitSignTmpDir = $_FILES["deans-signature-logo"]["name"];
             $signsize = getimagesize($_FILES["deans-signature-logo"]["name"]);
 
@@ -286,7 +295,12 @@ Class EXECUTIVESUMCLASS extends BPCONTENTS
         if ($_FILES['deans-college-school-logo']['tmp_name'] != "") {
 
             $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/" . $_SESSION['site'] . "/uploads/exec_summary/";
-            $target_file_sch_logo = $target_dir . basename($_FILES["deans-college-school-logo"]["name"]);
+
+            $imageFileType = pathinfo(basename($_FILES["deans-college-school-logo"]["name"]), PATHINFO_EXTENSION);
+            $target_file_sch_logo = $target_dir . $this->bpayname.$this->ouabbrev.'-deansSchoolLogo.'.$imageFileType;
+
+          //  $target_file_sch_logo = $target_dir . basename($_FILES["deans-college-school-logo"]["name"]);
+
             $deansSchoolLogoTmpDir = $_FILES["deans-college-school-logo"]["name"];
             //$imagedimension = getimagesize($_FILES["deans-college-school-logo"]["name"]);
 
@@ -400,7 +414,9 @@ Class ACADEMICPROGRAM extends BPCONTENTS
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0755);
             }
-            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $target_file = $target_dir . $this->bpayname.$this->ouabbrev.'-AcademicProgramSupplementInfo.pdf';
+
+//            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
             $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
             $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
 
@@ -493,6 +509,7 @@ Class FACULTYINFO extends BPCONTENTS
         $createact = Initialize::mynl2br($_POST['cractivity']);
         $this->contentLinkId = $_GET['linkid'];
 
+        $supinfopath = $_SERVER['DOCUMENT_ROOT'] . "/" . $_SESSION['site'] . "/uploads/facultyInfo/".$_POST['supinfo'];
 
         //    if ($_FILES["supinfo"]["error"] > 0) {
         //        $error[0] = "Return Code: No Input " . $_FILES["supinfo"]["error"] . "<br />";
@@ -501,13 +518,15 @@ Class FACULTYINFO extends BPCONTENTS
         //    } else {
         //        $target_dir = "../../user"."/".$name."/";
 
+
         if ($_FILES['supinfo']['tmp_name'] != "") {
+
             //$target_dir = "../uploads/facultyInfo/";
             $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/" . $_SESSION['site'] . "/uploads/facultyInfo/";
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0755);
             }
-            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $target_file = $target_dir . $this->bpayname.$this->ouabbrev.'-FacultySupplementInfo.pdf';
             $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 
 
@@ -768,7 +787,8 @@ Class ALUMNIDEVELOPMENT extends BPCONTENTS
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0755);
             }
-            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $target_file = $target_dir . $this->bpayname.$this->ouabbrev.'-AlumniSupplementInfo.pdf';
+//            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
             $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
             $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
 
@@ -866,7 +886,8 @@ Class COLLABORATION extends BPCONTENTS
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0755);
             }
-            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $target_file = $target_dir . $this->bpayname.$this->ouabbrev.'-CollaborationSupplimentInfo.pdf';
+//            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
             $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 
 
@@ -961,7 +982,8 @@ Class CAMPUSCLIMATE extends BPCONTENTS
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0755);
             }
-            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $target_file = $target_dir . $this->bpayname.$this->ouabbrev.'-CampusSupplimentInfo.pdf';
+//            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
             $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
             $imagedimension = getimagesize($_FILES["supinfo"]["name"]);
 
@@ -1141,7 +1163,8 @@ Class INITIATIVES extends BPCONTENTS
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0755);
             }
-            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $target_file = $target_dir . $this->bpayname.$this->ouabbrev.'-InitiativeSupplementInfo.pdf';
+//            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
             $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 
             if ($imageFileType != "pdf") {
@@ -1240,7 +1263,8 @@ Class COMMUNITYENGAGEMENT extends BPCONTENTS
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0755);
             }
-            $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
+            $target_file = $target_dir . $this->bpayname.$this->ouabbrev.'-CommunitySupplementInfo.pdf';
+            //$target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
             $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 
 
@@ -1354,7 +1378,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = :author, LastModified = :times
         $resultFacultyAwards = $this->connection->prepare($sqlAcFacAward);
 
         $resultFacultyAwards->bindParam(":author", $this->author, PDO::PARAM_STR);
-        $resultFacultyAwards->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
+        $resultFacultyAwards->bindParam(":timeStampmod", $this->time, PDO::PARAM_STR);
 
         $resultFacultyAwards->bindParam(":awardType", $awardType, PDO::PARAM_STR);
         $resultFacultyAwards->bindParam(":awardLoc", $awardLoc, PDO::PARAM_STR);
@@ -1375,6 +1399,9 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = :author, LastModified = :times
             $resultFacultyAwards->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
         }
         if ($resultFacultyAwards->execute()) {
+//            require_once ("Data.php");
+//            $data = new Data();
+//            $data->initOrderGoals();
 
             $this->message = "Award Updated Succesfully.";
         } else {
@@ -1414,7 +1441,7 @@ Class FACULTYNOMINATIONS extends BPCONTENTS
         $recipFname = $_POST['recipFname'];
         $awardTitle = $_POST['awardTitle'];
         $awardOrg = $_POST['awardOrg'];
-        $dateNominated = $_POST['dateNominated'];
+        $dateNominated = date('Y-m-d',strtotime($_POST['dateNominated']));
 
         $sqlAcFacAward = "UPDATE `AC_FacultyNominations` SET OUTCOMES_AUTHOR = :author, MOD_TIMESTAMP = :timeStampmod, 
 AWARD_TYPE = :awardType, AWARD_LOCATION = :awardLoc, RECIPIENT_NAME_LAST = :recipLname, 
@@ -1433,8 +1460,7 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = :author, LastModified = :times
         $resultFacultyAwards = $this->connection->prepare($sqlAcFacAward);
 
         $resultFacultyAwards->bindParam(":author", $this->author, PDO::PARAM_STR);
-        $resultFacultyAwards->bindParam(":timestampmod", $this->time, PDO::PARAM_STR);
-
+        $resultFacultyAwards->bindParam(":timeStampmod", $this->time, PDO::PARAM_STR);
         $resultFacultyAwards->bindParam(":awardType", $awardType, PDO::PARAM_STR);
         $resultFacultyAwards->bindParam(":awardLoc", $awardLoc, PDO::PARAM_STR);
         $resultFacultyAwards->bindParam(':recipLname', $recipLname, PDO::PARAM_STR);
@@ -1454,6 +1480,13 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR = :author, LastModified = :times
             $resultFacultyAwards->bindParam(':bpid', $this->bpid, PDO::PARAM_STR);
         }
         if ($resultFacultyAwards->execute()) {
+
+            if($awardType != $rowsexvalue['AWARD_TYPE']) {
+
+                require_once ("Data.php");
+                $data = new Data();
+                $data->setUpdateAwardTypeOrder($award_id,$awardType);
+            }
 
             $this->message = "Nominations Updated Succesfully.";
         } else {

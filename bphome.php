@@ -1,7 +1,7 @@
 <?php
 
 
-require_once("../Resources/Includes/Initialize.php");
+require_once("Resources/Includes/Initialize.php");
 $initalize = new Initialize();
 $initalize->checkSessionStatus();
 $connection = $initalize->connection;
@@ -124,10 +124,10 @@ if(isset($_POST['approve'])) {
 
 
 
-require_once("../Resources/Includes/header.php");
+require_once("Resources/Includes/header.php");
 
 // Include Menu and Top Bar
-require_once("../Resources/Includes/menu.php");
+require_once("Resources/Includes/menu.php");
 ?>
 
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
@@ -157,40 +157,44 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <div class="col-xs-10">
+        <div class="col-xs-6">
             <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
-        <div class="col-xs-2">
+
+        <div class="col-xs-3">
+            <a href="visualizations.php" target="_Blank" class="btn-primary">Data Visuals</a>
+        </div>
+        <div class="col-xs-3">
             <a href="../Resources/Includes/FPDFExtended.php" target="_Blank" class="btn-primary">View PDF</a>
         </div>
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Blueprint</h1>
+        <h1 class="box-title col-xs-12">Blueprint</h1>
         <div id="list">
-            <ul class="list-nav">
+            <ul class="list-nav row">
                 <li class="col-xs-4">Section</li>
                 <li class="col-xs-3">Last Edited By</li>
-                <li class="col-xs-2">Last Edited On</li>
-                <li class="col-xs-3">Status</li>
+                <li class="col-xs-3">Last Edited On</li>
+                <li class="col-xs-2">Status</li>
             </ul>
             <!-- Start the loop to pull from database here -->
             <?php while($rowsbpcontent = $resultbpcontent->fetch(2)) :
             if ($rowsbpcontent['Sr_No'] == '4') { ?>
         </div>
-        <h1 class="box-title" style="margin-top: 50px;">Outcomes</h1>
+        <h1 class="box-title col-xs-12" style="margin-top: 50px;">Outcomes</h1>
         <div id="list">
-            <ul class="list-nav">
+            <ul class="list-nav row">
                 <li class="col-xs-4">Section</li>
                 <li class="col-xs-3">Last Edited By</li>
-                <li class="col-xs-2">Last Edited On</li>
-                <li class="col-xs-3">Status</li>
+                <li class="col-xs-3">Last Edited On</li>
+                <li class="col-xs-2">Status</li>
             </ul>
             <?php } ?>
             <a href="<?php echo $rowsbpcontent['CONTENT_LINK'].'?linkid='.$rowsbpcontent['ID_CONTENT'] ?>">
-                <ul class="items">
+                <ul class="items row">
                     <li class="col-xs-4"><?php echo $rowsbpcontent['CONTENT_BRIEF_DESC'] ?></li>
                     <li class="col-xs-3"><?php
                         echo $initalize->getUserName($rowsbpcontent['BP_AUTHOR']);

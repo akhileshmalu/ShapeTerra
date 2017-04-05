@@ -266,7 +266,7 @@ require_once("../Resources/Includes/menu.php");
                 }
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Research", function(data) {
+              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Research", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridResearch").jsGrid({
                   width: "100%",
@@ -315,7 +315,7 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Service", function(data) {
+              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Service", function(data) {
                 data = $.parseJSON(data);
                   console.log(data);
                 $("#jsGridService").jsGrid({
@@ -365,7 +365,7 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Teaching", function(data) {
+              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Teaching", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridTeaching").jsGrid({
                   width: "100%",
@@ -405,7 +405,8 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},
+                            function(){
 
                         })
                       }
@@ -414,7 +415,7 @@ require_once("../Resources/Includes/menu.php");
                 });
               });
 
-              $.post("../Resources/Includes/data.php?functionNum=6&viewpoint=Other", function(data) {
+              $.post("../Resources/Includes/Data.php?functionNum=6&viewpoint=Other", function(data) {
                 data = $.parseJSON(data);
                 $("#jsGridOther").jsGrid({
                   width: "100%",
@@ -454,7 +455,8 @@ require_once("../Resources/Includes/menu.php");
                         var items = $.map($gridData.find("tr"), function(row) {
                             return $(row).data("JSGridItem");
                         });
-                        $.post("../Resources/Includes/data.php?functionNum=4",{'data':items,'indexes':indexes},function(){
+                        $.post("../Resources/Includes/Data.php?functionNum=4",{'data':items,'indexes':indexes},
+                            function(){
 
                         })
                       }

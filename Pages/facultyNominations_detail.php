@@ -150,7 +150,8 @@ require_once("../Resources/Includes/menu.php");
 
                 <label for="datetimepicker3">Date Nominated:</label>
                 <div class='input-group date' id='datetimepicker3'>
-                    <input type='text' name="dateNominated" value="<?php echo $rowsexvalue['DATE_NOMINATED'] ?>"
+                    <input type='text' name="dateNominated" value="<?php
+                    echo date('m/d/Y', strtotime($rowsexvalue['DATE_NOMINATED'])) ?>"
                            class="form-control" required>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>

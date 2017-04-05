@@ -35,7 +35,7 @@ $resultay->execute();
 
 // To provide Global access to Sys Admin of Provost Unit <Inter Unit Role Change>
 $globalAdminRoles = $_SESSION['login_outype'] == 'Administration' ?"'Provost'":
-    "'Provost','System Administrator','System Developer'";
+    "'Provost','System Administrator','System Developer','Team Lead'";
 
 $sqlrole = "SELECT * FROM UserRoles WHERE USER_ROLE NOT IN ($globalAdminRoles);";
 $resultrole = $connection->prepare($sqlrole);
@@ -150,7 +150,7 @@ require_once("../Resources/Includes/menu.php");
             <br/>
             <?php if ($_SESSION['login_outype'] == 'Administration'): ?>
                 <h2>3. Select Organization Unit</h2>
-                <select name="ouname" class="form-group">
+                <select name="ouname" class="form-control">
                     <option value="0" selected>--Select A Unit--</option>
                     <?php while ($rowsou = $resultou->fetch(4)) { ?>
                         <option value="<?php echo $rowsou[0]; ?>"
@@ -165,7 +165,7 @@ require_once("../Resources/Includes/menu.php");
             <?php endif; ?>
             <input type="submit" name="modifyUser" value="Modify User" class="btn-primary pull-right">
 
-            <input type="submit" name="delUser" value="Delete User" class="btn-primary pull-right">
+            <input type="submit" name="delUser" value="Terminate User" class="btn-primary pull-right">
         </form>
     </div>
 </div>

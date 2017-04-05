@@ -114,8 +114,8 @@ require_once("../Resources/Includes/menu.php");
                         Academic Year.
                     </small>
                 </p>
-                <label for="supinfofile">Select File</label>
-                <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
+                <input id="supinfofile" type="file" name="supinfo" filetype="pdf" class="form-control col-xs-2
+                custom-file-upload" defaultValue="<?php echo $rowsExValue['SUPPL_CLIMATE_INCLUSION'] ?>">
             </div>
 
             <!--                      Edit Control-->
@@ -136,22 +136,22 @@ require_once("../Resources/Includes/footer.php");
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     });
-    function selectorfile(selected) {
-
-        var doc, image;
-        var filename = $(selected).val();
-        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
-        var allowedext = ['pdf'];
-
-        if (filename.length > 0) {
-            if (allowedext.indexOf(extention) !== -1) {
-                alert(filename.substr(12) + " is selected.");
-            } else {
-                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
-                $(selected).val('');
-            }
-        }
-    }
+//    function selectorfile(selected) {
+//
+//        var doc, image;
+//        var filename = $(selected).val();
+//        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
+//        var allowedext = ['pdf'];
+//
+//        if (filename.length > 0) {
+//            if (allowedext.indexOf(extention) !== -1) {
+//                alert(filename.substr(12) + " is selected.");
+//            } else {
+//                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
+//                $(selected).val('');
+//            }
+//        }
+//    }
 </script>
 <script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
@@ -159,3 +159,4 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/outcomecntrl.js"></script>
+<script src="../Resources/Library/js/customFileUpload.js"></script>

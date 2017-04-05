@@ -76,6 +76,7 @@ require_once("../Resources/Includes/menu.php");
 
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
 
+
 <div class="overlay hidden"></div>
 <?php if (isset($_POST['submit_approval']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
@@ -165,14 +166,16 @@ require_once("../Resources/Includes/menu.php");
 
 
             <h3>Supplemental Faculty Info</h3>
-            <div id="suppfacinfo" class="form-group form-indent">
+            <div id="suppfacinfo" class="form-group form-indent btn-group" role="group">
                 <p class="status">
                     <small>Optional. You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide
                         additional detail on Faculty for the Academic Year. This document will appear as an Appendix in
                         the Draft Report and Final Report.
                     </small>
                 </p>
-                <input id="supinfo" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
+
+                <input id="supinfo" type="file" name="supinfo" class="form-control col-xs-2 custom-file-upload"
+                       filetype="pdf" defaultValue="<?php echo $rowsexvalue['AC_SUPPL_FACULTY'] ?>">
             </div>
 
             <!--                      Edit Control-->
@@ -191,40 +194,18 @@ require_once("../Resources/Includes/menu.php");
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
-
+<script src="../Resources/Library/js/customFileUpload.js"></script>
+<script src="../Resources/Library/js/customfileupload2.js"></script>
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 
-<script src="../Resources/Library/js/tabAlert.js"></script>
-<script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
-<script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
-<script src="../Resources/Library/js/calender.js"></script>
-<script src="../Resources/Library/js/chkbox.js"></script>
+<!--<script src="../Resources/Library/js/tabAlert.js"></script>-->
+<!--<script type="text/javascript" src="../Resources/Library/js/moment.js"></script>-->
+<!--<script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>-->
+<!--<script src="../Resources/Library/js/calender.js"></script>-->
+<!--<script src="../Resources/Library/js/chkbox.js"></script>-->
+
 
 <script type="text/javascript">
-
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    });
-
-
-    function selectorfile(selected) {
-
-        var doc, image;
-        var filename = $(selected).val();
-        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
-        var allowedext = ['pdf'];
-
-        if (filename.length > 0) {
-            if (allowedext.indexOf(extention) !== -1) {
-                alert(filename.substr(12) + " is selected.");
-            } else {
-                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
-                $(selected).val('');
-            }
-        }
-    }
-
-
     $('.cancelbox').on("click", function () {
         var choice = confirm("Are you sure you want to cancel");
         if (choice == true) {

@@ -114,14 +114,20 @@ if(isset($_POST['goal_submit'])) {
     $goalalignment = $Bpcontent->mynl2br($_POST['goalalignment']);
     $goalview = $_POST['goal_viewpoint'];
     $goalaction = $Bpcontent->mynl2br($_POST['goal_action']);
+    $noRespAction = $_POST['noRespActionPlan'];
+    $goalresNeed = $Bpcontent->mynl2br($_POST['goal_resNeedLookAhead']);
+    $noRespResNeed = $_POST['noRespResNeed'];
     $goalnotes = $Bpcontent->mynl2br($_POST['goal_notes']);
+    $noRespNotes = $_POST['noRespNotes'];
 
     try {
 
         $sqlunitgoal = "UPDATE `BP_UnitGoals` SET GOAL_AUTHOR = :author, MOD_TIMESTAMP = :timeStampmod, 
 GOAL_STATUS = 'In Progress', UNIT_GOAL_TITLE = :goaltitle, LINK_UNIV_GOAL = :unigoallinkname,
 GOAL_VIEWPOINT = :goalview, GOAL_STATEMENT = :goalstatement, GOAL_ALIGNMENT = :goalalignment, 
-GOAL_ACTION_PLAN = :goalaction, GOAL_NOTES = :goalnotes  WHERE ID_UNIT_GOAL = :goal_id ;";
+GOAL_ACTION_PLAN = :goalaction, GOAL_ACTION_PLAN_NO_RESP = :noRespAction,GOAL_RSRCS_NEEDED_LOOKAHEAD = :resneed, 
+GOAL_RSRCS_NEEDED_NO_RESP = :noRespResNeed, GOAL_NOTES = :goalnotes, GOAL_NOTES_NO_RESP = :noRespNotes
+ WHERE ID_UNIT_GOAL =:goal_id ;";
 
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
             $sqlunitgoal .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
@@ -141,8 +147,12 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timeSt
         $resultunitgoal->bindParam(":goalstatement", $goalstatement, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goalalignment", $goalalignment, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goalaction", $goalaction, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":noRespAction", $noRespAction, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":resneed", $goalresNeed, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":noRespResNeed", $noRespResNeed, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goalnotes", $goalnotes, PDO::PARAM_STR);
-        $resultunitgoal->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+        $resultunitgoal->bindParam(":noRespNotes", $noRespNotes, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":goal_id",$goal_id,2);
 
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
 
@@ -155,6 +165,12 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timeSt
         }
 
         if ($resultunitgoal->execute()) {
+
+            if($goalview != $rowsexvalue['GOAL_VIEWPOINT']) {
+                require_once ("../Resources/Includes/Data.php");
+                $data = new Data();
+                $data->setUpdateViewPointOrder($goal_id,$goalview);
+            }
 
             $message[0] = "Unit goals Updated Succesfully.";
         } else {
@@ -181,14 +197,19 @@ if(isset($_POST['new_goal_submit'])) {
     $goalalignment = $Bpcontent->mynl2br($_POST['goalalignment']);
     $goalview = $_POST['goal_viewpoint'];
     $goalaction = $Bpcontent->mynl2br($_POST['goal_action']);
+    $noRespAction = $_POST['noRespActionPlan'];
+    $goalresNeed = $Bpcontent->mynl2br($_POST['goal_resNeedLookAhead']);
+    $noRespResNeed = $_POST['noRespResNeed'];
     $goalnotes = $Bpcontent->mynl2br($_POST['goal_notes']);
+    $noRespNotes = $_POST['noRespNotes'];
 
     try {
 
         $sqlunitgoal = "INSERT INTO `BP_UnitGoals` (OU_ABBREV, GOAL_AUTHOR, MOD_TIMESTAMP, UNIT_GOAL_AY, 
-UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_VIEWPOINT, GOAL_STATEMENT, GOAL_ALIGNMENT, GOAL_ACTION_PLAN, GOAL_NOTES)
-VALUES (:ouabbrev, :author, :timestampmod, :bpayname, :goaltitle, :unigoallinkname, :goalview, :goalstatement,
-:goalalignment, :goalaction, :goalnotes);";
+UNIT_GOAL_TITLE, LINK_UNIV_GOAL, GOAL_VIEWPOINT, GOAL_STATEMENT, GOAL_ALIGNMENT, GOAL_ACTION_PLAN,
+GOAL_ACTION_PLAN_NO_RESP, GOAL_RSRCS_NEEDED_LOOKAHEAD, GOAL_RSRCS_NEEDED_NO_RESP,GOAL_NOTES,GOAL_NOTES_NO_RESP) VALUES 
+(:ouabbrev, :author, :timestampmod, :bpayname, :goaltitle, :unigoallinkname, :goalview, :goalstatement,:goalalignment,
+ :goalaction, :noRespAction, :resneed, :noRespResNeed, :goalnotes,:noRespNotes);";
 
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
             $sqlunitgoal .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In Progress', BP_AUTHOR= :author,
@@ -210,7 +231,11 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         $resultunitgoal->bindParam(":goalstatement", $goalstatement, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goalalignment", $goalalignment, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goalaction", $goalaction, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":noRespAction", $noRespAction, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":resneed", $goalresNeed, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":noRespResNeed", $noRespResNeed, PDO::PARAM_STR);
         $resultunitgoal->bindParam(":goalnotes", $goalnotes, PDO::PARAM_STR);
+        $resultunitgoal->bindParam(":noRespNotes", $noRespNotes, PDO::PARAM_STR);
 
         if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') {
 
@@ -223,6 +248,9 @@ BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= :author, LastModified = :timest
         }
 
         if ($resultunitgoal->execute()) {
+            require_once ("../Resources/Includes/Data.php");
+            $data = new Data();
+            $data->initOrderGoals();
 
             $message[0] = "Unit goals Updated Succesfully.";
         } else {
@@ -363,7 +391,8 @@ require_once("../Resources/Includes/menu.php");
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" onclick="$redirect = $('.alert button').attr('redirect');
-		$(window).attr('location',$redirect)" redirect="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id ?>" class="end btn-primary">Close</button>
+		$(window).attr('location',$redirect)" redirect="<?php echo "unitgoaloverview.php?linkid=".$contentlink_id
+        ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 
@@ -406,22 +435,27 @@ require_once("../Resources/Includes/menu.php");
                 $sqlug = "SELECT * FROM UniversityGoals ORDER BY ID_UNIV_GOAL ASC;";
                 $resultug = $Bpcontent->connection->prepare($sqlug);
                 $resultug->execute();
-                while ($rowsug = $resultug->fetch(2)) { ?>
+                $rowsug = $resultug->fetchAll(2);
+                $rowCount = $resultug->rowCount();
+                $counter = 0;
+                while ($counter<$rowCount) { ?>
                     <div class="checkbox form-indent" id="goallink">
                         <label><input type="checkbox" name="goallink[]"
                                       class="checkBoxClass"
-                                      value="<?php echo $rowsug['ID_UNIV_GOAL']; ?>"
+                                      value="<?php echo $rowsug[$counter]['ID_UNIV_GOAL']; ?>"
                                 <?php
                                 $goals_in_db = explode(',', $rowsexvalue['LINK_UNIV_GOAL']);
                                 foreach ($goals_in_db as $items) {
 
-                                    if (!strcmp($items, $rowsug['ID_UNIV_GOAL'])) {
+                                    if (!strcmp($items, $rowsug[$counter]['ID_UNIV_GOAL'])) {
                                         echo " checked";
                                     }
-                                } ?> ><?php echo $rowsug['GOAL_TITLE']; ?>
+                                } ?> ><?php echo $rowsug[$counter]['GOAL_TITLE']; ?>
                         </label>
                     </div>
-                <?php } ?>
+                <?php
+                    $counter++;
+                } ?>
             </div>
             <div id="goalview" class="form-group">
                 <h3>Goal Viewpoint in Report<span
@@ -469,7 +503,35 @@ require_once("../Resources/Includes/menu.php");
                 form-indent" ><?php echo $Bpcontent->mybr2nl($rowsexvalue['GOAL_ACTION_PLAN']); ?></textarea>
                 <div class="checkbox">
                     <label for="optionalCheck">
-                        <input type="checkbox" name="optionalCheck" id="goal_action"/> No response to this item
+                        <input type="checkbox" name="noRespActionPlan" class="optionalCheck"
+                            <?php
+                            if($rowsexvalue['GOAL_ACTION_PLAN_NO_RESP']) {
+                                echo ' checked';
+                            }
+                            ?>
+                               id="goal_action"/> No response to this item
+                    </label>
+                </div>
+            </div>
+
+            <div id="resNeedLookAhead"  class="form-group hidden">
+                <h3>Resources Needed - Looking Ahead</h3>
+                <p class="status">
+                    <small>Describe budgetary, personnel, and other resources needed to to undertake the Goal.
+                        Note whether those resources are in place and sufficient.</small>
+                </p>
+                <textarea name="goal_resNeedLookAhead" rows="3" cols="25" wrap="hard" style="width: 95%" class="form-control
+                form-indent" ><?php echo $Bpcontent->mybr2nl($rowsexvalue['GOAL_RSRCS_NEEDED_LOOKAHEAD']); ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="noRespResNeed" class="optionalCheck"
+                            <?php
+                            if($rowsexvalue['GOAL_RSRCS_NEEDED_NO_RESP']) {
+                                echo ' checked';
+                            }
+                            ?>
+                               id="goal_resNeedLookAhead"/> No response to this
+                        item
                     </label>
                 </div>
             </div>
@@ -483,7 +545,13 @@ require_once("../Resources/Includes/menu.php");
                 form-indent" ><?php echo $Bpcontent->mybr2nl($rowsexvalue['GOAL_NOTES']); ?></textarea>
                 <div class="checkbox">
                     <label for="optionalCheck">
-                        <input type="checkbox" name="optionalCheck" id="goal_notes"/> No response to this item
+                        <input type="checkbox" name="noRespNotes" class="optionalCheck"
+                            <?php
+                            if($rowsexvalue['GOAL_NOTES_NO_RESP']) {
+                                echo ' checked';
+                            }
+                            ?>
+                               id="goal_notes"/> No response to this item
                     </label>
                 </div>
 
@@ -529,6 +597,20 @@ require_once("../Resources/Includes/footer.php");
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 <script type="text/javascript">
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // On Load function for control viewpoint Look ahead teax check
+        var goalviewpoint = $("#viewpoint option:selected").text();
+        lookaheadcontrol(goalviewpoint);
+
     });
+
+    $('#viewpoint').change(function (){
+        lookaheadcontrol(this.value);
+    });
+
+    function lookaheadcontrol(goalviewpoint) {
+        goalviewpoint == "Looking Ahead"? $('#resNeedLookAhead').removeClass("hidden"): $('#resNeedLookAhead')
+            .addClass("hidden");
+    }
 </script>
