@@ -15,24 +15,26 @@ if (isset($_GET['functionNum']))
 
 
 if (!empty($function)) {
-    $ChartVisualizations = new ChartVisualizations();
-}
 
-switch ($function) {
-    case 1:
-        $ChartVisualizations->chartEnrollementStudentByYear($_GET["yearDescription"], $_GET["ouchoice"]);
-        break;
-    case 2:
-        $ChartVisualizations->chartDiversityStudentByYear($_GET["yearDescription"], $_GET["ouchoice"]);
-        break;
-    case 3:
-        $ChartVisualizations->chartDiversityFacultyByYear($_GET["yearDescription"], $_GET["ouchoice"]);
-        break;
-    case 5:
-        $ChartVisualizations->exportToPng($_POST["imagebase"], $_POST["name"]);
-        break;
-    default:
-        break;
+    $ChartVisualizations = new ChartVisualizations();
+
+    switch ($function) {
+        case 1:
+            $ChartVisualizations->chartEnrollementStudentByYear($_GET["yearDescription"], $_GET["ouchoice"]);
+            break;
+        case 2:
+            $ChartVisualizations->chartDiversityStudentByYear($_GET["yearDescription"], $_GET["ouchoice"]);
+            break;
+        case 3:
+            $ChartVisualizations->chartDiversityFacultyByYear($_GET["yearDescription"], $_GET["ouchoice"]);
+            break;
+        case 5:
+            $ChartVisualizations->exportToPng($_POST["imagebase"], $_POST["name"]);
+            break;
+        default:
+            break;
+    }
+
 }
 
 Class ChartVisualizations
@@ -403,7 +405,7 @@ Class ChartVisualizations
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-all-" . $this->college . "', functionNum: '5'});
+                $.post('ChartVisualizations.php',{imagebase: chartEnrollementStudentAll.toBase64Image(), name: 'student-enrollements-all-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -444,7 +446,7 @@ Class ChartVisualizations
         });
 
         var ctx = document.getElementById('chartEnrollementStudentUnder');
-        var myChart = new Chart(ctx, {
+        var chartEnrollementStudentUnder = new Chart(ctx, {
           type: 'horizontalBar',
           data: {
             labels: ['2014', '2015', '2016'],
@@ -474,7 +476,7 @@ Class ChartVisualizations
           },
           animation: {
             onComplete: function(){
-              $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-under-" . $this->college . "', functionNum: '5'});
+              $.post('ChartVisualizations.php',{imagebase: chartEnrollementStudentUnder.toBase64Image(), name: 'student-enrollements-under-" . $this->college . "', functionNum: '5'});
             }
           },
           scaleLabel:{
@@ -515,7 +517,7 @@ Class ChartVisualizations
       });
 
       var ctx = document.getElementById('chartEnrollementStudentGrad');
-      var myChart = new Chart(ctx, {
+      var chartEnrollementStudentGrad = new Chart(ctx, {
         type: 'horizontalBar',
         data: {
           labels: ['2014', '2015', '2016'],
@@ -541,7 +543,7 @@ Class ChartVisualizations
         },
         animation: {
           onComplete: function(){
-            $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-under-" . $this->college . "', functionNum: '5'});
+            $.post('ChartVisualizations.php',{imagebase: chartEnrollementStudentGrad.toBase64Image(), name: 'student-enrollements-grad-" . $this->college . "', functionNum: '5'});
           }
         },
         scaleLabel:{
@@ -713,7 +715,7 @@ Class ChartVisualizations
                     },
                     animation: {
                       onComplete: function(){
-                        $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-enrollements-" . $this->year . "', functionNum: '5'});
+
                       }
                     }
                   }
@@ -978,7 +980,7 @@ Class ChartVisualizations
               </div>
             </div>
             <div class='col-md-6'>
-              <canvas id='underDiversityRace' height='220'></canvas>
+              <canvas id='underDiversityRace' width='300' height='220'></canvas>
             </div>
           </div>
           <h2 class='text-center'>" . $this->college . " Graduate Gender Data</h2>
@@ -1133,7 +1135,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-" . $this->college . "', functionNum: '5'});
+                  $.post('ChartVisualizations.php',{imagebase: underDiversityGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1164,7 +1166,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-" . $this->college . "', functionNum: '5'});
+                  $.post('ChartVisualizations.php',{imagebase: underDiversityGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1195,7 +1197,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: underDiversityGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-" . $this->college . "', functionNum: '5'});
+                  $.post('ChartVisualizations.php',{imagebase: underDiversityGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1252,7 +1254,7 @@ Class ChartVisualizations
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
+                $.post('ChartVisualizations.php',{imagebase: underDiversityRace.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -1317,7 +1319,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2014.toBase64Image(), name: 'student-diversity-gender-under-2014-" . $this->college . "', functionNum: '5'});
+                  $.post('ChartVisualizations.php',{imagebase: gradGender2014.toBase64Image(), name: 'student-diversity-gender-grad-2014-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1348,7 +1350,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2015.toBase64Image(), name: 'student-diversity-gender-under-2015-" . $this->college . "', functionNum: '5'});
+                  $.post('ChartVisualizations.php',{imagebase: gradGender2015.toBase64Image(), name: 'student-diversity-gender-grad-2015-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1379,7 +1381,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: gradGender2016.toBase64Image(), name: 'student-diversity-gender-under-2016-" . $this->college . "', functionNum: '5'});
+                  $.post('ChartVisualizations.php',{imagebase: gradGender2016.toBase64Image(), name: 'student-diversity-gender-grad-2016-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -1436,7 +1438,7 @@ Class ChartVisualizations
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
+                $.post('ChartVisualizations.php',{imagebase: gradDiversityRace.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -2095,7 +2097,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2014.toBase64Image(), name: 'faculty-diversity-gender-2014-" . $this->college . "', functionNum: '5'});
+                  $.post('ChartVisualizations.php',{imagebase: facultyDiversityGender2014.toBase64Image(), name: 'faculty-diversity-gender-2014-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -2126,7 +2128,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2015.toBase64Image(), name: 'faculty-diversity-gender-2015-" . $this->college . "', functionNum: '5'});
+                  $.post('ChartVisualizations.php',{imagebase: facultyDiversityGender2015.toBase64Image(), name: 'faculty-diversity-gender-2015-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -2157,7 +2159,7 @@ Class ChartVisualizations
               },
               animation: {
                 onComplete: function(){
-                  $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityGender2016.toBase64Image(), name: 'faculty-diversity-gender-2016-" . $this->college . "', functionNum: '5'});
+                  $.post('ChartVisualizations.php',{imagebase: facultyDiversityGender2016.toBase64Image(), name: 'faculty-diversity-gender-2016-" . $this->college . "', functionNum: '5'});
                 }
               }
             }
@@ -2214,7 +2216,7 @@ Class ChartVisualizations
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: facultyDiversityRace.toBase64Image(), name: 'faculty-diversity-race-" . $this->college . "', functionNum: '5'});
+                $.post('ChartVisualizations.php',{imagebase: facultyDiversityRace.toBase64Image(), name: 'faculty-diversity-race-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -2969,7 +2971,7 @@ Class ChartVisualizations
             },
             animation: {
               onComplete: function(){
-                $.post('../Resources/Includes/ChartVisualizations.php',{imagebase: myChart.toBase64Image(), name: 'student-diversity-race-under-" . $this->college . "', functionNum: '5'});
+                $.post('ChartVisualizations.php',{imagebase: degreesAwarded.toBase64Image(), name: 'student-degreesAwarded-" . $this->college . "', functionNum: '5'});
               }
             },
             scaleLabel:{
@@ -3014,8 +3016,9 @@ Class ChartVisualizations
     public function exportToPng($base64Image, $pngName)
     {
 
+        // /unlink("../../uploads/charts/" . $pngName . ".png");
         $data = explode(",", $base64Image);
-        $fileHandler = fopen("../../User/charts/" . $pngName . ".png", "wb");
+        $fileHandler = fopen("../../uploads/charts/" . $pngName . ".png", "wb");
         fwrite($fileHandler, base64_decode($data[1]));
         fclose($fileHandler);
 
