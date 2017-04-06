@@ -140,7 +140,7 @@ require_once("../Resources/Includes/menu.php");
 
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit_bp'])) { ?>
+<?php if (isset($_POST['submit_bp']) || isset($_POST['approve'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>

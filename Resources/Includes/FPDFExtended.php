@@ -312,7 +312,7 @@ require "../Library/FPDI/fpdi.php";
       $this->selectedYear = $_SESSION["bpayname"];
       $this->ouId = $_SESSION["login_ouid"];
 
-      if ($this->ouid == 4) {
+      if ($this->ouId == 4) {
 
         $this->ouAbbrev = $_SESSION['bpouabbrev'];
 
@@ -343,25 +343,25 @@ require "../Library/FPDI/fpdi.php";
     {
 
       $this->introPage();
-//      $this->executiveSummaryPage();
-//      $this->foundationPage();
-//      $this->goalsLookingBackPage();
-//      $this->goalsRealTimePage();
-//      $this->goalsLookingAheadPage();
-//      $this->academicPrograms();
-//      $this->academicInitiatives();
-//      $this->facultyPopulation();
-//      $this->facultyInformation();
-//      $this->teaching();
-//      $this->studentRecruitingRetention();
-//      $this->studentEnrollmentPage();
-//      $this->facultyAwardsPage();
-//      $this->serviceAwardsPage();
-//      $this->teachingAwardsPage();
-//      $this->collaborationsPage();
-//      $this->getUnivLinkedGoal();
-//      $this->getGoalOutcomes();
-//      $this->pdf->insertTOC(3);
+      $this->executiveSummaryPage();
+      $this->foundationPage();
+      $this->goalsLookingBackPage();
+      $this->goalsRealTimePage();
+      $this->goalsLookingAheadPage();
+      $this->academicPrograms();
+      $this->academicInitiatives();
+      $this->facultyPopulation();
+      $this->facultyInformation();
+      $this->teaching();
+      $this->studentRecruitingRetention();
+      $this->studentEnrollmentPage();
+      $this->facultyAwardsPage();
+      $this->serviceAwardsPage();
+      $this->teachingAwardsPage();
+      $this->collaborationsPage();
+      $this->getUnivLinkedGoal();
+      $this->getGoalOutcomes();
+      $this->pdf->insertTOC(3);
       $this->getSupplementPdf('../../uploads/facultyInfo/facInfo.pdf');
       $this->pdf->Output("report_final.pdf","I");
 
