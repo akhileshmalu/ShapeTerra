@@ -362,6 +362,7 @@ Class ChartVisualizations
           </div>
         </div>
         <script>
+          var testPost;
           var red = 'rgba(189, 59, 71, 0.8)';
           var blue = 'rgba(87, 147, 243, 0.8)';
           var purple = 'rgba(114, 92, 164, 0.8)';
@@ -2863,7 +2864,7 @@ Class ChartVisualizations
                         yAxes: [
                             {
                                 ticks: {
-                                    min: 0.4, 
+                                    min: 0.4,
                                     stepSize: 0.05,
                                     max: 1
                                 }
@@ -2899,7 +2900,7 @@ Class ChartVisualizations
                         yAxes: [
                             {
                                 ticks: {
-                                    min: 0.4, 
+                                    min: 0.4,
                                     stepSize: 0.05,
                                     max: 1
                                 }
@@ -3175,7 +3176,7 @@ Class ChartVisualizations
               </div>
             </div>
           </div>
-        </div>    
+        </div>
       ";
 
     }
@@ -3448,13 +3449,13 @@ Class ChartVisualizations
                         <th>$other20142015</th>
                       </tr>
                     </thead>
-                    
+
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
-        </div>    
+        </div>
       ";
 
     }
@@ -3563,7 +3564,7 @@ Class ChartVisualizations
               </div>
             </div>
           </div>
-        </div>    
+        </div>
       ";
 
     }
@@ -3733,7 +3734,7 @@ Class ChartVisualizations
               </div>
             </div>
           </div>
-        </div>    
+        </div>
       ";
 
     }

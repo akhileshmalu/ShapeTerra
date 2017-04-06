@@ -31,6 +31,7 @@
 
         //Calculate the height of the row
         $nb=0;
+        $this->SetDrawColor(35, 32, 32);
 
         for($i=0;$i<count($data);$i++){
 
@@ -160,7 +161,7 @@
   {
 
     protected $_toc = array();
-    protected $_numbering = false;
+    protected $_numbering = true;
     protected $_numberingFooter = false;
     protected $_numPageNum = 1;
 
@@ -199,7 +200,7 @@
     function TOC_Entry($txt, $level)
     {
 
-      if ($level == 0)
+      if($this->_numbering)
         $this->_numPageNum++;
 
       $this->_toc[] = array('t'=>$txt,'l'=>$level,'p'=>$this->numPageNo());
@@ -500,7 +501,7 @@
       $this->pdf->Write(5,"Introduction");
       $this->pdf->Ln(7);
       $this->pdf->setFont("Arial","",12);
-      $this->pdf->Write(5,$this->initalize->mybr2nl($data["INTRODUCTION"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($data["INTRODUCTION"])))));
 
       $this->pdf->Ln(15);
       $this->pdf->setFont("Arial","B",16);
@@ -514,10 +515,9 @@
       for ($i = 0; count($highlightsArray) > $i; $i++){
 
         $this->pdf->Ln(5);
-        $this->pdf->Write(8,chr(127)." ".$this->initalize->mybr2nl($highlightsArray[$i]));
+        $this->pdf->Write(8,chr(127)." ".$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($highlightsArray[$i])))));
 
       }
-
 
       $deanImage = "fpdfimages/".$this->ouAbbrev."_Dean.jpg";
       $unitImage = "fpdfimages/".$this->ouAbbrev."_Logo.jpg";
@@ -527,7 +527,8 @@
 
       $this->pdf->setFont("Arial","",11);
       $this->pdf->setTextColor(0,0,0);
-      $this->pdf->Ln(105);
+      $this->pdf->Ln(55);
+      $this->pdf->setX(17);
       $this->pdf->Write(35,$data["DEAN_NAME_PRINT"].", ".$data["DEAN_TITLE"]);
       $this->pdf->Image($deanImage,130,210,50);
       $this->pdf->Image($unitImage,15,250,85);
@@ -566,7 +567,7 @@
       $this->pdf->SetFont('Arial','',11);
       $this->pdf->Ln(5);
       $this->pdf->TOC_Entry("Mission Statement", 1);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["MISSION_STATEMENT"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($data["MISSION_STATEMENT"])))));
       $this->pdf->Ln(10);
       $this->pdf->setX(130);
       $this->pdf->Write(5,"Updated: " .$data["MISSION_UPDATE_DATE"]);
@@ -580,7 +581,7 @@
       $this->pdf->SetFont('Arial','',11);
       $this->pdf->Ln(5);
       $this->pdf->TOC_Entry("Vision Statement", 1);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["VISION_STATEMENT"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($data["VISION_STATEMENT"])))));
       $this->pdf->Ln(10);
       $this->pdf->setX(130);
       $this->pdf->Write(5,"Updated: ".$data["VISION_UPDATE_DATE"]);
@@ -597,7 +598,7 @@
       $this->pdf->Write(5,str_replace("<br />", "",$data["VALUES_STATEMENT"]));
       $this->pdf->Ln(10);
       $this->pdf->setX(130);
-      $this->pdf->Write(5,"Updated: ".$data["VALUES_UPDATE_DATE"]);
+      $this->pdf->Write(5,"Updated: ".$data["VALUE_UPADTE_DATE"]);
       $this->pdf->setX(5);
 
 
@@ -647,25 +648,26 @@
         $goalOutcomes = $this->getGoalOutcomes($data["ID_UNIT_GOAL"]);
         $unitGoalTitle = $data["UNIT_GOAL_TITLE"];
 
+        $this->pdf->AddPage();
         $this->pdf->Ln(10);
         $this->pdf->setTextColor(115,0,10);
         $this->pdf->SetFont('Arial','B',12);
-        $this->pdf->Write(5,"Goal $counter - ".$unitGoalTitle);
+        $this->pdf->Write(5,"Goal $counter - ".$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($unitGoalTitle)))));
         $this->pdf->Ln(5);
-        $this->pdf->SetDrawColor(0, 0, 0);
+        $this->pdf->SetDrawColor(35, 32, 32);
         $this->pdf->setTextColor(0,0,0);
         $this->pdf->SetFont('Arial','',12);
         $this->pdf->SetMargins(10,10,10);
 
-        $this->pdf->Row(array("Goal Statement",$this->initalize->mybr2nl($data["GOAL_STATEMENT"])));
-        $this->pdf->Row(array("Linkage to University Goal",$universityGoals));
-        $this->pdf->Row(array("Alignment with Mission, Vision, and Values",$data["GOAL_ALIGNMENT"]));
-        $this->pdf->Row(array("Status",$this->initalize->mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
-        $this->pdf->Row(array("Achievements",$this->initalize->mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
-        $this->pdf->Row(array("Resources Utilized",$this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
-        $this->pdf->Row(array("Continuation",$this->initalize->mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
-        $this->pdf->Row(array("Resources Needed",$this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
-        $this->pdf->Row(array("Plans for upcoming year (if not completed)",$this->initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
+        $this->pdf->Row(array("Goal Statement",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($data["GOAL_STATEMENT"]))))));
+        $this->pdf->Row(array("Linkage to University Goal",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($universityGoals))))));
+        $this->pdf->Row(array("Alignment with Mission, Vision, and Values",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($data["GOAL_ALIGNMENT"]))))));
+        $this->pdf->Row(array("Status",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($goalOutcomes["GOAL_REPORT_STATUS"]))))));
+        $this->pdf->Row(array("Achievements",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($goalOutcomes["GOAL_ACHIEVEMENTS"]))))));
+        $this->pdf->Row(array("Resources Utilized",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($goalOutcomes["GOAL_RSRCS_UTLZD"]))))));
+        $this->pdf->Row(array("Continuation",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($goalOutcomes["GOAL_CONTINUATION"]))))));
+        $this->pdf->Row(array("Resources Needed",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($goalOutcomes["GOAL_RSRCS_NEEDED"]))))));
+        $this->pdf->Row(array("Plans for upcoming year (if not completed)",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])))))));
 
       }
 
@@ -713,24 +715,25 @@
         $unitGoalTitle = $data["UNIT_GOAL_TITLE"];
 
         $counter++;
+        $this->pdf->AddPage();
         $this->pdf->Ln(10);
         $this->pdf->setTextColor(115,0,10);
         $this->pdf->SetFont('Arial','B',12);
         $this->pdf->Write(5,"Goal $counter - ".$unitGoalTitle);
         $this->pdf->SetFont('Arial','',11);
         $this->pdf->Ln(5);
-        $this->pdf->SetDrawColor(0, 0, 0);
+        $this->pdf->SetDrawColor(35, 32, 32);
         $this->pdf->setTextColor(0,0,0);
 
-        $this->pdf->Row(array("Goal Statement",$this->initalize->mybr2nl($data["GOAL_STATEMENT"])));
-        $this->pdf->Row(array("Linkage to University Goal",$universityGoals));
-        $this->pdf->Row(array("Alignment with Mission, Vision, and Values",$this->initalize->mybr2nl($data["GOAL_ALIGNMENT"])));
-        $this->pdf->Row(array("Status",$this->initalize->mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
-        $this->pdf->Row(array("Achievements",$this->initalize->mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
-        $this->pdf->Row(array("Resources Utilized",$this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
-        $this->pdf->Row(array("Continuation",$this->initalize->mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
-        $this->pdf->Row(array("Resources Needed",$this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
-        $this->pdf->Row(array("Plans for upcoming year (if not completed)",$this->initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
+        $this->pdf->Row(array("Goal Statement",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["GOAL_STATEMENT"])))))));
+        $this->pdf->Row(array("Linkage to University Goal",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($universityGoals)))))));
+        $this->pdf->Row(array("Alignment with Mission, Vision, and Values",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["GOAL_ALIGNMENT"])))))));
+        $this->pdf->Row(array("Status",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])))))));
+        $this->pdf->Row(array("Achievements",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])))))));
+        $this->pdf->Row(array("Resources Utilized",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])))))));
+        $this->pdf->Row(array("Continuation",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_CONTINUATION"])))))));
+        $this->pdf->Row(array("Resources Needed",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])))))));
+        $this->pdf->Row(array("Plans for upcoming year (if not completed)",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])))))));
 
       }
 
@@ -773,29 +776,30 @@
 
       while ($data = $getGoals->fetch()){
 
-        $universityGoals = $this->getUnivLinkedGoal($data["LINK_UNIV_GOAL"]);
-        $goalOutcomes = $this->getGoalOutcomes($data["ID_UNIT_GOAL"]);
-        $unitGoalTitle = $data["UNIT_GOAL_TITLE"];
+        $universityGoals = $this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($this->getUnivLinkedGoal($data["LINK_UNIV_GOAL"]))))));
+        $goalOutcomes = $this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($this->getGoalOutcomes($data["ID_UNIT_GOAL"]))))));
+        $unitGoalTitle = $this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["UNIT_GOAL_TITLE"])))));
 
         $counter++;
+        $this->pdf->AddPage();
         $this->pdf->Ln(10);
         $this->pdf->setTextColor(115,0,10);
         $this->pdf->SetFont('Arial','B',12);
         $this->pdf->Write(5,"Goal $counter - ".$unitGoalTitle);
         $this->pdf->SetFont('Arial','',11);
         $this->pdf->Ln(5);
-        $this->pdf->SetDrawColor(0, 0, 0);
+        $this->pdf->SetDrawColor(35, 32, 32);
         $this->pdf->setTextColor(0,0,0);
 
-        $this->pdf->Row(array("Goal Statement",$this->initalize->mybr2nl($data["GOAL_STATEMENT"])));
-        $this->pdf->Row(array("Linkage to University Goal",$universityGoals));
-        $this->pdf->Row(array("Alignment with Mission, Vision, and Values",$this->initalize->mybr2nl($data["GOAL_ALIGNMENT"])));
-        $this->pdf->Row(array("Status",$this->initalize->mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"])));
-        $this->pdf->Row(array("Achievements",$this->initalize->mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])));
-        $this->pdf->Row(array("Resources Utilized",$this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"])));
-        $this->pdf->Row(array("Continuation",$this->initalize->mybr2nl($goalOutcomes["GOAL_CONTINUATION"])));
-        $this->pdf->Row(array("Resources Needed",$this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"])));
-        $this->pdf->Row(array("Plans for upcoming year (if not completed)",$this->initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])));
+        $this->pdf->Row(array("Goal Statement",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["GOAL_STATEMENT"])))))));
+        $this->pdf->Row(array("Linkage to University Goal",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($universityGoals)))))));
+        $this->pdf->Row(array("Alignment with Mission, Vision, and Values",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($this->initalize->mybr2nl($data["GOAL_ALIGNMENT"]))))))));
+        $this->pdf->Row(array("Status",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($this->initalize->mybr2nl($goalOutcomes["GOAL_REPORT_STATUS"]))))))));
+        $this->pdf->Row(array("Achievements",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_ACHIEVEMENTS"])))))));
+        $this->pdf->Row(array("Resources Utilized",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_UTLZD"]))))))));
+        $this->pdf->Row(array("Continuation",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_CONTINUATION"])))))));
+        $this->pdf->Row(array("Resources Needed",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($this->initalize->mybr2nl($goalOutcomes["GOAL_RSRCS_NEEDED"]))))))));
+        $this->pdf->Row(array("Plans for upcoming year (if not completed)",$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($goalOutcomes["GOAL_PLAN_INCOMPLT"])))))));
 
       }
 
@@ -826,12 +830,11 @@
       $this->pdf->Write(5,"Program Rankings");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Academic programs that were nationally ranked or received external recognition during the Academic Year.");
       $this->pdf->Ln(10);
       $this->pdf->setX(10);
       $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["PROGRAM_RANKINGS"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["PROGRAM_RANKINGS"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
@@ -839,12 +842,11 @@
       $this->pdf->Write(5,"Instructional Modalities");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Innovations and changes to Instructional Modalities in unit's programmatic and course offerings that were implemented during the Academic Year.");
       $this->pdf->Ln(10);
       $this->pdf->setX(10);
       $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["INSTRUCT_MODALITIES"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["INSTRUCT_MODALITIES"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
@@ -852,12 +854,11 @@
       $this->pdf->Write(5,"Program Launches");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Academic Programs that were newly launched during the Academic Year; those that received required approvals but which had not yet enrolled students are not included. ");
       $this->pdf->Ln(10);
       $this->pdf->setX(10);
       $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["PROGRAM_LAUNCHES"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["PROGRAM_LAUNCHES"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
@@ -865,12 +866,11 @@
       $this->pdf->Write(5,"Program Terminations");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Academic Programs that were newly terminated or discontinued during the Academic Year.");
       $this->pdf->Ln(10);
       $this->pdf->setX(10);
       $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["TERMINATIONS"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["TERMINATIONS"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
@@ -878,7 +878,6 @@
       $this->pdf->Write(5,"Supplemental Info - Academic Programs");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Any additional information on Academic Programs appears as Appendix 1, TODO!. ");
       $this->pdf->Ln(10);
 
@@ -909,12 +908,11 @@
       $this->pdf->Write(5,"Experiential Learning for Undergraduates");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Initiatives, improvements, challenges, and progress with Experiential Learning at the Undergraduate level.");
       $this->pdf->Ln(10);
       $this->pdf->setX(10);
       $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["EXPERIENTIAL_LEARNING_UGRAD"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["EXPERIENTIAL_LEARNING_UGRAD"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
@@ -922,12 +920,11 @@
       $this->pdf->Write(5,"Experiential Learning For Graduate & Professional Students");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Initiatives, improvements, challenges, and progress with Experiential Learning at the Graduate or Professional level.");
       $this->pdf->Ln(10);
       $this->pdf->setX(10);
       $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["EXPERIENTIAL_LEARNING_GRAD"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["EXPERIENTIAL_LEARNING_GRAD"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
@@ -935,12 +932,11 @@
       $this->pdf->Write(5,"Affordability");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Assessment of affordability and efforts to address affordability.");
       $this->pdf->Ln(10);
       $this->pdf->setX(10);
       $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["AFFORDABILITY"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["AFFORDABILITY"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
@@ -948,12 +944,11 @@
       $this->pdf->Write(5,"Reputation Enhancement");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Contributions and achievements that enhance the reputation of USC Columbia regionally and nationally.");
       $this->pdf->Ln(10);
       $this->pdf->setX(10);
       $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["REPUTATION_ENHANCE"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["REPUTATION_ENHANCE"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
@@ -961,12 +956,11 @@
       $this->pdf->Write(5,"Challenges");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Challenges and resource needs anticipated for the current and upcoming Academic Years, not noted elsewhere in this report and/or those which merit additional attention.");
       $this->pdf->Ln(10);
       $this->pdf->setX(10);
       $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Write(5,str_replace("<br />", "",$data["CHALLENGES"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["CHALLENGES"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->SetFont('Arial','B',16);
@@ -974,7 +968,6 @@
       $this->pdf->Write(5,"Supplemental Info - Initiatives And Observations");
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->setX(20);
       $this->pdf->Write(5,"Any additional information on Academic Initiatives appears as Appendix 2, TODO. ");
       $this->pdf->Ln(10);
 
@@ -1044,7 +1037,7 @@
       $this->pdf->SetFont('Arial','B',11);
       $this->pdf->Write(5,"Table 1. Faculty Employment by Track and Title, Fall 2016, Fall 2015, and Fall 2014.");
       $this->pdf->Ln(5);
-      $this->pdf->SetDrawColor(0,0,0);
+      $this->pdf->SetDrawColor(35, 32, 32);
       $this->pdf->Row(array("","Fall 2016","Fall 2015","Fall 2014"));
       $this->pdf->Row(array("Tenure-track Faculty",$data20162017["TTF_FTE_ALL"],$data20152016["TTF_FTE_ALL"],$data20142015["TTF_FTE_ALL"]));
       $this->pdf->Row(array("Professor, with tenure",$data20162017["TTF_FTE_PROF_TNR"],$data20152016["TTF_FTE_PROF_TNR"],$data20142015["TTF_FTE_PROF_TNR"]));
@@ -1123,7 +1116,7 @@
       $this->pdf->Ln(5);
       $this->pdf->Write(5,"Table 2. Faculty Diversity by Gender and Race/Ethnicity, Fall 2016, Fall 2015, and Fall 2014.");
 
-      $this->pdf->SetDrawColor(0,0,0);
+      $this->pdf->SetDrawColor(35, 32, 32);
       $this->pdf->Ln(5);
       $this->pdf->Row(array("","Fall 2016","Fall 2015","Fall 2014"));
       $this->pdf->Row(array("Gender",$data20162017["FAC_FEMALE"] + $data20162017["FAC_MALE"],$data20152016["FAC_FEMALE"] + $data20152016["FAC_MALE"],$data20142015["FAC_FEMALE"] + $data20142015["FAC_MALE"]));
@@ -1208,13 +1201,10 @@
       $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(5,"Please refer to Appendix 3, which provides detailed information from the Office of the Vice President for Research, department of Information Technology and Data Management, including:");
       $this->pdf->Ln(5);
-      $this->pdf->setX(25);
       $this->pdf->Write(5,"1) The total number and amount of externally sponsored research proposal submissions by funding source for the appropriate Fiscal Year.");
       $this->pdf->Ln(5);
-      $this->pdf->setX(25);
       $this->pdf->Write(5,"2) Summary of externally sponsored research awards by funding source for the appropriate Fiscal Year. Total extramural funding processed through Sponsored Awards Management (SAM) in the Fiscal Year, and federal extramural funding processed through SAM in the Fiscal Year. (Available at:  http://sam.research.sc.edu/awards.html)  Amount of sponsored research funding per faculty member in FY YYYY (by rank, type of funding; e.g., federal, state, etc., and by department, if applicable).");
       $this->pdf->Ln(5);
-      $this->pdf->setX(25);
       $this->pdf->Write(5,"3) Number of patents, disclosures, and licensing agreements for three most recent Fiscal Years.");
       $this->pdf->Ln(5);
       $this->pdf->Write(5,"RESEARCH SCHOLARLY INSERT HERE");
@@ -1226,8 +1216,7 @@
       $this->pdf->TOC_Entry("Faculty Development", 1);
       $this->pdf->Write(5,"Faculty Development");
       $this->pdf->Ln(5);
-      $this->pdf->setX(20);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(7,"Efforts at Faculty Development, including investments, activities, incentives, objectives, and outcomes. Optional");
       $this->pdf->setX(10);
       $this->pdf->Ln(10);
@@ -1238,8 +1227,7 @@
       $this->pdf->TOC_Entry("Other Activity", 1);
       $this->pdf->Write(5,"Other Activity");
       $this->pdf->Ln(5);
-      $this->pdf->setX(20);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(7,"Efforts at Faculty Development, including investments, activities, incentives, objectives, and outcomes. Optional");
       $this->pdf->setX(10);
       $this->pdf->Ln(10);
@@ -1316,7 +1304,7 @@
       $this->pdf->Write(5,"Table 4. Faculty-to-Student Ratio, Fall 2016, Fall 2015, and Fall 2014");
       $this->pdf->Ln(10);
       $this->pdf->SetWidths(array(35,35,35));
-      $this->pdf->SetDrawColor(0,0,0);
+      $this->pdf->SetDrawColor(35, 32, 32);
       $this->pdf->setX(20);
       $this->pdf->Row(array("Fall 2016","Fall 2015","Fall 2014"));
       $this->pdf->setX(20);
@@ -1361,7 +1349,7 @@
       $this->pdf->setX(20);
       $this->pdf->Write(5,"Efforts, including specific actions, to recruit students into College/School programs.");
       $this->pdf->setX(10);
-      $this->pdf->Write(5,$dataRR["STUDENT_RECRUITMENT_EFFORTS"]);
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($dataRR["STUDENT_RECRUITMENT_EFFORTS"]))))));
 
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','B',16);
@@ -1372,7 +1360,7 @@
       $this->pdf->setX(20);
       $this->pdf->Write(5,"Efforts at retaining current students in College/School programs.");
       $this->pdf->setX(10);
-      $this->pdf->Write(5,$dataRR["STUDENT_RETENTION_EFFORTS"]);
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($dataRR["STUDENT_RETENTION_EFFORTS"]))))));
 
 
     }
@@ -1405,9 +1393,10 @@
       $this->pdf->Write(5, "Table 5. Student Enrollment by Level & Classification, Fall 2016, Fall 2015, and Fall 2014");
       $this->pdf->Ln(5);
 
+      $year = "AY2016-2017";
       $getEnrollmentData = $this->connection->prepare("SELECT * FROM `IR_AC_Enrollments` where OU_ABBREV=? AND ID_AC_ENROLLMENTS in (select max(ID_AC_ENROLLMENTS) from `IR_AC_Enrollments` where OUTCOMES_AY = ? group by OU_ABBREV )");
       $getEnrollmentData->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
-      $getEnrollmentData->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getEnrollmentData->bindParam(2,$year,PDO::PARAM_STR);
       $getEnrollmentData->execute();
 
       $oldYear = "AY2015-2016";
@@ -1443,39 +1432,39 @@
       $total2015 = $total2015Under + $total2015Grad + $total2015Pro;
 
       $this->pdf->TOC_Entry("Student Enrollments", 1);
-      $this->pdf->SetWidths(array(40,50,50,50));
+      $this->pdf->SetWidths(array(56,49,49,49));
       $this->pdf->SetDrawColor(0,0,0);
       $this->pdf->TOC_Entry("Student Population by Headcount", 2);
       $this->pdf->Row(array("","Fall 2016-2017","Fall 2015-2016","Fall 2014-2015"));
       $this->pdf->Row(array("Undergraduate Enrollment","","",""));
-      $this->pdf->Row(array("Freshman",$data["ENROLL_HC_FRESH"],$dataOld1["ENROLL_HC_FRESH"],$dataOld2["ENROLL_HC_FRESH"]));
-      $this->pdf->Row(array("Sophmore",$data["ENROLL_HC_SOPH"],$dataOld1["ENROLL_HC_SOPH"],$dataOld2["ENROLL_HC_SOPH"]));
-      $this->pdf->Row(array("Junior",$data["ENROLL_HC_JUNR"],$dataOld1["ENROLL_HC_JUNR"],$dataOld2["ENROLL_HC_JUNR"]));
-      $this->pdf->Row(array("Senior",$data["ENROLL_HC_SENR"],$dataOld1["ENROLL_HC_SENR"],$dataOld2["ENROLL_HC_SENR"]));
+      $this->pdf->Row(array("    Freshman",$data["ENROLL_HC_FRESH"],$dataOld1["ENROLL_HC_FRESH"],$dataOld2["ENROLL_HC_FRESH"]));
+      $this->pdf->Row(array("    Sophmore",$data["ENROLL_HC_SOPH"],$dataOld1["ENROLL_HC_SOPH"],$dataOld2["ENROLL_HC_SOPH"]));
+      $this->pdf->Row(array("    Junior",$data["ENROLL_HC_JUNR"],$dataOld1["ENROLL_HC_JUNR"],$dataOld2["ENROLL_HC_JUNR"]));
+      $this->pdf->Row(array("    Senior",$data["ENROLL_HC_SENR"],$dataOld1["ENROLL_HC_SENR"],$dataOld2["ENROLL_HC_SENR"]));
       $this->pdf->Row(array("Totals",$total2017Under,$total2016Under,$total2015Under));
       $this->pdf->Row(array("Graduate Enrollment","","",""));
-      $this->pdf->Row(array("Masters",$data["ENROLL_HC_MASTERS"],$dataOld1["ENROLL_HC_MASTERS"],$dataOld2["ENROLL_HC_MASTERS"]));
-      $this->pdf->Row(array("Doctoral",$data["ENROLL_HC_DOCTORAL"],$dataOld1["ENROLL_HC_DOCTORAL"],$dataOld2["ENROLL_HC_DOCTORAL"]));
-      $this->pdf->Row(array("Graduate Certificate",$data["ENROLL_HC_GRAD_CERT"],$dataOld1["ENROLL_HC_GRAD_CERT"],$dataOld2["ENROLL_HC_GRAD_CERT"]));
+      $this->pdf->Row(array("    Masters",$data["ENROLL_HC_MASTERS"],$dataOld1["ENROLL_HC_MASTERS"],$dataOld2["ENROLL_HC_MASTERS"]));
+      $this->pdf->Row(array("    Doctoral",$data["ENROLL_HC_DOCTORAL"],$dataOld1["ENROLL_HC_DOCTORAL"],$dataOld2["ENROLL_HC_DOCTORAL"]));
+      $this->pdf->Row(array("    Graduate Certificate",$data["ENROLL_HC_GRAD_CERT"],$dataOld1["ENROLL_HC_GRAD_CERT"],$dataOld2["ENROLL_HC_GRAD_CERT"]));
       $this->pdf->Row(array("Totals",$total2017Grad,$total2016Grad,$total2015Grad));
       $this->pdf->Row(array("Graduate Enrollment","","",""));
-      $this->pdf->Row(array("Medicine",$data["ENROLL_HC_MEDICINE"],$dataOld1["ENROLL_HC_MEDICINE"],$dataOld2["ENROLL_HC_MEDICINE"]));
-      $this->pdf->Row(array("Law",$data["ENROLL_HC_LAW"],$dataOld1["ENROLL_HC_LAW"],$dataOld2["ENROLL_HC_LAW"]));
-      $this->pdf->Row(array("PharmD",$data["ENROLL_HC_PHARMD"],$dataOld1["ENROLL_HC_PHARMD"],$dataOld2["ENROLL_HC_PHARMD"]));
+      $this->pdf->Row(array("    Medicine",$data["ENROLL_HC_MEDICINE"],$dataOld1["ENROLL_HC_MEDICINE"],$dataOld2["ENROLL_HC_MEDICINE"]));
+      $this->pdf->Row(array("    Law",$data["ENROLL_HC_LAW"],$dataOld1["ENROLL_HC_LAW"],$dataOld2["ENROLL_HC_LAW"]));
+      $this->pdf->Row(array("    PharmD",$data["ENROLL_HC_PHARMD"],$dataOld1["ENROLL_HC_PHARMD"],$dataOld2["ENROLL_HC_PHARMD"]));
       $this->pdf->Row(array("Totals",$total2017Pro,$total2016Pro,$total2015Pro));
       $this->pdf->Row(array("Total Enrollment (All Levels)",$total2017,$total2016,$total2015));
 
       $this->pdf->AddPage();
       $this->pdf->setFont('Arial','B',11);
       $this->pdf->Write(5, "Illustration 3. Undergraduate Student Enrollment by Classification");
-      //$this->pdf->Image("../../uploads/charts/student-enrollements-under-".$this->ouAbbrev.".png",50,20,115);
+      $this->pdf->Image("../../uploads/charts/student-enrollements-under-".$this->ouAbbrev.".png",50,20,115);
       $this->pdf->Ln(105);
       $this->pdf->Write(5, "Illustration 4. Graduate/Professional Student Enrollment by Classification");
-      //$this->pdf->Image("../../uploads/charts/student-enrollements-grad-".$this->ouAbbrev.".png",50,130,115);
+      $this->pdf->Image("../../uploads/charts/student-enrollements-grad-".$this->ouAbbrev.".png",50,130,115);
       $this->pdf->AddPage();
       $this->pdf->setFont('Arial','B',11);
       $this->pdf->Write(5, "Illustration 5. Total Student Enrollment by Classification (All Levels) ");
-      //  $this->pdf->Image("../../uploads/charts/student-enrollements-all-".$this->ouAbbrev.".png",50,20,115);
+      $this->pdf->Image("../../uploads/charts/student-enrollements-all-".$this->ouAbbrev.".png",50,20,115);
 
       $timeTotal2016 = $data["ENROLL_UGRAD_FULLTIME"] + $data["ENROLL_UGRAD_PARTTIME"] + $data["ENROLL_GRADPRFSNL_FULLTIME"] + $data["ENROLL_GRADPRFSNL_PARTTIME"];
       $timeTotal2015 = $dataOld1["ENROLL_UGRAD_FULLTIME"] + $dataOld1["ENROLL_UGRAD_PARTTIME"] + $dataOld1["ENROLL_GRADPRFSNL_FULLTIME"] + $dataOld1["ENROLL_GRADPRFSNL_PARTTIME"];
@@ -1571,9 +1560,9 @@
       $this->pdf->setX(16);
       $this->pdf->setFont('Arial','B',11);
       $this->pdf->Row(array("2016 Undergraduate Gender","2015 Undergraduate Gender","2014 Undergraduate Gender"));
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-under-2016-".$this->ouAbbrev.".png",20,37,45);
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-under-2015-".$this->ouAbbrev.".png",80,37,45);
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-under-2014-".$this->ouAbbrev.".png",140,37,45);
+      $this->pdf->Image("../../uploads/charts/student-diversity-gender-under-2016-".$this->ouAbbrev.".png",20,44,45);
+      $this->pdf->Image("../../uploads/charts/student-diversity-gender-under-2015-".$this->ouAbbrev.".png",80,37,45);
+      $this->pdf->Image("../../uploads/charts/student-diversity-gender-under-2014-".$this->ouAbbrev.".png",140,44,45);
       $this->pdf->Ln(10);
       $this->pdf->SetDrawColor(255,255,255);
       $this->pdf->setX(15);
@@ -1583,9 +1572,9 @@
       $this->pdf->Ln(10);
       $this->pdf->setX(20);
       $this->pdf->Row(array("2016 Graduate Gender","2015 Graduate Gender","2014 Graduate Gender"));
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2016-".$this->ouAbbrev.".png",20,110,45);
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2015-".$this->ouAbbrev.".png",80,110,45);
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2014-".$this->ouAbbrev.".png",140,110,45);
+      $this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2016-".$this->ouAbbrev.".png",20,117,45);
+      $this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2015-".$this->ouAbbrev.".png",80,110,45);
+      $this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2014-".$this->ouAbbrev.".png",140,117,45);
 
       $totalUnder2016 = $data["UGRAD_AMERIND_ALASKNAT"] + $data["UGRAD_ASIAN"] + $data["UGRAD_BLACK"] + $data["UGRAD_HISPANIC"] +
       $data["UGRAD_HI_PAC_ISL"] + $data["UGRAD_NONRESIDENT_ALIEN"] + $data["UGRAD_TWO_OR_MORE"] + $data["UGRAD_UNKNOWN_RACE_ETHNCTY"] +
@@ -1612,7 +1601,7 @@
       $dataOld2["GRAD_WHITE"];
 
       $this->pdf->setFont('Arial','B',16);
-      $this->pdf->Ln(75);
+      $this->pdf->Ln(65);
       $this->pdf->Write(5, "Student Diversity by Race/Ethnicity");
       $this->pdf->Ln(5);
       $this->pdf->setFont('Arial','B',11);
@@ -1646,7 +1635,7 @@
       $this->pdf->Write(5, "Illustration 8. Undergraduate Student Diversity by Race/Ethnicity");
       $this->pdf->SetDrawColor(255,255,255);
       $this->pdf->setX(15);
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-under-2016-".$this->ouAbbrev.".png",20,37,45);
+      $this->pdf->Image("../../uploads/charts/student-diversity-gender-under-2016-".$this->ouAbbrev.".png",20,37,45);
       $this->pdf->Ln(10);
       $this->pdf->SetDrawColor(255,255,255);
       $this->pdf->setX(15);
@@ -1654,7 +1643,7 @@
       $this->pdf->setFont('Arial','B',11);
       $this->pdf->Write(5, "Illustration 9. Graduate/Professional Student Diversity by Race/Ethnicity");
       $this->pdf->Ln(10);
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2016-".$this->ouAbbrev.".png",20,110,45);
+      $this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2016-".$this->ouAbbrev.".png",20,110,45);
 
       $this->pdf->AddPage();
       $this->pdf->setFont('Arial','B',16);
@@ -1816,7 +1805,7 @@
       $this->pdf->Ln(20);
       $this->pdf->setFont('Arial','B',11);
       $this->pdf->Write(5,"Illustration 11. Degrees Awarded by Level");
-      //insert chart hyurrrrr
+      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2016-".$this->ouAbbrev.".png",20,110,45);
 
     }
 
@@ -1832,7 +1821,7 @@
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
       $this->pdf->Ln(7);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(5,"Faculty nominated for the following awards in the categories of Research, Service, Teaching, or Other, during AY2016-2017.");
 
       $this->pdf->Ln(10);
@@ -1953,7 +1942,7 @@
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
       $this->pdf->Ln(7);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(5,"During $this->selectedYear faculty of $this->ouAbbrev were recognized for their professional accomplishments in the categories of Research, Service, and Teaching.");
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Ln(10);
@@ -2084,11 +2073,10 @@
       $this->pdf->TOC_Entry("Alumni", 1);
       $this->pdf->Write(5,"Alumni");
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
-      $this->pdf->setX(20);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(5,"Substantial activities, engagements, and initiatives with alumni during AY2016-2017, focusing on relationships and activities with alumni.");
       $this->pdf->Ln(10);
-      $this->pdf->Write(5,$this->initalize->mybr2nl($data["AC_UNIT_ALUMNI"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["AC_UNIT_ALUMNI"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->Ln(10);
@@ -2096,21 +2084,18 @@
       $this->pdf->TOC_Entry("Development", 1);
       $this->pdf->Write(5,"Development, Fundraising and Gifts");
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
-      $this->pdf->setX(20);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(5,"Substantial development initiatives and outcomes during AY2016-2017, including Fundraising and Gifts.");
       $this->pdf->Ln(10);
-      $this->pdf->Write(5,$this->initalize->mybr2nl($data["AC_UNIT_GIFTS"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["AC_UNIT_GIFTS"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->TOC_Entry("Supplemental Info - Alumni Engagement & Fundraising", 1);
       $this->pdf->Write(5,"Supplemental Info - Alumni Engagement & Fundraising");
-      $this->pdf->Ln(5);
-      $this->pdf->setX(20);
-      $this->pdf->SetFont('Arial','',11);
-      $this->pdf->Ln(10);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->Ln(15);
       $this->pdf->Write(5,"Any additional information on Alumni Engagement and Fundraising appears as Appendix 6, coming soon. ");
 
     }
@@ -2137,21 +2122,22 @@
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->TOC_Entry("Description", 1);
       $this->pdf->Write(5,"Description");
-      $this->pdf->setX(20);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
+      $this->pdf->Ln(5);
       $this->pdf->Write(5,"Community engagement and community based research, scholarship, outreach, service or volunteerism conducted during AY2016-2017, including activities at the local, state, regional national and international levels.");
-      $this->pdf->Write($this->initalize->mybr2nl($data["CMMTY_ENGMNT_ACTVTY"]));
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write($this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["CMMTY_ENGMNT_ACTVTY"]))))));
 
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->TOC_Entry("Community Perceptions", 1);
       $this->pdf->Write(5,"Community Perceptions");
-      $this->pdf->setX(20);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Ln(5);
       $this->pdf->Write(5,"How unit assesses community perceptions of engagement, as well as impact of community engagement on students, faculty, community and the institution.");
+      $this->pdf->SetFont('Arial','',11);
       $this->pdf->Ln(10);
-      $this->pdf->Write($this->initalize->mybr2nl($data["ENGAGE_CMMTY_PERCEPTIONS"]));
+      $this->pdf->Write($this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["ENGAGE_CMMTY_PERCEPTIONS"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->Ln(10);
@@ -2159,18 +2145,18 @@
       $this->pdf->TOC_Entry("Incentivizing Faculty Engagement", 1);
       $this->pdf->Write(5,"Incentivizing Faculty Engagement");$this->pdf->setX(20);
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(5,"Policies and practices for incentivizing and recognizing community engagement in teaching and learning, research, and creative activity.");
       $this->pdf->Ln(10);
-      $this->pdf->Write($this->initalize->mybr2nl($data["ENGAGE_FACULTY_INCTV"]));
+      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->Write($this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["ENGAGE_FACULTY_INCTV"]))))));
       $this->pdf->Ln(10);
 
       $this->pdf->Ln(10);
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->TOC_Entry("Supplemental Info - Community Engagement", 1);
       $this->pdf->Write(5,"Supplemental Info - Community Engagement");
-      $this->pdf->setX(20);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Ln(10);
       $this->pdf->Write(5,"Any additional information on Community Engagement appears as Appendix 7, <INSERT DOCUMENT_NAME>. ");
 
@@ -2206,13 +2192,14 @@
       $this->pdf->Ln(10);
       $this->pdf->Write(5,"Internal Collaborations");
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write("Our most significant academic collaborations and multidisciplinary efforts characterized as internal to the University.");
+      $this->pdf->SetFont('Arial','',11);
 
       while($data = $getCollaborations->fetch()){
 
         $this->pdf->Ln(5);
-        $this->pdf->Write(5,chr(127)." ".$this->initalize->mybr2nl($data["COLLAB_INTERNAL"]));
+        $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["COLLAB_INTERNAL"]))))));
 
       }
 
@@ -2227,13 +2214,14 @@
       $this->pdf->TOC_Entry("External Collaborations", 1);
       $this->pdf->Write(5,"External Collaborations");
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write("Our most significant academic collaborations and multidisciplinary efforts characterized as external to the University.");
+      $this->pdf->SetFont('Arial','',11);
 
       while($data = $getCollaborations->fetch()){
 
         $this->pdf->Ln(5);
-        $this->pdf->Write(5,chr(127)." ".$this->initalize->mybr2nl($data["COLLAB_EXTERNAL"]));
+        $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["COLLAB_EXTERNAL"]))))));
 
       }
 
@@ -2248,13 +2236,14 @@
       $this->pdf->TOC_Entry("Other Collaborations", 1);
       $this->pdf->Write(5,"Other Collaborations");
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write("Our most significant academic collaborations and multidisciplinary efforts that are not otherwise accounted for as Internal or External Collaborations.");
+      $this->pdf->SetFont('Arial','',11);
 
       while($data = $getCollaborations->fetch()){
 
         $this->pdf->Ln(5);
-        $this->pdf->Write(5,chr(127)." ".$this->initalize->mybr2nl($data["COLLAB_OTHER"]));
+        $this->pdf->Write(5,chr(127)." ".$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["COLLAB_OTHER"]))))));
 
       }
 
@@ -2264,7 +2253,7 @@
       $this->pdf->TOC_Entry("Supplemental Info - Collaborations", 0);
       $this->pdf->Write(5,"Supplemental Info - Collaborations");
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(5,"Additional information provided by the $ouName appears as Appendix ~#");
 
     }
@@ -2298,18 +2287,19 @@
       $this->pdf->TOC_Entry("Campus Climate", 1);
       $this->pdf->Write(5,"Campus Climate");
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write("Activities unit conducted within AY2016-2017 that were designed to improve campus climate and inclusion.");
+      $this->pdf->SetFont('Arial','',11);
 
       $this->pdf->Ln(5);
-      $this->pdf->Write(5,$this->initalize->mybr2nl($data["CLIMATE_INCLUSION"]));
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["CLIMATE_INCLUSION"]))))));
 
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Ln(10);
       $this->pdf->TOC_Entry("Supplemental Info – Campus Climate & Inclusion", 1);
       $this->pdf->Write(5,"Supplemental Info - Campus Climate & Inclusion ");
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(5,"Any additional information about Campus Climate and Inclusion appears as Appendix 9, coming soon. ");
 
     }
@@ -2341,11 +2331,11 @@
       $this->pdf->SetFont('Arial','B',16);
       $this->pdf->Cell(10,0,"Quantitative Outcomes");
       $this->pdf->Ln(5);
-      $this->pdf->setX(20);
-      $this->pdf->SetFont('Arial','',11);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write(5,"Explanation of any surprises with regard to data provided in the quantitative outcomes throughout this report.");
+      $this->pdf->SetFont('Arial','',11);
       $this->pdf->Ln(10);
-      $this->pdf->Write(5,$data["REMARKS_QUANT_OUTCOMES"]);
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["REMARKS_QUANT_OUTCOMES"]))))));
 
       $this->pdf->TOC_Entry("Cool Stuff", 1);
       $this->pdf->setTextColor(0,0,0);
@@ -2353,11 +2343,11 @@
       $this->pdf->Ln(10);
       $this->pdf->Write(5,"Cool Stuff");
       $this->pdf->Ln(5);
-      $this->pdf->SetFont('Arial','',11);
-      $this->pdf->setX(20);
+      $this->pdf->SetFont('Arial','I',11);
       $this->pdf->Write("Activities unit conducted within AY2016-2017 that were designed to improve campus climate and inclusion.");
+      $this->pdf->SetFont('Arial','',11);
       $this->pdf->Ln(10);
-      $this->pdf->Write(5,$data["REMARKS_COOLSTUFF"]);
+      $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["REMARKS_COOLSTUFF"]))))));
 
     }
 
