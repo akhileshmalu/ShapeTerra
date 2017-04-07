@@ -38,7 +38,7 @@ $rowbroad = $resultbroad->fetch(4);
 
 // Values for placeholders
 $resultexvalue = $communityEngage->PlaceHolderValue();
-$rowsExValue1 = $resultexvalue->fetch(4);
+$rowsExValue = $resultexvalue->fetch(4);
 
 // SQL check Status of Blueprint Content for Edit restrictions
 $resultbpstatus = $communityEngage->GetStatus();
@@ -105,13 +105,13 @@ require_once("../Resources/Includes/menu.php");
                 <p class="status">Describe the community engagement and community based research, scholarship, outreach, service or volunteerism your unit conducted this Academic Year which would include the following:  local, state, regional, national and international.
                     Please provide responses in order of significance beginning with most significant. Please note: based on the specific activity, it is acceptable to list an activity in this response as well as the response below.</p>
                 <textarea name="cmmtyEngage" rows="6" cols="25" wrap="hard" class="form-control"
-                          required><?php echo $initalize->mybr2nl($rowsExValue1['CMMTY_ENGMNT_ACTVTY']); ?></textarea>
+                          required><?php echo $initalize->mybr2nl($rowsExValue['CMMTY_ENGMNT_ACTVTY']); ?></textarea>
             </div>
             <h3>Community Perceptions</h3>
             <div class="form-group form-indent">
                 <p class="status">Describe how your unit assesses community perceptions of your engagement, and how the unit assesses the impact of community engagement on students, faculty, community, and the institution.  Provide specific findings.</p>
                 <textarea name="cmmtyPerception" rows="6" cols="25" wrap="hard"
-                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue1['ENGAGE_CMMTY_PERCEPTIONS']); ?></textarea>
+                          class="form-control"><?php echo $initalize->mybr2nl($rowsExValue['ENGAGE_CMMTY_PERCEPTIONS']); ?></textarea>
             </div>
             <h3>Incentivizing Faculty Engagement</h3>
             <div class="form-group form-indent">
@@ -121,13 +121,14 @@ require_once("../Resources/Includes/menu.php");
                 </p>
                 <textarea name="facultyEngagement" rows="6" cols="25" wrap="hard" maxlength="3000"
                           class="form-control wordCount"><?php echo $initalize->mybr2nl
-                    ($rowsExValue1['ENGAGE_FACULTY_INCTV']); ?></textarea>
+                    ($rowsExValue['ENGAGE_FACULTY_INCTV']); ?></textarea>
             </div>
 
             <h3>Supplemental Info</h3>
             <div id="suppfacinfo" class="form-group form-indent">
                 <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Community Engagement for the Academic Year.</small></p>
-                <input id="supinfo" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
+                <input id="supinfofile" type="file" name="supinfo" filetype="pdf" class="form-control col-xs-2
+                custom-file-upload" defaultValue="<?php echo $rowsExValue['SUPPL_CMTY_ENGMNTS'] ?>">
             </div>
 
             <!--                      Edit Control-->
@@ -150,21 +151,21 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     });
     function selectorfile(selected) {
-
-        var doc, image;
-        var filename = $(selected).val();
-        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
-        var allowedext = ['pdf'];
-
-        if (filename.length > 0) {
-            if (allowedext.indexOf(extention) !== -1) {
-                alert(filename.substr(12) + " is selected.");
-            } else {
-                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
-                $(selected).val('');
-            }
-        }
-    }
+//
+//        var doc, image;
+//        var filename = $(selected).val();
+//        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
+//        var allowedext = ['pdf'];
+//
+//        if (filename.length > 0) {
+//            if (allowedext.indexOf(extention) !== -1) {
+//                alert(filename.substr(12) + " is selected.");
+//            } else {
+//                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
+//                $(selected).val('');
+//            }
+//        }
+//    }
 </script>
 <script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
@@ -172,3 +173,4 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/outcomecntrl.js"></script>
+<script src="../Resources/Library/js/customFileUpload.js"></script>

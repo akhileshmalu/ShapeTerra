@@ -8,6 +8,7 @@
   $ChartVisualizations->chartEnrollementStudent();
   $ChartVisualizations->chartDiversityStudent();
   $ChartVisualizations->chartDiversityFaculty();
+  $ChartVisualizations->chartStudentOutcomes();
 
   //header("Location: FPDFExtended.php");
 

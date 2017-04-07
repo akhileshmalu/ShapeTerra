@@ -159,8 +159,8 @@ require_once("../Resources/Includes/menu.php");
                 <h3>Supplemental Info</h3>
                 <div id="suppinfo" class="form-group form-indent">
                     <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Initiatives & Observations for the Academic Year.</small></p>
-                    <label for="supinfofile">Select File</label>
-                    <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
+                    <input id="supinfofile" type="file" name="supinfo" filetype="pdf" class="form-control col-xs-2
+                custom-file-upload" defaultValue="<?php echo $rowsexvalue['AC_SUPPL_INITIATIVES_OBSRV'] ?>">
                 </div>
 
                 <!--                      Edit Control-->
@@ -206,3 +206,4 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/outcomecntrl.js"></script>
+<script src="../Resources/Library/js/customFileUpload.js"></script>

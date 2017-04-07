@@ -58,9 +58,9 @@ array("Data Visuals", "../$navdir"."/Pages/visualizations.php", "" ,"main","basi
 	array("Add Academic Year", "../$navdir"."/Pages/adday.php", "" ,"main","provost", true),
 	array("Edit Academic Year", "../$navdir"."/Pages/editay.php", "" ,"main","provost", true),
 	array("Initiate Academic BluePrint", "../$navdir"."/Pages/initiatebp.php", "" ,"main","provost", false),
-	array("Approve Request", "../$navdir"."/Pages/updateaccess.php", "" ,"admin","basic", false),
-	array("Invite User", "../$navdir"."/Pages/addUser.php", "" ,"admin","basic", false),
-	array("Deactivate Users", "../$navdir"."/Pages/delete.php", "" ,"admin","basic", false)
+//	array("Approve Request", "../$navdir"."/Pages/updateaccess.php", "" ,"admin","basic", false),
+	array("Invite User", "../$navdir"."/Pages/addUser.php", "" ,"UserAdmin","basic", false),
+//	array("Deactivate Users", "../$navdir"."/Pages/delete.php", "" ,"admin","basic", false)
 //	array("Request privilege", "../$navdir"."/Pages/requestupgrade.php", "&#xe02f;" ,"user","basic", false),
 	);
 
@@ -148,9 +148,9 @@ function download($filename){
 		  {
 			  case "sysadmin" :
 				  for($i = 0; $i < count($menu); $i++){
-					  if($menu[$i][3] == "admin"){
+//					  if($menu[$i][3] == "admin"){
 						  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
-					  }
+//					  }
 				  }
 				  echo "<li role='separator' class='divider'></li>";
 				  break;
@@ -162,6 +162,45 @@ function download($filename){
 				  }
 				  echo "<li role='separator' class='divider'></li>";
 				  break;
+
+			  case "teamlead":
+				  for($i = 0; $i < count($menu); $i++){
+					  if($menu[$i][3] == "user" || $menu[$i][3] == "UserAdmin"){
+						  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+					  }
+				  }
+				  echo "<li role='separator' class='divider'></li>";
+				  break;
+
+			  case "designee":
+				  for($i = 0; $i < count($menu); $i++){
+					  if($menu[$i][3] == "user" || $menu[$i][3] == "UserAdmin"){
+						  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+					  }
+				  }
+				  echo "<li role='separator' class='divider'></li>";
+				  break;
+
+			  case "dean":
+				  for($i = 0; $i < count($menu); $i++){
+					  if($menu[$i][3] == "user" || $menu[$i][3] == "UserAdmin"){
+						  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") ."'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>". $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+					  }
+				  }
+				  echo "<li role='separator' class='divider'></li>";
+				  break;
+
+			  case "provost":
+				  for($i = 0; $i < count($menu); $i++){
+					  if($menu[$i][3] == "user" || $menu[$i][3] == "UserAdmin"){
+						  echo "<li><a class = '". ($menu[$i][4] ? "selected" : "") .
+							  "'href='../../Pages/". $menu[$i][1] ."'><span class='icon'>".
+							  $menu[$i][2] . "</span>" . $menu[$i][0] ."</a></li>";
+					  }
+				  }
+				  echo "<li role='separator' class='divider'></li>";
+				  break;
+
 			  default :
 				  for($i = 0; $i < count($menu); $i++){
 					  if($menu[$i][3] == "user"){
@@ -195,8 +234,8 @@ Generate PDF button currently disabled.
 
 	<ul class="col-xs-12">
 		<?php if(@$BackToDashboard){ ?>
-			<li class="" id="header"><a class="" href="<?php echo 'bphome.php?ayname='.@$bpayname.'&ou_abbrev='
-					.$_SESSION['bpouabbrev']; ?>" >
+			<li class="" id="header"><a class="" href="<?php echo 'bphome.php?ayname='.@$_SESSION['bpayname'] .
+					'&ou_abbrev=' .$_SESSION['bpouabbrev'].'&id='.$_SESSION['bpid']; ?>" >
 			<span id="" class="icon">l</span>Back To Contents</a></li>
 		<?php } ?>
 		<?php if(@$BackToFileUploadHome){ ?>

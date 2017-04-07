@@ -420,8 +420,7 @@ Class ChartVisualizations
             scales: {
               xAxes: [{
                 ticks: {
-                    beginAtZero:true,
-                    fontSize:11
+                    beginAtZero:true
                 },
                 scaleLabel:{
                     display:false
@@ -437,10 +436,7 @@ Class ChartVisualizations
                     color: '#fff',
                     zeroLineColor: '#fff',
                     zeroLineWidth: 0
-                },
-                ticks: {
-                  fontSize:11
-                },
+                }
               }]
             },tooltips: {
               enabled: true
@@ -491,8 +487,7 @@ Class ChartVisualizations
           scales: {
             xAxes: [{
               ticks: {
-                  beginAtZero:true,
-                  fontSize:11
+                  beginAtZero:true
               },
               scaleLabel:{
                   display:false
@@ -510,7 +505,6 @@ Class ChartVisualizations
                   zeroLineWidth: 0
               },
               ticks: {
-                fontSize:11
               },
             }]
           },tooltips: {
@@ -558,8 +552,7 @@ Class ChartVisualizations
         scales: {
           xAxes: [{
             ticks: {
-                beginAtZero:true,
-                fontSize:11
+                beginAtZero:true
             },
             scaleLabel:{
                 display:false
@@ -577,7 +570,6 @@ Class ChartVisualizations
                 zeroLineWidth: 0
             },
             ticks: {
-              fontSize:11
             },
           }]
         },tooltips: {
@@ -1279,8 +1271,7 @@ Class ChartVisualizations
             scales: {
               xAxes: [{
                 ticks: {
-                    beginAtZero:true,
-                    fontSize:11
+                    beginAtZero:true
                 },
                 scaleLabel:{
                     display:false
@@ -1298,7 +1289,6 @@ Class ChartVisualizations
                     zeroLineWidth: 0
                 },
                 ticks: {
-                  fontSize:11
                 },
               }]
             },tooltips: {
@@ -1463,8 +1453,7 @@ Class ChartVisualizations
             scales: {
               xAxes: [{
                 ticks: {
-                    beginAtZero:true,
-                    fontSize:11
+                    beginAtZero:true
                 },
                 scaleLabel:{
                     display:false
@@ -1482,7 +1471,6 @@ Class ChartVisualizations
                     zeroLineWidth: 0
                 },
                 ticks: {
-                  fontSize:11
                 },
               }]
             },
@@ -2246,8 +2234,7 @@ Class ChartVisualizations
             scales: {
               xAxes: [{
                 ticks: {
-                    beginAtZero:true,
-                    fontSize:11
+                    beginAtZero:true
                 },
                 scaleLabel:{
                     display:false
@@ -2265,7 +2252,6 @@ Class ChartVisualizations
                     zeroLineWidth: 0
                 },
                 ticks: {
-                  fontSize:11
                 },
               }]
             },tooltips: {
@@ -2859,6 +2845,10 @@ Class ChartVisualizations
               responsive: false,
               legend: {
                 display: false
+              },animation: {
+                onComplete: function(){
+                  $.post('ChartVisualizations.php',{imagebase: retentionRatesFirstYear.toBase64Image(), name: 'student-retention-first-under-" . $this->college . "', functionNum: '5'});
+                }
               },
               scales: {
                         yAxes: [
@@ -2896,17 +2886,22 @@ Class ChartVisualizations
               legend: {
                 display: false
               },
+              animation: {
+                onComplete: function(){
+                  $.post('ChartVisualizations.php',{imagebase: retentionRatesSecondYear.toBase64Image(), name: 'student-retention-second-under-" . $this->college . "', functionNum: '5'});
+                }
+              },
               scales: {
-                        yAxes: [
-                            {
-                                ticks: {
-                                    min: 0.4,
-                                    stepSize: 0.05,
-                                    max: 1
-                                }
-                            }
-                        ]
+                yAxes: [
+                    {
+                        ticks: {
+                            min: 0.4,
+                            stepSize: 0.05,
+                            max: 1
+                        }
                     }
+                ]
+            }
             }
           });
 
@@ -3062,8 +3057,7 @@ Class ChartVisualizations
             scales: {
               xAxes: [{
                 ticks: {
-                    beginAtZero:true,
-                    fontSize:11
+                    beginAtZero:true
                 },
                 scaleLabel:{
                     display:false
@@ -3081,7 +3075,6 @@ Class ChartVisualizations
                     zeroLineWidth: 0
                 },
                 ticks: {
-                  fontSize:11
                 },
               }]
             },

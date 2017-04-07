@@ -88,7 +88,8 @@ require_once("../Resources/Includes/menu.php");
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
         <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
+        <button type="button" redirect="facultyawards.php?linkid=<?php echo $contentlink_id; ?>" class="end
+        btn-primary">Close</button>
     </div>
 <?php } ?>
 

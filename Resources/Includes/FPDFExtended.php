@@ -3,8 +3,9 @@
   error_reporting(1);
   @ini_set('display_errors', 1);
   require "../Library/FPDF/fpdf.php";
+  require "../Library/FPDI/fpdi.php";
 
-  class Table extends FPDF
+  class Table extends FPDI
   {
 
     var $widths;
@@ -361,18 +362,58 @@
       $this->facultyPopulation();
       $this->facultyInformation();
       $this->teaching();
+      $this->studentEnrollmentPage();
       $this->facultyAwardsPage();
       $this->facultyAwardsNominations();
       $this->alumniEngagementFundraising();
       $this->communityEngagement();
       $this->collaborationsPage();
       $this->campusClimateInclusion();
-      $this->studentEnrollmentPage();
       $this->concludingRemarks();
-      $this->getUnivLinkedGoal();
-      $this->getGoalOutcomes();
       $this->pdf->insertTOC(3);
+      $this->getAcademicProgramsPDF();
+      $this->getResearchScholarlyActivityPDF();
+      $this->getResearchFacultyInformationPDF();
+      $this->getAcademicAnalyticsPDF();
+      $this->getAlumniEngagementFundraisingPDF();
+      $this->getCoummunityEngagementPDF();
+      $this->getCollaborationsPDF();
+      $this->getCampusClimateInclusionPDF();
       $this->pdf->Output("report_final.pdf","I");
+
+    }
+
+    public function getSupplementPdf($filepath)
+    {
+
+      // get the page count & set pdf to merge
+      $pageCount = $this->pdf->setSourceFile($filepath);
+
+      // iterate through all pages
+      for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+        // import a page
+        $templateId = $this->pdf->importPage($pageNo);
+        // get the size of the imported page
+        $size = $this->pdf->getTemplateSize($templateId);
+
+        //create a page (landscape or portrait depending on the imported page size)
+        if ($size['w'] > $size['h']) {
+
+          $this->pdf->AddPage('L', array($size['w'], $size['h']));
+
+        } else {
+
+          $this->pdf->AddPage('P', array($size['w'], $size['h']));
+
+        }
+
+        // use the imported page
+        $this->pdf->useTemplate($templateId);
+
+      }
+
+      // Clean might help in setting cursors back to its place . You might need to check that for further input.
+      //$this->pdf->cleanUp();
 
     }
 
@@ -1162,15 +1203,15 @@
       $this->pdf->SetWidths(array(65,60,65));
       $this->pdf->Row(array("2016 Faculty Gender","2015 Faculty Gender","2014 Faculty Gender"));
       $this->pdf->setX(10);
-      //$this->pdf->Image("../../uploads/charts/faculty-diversity-gender-2016-".$this->ouAbbrev.".png",20,40,45);
-      //$this->pdf->Image("../../uploads/charts/faculty-diversity-gender-2015-".$this->ouAbbrev.".png",80,40,45);
-      //$this->pdf->Image("../../uploads/charts/faculty-diversity-gender-2014-".$this->ouAbbrev.".png",140,40,45);
+      $this->pdf->Image("../../uploads/charts/faculty-diversity-gender-2016-".$this->ouAbbrev.".png",20,40,45);
+      $this->pdf->Image("../../uploads/charts/faculty-diversity-gender-2015-".$this->ouAbbrev.".png",80,33,45);
+      $this->pdf->Image("../../uploads/charts/faculty-diversity-gender-2014-".$this->ouAbbrev.".png",140,40,45);
 
-      $this->pdf->Ln(80);
+      $this->pdf->Ln(70);
       $this->pdf->SetFont('Arial','B',11);
       $this->pdf->Write(5,"Illustration 2. Faculty Diversity by Race & Ethnicity");
       $this->pdf->Ln(10);
-      //$this->pdf->Image("../../uploads/charts/faculty-diversity-race-".$this->ouAbbrev.".png",50,120,115);
+      $this->pdf->Image("../../uploads/charts/faculty-diversity-race-".$this->ouAbbrev.".png",50,110,115);
 
     }
 
@@ -1632,18 +1673,14 @@
       $this->pdf->Row(array("White",$data["GRAD_WHITE"],$dataOld1["GRAD_WHITE"],$dataOld2["GRAD_WHITE"]));
 
       $this->pdf->Ln(5);
+      $this->pdf->setFont('Arial','B',11);
       $this->pdf->Write(5, "Illustration 8. Undergraduate Student Diversity by Race/Ethnicity");
       $this->pdf->SetDrawColor(255,255,255);
       $this->pdf->setX(15);
-      $this->pdf->Image("../../uploads/charts/student-diversity-gender-under-2016-".$this->ouAbbrev.".png",20,37,45);
+      $this->pdf->Image("../../uploads/charts/student-diversity-race-under-".$this->ouAbbrev.".png",20,140,100);
       $this->pdf->Ln(10);
       $this->pdf->SetDrawColor(255,255,255);
       $this->pdf->setX(15);
-      $this->pdf->Ln(50);
-      $this->pdf->setFont('Arial','B',11);
-      $this->pdf->Write(5, "Illustration 9. Graduate/Professional Student Diversity by Race/Ethnicity");
-      $this->pdf->Ln(10);
-      $this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2016-".$this->ouAbbrev.".png",20,110,45);
 
       $this->pdf->AddPage();
       $this->pdf->setFont('Arial','B',16);
@@ -1705,7 +1742,12 @@
       $this->pdf->setFont('Arial','B',11);
       $this->pdf->TOC_Entry("Student Retention, Transfer, and Graduation", 2);
       $this->pdf->Write(5,"Illustration 10. Undergraduate Retention, First- and Second Year");
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2016-".$this->ouAbbrev.".png",20,110,45);
+      $this->pdf->Ln(10);
+      $this->pdf->SetWidths(array(85,50));
+      $this->pdf->setX(40);
+      $this->pdf->Row(array("First Year"," Second Year"));
+      $this->pdf->Image("../../uploads/charts/student-retention-first-under-".$this->ouAbbrev.".png",20,105,65);
+      $this->pdf->Image("../../uploads/charts/student-retention-second-under-".$this->ouAbbrev.".png",105,105,65);
 
       $this->pdf->AddPage();
       $this->pdf->setFont('Arial','B',16);
@@ -1802,10 +1844,10 @@
       $this->pdf->setX(20);
       $this->pdf->Row(array("Graduate Certificate",$data2016["DEGREES_AWRD_GRAD_CERT"],$data2015["DEGREES_AWRD_GRAD_CERT"],$data2014["DEGREES_AWRD_GRAD_CERT"]));
 
-      $this->pdf->Ln(20);
+      $this->pdf->Ln(10);
       $this->pdf->setFont('Arial','B',11);
       $this->pdf->Write(5,"Illustration 11. Degrees Awarded by Level");
-      //$this->pdf->Image("../../uploads/charts/student-diversity-gender-grad-2016-".$this->ouAbbrev.".png",20,110,45);
+      $this->pdf->Image("../../uploads/charts/student-degreesAwarded-".$this->ouAbbrev.".png",20,180,125);
 
     }
 
@@ -2173,7 +2215,6 @@
       $this->pdf->setTextColor(0,0,0);
       $this->pdf->SetFont('Arial','',22);
       $this->pdf->Cell(10,0,"Collaborations");
-      $this->pdf->Ln();
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
 
@@ -2182,9 +2223,6 @@
       $getCollaborations->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
       $getCollaborations->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
       $getCollaborations->execute();
-
-      $this->pdf->Ln(10);
-      $this->pdf->setTextColor(0,0,0);
 
       //internal collaborations
       $this->pdf->TOC_Entry("Internal Collaborations", 1);
@@ -2273,13 +2311,11 @@
       //header
       $this->pdf->TOC_Entry("Campus Climate and Inclusion", 0);
       $this->pdf->setTextColor(0,0,0);
-      $this->pdf->setTextColor(0,0,0);
       $this->pdf->SetFont('Arial','',22);
       $this->pdf->Cell(10,0,"Campus Climate and Inclusion");
       $this->pdf->Ln();
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
-      $this->pdf->Ln(10);
 
       //other collaborations
       $this->pdf->SetFont('Arial','B',16);
@@ -2288,7 +2324,7 @@
       $this->pdf->Write(5,"Campus Climate");
       $this->pdf->Ln(5);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->Write("Activities unit conducted within AY2016-2017 that were designed to improve campus climate and inclusion.");
+      $this->pdf->Write(5,"Activities unit conducted within AY2016-2017 that were designed to improve campus climate and inclusion.");
       $this->pdf->SetFont('Arial','',11);
 
       $this->pdf->Ln(5);
@@ -2318,11 +2354,10 @@
       $this->pdf->AddPage();
       $this->pdf->setTextColor(0,0,0);
       $this->pdf->SetFont('Arial','',22);
-      $this->pdf->Cell(10,0,"Campus Climate and Inclusion");
+      $this->pdf->Cell(10,0,"Concluding Remarks");
       $this->pdf->Ln();
       $this->pdf->SetDrawColor(115,0,10);
       $this->pdf->Line(195, 15, 11, 15);
-      $this->pdf->Ln(10);
 
       //header
       $this->pdf->Ln(10);
@@ -2344,10 +2379,173 @@
       $this->pdf->Write(5,"Cool Stuff");
       $this->pdf->Ln(5);
       $this->pdf->SetFont('Arial','I',11);
-      $this->pdf->Write("Activities unit conducted within AY2016-2017 that were designed to improve campus climate and inclusion.");
+      $this->pdf->Write(5,"Activities unit conducted within AY2016-2017 that were designed to improve campus climate and inclusion.");
       $this->pdf->SetFont('Arial','',11);
       $this->pdf->Ln(10);
       $this->pdf->Write(5,$this->initalize->mybr2nl(iconv("UTF-8", "ISO-8859-1", trim(utf8_decode($this->initalize->mybr2nl($data["REMARKS_COOLSTUFF"]))))));
+
+    }
+
+    public function getAcademicProgramsPDF()
+    {
+
+      $getUrl = $this->connection->prepare("SELECT * FROM `AC_Programs` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getUrl->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getUrl->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getUrl->execute();
+      $data = $getUrl->fetch();
+
+      if (!empty($data["AC_SUPPL_PROGRAMS"])){
+
+        if (file_exists("../../uploads/ac_programs/".$data["AC_SUPPL_PROGRAMS"]))
+          $this->getSupplementPdf("../../uploads/ac_programs/".$data["AC_SUPPL_PROGRAMS"]);
+
+      }
+
+    }
+
+    public function getAcademicInitativesPDF()
+    {
+
+      $getUrl = $this->connection->prepare("SELECT * FROM `AC_InitObsrv` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getUrl->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getUrl->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getUrl->execute();
+      $data = $getUrl->fetch();
+
+      if (!empty($data["AC_SUPPL_INITIATIVES_OBSRV"])){
+
+        if (file_exists("../../uploads/ac_programs/".$data["AC_SUPPL_INITIATIVES_OBSRV"]))
+          $this->getSupplementPdf("../../uploads/ac_programs/".$data["AC_SUPPL_INITIATIVES_OBSRV"]);
+
+      }
+
+    }
+
+    public function getResearchScholarlyActivityPDF()
+    {
+
+      $getUrl = $this->connection->prepare("SELECT * FROM `AC_Programs` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getUrl->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getUrl->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getUrl->execute();
+      $data = $getUrl->fetch();
+
+      if (!empty($data["AC_VPR_REPORT"])){
+
+        if (file_exists("../../uploads/ac_programs/".$data["AC_VPR_REPORT"]))
+          $this->getSupplementPdf("../../uploads/ac_programs/".$data["AC_VPR_REPORT"]);
+
+      }
+
+    }
+
+    public function getResearchFacultyInformationPDF()
+    {
+
+      $getUrl = $this->connection->prepare("SELECT * FROM `AC_FacultyInfo` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getUrl->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getUrl->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getUrl->execute();
+      $data = $getUrl->fetch();
+
+      if (!empty($data["AC_SUPPL_FACULTY"])){
+
+        if (file_exists("../../uploads/ac_programs/".$data["AC_SUPPL_FACULTY"]))
+          $this->getSupplementPdf("../../uploads/ac_programs/".$data["AC_SUPPL_FACULTY"]);
+
+      }
+
+    }
+
+    //figure out what table this is
+    public function getAcademicAnalyticsPDF()
+    {
+
+      /*$getUrl = $this->connection->prepare("SELECT * FROM `AC_FacultyInfo` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getUrl->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getUrl->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getUrl->execute();
+      $data = $getUrl->fetch();
+
+      if (!empty($data["AC_SUPPL_ACADEMIC_ANALYTICS"])){
+
+        if (file_exists("../../uploads/ac_programs/".$data["AC_SUPPL_ACADEMIC_ANALYTICS"]))
+          $this->getSupplementPdf("../../uploads/ac_programs/".$data["AC_SUPPL_ACADEMIC_ANALYTICS"]);
+
+      }*/
+
+    }
+
+    public function getAlumniEngagementFundraisingPDF()
+    {
+
+      $getUrl = $this->connection->prepare("SELECT * FROM `AC_AlumDev` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getUrl->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getUrl->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getUrl->execute();
+      $data = $getUrl->fetch();
+
+      if (!empty($data["AC_UNIT_SUPPL_ALUM_DEV"])){
+
+        if (file_exists("../../uploads/ac_programs/".$data["AC_UNIT_SUPPL_ALUM_DEV"]))
+          $this->getSupplementPdf("../../uploads/ac_programs/".$data["AC_UNIT_SUPPL_ALUM_DEV"]);
+
+      }
+
+    }
+
+    public function getCoummunityEngagementPDF()
+    {
+
+      $getUrl = $this->connection->prepare("SELECT * FROM `AC_CommunityEngage` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getUrl->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getUrl->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getUrl->execute();
+      $data = $getUrl->fetch();
+
+      if (!empty($data["SUPPL_CMTY_ENGMNTS"])){
+
+        if (file_exists("../../uploads/ac_programs/".$data["SUPPL_CMTY_ENGMNTS"]))
+          $this->getSupplementPdf("../../uploads/ac_programs/".$data["SUPPL_CMTY_ENGMNTS"]);
+
+      }
+
+    }
+
+    public function getCollaborationsPDF()
+    {
+
+      $getUrl = $this->connection->prepare("SELECT * FROM `AC_Collaborations` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getUrl->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getUrl->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getUrl->execute();
+      $data = $getUrl->fetch();
+
+      if (!empty($data["SUPPL_COLLABORATIONS"])){
+
+        if (file_exists("../../uploads/ac_programs/".$data["SUPPL_COLLABORATIONS"]))
+          $this->getSupplementPdf("../../uploads/ac_programs/".$data["SUPPL_COLLABORATIONS"]);
+
+      }
+
+    }
+
+    public function getCampusClimateInclusionPDF()
+    {
+
+      $getUrl = $this->connection->prepare("SELECT * FROM `AC_CampusClimateInclusion` WHERE OU_ABBREV = ? AND OUTCOMES_AY = ?");
+      $getUrl->bindParam(1,$this->ouAbbrev,PDO::PARAM_STR);
+      $getUrl->bindParam(2,$this->selectedYear,PDO::PARAM_STR);
+      $getUrl->execute();
+      $data = $getUrl->fetch();
+
+      if (!empty($data["SUPPL_CLIMATE_INCLUSION"])){
+
+        if (file_exists("../../uploads/ac_programs/".$data["SUPPL_CLIMATE_INCLUSION"]))
+          $this->getSupplementPdf("../../uploads/ac_programs/".$data["SUPPL_CLIMATE_INCLUSION"]);
+
+      }
 
     }
 

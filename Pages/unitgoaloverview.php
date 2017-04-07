@@ -3,12 +3,12 @@
 /*
  * Session & Error control Initialization.
  */
-require_once ("../Resources/Includes/BpContents.php");
+require_once("../Resources/Includes/BpContents.php");
 $goaloutcomehome = new BPCONTENTS();
 $goaloutcomehome->checkSessionStatus();
 
 $message = array();
-$errorflag =0;
+$errorflag = 0;
 $BackToDashboard = true;
 
 /*
@@ -21,7 +21,7 @@ $BackToDashboard = true;
  */
 $bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
-$bpayname =$_SESSION['bpayname'];
+$bpayname = $_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
@@ -34,7 +34,6 @@ if ($ouid == 4) {
 }
 
 
-
 // Blueprint Status information on title box
 $resultbroad = $goaloutcomehome->BlueprintStatusDisplay();
 $rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
@@ -42,7 +41,6 @@ $rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
 // SQL check Status of Blueprint Content for Edit restrictions
 $resultbpstatus = $goaloutcomehome->GetStatus();
 $rowsbpstatus = $resultbpstatus->fetch(2);
-
 
 
 /*
@@ -136,8 +134,8 @@ require_once("../Resources/Includes/menu.php");
     src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"
     integrity="sha256-oTyWrNiP6Qftu4vs2g0RPCKr3g1a6QTlITNgoebxRc4="
     crossorigin="anonymous"></script>
-<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
-<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css"/>
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css"/>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
 
 <link href="Css/approvebp.css" rel="stylesheet" type="text/css"/>
@@ -163,7 +161,7 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
         <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
-        <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
+        <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
         <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
     </div>
 
@@ -171,11 +169,13 @@ require_once("../Resources/Includes/menu.php");
         <!--                        Reviewer Edit Control-->
         <?php if ($_SESSION['login_right'] != 1): ?>
             <div>
-<!--                <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-right"-->
-<!--                        data-toggle="modal"-->
-<!--                        data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Goal-->
-<!--                </button>-->
-                <a id="add-mission" href="<?php echo "unitgoal_detail.php?linkid=".$contentlink_id."&goal_id=0"?>" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-right"><span class="icon">&#xe035;</span> Add New Goal
+                <!--                <button id="add-mission" type="button" class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-right"-->
+                <!--                        data-toggle="modal"-->
+                <!--                        data-target="#addawardModal"><span class="icon">&#xe035;</span> Add New Goal-->
+                <!--                </button>-->
+                <a id="add-mission" href="<?php echo "unitgoal_detail.php?linkid=" . $contentlink_id . "&goal_id=0" ?>"
+                   class="btn-secondary  col-lg-3 col-md-7 col-sm-8 pull-right"><span class="icon">&#xe035;</span> Add
+                    New Goal
                 </a>
 
             </div>
@@ -184,228 +184,280 @@ require_once("../Resources/Includes/menu.php");
 
 
         <p>Below is a summary of your Unit Goals.</p>
-<!--        <div id="taskboard" style="margin-top: 10px;">-->
-            <!--<table class="grid" action="taskboard/unitgoalajax.php" title="Unit Goals">
+        <!--        <div id="taskboard" style="margin-top: 10px;">-->
+        <!--<table class="grid" action="taskboard/unitgoalajax.php" title="Unit Goals">
                 <tr>
-                    <th col="UNIT_GOAL_TITLE" width="200" href="<?php echo "unitgoal_detail.php?linkid=".$contentlink_id."&goal_id="?>{{columns.ID_UNIT_GOAL}}" type="text">Goal Title</th>
+                    <th col="UNIT_GOAL_TITLE" width="200" href="<?php //echo "unitgoal_detail.php?linkid=" .
+           // $contentlink_id . "&goal_id=" ?>{{columns.ID_UNIT_GOAL}}" type="text">Goal Title</th>
                     <th col="STATUS" width="150" type="text">Status</th>
                     <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
                     <th col="AUTHOR" width="150" type="text">Last Modified By</th>
 
                 </tr>
             </table>-->
-            <p class="status"><em><small>To change the order in which the goals are displayed, clicking and hold the goal you wish to move, and drag it up or down, releasing in the appropriate location.  The item will move as intended.  To update the number of the goal accordingly, please Refresh the page.</small></em></p>
-            <h3 style="padding: 5px;">Looking Back</h3>
-            <div id="jsGridBack"></div>
-            <h3 style="padding: 5px;">Real Time</h3>
-            <div id="jsGridReal"></div>
-            <h3 style="padding: 5px;">Looking Ahead</h3>
-            <div id="jsGridAhead"></div>
-            <script>
+        <p class="status"><em>
+                <small>To change the order in which the goals are displayed, clicking and hold the goal you wish to
+                    move, and drag it up or down, releasing in the appropriate location. The item will move as intended.
+                    To update the number of the goal accordingly, please Refresh the page.
+                </small>
+            </em></p>
+        <h3 id="backtitle" class="hidden" style="padding: 5px;">Looking Back</h3>
+        <div id="jsGridBack"></div>
+        <h3 id="realtitle" class="hidden" style="padding: 5px;">Real Time</h3>
+        <div id="jsGridReal"></div>
+        <h3 id="aheadtitle" class="hidden" style="padding: 5px;">Looking Ahead</h3>
+        <div id="jsGridAhead"></div>
+        <script>
 
-              var status;
+            var status;
 
-              $.extend({
-                getUrlVars: function(){
-                  var vars = [], hash;
-                  var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-                  for(var i = 0; i < hashes.length; i++)
-                  {
-                    hash = hashes[i].split('=');
-                    vars.push(hash[0]);
-                    vars[hash[0]] = hash[1];
-                  }
-                  return vars;
+            $.extend({
+                getUrlVars: function () {
+                    var vars = [], hash;
+                    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                    for (var i = 0; i < hashes.length; i++) {
+                        hash = hashes[i].split('=');
+                        vars.push(hash[0]);
+                        vars[hash[0]] = hash[1];
+                    }
+                    return vars;
                 },
-                getUrlVar: function(name){
-                  return $.getUrlVars()[name];
+                getUrlVar: function (name) {
+                    return $.getUrlVars()[name];
                 }
-              });
+            });
 
-              $.post("../Resources/Includes/Data.php?functionNum=5", function(peopleArray) {
-                if (peopleArray != ""){
-                  peopleArray = $.parseJSON(peopleArray);
+            $.post("../Resources/Includes/Data.php?functionNum=5", function (peopleArray) {
+                if (peopleArray != "") {
+                    peopleArray = $.parseJSON(peopleArray);
                 }
 
-                $.post("../Resources/Includes/Data.php?functionNum=1&viewpoint=back", function(data) {
-                  data = $.parseJSON(data);
-                  $("#jsGridBack").jsGrid({
-                    width: "100%",
-                    height: "300px",
-                    sorting: true,
-                    paging: true,
-                    data: data,
-                    rowClass: function(item, itemIndex) {
-                      return "client-" + itemIndex;
-                    },
-                    controller: {
-                      loadData: function() {
-                        return db.clients.slice(0, 15);
-                      }
-                    },
-                    fields: [
-                      { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                      { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
+                $.post("../Resources/Includes/Data.php?functionNum=1&viewpoint=back", function (data) {
+                    data = $.parseJSON(data);
+                    $('#backtitle').removeClass("hidden");
+                    $("#jsGridBack").jsGrid({
+                        width: "100%",
+                        height: "300px",
+                        sorting: true,
+                        paging: true,
+                        data: data,
+//                        rowClass: function (item, itemIndex) {
+//                            return "client-" + itemIndex;
+//                        },
+                        controller: {
+                            loadData: function () {
+                                return db.clients.slice(0, 15);
+                            }
+                        },
+                        rowClick: function (args) {
+                            window.location = "./unitgoal_detail.php?goal_id=" + args.item.ID_UNIT_GOAL+"&linkid="+$
+                                    .getUrlVar("linkid");
+                        },
+                        fields: [
+                            {name: "ID_SORT", title: "#", type: "text", width: "20px"},
+                            {
+                                name: "UNIT_GOAL_TITLE", title: "Goal Title",
+                          itemTemplate: function(value,item){
                         return $("<a>").attr("href", "../Pages/unitgoal_detail.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
-                      }, width: "auto" },
-                      { name: "GOAL_STATUS", title: "Status", type: "text", width: "auto" },
-                      { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" },
-                      { name: "AUTHOR", title: "Author", itemTemplate: function(value,item){
-                        var status;
-                        for (var i = 0; i < peopleArray.length; i++){
-                          if (peopleArray[i][0] == item.GOAL_AUTHOR){
-                            person = peopleArray[i][11] + ", " +  peopleArray[i][10];
-                          }
+                      },
+                                width: "auto"
+                            },
+                            {name: "GOAL_STATUS", title: "Status", type: "text", width: "auto"},
+                            {name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto"},
+                            {
+                                name: "AUTHOR", title: "Author", itemTemplate: function (value, item) {
+                                var status;
+                                for (var i = 0; i < peopleArray.length; i++) {
+                                    if (peopleArray[i][0] == item.GOAL_AUTHOR) {
+                                        person = peopleArray[i][11] + ", " + peopleArray[i][10];
+                                    }
+                                }
+                                return person;
+                            }, width: "auto"
+                            }
+                        ],
+                        onRefreshed: function () {
+                            var $gridData = $("#jsGridBack .jsgrid-grid-body tbody");
+                            $gridData.sortable({
+                                update: function (e, ui) {
+                                    var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                                    var indexes = $.map($gridData.sortable("toArray", {attribute: "class"}), function (classes) {
+                                        return clientIndexRegExp.exec(classes)[1];
+                                    });
+                                    var items = $.map($gridData.find("tr"), function (row) {
+                                        return $(row).data("JSGridItem");
+                                    });
+                                    alert(indexes);
+                                    alert(items);
+                                    $.post("../Resources/Includes/Data.php?functionNum=2", {
+                                        'data': items,
+                                        'indexes': indexes,
+                                        'viewpoint': 'back'
+                                    }, function () {
+                                        location.reload()
+                                    })
+                                }
+                            });
                         }
-                        return person;
-                      }, width: "auto" }
-                    ],
-                    onRefreshed: function() {
-                      var $gridData = $("#jsGridBack .jsgrid-grid-body tbody");
-                      $gridData.sortable({
-                        update: function(e, ui) {
-                          var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                          var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                              return clientIndexRegExp.exec(classes)[1];
-                          });
-                          var items = $.map($gridData.find("tr"), function(row) {
-                              return $(row).data("JSGridItem");
-                          });
-                          $.post("../Resources/Includes/Data.php?functionNum=2",{'data':items,'indexes':indexes,'viewpoint':'back'},function(){
-
-                          })
-                        }
-                      });
-                    }
-                  });
+                    });
                 });
-              });
+            });
 
-              $.post("../Resources/Includes/Data.php?functionNum=5", function(peopleArray) {
-                if (peopleArray != ""){
-                  peopleArray = $.parseJSON(peopleArray);
+            $.post("../Resources/Includes/Data.php?functionNum=5", function (peopleArray) {
+                if (peopleArray != "") {
+                    peopleArray = $.parseJSON(peopleArray);
                 }
 
-                $.post("../Resources/Includes/Data.php?functionNum=1&viewpoint=real", function(data) {
-                  data = $.parseJSON(data);
-                  $("#jsGridReal").jsGrid({
-                    width: "100%",
-                    height: "300px",
-                    sorting: true,
-                    paging: true,
-                    data: data,
-                    rowClass: function(item, itemIndex) {
-                      return "client-" + itemIndex;
-                    },
-                    controller: {
-                      loadData: function() {
-                        return db.clients.slice(0, 15);
-                      }
-                    },
-                    fields: [
-                      { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                      { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
+                $.post("../Resources/Includes/Data.php?functionNum=1&viewpoint=real", function (data) {
+                    data = $.parseJSON(data);
+                    $('#realtitle').removeClass("hidden");
+                    $("#jsGridReal").jsGrid({
+                        width: "100%",
+                        height: "300px",
+                        sorting: true,
+                        paging: true,
+                        data: data,
+                        rowClass: function (item, itemIndex) {
+                            return "client-" + itemIndex;
+                        },
+                        controller: {
+                            loadData: function () {
+                                return db.clients.slice(0, 15);
+                            }
+                        },
+//                        rowClick: function (args) {
+//                            window.location = "./unitgoal_detail.php?goal_id=" + args.item.ID_UNIT_GOAL + "&linkid=" + $.getUrlVar("linkid");
+//                        },
+                        fields: [
+                            {name: "ID_SORT", title: "#", type: "text", width: "20px"},
+                            {
+                                name: "UNIT_GOAL_TITLE", title: "Goal Title",
+                          itemTemplate: function(value,item){
                         return $("<a>").attr("href", "../Pages/unitgoal_detail.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
-                      }, width: "auto" },
-                      { name: "GOAL_STATUS", title: "Status", type: "text", width: "auto" },
-                      { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" },
-                      { name: "AUTHOR", title: "Author", itemTemplate: function(value,item){
-                        var status;
-                        for (var i = 0; i < peopleArray.length; i++){
-                          if (peopleArray[i][0] == item.GOAL_AUTHOR){
-                            person = peopleArray[i][11] + ", " +  peopleArray[i][10];
-                          }
+                      },
+                                width: "auto"
+                            },
+                            {name: "GOAL_STATUS", title: "Status", type: "text", width: "auto"},
+                            {name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto"},
+                            {
+                                name: "AUTHOR", title: "Author", itemTemplate: function (value, item) {
+                                var status;
+                                for (var i = 0; i < peopleArray.length; i++) {
+                                    if (peopleArray[i][0] == item.GOAL_AUTHOR) {
+                                        person = peopleArray[i][11] + ", " + peopleArray[i][10];
+                                    }
+                                }
+                                return person;
+                            }, width: "auto"
+                            }
+                        ],
+                        onRefreshed: function () {
+                            var $gridData = $("#jsGridReal .jsgrid-grid-body tbody");
+                            $gridData.sortable({
+                                update: function (e, ui) {
+                                    var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                                    var indexes = $.map($gridData.sortable("toArray", {attribute: "class"}), function (classes) {
+                                        return clientIndexRegExp.exec(classes)[1];
+                                    });
+                                    var items = $.map($gridData.find("tr"), function (row) {
+                                        return $(row).data("JSGridItem");
+                                    });
+                                    $.post("../Resources/Includes/Data.php?functionNum=2", {
+                                        'data': items,
+                                        'indexes': indexes,
+                                        'viewpoint': 'real'
+                                    }, function () {
+                                        location.reload()
+                                    })
+                                }
+                            });
                         }
-                        return person;
-                      }, width: "auto" }
-                    ],
-                    onRefreshed: function() {
-                      var $gridData = $("#jsGridReal .jsgrid-grid-body tbody");
-                      $gridData.sortable({
-                        update: function(e, ui) {
-                          var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                          var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                              return clientIndexRegExp.exec(classes)[1];
-                          });
-                          var items = $.map($gridData.find("tr"), function(row) {
-                              return $(row).data("JSGridItem");
-                          });
-                          $.post("../Resources/Includes/Data.php?functionNum=2",{'data':items,'indexes':indexes,'viewpoint':'real'},function(){
-
-                          })
-                        }
-                      });
-                    }
-                  });
+                    });
                 });
-              });
+            });
 
-              $.post("../Resources/Includes/Data.php?functionNum=5", function(peopleArray) {
-                if (peopleArray != ""){
-                  peopleArray = $.parseJSON(peopleArray);
+            $.post("../Resources/Includes/Data.php?functionNum=5", function (peopleArray) {
+                if (peopleArray != "") {
+                    peopleArray = $.parseJSON(peopleArray);
                 }
 
-                $.post("../Resources/Includes/Data.php?functionNum=1&viewpoint=ahead", function(data) {
-                  data = $.parseJSON(data);
-                  $("#jsGridAhead").jsGrid({
-                    width: "100%",
-                    height: "300px",
-                    sorting: true,
-                    paging: true,
-                    data: data,
-                    rowClass: function(item, itemIndex) {
-                      return "client-" + itemIndex;
-                    },
-                    controller: {
-                      loadData: function() {
-                        return db.clients.slice(0, 15);
-                      }
-                    },
-                    fields: [
-                      { name: "ID_SORT", title: "#", type: "text", width: "20px" },
-                      { name: "UNIT_GOAL_TITLE", title: "Goal Title", itemTemplate: function(value,item){
+                $.post("../Resources/Includes/Data.php?functionNum=1&viewpoint=ahead", function (data) {
+                    data = $.parseJSON(data);
+                    $('#aheadtitle').removeClass("hidden");
+                    $("#jsGridAhead").jsGrid({
+                        width: "100%",
+                        height: "300px",
+                        sorting: true,
+                        paging: true,
+                        data: data,
+                        rowClass: function (item, itemIndex) {
+                            return "client-" + itemIndex;
+                        },
+                        controller: {
+                            loadData: function () {
+                                return db.clients.slice(0, 15);
+                            }
+                        },
+//                        rowClick: function (args) {
+//                            window.location = "./unitgoal_detail.php?goal_id=" + args.item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid");
+//                        },
+                        fields: [
+                            {name: "ID_SORT", title: "#", type: "text", width: "20px"},
+                            {
+                                name: "UNIT_GOAL_TITLE", title: "Goal Title",
+                          itemTemplate: function(value,item){
                         return $("<a>").attr("href", "../Pages/unitgoal_detail.php?goal_id="+item.ID_UNIT_GOAL+"&linkid="+$.getUrlVar("linkid")).text(value);
-                      }, width: "auto" },
-                        { name: "GOAL_STATUS", title: "Status", type: "text", width: "auto" },
-                      { name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto" },
-                      { name: "AUTHOR", title: "Author", itemTemplate: function(value,item){
-                        var status;
-                        for (var i = 0; i < peopleArray.length; i++){
-                          if (peopleArray[i][0] == item.GOAL_AUTHOR){
-                            person = peopleArray[i][11] + ", " +  peopleArray[i][10];
-                          }
-                        }
-                        return person;
-                      }, width: "auto" }
-                    ],
-                    onRefreshed: function() {
-                      var $gridData = $("#jsGridAhead .jsgrid-grid-body tbody");
-                      $gridData.sortable({
-                        update: function(e, ui) {
-                          var clientIndexRegExp = /\s*client-(\d+)\s*/;
-                          var indexes = $.map($gridData.sortable("toArray", { attribute: "class" }), function(classes) {
-                              return clientIndexRegExp.exec(classes)[1];
-                          });
-                          var items = $.map($gridData.find("tr"), function(row) {
-                              return $(row).data("JSGridItem");
-                          });
-                          $.post("../Resources/Includes/Data.php?functionNum=2",{'data':items,'indexes':indexes,'viewpoint':'ahead'},function(){
+                      },
+                                width: "auto"
+                            },
+                            {name: "GOAL_STATUS", title: "Status", type: "text", width: "auto"},
+                            {name: "MOD_TIMESTAMP", title: "Last Updated", type: "text", width: "auto"},
+                            {
+                                name: "AUTHOR", title: "Author", itemTemplate: function (value, item) {
+                                var status;
+                                for (var i = 0; i < peopleArray.length; i++) {
+                                    if (peopleArray[i][0] == item.GOAL_AUTHOR) {
+                                        person = peopleArray[i][11] + ", " + peopleArray[i][10];
+                                    }
+                                }
+                                return person;
+                            }, width: "auto"
+                            }
+                        ],
+                        onRefreshed: function () {
+                            var $gridData = $("#jsGridAhead .jsgrid-grid-body tbody");
+                            $gridData.sortable({
+                                update: function (e, ui) {
+                                    var clientIndexRegExp = /\s*client-(\d+)\s*/;
+                                    var indexes = $.map($gridData.sortable("toArray", {attribute: "class"}), function (classes) {
+                                        return clientIndexRegExp.exec(classes)[1];
+                                    });
+                                    alert("Reordered indexes: " + indexes.join(", "));
 
-                          })
+                                    var items = $.map($gridData.find("tr"), function (row) {
+                                        return $(row).data("JSGridItem");
+                                    });
+                                    console && console.log("Reordered items", items);
+
+                                    $.post("../Resources/Includes/Data.php?functionNum=2", {
+                                        'data': items,
+                                        'indexes': indexes,
+                                        'viewpoint': 'ahead'
+                                    }, function () {
+                                        location.reload()
+                                    })
+                                }
+                            });
                         }
-                      });
-                    }
-                  });
+                    });
                 });
-              });
+            });
 
-            </script>
-<!--        </div>-->
+        </script>
+        <!--        </div>-->
 
     </div>
 </div>
-
-
 
 
 <?php

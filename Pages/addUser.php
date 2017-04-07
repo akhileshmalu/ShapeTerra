@@ -38,8 +38,8 @@ $resultay = $connection->prepare($sqlay);
 $resultay->execute();
 
 // To provide Global access to Sys Admin of Provost Unit <Inter Unit Role Change>
-$globalAdminRoles = $_SESSION['login_outype'] == 'Administration' ?"'Provost'":
-    "'Provost','System Administrator','System Developer'";
+$globalAdminRoles = $_SESSION['login_outype'] == 'Administration' ? "'Provost'" :
+    "'Provost','System Administrator','System Developer','Team Lead'";
 
 $sqlrole = "SELECT * FROM UserRoles WHERE USER_ROLE NOT IN ($globalAdminRoles);";
 $resultrole = $connection->prepare($sqlrole);
@@ -107,7 +107,12 @@ require_once("../Resources/Includes/menu.php");
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <form action="" method="POST" class="col-xs-12">
             <h2>1. Enter Network Username</h2>
-            <input type="text" name="username" placeholder="Network Username" class="form-control" required>
+            <div id="userbox">
+                <div  class="input-group">
+                    <input type="text" name="username" class="form-control" placeholder="Network Username / VIP ID">
+                    <span class="input-group-btn"><button class="btn" type="button">Search</button></span>
+                </div>
+            </div>
             <h2>2. Select User Roles </h2>
             <div>
                 <select name="role" class="form-control" id="roles"
@@ -118,18 +123,21 @@ require_once("../Resources/Includes/menu.php");
                     <?php } endwhile; ?>
                 </select>
             </div>
-            <br/>
+            <!--            <br/>-->
             <?php if ($_SESSION['login_outype'] == 'Administration'): ?>
                 <h2>3. Select Organization Unit</h2>
-                <select name="ouname" class="form-control">
-                    <option value="0" selected>--Select A Unit--</option>
-                    <?php while ($rowsou = $resultou->fetch(4)) { ?>
-                        <option value="<?php echo $rowsou[0]; ?>"><?php echo $rowsou[1]; ?></option>
-                    <?php } ?>
-                </select>
+                <div>
+                    <select name="ouname" class="form-control">
+                        <option value="0" selected>--Select A Unit--</option>
+                        <?php while ($rowsou = $resultou->fetch(4)) { ?>
+                            <option value="<?php echo $rowsou[0]; ?>"><?php echo $rowsou[1]; ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
             <?php endif; ?>
-            <input type="submit" name="addUser" value="Add User" class="btn-primary pull-right">
-
+            <div>
+                <input type="submit" name="addUser" value="Add User" class="btn-primary pull-right">
+            </div>
             <div id="taskboard" class="col-xl-12" style="margin-top: 5px;">
                 <h3 style="padding: 5px;">PERMITTED USERS</h3>
                 <div id="jsGridUsersTable"></div>
@@ -155,8 +163,11 @@ require_once("../Resources/Includes/menu.php");
                         }
                     });
                     $.post("../Resources/Includes/Data.php?functionNum=7&ouid=" + ouid, function (data) {
+                        if(data==""){
+
+                        }
                         data = $.parseJSON(data);
-                        console.log(data);
+                        //console.log(data);
                         $("#jsGridUsersTable").jsGrid({
                             width: "100%",
                             height: "400px",
@@ -186,12 +197,7 @@ require_once("../Resources/Includes/menu.php");
 //                                    },
                                     type: "text", width: "auto"
                                 },
-                                {name: "USER_ROLE", title: "User Role", type: "text", width: "auto"},
-                                {
-                                    type: "control",
-                                    modeSwitchButton: false,
-                                    editButton: true,
-                                }
+                                {name: "USER_ROLE", title: "User Role", type: "text", width: "auto"}
                             ],
 //
                         });
@@ -215,9 +221,27 @@ require_once("../Resources/Includes/footer.php");
 
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 <script type="text/javascript">
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
+
+        var tableBody = $('<div> <table id="mytb" class="table"> <thead>' +
+            ' <tr> <th style="width: 25%;">User Full Name</th> <th style="width: 40%">User College</th> <th ' +
+            'style="width: ' +
+            '35%">Select</th> </tr> ' + '</thead>' +
+            ' <tbody> <tr> ' +
+            '<td>Blah</td> <td>Blah More</td>' +
+            ' <td class="vcenter"><input type="checkbox" id="blahA" value="1"/></td> </tr> </tbody> </table> </div>');
+        $('#userbox').append(tableBody);
+
+        $('#selectChk').on('change', function() {
+            if ($('#selectChk').is(':checked')) {
+                //$(this).prop('checked',false);
+                $('#userCredential').attr("readonly","readonly");
+            } else {
+                //$(this).prop('checked',true);
+                $('#userCredential').removeAttr("readonly");
+            }
+        });
+
+
 </script>
 <script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
