@@ -11,8 +11,6 @@ Class BPCONTENTS extends Initialize
     {
         //getting the connection object
         parent::__construct();
-//          $this->connection = new PDO(sprintf('mysql:host=%s;dbname=%s', HOSTNAME, DB), USERNAME, PASSCODE);
-//          $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->errorflag = 0;
         $this->message = null;
         $this->author = $_SESSION['login_userid'];

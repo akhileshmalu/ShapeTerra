@@ -51,7 +51,7 @@ if (isset($_POST['savedraft'])) {
 
 if (isset($_POST['submit_approve'])) {
 
-    $message = $FacultyInfo->SaveDraft();
+    $message[0] = $FacultyInfo->SaveDraft();
     $message[0] = "Faculty Info";
     $message[0] .= $FacultyInfo->SubmitApproval();
 
@@ -178,6 +178,18 @@ require_once("../Resources/Includes/menu.php");
                        filetype="pdf" defaultValue="<?php echo $rowsexvalue['AC_SUPPL_FACULTY'] ?>">
             </div>
 
+            <h3>Supplemental Faculty Info2</h3>
+            <div id="suppfacinfo" class="form-group form-indent btn-group" role="group">
+                <p class="status">
+                    <small>Optional. You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide
+                        additional detail on Faculty for the Academic Year. This document will appear as an Appendix in
+                        the Draft Report and Final Report.
+                    </small>
+                </p>
+
+                <input id="supinfo2" type="file" name="supinfo2" class="form-control col-xs-2 custom-file-upload"
+                       filetype="pdf" defaultValue="<?php echo $rowsexvalue['AC_SUPPL_FACULTY'] ?>">
+            </div>
             <!--                      Edit Control-->
 
             <?php require_once("../Resources/Includes/control.php"); ?>
@@ -195,7 +207,6 @@ require_once("../Resources/Includes/menu.php");
 require_once("../Resources/Includes/footer.php");
 ?>
 <script src="../Resources/Library/js/customFileUpload.js"></script>
-<script src="../Resources/Library/js/customfileupload2.js"></script>
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 
 <!--<script src="../Resources/Library/js/tabAlert.js"></script>-->

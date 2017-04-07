@@ -316,7 +316,7 @@
       $this->selectedYear = $_SESSION["bpayname"];
       $this->ouId = $_SESSION["login_ouid"];
 
-      if ($this->ouid == 4) {
+      if ($this->ouId == 4) {
 
         $this->ouAbbrev = $_SESSION['bpouabbrev'];
 
@@ -370,7 +370,6 @@
       $this->collaborationsPage();
       $this->campusClimateInclusion();
       $this->concludingRemarks();
-      $this->pdf->insertTOC(3);
       $this->getAcademicProgramsPDF();
       $this->getResearchScholarlyActivityPDF();
       $this->getResearchFacultyInformationPDF();
@@ -379,6 +378,7 @@
       $this->getCoummunityEngagementPDF();
       $this->getCollaborationsPDF();
       $this->getCampusClimateInclusionPDF();
+      $this->pdf->insertTOC(3);
       $this->pdf->Output("report_final.pdf","I");
 
     }
