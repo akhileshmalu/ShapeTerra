@@ -1,10 +1,9 @@
 <?php
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-require_once ("../Resources/Includes/connect.php");
+require_once("../Resources/Includes/Initialize.php");
+$recruitNretention = new Initialize();
+$recruitNretention->checkSessionStatus();
+$connection = $recruitNretention->connection;
+
 $error =array();
 $fname = $_SESSION['login_fname'];
 $approver = $_SESSION['login_email'];

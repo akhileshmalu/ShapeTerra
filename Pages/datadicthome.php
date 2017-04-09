@@ -14,14 +14,16 @@ if(!$_SESSION['isLogged']) {
     die();
 }
 $error = array();
-$errorflag =0;
+$errorflag = 0;
 $notBackToDashboard = true;
 
 /*
  * Connection to DataBase.
  */
-require_once ("../Resources/Includes/connect.php");
+require_once ("../Resources/Includes/DataDictionary.php");
 
+$dataDict = new DATADICTIONARY();
+$dataDict->checkSessionStatus();
 /*
  * Local & Session variable Initialization
  */
@@ -56,8 +58,6 @@ require_once("../Resources/Includes/menu.php");
     background: -webkit-linear-gradient(top, #fff 0%, #e4e4e4 100%);
     }
 </style>
-
-
 
 
 

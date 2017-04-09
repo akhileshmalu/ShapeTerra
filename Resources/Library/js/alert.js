@@ -1,12 +1,14 @@
-$('.alert').fadeIn("slow", function() {
-    $('.overlay').removeClass("hidden");
-});
-
-$('.alert .end').click(function(){
-	$('.alert').fadeOut("fast");
-	$('.overlay').fadeOut("fast", function() {
-    	$('.overlay').addClass("hidden");
+$(document).ready(function(){
+	$('.alert').fadeIn("slow", function() {
+		$('.overlay').removeClass("hidden");
 	});
-	$redirect = $('.alert button').attr('redirect');
-	$(window).attr('location',$redirect)
+
+	$('.alert .end').click(function(){
+		$('.alert').fadeOut("fast");
+		$('.overlay').fadeOut("fast", function() {
+			$('.overlay').addClass("hidden");
+		});
+		$redirect = $('.alert button').attr('redirect');
+		$(window).attr('location',$redirect)
+	});
 });

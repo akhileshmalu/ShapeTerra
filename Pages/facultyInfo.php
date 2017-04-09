@@ -1,29 +1,24 @@
 <?php
 
-$pagename = "bphome";
-
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
+//$pagename = "bphome";
 
 /*
  * This Page controls Academic Faculty Info.
  */
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-$error = array();
-$errorflag =0;
-$BackToDashboard = true;
+require_once("../Resources/Includes/BpContents.php");
+$FacultyInfo = new FACULTYINFO();
+$FacultyInfo->checkSessionStatus();
 
-require_once ("../Resources/Includes/connect.php");
+
+$message = array();
+$errorflag = 0;
+$BackToDashboard = true;
 
 $bpid = $_SESSION['bpid'];
 $author = $_SESSION['login_userid'];
 $ouid = $_SESSION['login_ouid'];
-$bpayname= $_SESSION['bpayname'];
+$bpayname = $_SESSION['bpayname'];
 $contentlink_id = $_GET['linkid'];
 
 if ($ouid == 4) {
@@ -32,127 +27,45 @@ if ($ouid == 4) {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-$fcdev=null;
-$createact=null;
+$fcdev = null;
+$createact = null;
 $time = date('Y-m-d H:i:s');
 
 
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY, OU_NAME, BROADCAST_STATUS, LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY, OU_NAME, BROADCAST_STATUS_OTHERS, LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
-}
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+//  Blueprint Status information on title box
+$resultbroad = $FacultyInfo->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(4);
 
+// Values for placeholders
+$resultexvalue = $FacultyInfo->PlaceHolderValue();
+$rowsexvalue = $resultexvalue->fetch(2);
 
-$sqlexvalue = "SELECT * from AC_FacultyInfo where OU_ABBREV='$ouabbrev' and OUTCOMES_AY='$bpayname' ";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue -> fetch_assoc();
-
-
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+// SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $FacultyInfo->GetStatus();
+$rowsbpstatus = $resultbpstatus->fetch(2);
 
 
 if (isset($_POST['savedraft'])) {
-
-    $facdev = nl2br($_POST['factextarea']);
-
-    $createact = nl2br($_POST['cractivity']);
-
-    $contentlink_id = $_GET['linkid'];
-
-
-//    if ($_FILES["supinfo"]["error"] > 0) {
-//        $error[0] = "Return Code: No Input " . $_FILES["supinfo"]["error"] . "<br />";
-//        $errorflag = 1;
-//
-//    } else {
-//        $target_dir = "../../user"."/".$name."/";
-
-    if ($_FILES['supinfo']['tmp_name'] !="") {
-        $target_dir = "../uploads/facultyInfo/";
-        $target_file = $target_dir . basename($_FILES["supinfo"]["name"]);
-        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
-
-
-        if ($imageFileType != "pdf") {
-            $error[1] = "Sorry, only PDf files are allowed.";
-            $errorflag = 1;
-
-        } else {
-            if (move_uploaded_file($_FILES["supinfo"]["tmp_name"], $target_file)) {
-                // $error[0] = "The file " . basename($_FILES["supinfo"]["name"]) . " has been uploaded.";
-                $supinfopath = $target_file;
-            } else {
-                $error[2] = "Sorry, there was an error uploading your file.";
-            }
-        }
-    }
-
-    if ($errorflag != 1) {
-
-        $sqlfacinfo = "INSERT INTO `AC_FacultyInfo` (OU_ABBREV, OUTCOMES_AY, OUTCOMES_AUTHOR, MOD_TIMESTAMP, FACULTY_DEVELOPMENT, CREATIVE_ACTIVITY, AC_SUPPL_FACULTY)
- VALUES ('$ouabbrev','$bpayname','$author','$time','$facdev','$createact','$supinfopath') ON DUPLICATE KEY UPDATE
- `OU_ABBREV` = VALUES(`OU_ABBREV`),`OUTCOMES_AY` = VALUES(`OUTCOMES_AY`),`OUTCOMES_AUTHOR` = VALUES(`OUTCOMES_AUTHOR`),`MOD_TIMESTAMP` = VALUES(`MOD_TIMESTAMP`),
- `FACULTY_DEVELOPMENT` = VALUES(`FACULTY_DEVELOPMENT`),`CREATIVE_ACTIVITY` = VALUES(`CREATIVE_ACTIVITY`),`AC_SUPPL_FACULTY` = VALUES(`AC_SUPPL_FACULTY`);";
-
-        $sqlfacinfo .= "Update  `BpContents` set CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-
-        $sqlfacinfo .= "Update  `broadcast` set BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
-
-        if ($mysqli->multi_query($sqlfacinfo)) {
-
-            $error[0] = "Faculty Info Added Succesfully.";
-        } else {
-            $error[3] = "Faculty Info could not be added.";
-        }
-
-    }
+    $message[0] = $FacultyInfo->SaveDraft();
 }
 
+if (isset($_POST['submit_approve'])) {
 
-if(isset($_POST['submit_approval'])) {
-
-    $contentlink_id = $_GET['linkid'];
-
-    $sqlfacinfo .= "UPDATE `BpContents` SET CONTENT_STATUS = 'Pending approval', BP_AUTHOR= '$author',MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id';";
-
-    if ($mysqli->query($sqlfacinfo)) {
-
-        $error[0] = "Faculty Information submitted Successfully";
-
-    } else {
-        $error[0] = "Faculty Information Could not be submitted. Please Retry.";
-    }
+    $message[0] = $FacultyInfo->SaveDraft();
+    $message[0] = "Faculty Info";
+    $message[0] .= $FacultyInfo->SubmitApproval();
 
 }
 
-if(isset($_POST['approve'])) {
-
-    $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Approved', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Information Approved Successfully";
-    } else {
-        $error[0] = "Faculty Information Could not be Approved. Please Retry.";
-    }
+if (isset($_POST['approve'])) {
+    $message[0] = "Faculty Info";
+    $message[0] .= $FacultyInfo->Approve();
 }
 
-if(isset($_POST['reject'])) {
+if (isset($_POST['reject'])) {
+    $message[0] = "Faculty Info";
+    $message[0] .= $FacultyInfo->Reject();
 
-    $contentlink_id = $_GET['linkid'];
-    $sqlmission = "UPDATE `BpContents` SET CONTENT_STATUS = 'Dean Rejected', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time'  where ID_CONTENT ='$contentlink_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Faculty Information Rejected Successfully";
-    } else {
-        $error[0] = "Faculty Information Could not be Rejected. Please Retry.";
-    }
 }
 
 require_once("../Resources/Includes/header.php");
@@ -161,24 +74,18 @@ require_once("../Resources/Includes/header.php");
 require_once("../Resources/Includes/menu.php");
 ?>
 
-<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
+<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css"/>
+
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['savedraft'])) { ?>
+<?php if (isset($_POST['submit_approval']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-<!--        Save will redirect to same page so user can approve -->
-        <button type="button" redirect="<?php echo "facultyInfo.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?> " class="end btn-primary">Close</button>
-    </div>
-<?php } ?>
-<?php if (isset($_POST['submit_approval'])) { ?>
-    <div class="alert">
-        <a href="#" class="close end"><span class="icon">9</span></a>
-        <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="<?php echo "bphome.php?ayname=".$rowbroad[0]; ?> " class="end btn-primary">Close</button>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
+        <button type="button" redirect="<?php echo "bphome.php?ayname=" . $rowbroad[0] . "&id=" . $bpid; ?> "
+                class="end btn-primary">Close
+        </button>
     </div>
 <?php } ?>
 <div class="hr"></div>
@@ -190,71 +97,105 @@ require_once("../Resources/Includes/menu.php");
         <div class="col-xs-8">
             <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
-            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Faculty information</h1>
-            <form action="<?php echo "facultyInfo.php?linkid=".$contentlink_id; ?>" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=" . $contentlink_id; ?>" method="POST"
+              enctype="multipart/form-data">
+            <h3>Research & Scholarly Activity: </h3>
+            <div id="resactivity" class="form-group form-indent">
+                <p class="status">
+                    <small>Please refer to the Academic Analytics data (through 2015) and the
+                        report provided by the Office of Research's Information Technology and Data Management.
+                        Identify areas of challenge and opportunities with faculty research and scholarly
+                        activity. Please provide specific plans you will implement to meet these challenges or
+                        take advantage of the opportunities.
+                    </small>
+                </p>
+                <textarea id="researchtextarea" name="researchtextarea" rows="6" cols="25" wrap="hard"
+                          class="form-control"><?php echo $FacultyInfo->mybr2nl($rowsexvalue['RSRCH_SCHOLRLY_ACTIVITY']);
+                    ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="researchtextarea"/> No response to this item
+                    </label>
+                </div>
+            </div>
+
             <h3>Faculty Development: </h3>
             <div id="facdev" class="form-group form-indent">
-                <p class="status"><small>Optional. List and describe your unit's efforts at faculty development during the Academic Year, including investments, activities, incentives, objectives, and outcomes.
-                    You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac)</small></p>
-                <textarea id="factextarea" name="factextarea" rows="5" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']); ?></textarea>
+                <p class="status">
+                    <small>Optional. List and describe your unit's efforts at faculty development during the Academic
+                        Year, including investments, activities, incentives, objectives, and outcomes.
+                        You may paste text from other applications by copying from the source document and hitting Ctrl
+                        + V (Windows) or Cmd + V (Mac)
+                    </small>
+                </p>
+                <textarea id="factextarea" name="factextarea" rows="6" cols="25" wrap="hard" class="form-control"><?php
+                echo $FacultyInfo->mybr2nl($rowsexvalue['FACULTY_DEVELOPMENT']);
+                ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="factextarea"/> No response to this item
+                    </label>
+                </div>
             </div>
-            <h3>Creative Activity</h3>
+            <h3>Other Activity</h3>
             <div id="createact" class="form-group form-indent">
-                <p class="status"><small>Optional.  List and describe significant artistic, creative, and performance activities of faculty in your unit during the Academic Year.  List by each individual's last name, first name, name of activity, and date (month and year are sufficient).
-                    You may paste text from other applications by copying from the source document and hitting Ctrl + V (Windows) or Cmd + V (Mac).</small></p>
+                <p class="status">
+                    <small>Optional. List and describe significant artistic, creative, and performance activities of
+                        faculty in your unit during the Academic Year. List by each individual's last name, first name,
+                        name of activity, and date (month and year are sufficient).
+                        You may paste text from other applications by copying from the source document and hitting Ctrl
+                        + V (Windows) or Cmd + V (Mac).
+                    </small>
+                </p>
 
-                <textarea id="cractivity" name="cractivity" rows="5" cols="25" wrap="hard" class="form-control"><?php echo mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']); ?></textarea>
+                <textarea id="cractivity" name="cractivity" rows="6" cols="25" wrap="hard" class="form-control"><?php
+                echo $FacultyInfo->mybr2nl($rowsexvalue['CREATIVE_ACTIVITY']);
+                ?></textarea>
+                <div class="checkbox">
+                    <label for="optionalCheck">
+                        <input type="checkbox" name="optionalCheck" id="cractivity"/> No response to this item
+                    </label>
+                </div>
             </div>
+
+
             <h3>Supplemental Faculty Info</h3>
-            <div id="suppfacinfo" class="form-group form-indent">
-                <p class="status"><small>Optional.  You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide additional detail on Faculty for the Academic Year.  This document will appear as an Appendix in the Draft Report and Final Report.</small></p>
-                <input id="supinfo" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
+            <div id="suppfacinfo" class="form-group form-indent btn-group" role="group">
+                <p class="status">
+                    <small>Optional. You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide
+                        additional detail on Faculty for the Academic Year. This document will appear as an Appendix in
+                        the Draft Report and Final Report.
+                    </small>
+                </p>
+
+                <input id="supinfo" type="file" name="supinfo" class="form-control col-xs-2 custom-file-upload"
+                       filetype="pdf" defaultValue="<?php echo $rowsexvalue['AC_SUPPL_FACULTY'] ?>">
             </div>
 
-                <!--                        Reviewer Edit Control-->
-<!--                --><?php //if ($_SESSION['login_right'] != 1): ?>
-<!---->
-<!--            <input type="button" value="Cancel & Discard" class="btn-primary cancelbox pull-left">-->
-<!--            <input id="approve" type="submit" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">-->
-<!--            <input id="save" type="submit" name="savedraft" value="Save Draft" class="btn-secondary pull-right" onclick="$('#approve').removeAttr('disabled');$('#save').addClass('hidden');">-->
-<!--                    -->
-<!--                    -->
-<!--                --><?php //endif; ?>
+            <h3>Supplemental Faculty Info2</h3>
+            <div id="suppfacinfo" class="form-group form-indent btn-group" role="group">
+                <p class="status">
+                    <small>Optional. You may attach a single PDF document, formatted to 8.5 x 11 dimensions, to provide
+                        additional detail on Faculty for the Academic Year. This document will appear as an Appendix in
+                        the Draft Report and Final Report.
+                    </small>
+                </p>
 
-                <!--                      Edit Control-->
+                <input id="supinfo2" type="file" name="supinfo2" class="form-control col-xs-2 custom-file-upload"
+                       filetype="pdf" defaultValue="<?php echo $rowsexvalue['AC_SUPPL_FACULTY'] ?>">
+            </div>
+            <!--                      Edit Control-->
 
-                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
+            <?php require_once("../Resources/Includes/control.php"); ?>
 
-                    <button id="save" type="submit" name="savedraft"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-secondary cancelbpbox pull-left">
-                    <button type="submit" id="submit_approve" name="submit_approve"
-                            class="btn-primary pull-right">Submit For Approval</button>
 
-                <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-
-                    <button id="save" type="submit" name="savedraft"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-
-                    <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                        <input type="submit" id="approve" name="approve" value="Approve"
-                               class="btn-primary pull-right">
-
-                        <input type="submit" id="reject" name="reject" value="Reject"
-                               class="btn-primary pull-right">
-
-                    <?php endif; } ?>
-
-            </form>
+        </form>
 
     </div>
 
@@ -265,27 +206,17 @@ require_once("../Resources/Includes/menu.php");
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
-
+<script src="../Resources/Library/js/customFileUpload.js"></script>
 <!--Calender Bootstrap inclusion for date picker INPUT-->
 
-<script src="../Resources/Library/js/tabAlert.js"></script>
-<script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
-<script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
-<script src="../Resources/Library/js/calender.js"></script>
-<script src="../Resources/Library/js/chkbox.js"></script>
+<!--<script src="../Resources/Library/js/tabAlert.js"></script>-->
+<!--<script type="text/javascript" src="../Resources/Library/js/moment.js"></script>-->
+<!--<script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>-->
+<!--<script src="../Resources/Library/js/calender.js"></script>-->
+<!--<script src="../Resources/Library/js/chkbox.js"></script>-->
+
 
 <script type="text/javascript">
-
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    });
-
-    function selectorfile(selected) {
-        var b = $(selected).val().substr(12);
-        alert(b + " is selected.");
-    };
-
-
     $('.cancelbox').on("click", function () {
         var choice = confirm("Are you sure you want to cancel");
         if (choice == true) {

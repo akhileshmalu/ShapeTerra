@@ -1,26 +1,19 @@
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
 
-/*
- * This Page controls Academic BluePrint Home.
- */
+require_once("../Resources/Includes/Initialize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-$error = array();
-$errorflag =0;
-
-require_once ("../Resources/Includes/connect.php");
-
-$bpid = $_GET['id'];
+$message = array();
+$errorflag = 0;
+@$bpid = $_GET['id'];
 $bpayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
+
+//Session variable required to keep Blueprint ID & year name
 $_SESSION['bpayname'] = $bpayname;
 $_SESSION['bpid'] = $bpid;
 
@@ -31,47 +24,102 @@ if ($outype == "Administration") {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
-/*
- * SQL to display Blueprint Content
- */
-if ($outype == "Academic Unit") {
-    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
- LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
-    $resultbpcontent = $mysqli->query($sqlbpcontent);
-} elseif ($outype == "Administration") {
-    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON BpContents.Linked_BP_ID = broadcast.ID_BROADCAST
- LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast.AUTHOR WHERE OU_ABBREV = '$ouabbrev' and BROADCAST_AY='$bpayname' ";
-    $resultbpcontent = $mysqli->query($sqlbpcontent);
+// SQL to display Blueprint Content
+try
+{
+    $sqlbpcontent = "SELECT * FROM `BpContents` INNER JOIN broadcast ON
+BpContents.Linked_BP_ID = broadcast.ID_BROADCAST LEFT JOIN PermittedUsers ON PermittedUsers.ID_STATUS = broadcast
+.AUTHOR WHERE OU_ABBREV = :ouabbrev AND BROADCAST_AY=:bpayname ";
+    $resultbpcontent = $connection->prepare($sqlbpcontent);
+    $resultbpcontent->bindParam(':ouabbrev', $ouabbrev, 2);
+    $resultbpcontent->bindParam(':bpayname', $bpayname, 2);
+    $resultbpcontent->execute();
+
+    $numbpcontent = $resultbpcontent->rowCount();
+}
+catch (PDOException $e)
+{
+//SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
 }
 
+try
+{
+    if ($outype == "Administration" || $outype == "Service Unit") {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified FROM broadcast INNER JOIN Hierarchy ON
+    broadcast.BROADCAST_OU=Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND Hierarchy.OU_ABBREV =:ouabbrev ;";
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(':bpayname', $bpayname, 2);
+        $resultbroad->bindParam(':ouabbrev', $ouabbrev, 2);
 
-
-if ($outype == "Administration" || $outype == "Service Unit" ) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+    } else {
+        $sqlbroad = "SELECT BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified FROM broadcast INNER JOIN
+    Hierarchy ON broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY WHERE BROADCAST_AY=:bpayname AND BROADCAST_OU =:ouid;";
+        $resultbroad = $connection->prepare($sqlbroad);
+        $resultbroad->bindParam(':bpayname', $bpayname, 2);
+        $resultbroad->bindParam(':ouid', $ouid, 1);
+    }
+    $resultbroad->execute();
 }
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
-
+catch (PDOException $e)
+{
+//SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+    error_log($e->getMessage());
+}
+$rowbroad = $resultbroad->fetch(4);
 
 
 if(isset($_POST['submit_bp'])) {
 
-    $status = "Submitted Draft";
     $bpayname = $_GET['ayname'];
-    $ouid = $_GET['ouid'];
+    $bpid = $_GET['id'];
+    try
+    {
+        $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='Submitted Draft',
+BROADCAST_STATUS_OTHERS='Submitted Draft' WHERE BROADCAST_AY=:bpayname AND BROADCAST_OU =:ouid; ";
+        $resultbroadupdate = $connection->prepare($sqlbroadupdate);
+        $resultbroadupdate->bindParam(':bpayname', $bpayname, 2);
+        $resultbroadupdate->bindParam(':ouid', $ouid, 1);
 
-    $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='$status', BROADCAST_STATUS_OTHERS='$status' where BROADCAST_AY='$bpayname' AND BROADCAST_OU ='$ouid';  ";
+        if ($resultbroadupdate->execute()) {
+            $message[0] = "Academic BluePrint Draft Submitted Successfully.";
+        } else {
+            $message[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+        }
+    }
+    catch (PDOException $e)
+    {
+//SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
+    }
+}
 
-    if($mysqli->query($sqlbroadupdate)){
-        $error[0] = "Academic BluePrint Draft Submitted Successfully.";
 
-    } else {
-        $error[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+if(isset($_POST['approve'])) {
+
+    $bpid = $_GET['id'];
+    $bpayname = $_GET['ayname'];
+
+    try
+    {
+        $sqlbroadupdate = "UPDATE `broadcast` SET BROADCAST_STATUS='Final', BROADCAST_STATUS_OTHERS='Final' WHERE
+    ID_BROADCAST = :bpid;";
+        $resultbroadupdate = $connection->prepare($sqlbroadupdate);
+        $resultbroadupdate->bindParam(':bpid',$bpid,2);
+        if ($resultbroadupdate->execute()) {
+            $message[0] = "Academic BluePrint Draft Submitted Successfully.";
+        } else {
+            $message[0] = "Academic BluePrint Draft could not be Submitted. Please retry.";
+        }
+    }
+    catch (PDOException $e)
+    {
+//SYSTEM::pLog($e->__toString(),$_SERVER['PHP_SELF']);
+        error_log($e->getMessage());
     }
 
 }
+
 
 
 
@@ -92,11 +140,11 @@ require_once("../Resources/Includes/menu.php");
 
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit_bp'])) { ?>
+<?php if (isset($_POST['submit_bp']) || isset($_POST['approve'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="account.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
@@ -109,56 +157,50 @@ require_once("../Resources/Includes/menu.php");
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <div class="col-xs-8">
+        <div class="col-xs-10">
             <h1 class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
-
-        <div class="col-xs-4">
-            <a href="pdfscript.php?ayname=<?php echo $bpayname; ?>" class="btn-primary">Preview</a>
+        <div class="col-xs-2">
+            <a href="../Resources/Includes/ChartInit.php" target="_Blank" class="btn-primary">View PDF</a>
         </div>
     </div>
-
-    <!-- <div id="main-box" class="information col-xs-10 col-xs-offset-1">
-        <div class="col-xs-8">
-            <h1 class="box-title"><span class="plus">+</span><span class="minus hidden">-</span> Information</h1>
-            <p class="hidden">Information here</p>
-        </div>
-    </div> -->
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Blueprint</h1>
         <div id="list">
             <ul class="list-nav">
-                <li class="col-xs-5">Section</li>
-                <li class="col-xs-2">Last Edited By</li>
+                <li class="col-xs-4">Section</li>
+                <li class="col-xs-3">Last Edited By</li>
                 <li class="col-xs-2">Last Edited On</li>
                 <li class="col-xs-3">Status</li>
             </ul>
             <!-- Start the loop to pull from database here -->
-            <?php while($rowsbpcontent = $resultbpcontent->fetch_assoc()) :
-                if ($rowsbpcontent['Sr_No'] == '3') { ?>
-            </div>
-        <h1 class="box-title">Outcomes</h1>
-            <div id="list">
-                <ul class="list-nav">
-                    <li class="col-xs-5">Section</li>
-                    <li class="col-xs-2">Last Edited By</li>
-                    <li class="col-xs-2">Last Edited On</li>
-                    <li class="col-xs-3">Status</li>
-                </ul>
-        <?php } ?>
+            <?php while($rowsbpcontent = $resultbpcontent->fetch(2)) :
+            if ($rowsbpcontent['Sr_No'] == '4') { ?>
+        </div>
+        <h1 class="box-title" style="margin-top: 50px;">Outcomes</h1>
+        <div id="list">
+            <ul class="list-nav">
+                <li class="col-xs-4">Section</li>
+                <li class="col-xs-3">Last Edited By</li>
+                <li class="col-xs-2">Last Edited On</li>
+                <li class="col-xs-3">Status</li>
+            </ul>
+            <?php } ?>
             <a href="<?php echo $rowsbpcontent['CONTENT_LINK'].'?linkid='.$rowsbpcontent['ID_CONTENT'] ?>">
                 <ul class="items">
-                    <li class="col-xs-5"><?php echo $rowsbpcontent['CONTENT_BRIEF_DESC'] ?></li>
-                    <li class="col-xs-2"><?php echo $rowsbpcontent['LNAME'].', '.$rowsbpcontent['FNAME']; ?></li>
+                    <li class="col-xs-4"><?php echo $rowsbpcontent['CONTENT_BRIEF_DESC'] ?></li>
+                    <li class="col-xs-3"><?php
+                        echo $initalize->getUserName($rowsbpcontent['BP_AUTHOR']);
+                        ?></li>
                     <li class="col-xs-2"><?php echo date("m/d/Y", strtotime($rowsbpcontent['MOD_TIMESTAMP'])); ?></li>
                     <li class="col-xs-3"><?php echo $rowsbpcontent['CONTENT_STATUS'] ?></li>
                 </ul>
             </a>
             <?php endwhile; ?>
-            </div>
+        </div>
 
 
         <!--
@@ -178,30 +220,39 @@ require_once("../Resources/Includes/menu.php");
             </table>
         </div> -->
 
-        <form action="<?php echo "bphome.php?ayname=$bpayname&ouname=$ouid"; ?>" method="POST">
+        <form action="<?php echo "bphome.php?ayname=$bpayname&ou_abbrev=$ouabbrev&id=$bpid"; ?>" method="POST">
             <?php if ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-            <div>
-            <input type="submit" name="submit_bp" value="Submit BluePrint"
-                <?php
-                $sqlbpcontent .= " and CONTENT_STATUS = 'Dean Approved' ;";
-                $resultcontent = $mysqli->query($sqlbpcontent);
-                $numrow = $resultcontent->num_rows;
-                if ($numrow < 6) { echo 'disabled'; } ?>
-                   class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-            </div>
+                <div>
+                    <input type="submit" name="submit_bp" value="Submit BluePrint"
+                        <?php
+                        $sqlbpcontent .= " AND CONTENT_STATUS = 'Dean Approved' ;";
+                        $resultcontent = $connection->prepare($sqlbpcontent);
+                        $resultcontent->bindParam(':ouabbrev', $ouabbrev, 2);
+                        $resultcontent->bindParam(':bpayname', $bpayname, 2);
+                        $resultcontent->execute();
+
+                        $numrow = $resultcontent->rowCount();
+                        if ($numrow < $numbpcontent) { echo 'disabled'; } ?>
+                           class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                </div>
+            <?php } elseif ($_SESSION['login_role'] == 'provost' &&
+                $rowbroad['BROADCAST_STATUS'] == 'Submitted Draft') { ?>
+                <!--                Provost Controls-->
+                <div>
+                    <input type="submit" name="approve" value="Approve BluePrint"
+                           class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-left">
+                    <input type="submit" name="reject" value="Reject BluePrint"
+                           class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
+                </div>
             <?php } ?>
         </form>
     </div>
-
-
 </div>
-
 
 <?php
 //Include Footer
 require_once("../Resources/Includes/footer.php");
 ?>
-
 
 <script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
@@ -209,5 +260,3 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
-
-

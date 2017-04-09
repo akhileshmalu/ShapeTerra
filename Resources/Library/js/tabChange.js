@@ -104,6 +104,18 @@ $('.changeTab2').click(function () {
 
 });
 
+$('.changeTab3').click(function () {
+    var nextcheck = true;
+    if (nextcheck) {
+        $tabs.filter('.active').removeClass('active').next('li').removeClass('disabled').addClass('active');
+        var className = $tabs.filter('.active').attr("class").split(' ')[0];
+        $("#actionlist.active").addClass("hidden");
+        $("#actionlist." + className).removeClass("hidden");
+        $("#actionlist." + className).addClass("active");
+        window.scrollTo(0, 0);
+    }
+});
+
 $($tabs).click(function () {
     var className = $(this).attr("class").split(' ')[0];
     var status = $(this).attr("class").split(' ')[1];

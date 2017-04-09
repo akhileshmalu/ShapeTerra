@@ -10,82 +10,95 @@
    *  -------- Note 1 Finished--------------------------------------------
    */
 
-       date_default_timezone_set("America/New_York");	//Setting time zone to EST time
 
-       session_start(); // Session Initiation
-       $error = array(); //Variable to store error msg
-       $errorflag = null;
+$message = array(); //Variable to store error msg
+$errorflag = null;
 
 if (isset($_POST['login'])) {
 
     if (empty($_POST['email']) || (empty($_POST['password']))) {
-        $error[0] = "Invalid Email Address or password";
+        $message[0] = "Invalid Email Address or password";
     } else {
-        require_once("../Resources/Includes/connect.php");         //Instance of Object class-connection Created
-        $email = test_input($_POST['email']);                       // Secured Input
-        $password = md5(test_input($_POST['password']));
+        require_once("../Resources/Includes/Initialize.php");
+        $concludingRemark = new Initialize();
+        $connection = $concludingRemark->connection;
+
+        $email = $concludingRemark->test_input($_POST['email']);                       // Secured Input
+        $password = md5($concludingRemark->test_input($_POST['password']));
 
         //Query into database for record check
-        $sql = "SELECT * FROM PermittedUsers where NETWORK_USERNAME ='$email' AND PW_DEV ='$password' ";
+        $sql = "SELECT * FROM PermittedUsers where NETWORK_USERNAME =:email AND PW_DEV =:password ";
+        $result = $connection->prepare($sql);                             //Query Execution
+        $result->bindParam(':email', $email, 2);
+        $result->bindParam('password', $password, 2);
+        $result->execute();
 
-        $result = $mysqli->query($sql);                             //Query Execution
-        $row_cnt = $result->num_rows;                               //count no of rows in result object.
+        $row_cnt = $result->rowCount();                                 //count no of rows in result object.
         if ($row_cnt >= '1') {                                        //If there exist one or more records
 
-            $record = $result->fetch_assoc();
+            $record = $result->fetch(2);
+
             /*
              Refer to Note 1 for status variable in instruction
              */
 
             if ($record['USER_STATUS'] == '1') {
+                ini_set("session.cookie_secure", 1);
+                ini_set("session.cookie_httponly", 1);
+//                session_start(); // Session Initiation
                 $_SESSION['login_email'] = $email;                   //session variable register
                 header("location:account.php");                     //redirect to account page
                 $_SESSION['isLogged'] = true;
             } else {
                 if ($record['USER_STATUS'] == '0') {
-                    $error [0] = "Please activate your account by link provided in your email.";
+                    $message [0] = "Please activate your account by link provided in your email.";
                 } // If User has been Terminated i.e. active = '-1'
                 else {
-                    $error[0] = "Incorrect Email address or Password! ";
+                    $message[0] = "Incorrect Email address or Password! ";
                 }
 
             }
 
         } else {
-            $error[0] = "Incorrect Email address or Password! ";
+            $message[0] = "Incorrect Email address or Password! ";
         }
-        $mysqli->close(); //Close Connection
+        //Close Connection
+        $connection = null;
+        $result = null;
     }
 
 }
 
+/*
+ * Functionality Discontinued
+
 if (isset($_POST['signup'])) {
 
     if (empty($_POST['email'])) {
-        $error[0] = " Please enter email address.";
+        $message[0] = " Please enter email address.";
         $errorflag = 1;
     } else {
 
         if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-            $error[0] = "Invalid Email Address.";
+            $message[0] = "Invalid Email Address.";
             $errorflag = 1;
         }
 
     }
 
-    /*
-     * Manual Exception handling in case of browser not supporting HTML5.0
-     */
+
+     //Manual Exception handling in case of browser not supporting HTML5.0
+
     if (empty($_POST['password'])) {
-        $error[1] = " Please enter password.";
+        $message[1] = " Please enter password.";
         $errorflag = 1;
     }
     if (empty($_POST['confirmPassword'])) {
-        $error[2] = " Please confirm password.";
+        $message[2] = " Please confirm password.";
         $errorflag = 1;
     }
     if (strcmp($_POST['password'], $_POST['confirmPassword'])) {
-        $error[3] = " Confirm Password does not match with Password.";
+        $message[3] = " Confirm Password does not match with Password.";
         $errorflag = 1;
     }
 
@@ -100,11 +113,17 @@ if (isset($_POST['signup'])) {
         $type = 1;
         $today = date("Y-m-d");
 
-        $sql = "INSERT INTO PermittedUsers(NETWORK_USERNAME,PW_DEV,DATE_BEGIN,HASH) VALUES ('$email','$password','$today','$hash')";
+        $sql = "INSERT INTO PermittedUsers(NETWORK_USERNAME,PW_DEV,DATE_BEGIN,HASH) VALUES (:email,:passcode,:today,
+        :hashValue)";
+        $result = $connection->prepare($sql);
+        $result->bindParam(':email',$email,2);
+        $result->bindParam(':passcode',$password,2);
+        $result->bindParam(':today',$today,2);
+        $result->bindParam(':hashValue',$hash,2);
 
-        if ($mysqli->query($sql)) {
-            $error[0] = "User Registered Successfully.";
-            $error[0] .= "Kindly confirm your profile by logging to your email.";
+        if ($result->execute()) {
+            $message[0] = "User Registered Successfully.";
+            $message[0] .= "Kindly confirm your profile by logging to your email.";
 
             //Confirmation Mail Variables
             $sub = "Congratulations! You have successfully registered.";
@@ -117,12 +136,14 @@ if (isset($_POST['signup'])) {
 
             mkdir("../User/" . "$email", 755);
 
-        } else $error [0] = "Registration Failed. Please retry";
+        } else $message [0] = "Registration Failed. Please retry";
 
-        $mysqli->close();
+        $connection = null;
+        $result = null;
 
     }
 }
+*/
 
 require_once("../Resources/Includes/header.php");
 ?>
@@ -334,18 +355,20 @@ require_once("../Resources/Includes/header.php");
             <div id="login-form" class="col-lg-10 col-xs-offset-1">
                 <form name="loginform" action="" method="POST">
                     <label id="error"
-                           class="text-center"> <?php foreach ($error as $value) echo "<span class=\"icon\">&#xe063;</span> " . $value; ?> </label>
+                           class="text-center"> <?php foreach ($message as $value) echo "<span class=\"icon\">&#xe063;</span> " . $value; ?> </label>
                     <input id="email" type="email" placeholder="Email" name="email" class="col-xs-12" required/>
                     <input id="password" type="password" placeholder="Password" name="password" class="col-xs-12"
                            required/>
                     <input id="confirm-password" type="password" placeholder="Confirm Password" name="confirmPassword"
                            class="col-xs-12 hidden"/>
-                    <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a>
+<!--                    <a href="forgotpassword.php" id="forgot-link" class="pull-right">Forgot your Password? </a>-->
 
 
                     <input type="submit" name="login" class="col-xs-12" value="Login" id="login-button">
 
-                    <!--        <button type="button" class="col-xs-12" id="signupShow">-->
+                    <!--  functionality discontinued
+
+                     <button type="button" class="col-xs-12" id="signupShow">-->
                     <!--            Sign Up-->
                     <!--        </button>-->
                     <!---->

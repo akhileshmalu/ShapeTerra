@@ -1,3 +1,7 @@
+html{
+    background-color: transparent !important; 
+}
+
 body{
     background: url('../../Resources/Images/Horseshoe.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;

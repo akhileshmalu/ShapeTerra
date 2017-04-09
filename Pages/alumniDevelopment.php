@@ -1,23 +1,12 @@
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
+require_once ("../Resources/Includes/BpContents.php");
+$alumniDeveopment = new ALUMNIDEVELOPMENT();
+$alumniDeveopment->checkSessionStatus();
 
-/*
- * This Page controls Initiatives & Observations.
- */
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-$error = array();
-$errorflag =0;
-$BackToDashboard = true;
-
-require_once ("../Resources/Includes/connect.php");
-
+$message = array();
+$errorflag = 0;
 $bpid = $_SESSION ['bpid'];
 $contentlink_id = $_GET['linkid'];
 $author = $_SESSION['login_userid'];
@@ -25,42 +14,51 @@ $ouid = $_SESSION['login_ouid'];
 $bpayname= $_SESSION['bpayname'];
 
 
+//Menu button ctrl for back button
+$BackToDashboard = true;
+
 if ($ouid == 4) {
     $ouabbrev = $_SESSION['bpouabbrev'];
 } else {
     $ouabbrev = $_SESSION['login_ouabbrev'];
 }
 
+//object for Alumni Dev Table
 
-$time = date('Y-m-d H:i:s');
+// Blueprint Status information on title box
+$resultbroad = $alumniDeveopment->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
 
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
+// Values for placeholders
+$resultExValue = $alumniDeveopment->PlaceHolderValue();
+$rowsExValue = $resultExValue->fetch(2);
+
+
+//  SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $alumniDeveopment->GetStatus();
+$rowsbpstatus = $resultbpstatus->fetch(2);
+
+
+if (isset($_POST['savedraft'])) {
+    $message[0] = $alumniDeveopment->SaveDraft();
 }
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
 
-/*
- * Values for placeholders
- */
-$sqlexvalue = "SELECT * from `AC_InitObsrv` where OU_ABBREV='$ouabbrev' and OUTCOMES_AY='$bpayname' ";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue -> fetch_assoc();
+if(isset($_POST['submit_approve'])) {
 
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM `BpContents` WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
+    $message[0] = $alumniDeveopment->SaveDraft();
+    $message[0] = "Alumni Development";
+    $message[0].= $alumniDeveopment->SubmitApproval();
+}
 
+if(isset($_POST['approve'])) {
+    $message[0] = "Alumni Development";
+    $message[0].= $alumniDeveopment->Approve();
+}
 
-
+if(isset($_POST['reject'])) {
+    $message[0] = "Alumni Development";
+    $message[0].= $alumniDeveopment->Reject();
+}
 
 require_once("../Resources/Includes/header.php");
 
@@ -71,20 +69,12 @@ require_once("../Resources/Includes/menu.php");
 <link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['submit_approval'])) { ?>
+<?php if (isset($_POST['submit_approve']) or isset($_POST['savedraft']) or isset($_POST['approve']) or isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
-    </div>
-<?php } ?>
-<?php if (isset($_POST['savedraft'])) { ?>
-    <div class="alert">
-        <a href="#" class="close end"><span class="icon">9</span></a>
-        <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="<?php echo "initiatives.php?ayname=".$rowbroad[0]."&linkid=".$contentlink_id; ?>" class="end btn-primary">Close</button>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
+        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]."&id=".$bpid; ?>" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
 <div class="hr"></div>
@@ -102,73 +92,43 @@ require_once("../Resources/Includes/menu.php");
     </div>
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <h1 class="box-title">Alumni &amp; Development</h1>
-        <form action="ACTION" method="POST" enctype="multipart/form-data">
-            <h3>Alumni</h3>
-                <div class="form-group form-indent">
-                    <p class="status">Describe your unit's substantial activities, engagements, and initiatives with alumni during the Academic Year.  Focus should be on relationships and activities with alumni; development with non-alumni and fundraising are collected separately.   </p>  
-                    <textarea name="alumni" rows="6" cols="25" wrap="hard" class="form-control"  required><?php echo $rowsexvalue['']; ?></textarea>
-                </div>
-            <h3>Development</h3>
-                <div class="form-group form-indent">
-                    <p class="status">Describe your unit's substantial development initiatives and outcomes during the Academic Year, excluding alumni, fundraising, and gifts.</p> 
-                    <textarea name="development" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo $rowsexvalue['']; ?></textarea>
-                </div>
-            <h3>Fundraising</h3>
-                <div class="form-group form-indent">
-                    <p class="status"><small>Describe your unit's major fundraising goals, initiatives, and outcomes during the Academic Year.  Include a calculation of all monetary funds actually received, excluding all other forms of donations, gifts, and planning.   </small></p>
-                    <textarea  name="fundraising" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['']); ?></textarea>
-                </div>
-            <h3>Gifts</h3>
-                <div class="form-group form-indent">
-                    <p class="status"><small>Describe major gifts, campaigns, and planning activities, exclusive of actual monetary fundraising, during the Academic Year. </small></p>
-                    <textarea  name="gifts" rows="6" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexvalue['']); ?></textarea>
-                </div>
+        <form action="<?php echo $_SERVER['PHP_SELF'] . "?linkid=" . $contentlink_id; ?>" method="POST"
+              enctype="multipart/form-data">
+            <h3>Alumni<span
+                        style="color: red"><sup>*</sup></span></h3>
+            <div class="form-group form-indent">
+                <p class="status">Describe your unit's substantial activities, engagements, and initiatives with alumni
+                    during the Academic Year. Focus should be on relationships and activities with alumni; development
+                    with non-alumni and fundraising are collected separately. </p>
+                <textarea name="alumni" rows="6" cols="25" wrap="hard" class="form-control"
+                          required><?php echo $alumniDeveopment->mybr2nl($rowsExValue['AC_UNIT_ALUMNI']); ?></textarea>
+            </div>
+            <h3>Development, Fundraising, and Gifts<span
+                        style="color: red"><sup>*</sup></span></h3>
+            <div class="form-group form-indent">
+                <p class="status">Describe your unit's substantial development initiatives and outcomes during the
+                    Academic Year.</p>
+                <textarea name="development" rows="6" cols="25" wrap="hard"
+                          class="form-control"><?php echo $alumniDeveopment->mybr2nl($rowsExValue['AC_UNIT_DEVT_FUND_GIFTS']); ?></textarea>
+            </div>
             <h3>Supplemental Info</h3>
-                <div id="suppinfo" class="form-group form-indent">
-                    <p class="status"><small>Optional.  If available, you may attach a single PDF document formatted to 8.5 x 11 dimensions, to provide additional detail on Alumni and Development for the Academic Year.  </small></p>
-                    <label for="supinfofile">Select File</label>
-                    <input id="supinfofile" type="file" name="supinfo" onchange="selectorfile(this)" class="form-control">
-                </div>
-                <!--                        Reviewer Edit Control
-                <?php //if ($_SESSION['login_right'] != 1): ?>
+            <div id="suppinfo" class="form-group form-indent">
+                <p class="status">
+                    <small>Optional. If available, you may attach a single PDF document formatted to 8.5 x 11
+                        dimensions, to provide additional detail on Alumni and Development for the Academic Year.
+                    </small>
+                </p>
+                <input id="supinfofile" type="file" name="supinfo" filetype="pdf" class="form-control col-xs-2
+                custom-file-upload" defaultValue="<?php echo $rowsExValue['AC_UNIT_SUPPL_ALUM_DEV'] ?>">
+            </div>
 
-                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                <input type="submit" id="approve" name="submit_approval" value="Submit For Approval" class="btn-primary pull-right">
-                <input type="submit" id="savebtn" name="savedraft" value="Save Draft" class="btn-secondary pull-right">
+<!--            --><?php //require_once("filePreview.php");?>
 
-                <?php //endif; ?>
-                -->
-
-                <!--                      Edit Control-->
-
-                <?php if (($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) AND ($rowsbpstatus['CONTENT_STATUS']=='In Progress' OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected' OR $rowsbpstatus['CONTENT_STATUS']=='Not Started') ) { ?>
-                    <button id="save" type="submit" name="savedraft"
-                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
-                    <button type="submit" id="submit_approve" name="submit_approve"
-                            class="btn-primary pull-right">Submit For Approval</button>
-
-                <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
-
-                    <button id="save" type="submit" name="savedraft"
-                            class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
-                        Save Draft
-                    </button>
-
-                    <?php if($rowsbpstatus['CONTENT_STATUS'] == 'Pending Dean Approval'): ?>
-                        <input type="submit" id="approve" name="approve" value="Approve" class="btn-primary pull-right">
-                        <input type="submit" id="reject" name="reject" value="Reject" class="btn-primary pull-right">
-                    <?php endif; } ?>
-
-            </form>
-        </div>
+            <!--                      Edit Control-->
+            <?php require_once ("../Resources/Includes/control.php"); ?>
+        </form>
     </div>
-
 </div>
-
 
 <?php
 //Include Footer
@@ -180,11 +140,24 @@ require_once("../Resources/Includes/footer.php");
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     });
-    function selectorfile(selected) {
-        var b = $(selected).val().substr(12);
-        alert(b + " is selected.");
-    }
+//    function selectorfile(selected) {
+//
+//        var doc, image;
+//        var filename = $(selected).val();
+//        var extention = $(selected).val().substr(filename.lastIndexOf('.') + 1).toLowerCase();
+//        var allowedext = ['pdf'];
+//
+//        if (filename.length > 0) {
+//            if (allowedext.indexOf(extention) !== -1) {
+//                alert(filename.substr(12) + " is selected.");
+//            } else {
+//                alert('Invalid file Format. Only ' + allowedext.join(', ') + ' are allowed.');
+//                $(selected).val('');
+//            }
+//        }
+//    }
 </script>
+<script src="../Resources/Library/js/customFileUpload.js"></script>
 <script src="../Resources/Library/js/tabAlert.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>

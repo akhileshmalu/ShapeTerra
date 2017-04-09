@@ -1,12 +1,11 @@
 <?php
 
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-require_once ("../Resources/Includes/connect.php");
-$error =array();
+require_once ("../Resources/Includes/initalize.php");
+$Initiatives = new Initialize();
+$Initiatives->checkSessionStatus();
+$connection = $Initiatives->connection;
+
+$message =array();
 
 $sql = "Select * from PermittedUsers";
 $result = $mysqli->query($sql);
@@ -19,12 +18,12 @@ if(isset($_POST['submit'])){
         $sql = "UPDATE PermittedUsers SET USER_STATUS = '-1' where NETWORK_USERNAME='$email';";
         $sql .= "UPDATE PermittedUsers SET DATE_TERMINATE = '$today' where NETWORK_USERNAME='$email';";
         if ($mysqli->multi_query($sql)) {
-            $error[0] = "User account has been successfully deactivated.";
+            $message[0] = "User account has been successfully deactivated.";
         } else {
-            $error[0] = "User account could not be deactivated. Please retry";
+            $message[0] = "User account could not be deactivated. Please retry";
         }
     } else {
-        $error[0] = "Please select a user";
+        $message[0] = "Please select a user";
     }
 }
 require_once("../Resources/Includes/header.php");
@@ -43,7 +42,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="account.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>

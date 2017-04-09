@@ -6,26 +6,16 @@ $pagename = "bphome";
  * This Page controls Faculty Awards Screen.
  */
 
-/*
- * Session & Error control Initialization.
- */
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-$error = array();
+require_once("../Resources/Includes/BpContents.php");
+
+$facultyNominations = new FACULTYAWARDS();
+$facultyNominations->checkSessionStatus();
+$connection = $facultyNominations->connection;
+
+$message = array();
 $errorflag = 0;
 $BackToDashboard = true;
 
-/*
- * Connection to DataBase.
- */
-require_once ("../Resources/Includes/connect.php");
-
-/*
- * Local & Session variable Initialization
- */
 $bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
 $award_id = $_GET['award_id'];
@@ -42,63 +32,36 @@ $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
-}
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+// Blueprint Status window of Page
+$resultbroad = $facultyNominations->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(4);
 
-/*
- * SQL check Status of Blueprint Content for Edit restrictions
- */
-$sqlbpstatus = "SELECT CONTENT_STATUS FROM BpContents WHERE ID_CONTENT = '$contentlink_id';";
-$resultbpstatus = $mysqli->query($sqlbpstatus);
-$rowsbpstatus = $resultbpstatus->fetch_assoc();
-
+// SQL check Status of Blueprint Content for Edit restrictions
+$resultbpstatus = $facultyNominations->GetStatus();
+$rowsbpstatus = $resultbpstatus->fetch(2);
 /*
  * New award modal Input values
  */
-$sqlaward = "select * from AwardType;";
-$resultaward = $mysqli->query($sqlaward);
+$sqlaward = "SELECT * FROM `AwardType` WHERE ELIGIBLE_RECIPIENTS = 'Faculty' ; ";
+$resultaward = $connection->prepare($sqlaward);
+$resultaward->execute();
 
-/*
- * SQL for pre-existing Awards Value
- */
-$sqlexvalue = "SELECT * FROM AC_FacultyAwards WHERE ID_FACULTY_AWARDS = '$award_id' ;";
-$resultexvalue = $mysqli->query($sqlexvalue);
-$rowsexvalue = $resultexvalue->fetch_assoc();
+
+$sqlawardLoc = "select * from AwardLocation;";
+$resultawardLoc = $connection->prepare($sqlawardLoc);
+$resultawardLoc->execute();
+
+
+// Values for placeholders
+$resultexvalue = $facultyNominations->PlaceHolderValue();
+$rowsexvalue = $resultexvalue->fetch(4);
 
 /*
  * Add Modal Record Addition
  */
 
-if(isset($_POST['award_submit'])){
-
-    $awardType = $_POST['awardType'];
-    $recipLname = $_POST['recipLname'];
-    $recipFname = $_POST['recipFname'];
-    $awardTitle = $_POST['awardTitle'];
-    $awardOrg = $_POST['awardOrg'];
-    $dateAward = $_POST['dateAward'];
-    $contentlink_id = $_GET['linkid'];
-
-    $sqlAcFacAward = "UPDATE `AC_FacultyAwards`
-SET OUTCOMES_AUTHOR = '$author',MOD_TIMESTAMP = '$time',AWARD_TYPE = '$awardType',RECIPIENT_NAME_LAST = '$recipLname',
-RECIPIENT_NAME_FIRST = '$recipFname', AWARD_TITLE = '$awardTitle',AWARDING_ORG = '$awardOrg',DATE_AWARDED ='$dateAward' WHERE ID_FACULTY_AWARDS = '$award_id' ;";
-
-    if($mysqli->query($sqlAcFacAward)){
-
-        $error[0] = "Award Updated Succesfully.";
-
-    } else {
-        $error[0] = "Award Could not be Updated.";
-    }
-
+if (isset($_POST['award_submit'])) {
+    $message[0] = $facultyNominations->SaveDraft();
 }
 
 
@@ -124,8 +87,9 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="bphome.php?ayname=<?php echo $rowbroad[0]; ?>" class="end btn-primary">Close</button>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
+        <button type="button" redirect="facultyawards.php?linkid=<?php echo $contentlink_id; ?>" class="end
+        btn-primary">Close</button>
     </div>
 <?php } ?>
 
@@ -140,7 +104,7 @@ require_once("../Resources/Includes/menu.php");
         <div class="col-xs-8">
             <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
             <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
-            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
             <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
 
@@ -148,18 +112,28 @@ require_once("../Resources/Includes/menu.php");
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
 
-        <form action="<?php echo "facultyawards_detail.php?linkid=".$contentlink_id."&award_id=".$award_id; ?>" method="POST" >
+        <form action="<?php echo $_SERVER['PHP_SELF']."?linkid=".$contentlink_id."&award_id=" .$award_id; ?>"
+              method="POST" >
 
             <div class="form-group">
 
                 <label for="awardtype">Select Award Type:</label>
                 <select name="awardType" class="form-control" id="awardtype">
                     <option value=""></option>
-                    <?php while ($rowsaward = $resultaward->fetch_assoc()): { ?>
+                    <?php while ($rowsaward = $resultaward->fetch(2)): { ?>
                         <option
                             value="<?php echo $rowsaward['AWARD_TYPE']; ?>"
                         <?php if($rowsaward['AWARD_TYPE'] == $rowsexvalue['AWARD_TYPE']) echo " selected = selected"; ?>>
                             <?php echo $rowsaward['AWARD_TYPE']; ?> </option>
+                    <?php } endwhile; ?>
+                </select>
+
+                <label for="awardLoc">Select Award Location:</label>
+                <select name="awardLoc" class="form-control" id="awardLoc">
+                    <option value=""></option>
+                    <?php while ($rowsawardLoc = $resultawardLoc->fetch(2)): { ?>
+                        <option
+                            value="<?php echo $rowsawardLoc['ID_AWARD_LOCATION'];?>"<?php if($rowsawardLoc['ID_AWARD_LOCATION'] == $rowsexvalue['AWARD_LOCATION']) { echo " selected = selected"; } ?>><?php echo $rowsawardLoc['AWARD_LOCATION']; ?></option>
                     <?php } endwhile; ?>
                 </select>
 
@@ -177,13 +151,21 @@ require_once("../Resources/Includes/menu.php");
 
                 <label for="datetimepicker3">Date Awarded:</label>
                 <div class='input-group date' id='datetimepicker3'>
-                    <input type='text' name="dateAward" value="<?php echo $rowsexvalue['DATE_AWARDED'] ?>" class="form-control" required>
+                    <input type='text' name="dateAward" value="<?php
+                    if(!empty($rowsexvalue['DATE_AWARDED']))
+                    echo date("m/d/Y", strtotime($rowsexvalue['DATE_AWARDED']));
+                    ?>" class="form-control" required>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                 </div>
 
-                <?php if ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee'): ?>
+                <?php if ($_SESSION['login_right'] != 1
+                    AND (  $rowsbpstatus['CONTENT_STATUS']=='In Progress'
+                        OR $rowsbpstatus['CONTENT_STATUS']=='Dean Rejected'
+                        OR $rowsbpstatus['CONTENT_STATUS']=='Not Started'
+                    )
+                ): ?>
                 <input type="submit" id="awardbtn" name="award_submit" value="Save" class="btn-primary">
                 <?php endif; ?>
 

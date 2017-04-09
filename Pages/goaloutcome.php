@@ -3,30 +3,17 @@
  * This Page controls Goal Outcomes.
  */
 
-/*
- * Session & Error control Initialization.
- */
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-$error = array();
-$errorflag =0;
+require_once("../Resources/Includes/BpContents.php");
+$goaloutcome = new GOALOUTCOME();
+$goaloutcome->checkSessionStatus();
+
+$message = array();
+$errorflag = 0;
 $BackToGoalOutHome = true;
-
-/*
- * Connection to DataBase.
- */
-require_once ("../Resources/Includes/connect.php");
-
-/*
- * Local & Session variable Initialization
- */
 $bpid = $_SESSION['bpid'];
 $contentlink_id = $_GET['linkid'];
-$goal_id=intval($_GET['goal_id']);
-$bpayname =$_SESSION['bpayname'];
+$goal_id = $_GET['goal_id'];
+$bpayname = $_SESSION['bpayname'];
 $ouid = $_SESSION['login_ouid'];
 
 if ($ouid == 4) {
@@ -39,106 +26,61 @@ $date = date("Y-m-d");
 $time = date('Y-m-d H:i:s');
 $author = $_SESSION['login_userid'];
 
-/*
- * faculty Award Grid ; conditional for provost & other users
- */
-if ($ouid == 4) {
-    $sqlbroad = "select BROADCAST_AY,OU_NAME,BROADCAST_STATUS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and Hierarchy.OU_ABBREV ='$ouabbrev';";
-} else{
-    $sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
-}
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+
+// Blueprint Status information on title box
+$resultbroad = $goaloutcome->BlueprintStatusDisplay();
+$rowbroad = $resultbroad->fetch(PDO::FETCH_BOTH);
+
 
 /*
  * Existing values to show for goal outcomes, If exist.
  */
-$sqlexgoalout = "select * from BP_UnitGoalOutcomes where ID_UNIT_GOAL = '$goal_id' ";
-$resultexgoalout = $mysqli->query($sqlexgoalout);
-$rowsexgoalout = $resultexgoalout -> fetch_assoc();
+$resultexgoalout = $goaloutcome->OutcomePlaceholders();
+$rowsexgoalout = $resultexgoalout->fetch(4);
 
 
+$resultunitgoal = $goaloutcome->PlaceHolderValue();
+$rowsunitgoal = $resultunitgoal->fetch(4);
 
-$sqlunitgoal = "select * from BP_UnitGoals where ID_UNIT_GOAL = '$goal_id' ";
-$resultunitgoal = $mysqli->query($sqlunitgoal);
-$rowsunitgoal = $resultunitgoal -> fetch_assoc();
-
+// Value Set for Goal ViewPoints;
+$goalviewpoint = array(
+    'Looking Back',
+    'Real Time',
+    'Looking Ahead'
+);
 
 
 /*
  * Add Modal Record Addition
  */
 
-if(isset($_POST['savedraft'])){
+if (isset($_POST['savedraft'])) {
 
-    $goalstatus = $_POST['goal_status'];
-    $goalach = nl2br($_POST['goal_ach']);
-    $resutilzed = nl2br($_POST['goal_resutil']);
-    $goalconti = nl2br($_POST['goal_conti']);
-    $resneed = nl2br($_POST['resoneed']);
-    $goalnote = nl2br($_POST['goal_notes']);
-    $goalreportstatus = "In progress";
-    $contentlink_id = $_GET['linkid'];
-    $goal_id=intval($_GET['goal_id']);
-
-
-
-    $sqlgoalout = "INSERT INTO `BP_UnitGoalOutcomes` (ID_UNIT_GOAL, OUTCOMES_AUTHOR, MOD_TIMESTAMP, GOAL_REPORT_STATUS, GOAL_STATUS, GOAL_ACHIEVEMENTS, GOAL_RSRCS_UTLZD, GOAL_CONTINUATION, GOAL_RSRCS_NEEDED, GOAL_NOTES) 
-VALUES ('$goal_id','$author','$time','$goalreportstatus','$goalstatus','$goalach','$resutilzed','$goalconti','$resneed','$goalnote'); ";
-
-    $sqlgoalout .= "UPDATE `BpContents` SET CONTENT_STATUS = 'In progress', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
-
-    $sqlgoalout .= "UPDATE `broadcast` SET BROADCAST_STATUS = 'In Progress', BROADCAST_STATUS_OTHERS = 'In Progress', AUTHOR= '$author', LastModified ='$time' where ID_BROADCAST = '$bpid'; ";
-
-    if($resultgoalout = $mysqli->multi_query($sqlgoalout)) {
-        $error[0] = "Goal Outcome Saved.";
-    } else{
-        $error[0] = "Goal Outcome could not be Saved.";
-    }
+    $message[0] = $goaloutcome->SaveDraft();
 
 }
 
-if(isset($_POST['submit_approve'])) {
+if (isset($_POST['submit_approve'])) {
 
-    $goal_id = $_GET['goal_id'];
-    $contentlink_id = $_GET['linkid'];
-    $goalreportstatus = "Pending Approval";
-    $sqlgoaloutap .= "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = '$goalreportstatus' where ID_UNIT_GOAL = '$goal_id'; ";
-
-    //$sqlgoaloutap .= "Update `BpContents` set CONTENT_STATUS = 'Pending Dean Approval', BP_AUTHOR= '$author', MOD_TIMESTAMP ='$time' where ID_CONTENT ='$contentlink_id';";
-
-    if($resultgoaloutap = $mysqli->multi_query($sqlgoaloutap)) {
-        $error[1] = "Goal Outcome submitted for Approval.";
-    } else {
-        $error[1] = "Goal Outcome could not be Submitted.";
-    }
+    $message[0] = $goaloutcome->SaveDraft();
+    $message[0] = "Goal Outcome";
+    $message[0] .= $goaloutcome->SubmitApproval();
 
 }
 
 //Dean Approve or Reject
 
-if(isset($_POST['approve'])) {
+if (isset($_POST['approve'])) {
 
-    $contentlink_id = $_GET['linkid'];
-    $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Approved' where ID_UNIT_GOAL = '$goal_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Goal Outcome Approved Successfully";
-    } else {
-        $error[0] = "Goal Outcome Could not be Approved. Please Retry.";
-    }
+    $message[0] = "Goal Outcome";
+    $message[0] .= $goaloutcome->Approve();
 }
 
-if(isset($_POST['reject'])) {
+if (isset($_POST['reject'])) {
 
-    $contentlink_id = $_GET['linkid'];
-    $sqlmission = "update `BP_UnitGoalOutcomes` set GOAL_REPORT_STATUS = 'Dean Rejected' where ID_UNIT_GOAL = '$goal_id'; ";
-    if ($mysqli->query($sqlmission)) {
-        $error[0] = "Goal Outcome Rejected Successfully";
-    } else {
-        $error[0] = "Goal Outcome Could not be Rejected. Please Retry.";
-    }
+    $message[0] = "Goal Outcome";
+    $message[0] .= $goaloutcome->Reject();
 }
-
 
 
 require_once("../Resources/Includes/header.php");
@@ -148,15 +90,18 @@ require_once("../Resources/Includes/menu.php");
 ?>
 
 
-<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />
+<!--<link href="../Resources/Library/css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css" />-->
 
 <div class="overlay hidden"></div>
-<?php if (isset($_POST['savedraft']) OR isset($_POST['submit_approve']) OR isset($_POST['approve']) OR isset($_POST['reject']) ) { ?>
+<?php if (isset($_POST['savedraft']) OR isset($_POST['submit_approve']) OR isset($_POST['approve']) OR isset($_POST['reject'])) { ?>
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
-        <button type="button" redirect="goaloutcomeshome.php?linkid=<?php echo $contentlink_id ?>" class="end btn-primary">Close</button>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
+        <button type="button" onclick="$redirect = $('.alert button').attr('redirect');
+		$(window).attr('location',$redirect)" redirect="<?php echo "goaloutcomeshome.php?linkid=" . $contentlink_id; ?>"
+                class="end btn-primary">Close
+        </button>
     </div>
 <?php } ?>
 
@@ -164,44 +109,37 @@ require_once("../Resources/Includes/menu.php");
 
 <div id="main-content" class="col-lg-10 col-md-8 col-xs-8">
     <div id="title-header">
-        <h1 id="title">Blueprint Management</h1>
+        <h1 class="box-title" id="title">Blueprint Management</h1>
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
         <div class="col-xs-8">
-                <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
-                <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1];  ?></p>
-                <p id="ouabbrev" class="hidden"><?php echo $ouabbrev;?></p>
-                <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
+            <h1 id="ayname" class="box-title"><?php echo $rowbroad[0]; ?></h1>
+            <p class="status"><span>Org Unit Name:</span> <?php echo $rowbroad[1]; ?></p>
+            <p id="ouabbrev" class="hidden"><?php echo $ouabbrev; ?></p>
+            <p class="status"><span>Status:</span> <?php echo $rowbroad[2]; ?></p>
         </div>
-
-<!--        <div class="col-xs-4">-->
-<!--            <a href="#" class="btn-primary">Preview</a>-->
-<!--        </div>-->
-
-
 
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
-        <h1 class="box-title">Goal Outcome Management</h1>
+        <h1 class="box-title">Goal : <?php echo $rowsunitgoal['UNIT_GOAL_TITLE']; ?></h1>
         <div id="" style="margin-top: 30px;">
-
-
-            <!--                <div class="form-group" style="border: solid">-->
-            <h4 style="border-top: 5px solid #862633; border-bottom: 5px solid #862633;padding:2% 0 2% 0;"><p
-                    style="color: grey">Goal : <?php echo $rowsunitgoal['UNIT_GOAL_TITLE']; ?></p></h4>
-            <!--                </div>-->
-
-            <form action="<?php echo "goaloutcome.php?goal_id=$goal_id&linkid=$contentlink_id"; ?>" method="POST">
+            <form action="<?php echo "goaloutcome.php?goal_id=" . $goal_id . "&linkid=" . $contentlink_id; ?>"
+                  onsubmit="if($('#goalstlist').val() == 0) { alert('Please select Goal Status'); return false; }"
+                  method="POST">
 
                 <div class="form-group">
-                    <label for="goallink"><h1>Linked to University Goal(s)</h1></label>
+                    <label for="goallink"><h3>Linked to University Goal(s)</h3></label>
 
                     <?php
-                    $sqlug = "Select * from BP_UnitGoals A   join UniversityGoals B where find_in_set(ID_UNIV_GOAL,LINK_UNIV_GOAL)>0 and A.ID_UNIT_GOAL = '$goal_id'; ";
-                    $resultug = $mysqli->query($sqlug);
-                    while ($rowsug = $resultug->fetch_assoc()): { ?>
+                    $sqlug = "SELECT * FROM BP_UnitGoals A   JOIN UniversityGoals B WHERE find_in_set(ID_UNIV_GOAL,LINK_UNIV_GOAL)>0 AND A.ID_UNIT_GOAL = :goal_id; ";
+
+                    $resultug = $goaloutcome->connection->prepare($sqlug);
+                    $resultug->bindParam(":goal_id", $goal_id, PDO::PARAM_INT);
+
+                    $resultug->execute();
+                    while ($rowsug = $resultug->fetch(4)): { ?>
                         <div class="checkbox" id="goallink">
                             <span class="icon">S</span><label style="color: grey"><?php echo $rowsug['GOAL_TITLE']; ?>
                             </label>
@@ -210,101 +148,124 @@ require_once("../Resources/Includes/menu.php");
                     <?php } endwhile; ?>
 
                 </div>
-                <label for ="goalstate" ><h1>Goal Statement </h1></label>
-                <div id="goalstate" class="form-group">
-                    <textarea  rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_STATEMENT']); ?></textarea>
+
+                <div id="goalstate" class="form-group col-xs-12">
+                    <h3>Goal Statement </h3>
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled
+                              readonly><?php echo $goaloutcome->mybr2nl($rowsunitgoal['GOAL_STATEMENT']); ?></textarea>
                 </div>
 
-                <label for ="goalalign" ><h1>Goal Alignment</h1></label>
-                <div id="goalalign" class="form-group">
-                    <textarea   rows="5" cols="25" wrap="hard" class="form-control" readonly><?php echo mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
+                <div id="goalalign" class="form-group col-xs-12">
+                    <h3>Goal Alignment</h3>
+                    <textarea rows="5" cols="25" wrap="hard" class="form-control form-indent" disabled
+                              readonly><?php echo $goaloutcome->mybr2nl($rowsunitgoal['GOAL_ALIGNMENT']); ?></textarea>
                 </div>
 
-                <label for ="goalstatus" ><h1>Goal Status</h1></label>
-                <div id="goalstatus" class="form-group">
-                    <select id="goalstlist" name="goal_status" onchange="control(this);" class="form-control">
-                    <?php $sqlgoalstatus ="select * from GoalStatus";
-                    $resultgoalstatus = $mysqli->query($sqlgoalstatus);
-                    while($rowsgoalstatus = $resultgoalstatus -> fetch_assoc()) :
-                    ?>
-                        <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"> <?php echo $rowsgoalstatus['STATUS']; ?> </option>
-                        <?php  endwhile; ?>
+                <!--                <label for ="goalview" ></label>-->
+                <div id="goalview" class="form-group col-xs-12">
+                    <h3>Goal Viewpoint in Report</h3>
+                    <input type="text" class="form-control form-indent"
+                           value="<?php echo $rowsunitgoal['GOAL_VIEWPOINT']; ?>" readonly disabled>
+                </div>
+
+                <!--                <label for ="goalstatus" ></label>-->
+                <div id="goalstatus" class="form-group col-xs-3">
+                    <h3>Goal Status</h3>
+                    <select id="goalstlist" name="goal_status" class="form-control form-indent"
+                            style="padding: 0px; background-color: #fff !important;">
+                        <option value="0"> -- select an option --</option>
+                        <?php $selectedViewPoint = $rowsunitgoal['GOAL_VIEWPOINT'];
+                        try {
+                            $sqlgoalstatus = "SELECT * FROM GoalStatus WHERE STATUS_VIEWPOINT = :selectedViewPoint; ";
+                            $resultgoalstatus = $goaloutcome->connection->prepare($sqlgoalstatus);
+                            $resultgoalstatus->bindParam(':selectedViewPoint', $selectedViewPoint, 2);
+                            $resultgoalstatus->execute();
+                        } catch (PDOException $e) {
+                            error_log($e->getMessage());
+                        }
+                        while ($rowsgoalstatus = $resultgoalstatus->fetch(2)) :?>
+                            <option value="<?php echo $rowsgoalstatus['ID_STATUS']; ?>"
+                                <?php if ($rowsgoalstatus['ID_STATUS'] == $rowsexgoalout['GOAL_STATUS']) echo " selected = selected"; ?>> <?php echo $rowsgoalstatus['STATUS']; ?> </option>
+                        <?php endwhile; ?>
                     </select>
                 </div>
-                <label for ="goalach" ><h1>Goal Achievement </h1></label>
-                <div id="goalach" class="form-group">
-                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
+                <!--                <label for ="goalach" ></label>-->
+                <div id="goalachcont" class="form-group col-xs-12 hidden">
+                    <h3>Goal Achievement </h3>
+                    <textarea id="goalachtext" name="goal_ach" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_ACHIEVEMENTS']); ?></textarea>
                 </div>
 
-
-                <div id="goalresutil" class="form-group hidden">
-                    <label for ="goalresutiltext" ><h1>Resources Utilized </h1></label>
-                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
+                <!--                <label for ="goalresutil" ></label>-->
+                <div id="goalresutilcont" class="form-group col-xs-12 hidden">
+                    <h3>Resources Utilized </h3>
+                    <textarea id="goalresutiltext" name="goal_resutil" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_RSRCS_UTLZD']); ?></textarea>
                 </div>
 
-
-                <div id="goalconti" class="form-group hidden">
-                    <label for ="goalcontitext" ><h1>Goal Continuation </h1></label>
-                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
+                <!--                <label id ="goalcontilable" ></label>-->
+                <div id="goalconticont" class="form-group col-xs-12 hidden">
+                    <h3>Goal Continuation </h3>
+                    <textarea id="goalcontitext" name="goal_conti" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_CONTINUATION']); ?></textarea>
                 </div>
 
-
-                <div id="resoneed" class="form-group hidden">
-                    <label for ="resoneedtext" ><h1>Resource Needed </h1></label>
-                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
+                <!--                <label for ="goalplanincomp" ></label>-->
+                <div id="goalincompcont" class="form-group col-xs-12 hidden">
+                    <h3>Goal Plans for Incomplete Goal</h3>
+                    <textarea id="goalincomptext" name="goal_plan_incomp" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_PLAN_INCOMPLT']); ?></textarea>
                 </div>
 
-                <label for ="notes" ><h1>Notes </h1></label>
-                <div id="notes" class="form-group">
-                    <textarea name="goal_notes" rows="3" cols="25" wrap="hard" class="form-control" ><?php echo mybr2nl($rowsexgoalout['GOAL_NOTES']); ?></textarea>
+                <!--                <label for ="goalplanupcom" ></label>-->
+                <div id="goalupcomincont" class="form-group col-xs-12 hidden">
+                    <h3>Goal Upcoming Plans </h3>
+                    <textarea id="goalupcomintext" name="goal_plan_upcoming" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_UPCOMING_PLAN']); ?></textarea>
                 </div>
 
-                <!--                        Reviewer Edit Control-->
-<!--                --><?php //if ($_SESSION['login_right'] != 1): ?>
-<!---->
-<!--                <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">-->
-<!---->
-<!--                <input type="submit" id="approve" name="approve" value="Submit For Approval" class="btn-primary pull-right">-->
-<!--                <input type="submit" id="savebtn" name="save_draft" value="Save Draft" class="btn-secondary pull-right">-->
-<!---->
-<!--                --><?php //endif; ?>
+                <!--                <label id = "resoneedlable" ></label>-->
+                <div id="resoneedcont" class="form-group col-xs-12 hidden">
+                    <h3>Resource Needed </h3>
+                    <textarea id="resoneedtext" name="resoneed" rows="3" cols="25" wrap="hard"
+                              class="form-control form-indent"><?php echo $goaloutcome->mybr2nl($rowsexgoalout['GOAL_RSRCS_NEEDED']); ?></textarea>
+                </div>
+
 
                 <!--                      Edit Control-->
+                <div class="col-xs-12"></div>
 
-                <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead' ) { ?>
+                <?php if ($_SESSION['login_role'] == 'contributor' OR $_SESSION['login_role'] == 'teamlead') { ?>
 
-                    <button id="save" type="submit" name="savedrft"
-                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
+                    <button id="save" type="submit" name="savedraft"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
-                    <input type="button" id="cancelbtn" value="Cancel & Discard" class="btn-primary cancelbpbox pull-left">
+                    <input type="button" id="cancelbtn" value="Cancel & Discard"
+                           class="btn-primary cancelbpbox pull-left">
                     <button type="submit" id="submit_approve" name="submit_approve"
-                            class="btn-primary pull-right">Submit For Approval</button>
+                            class="btn-primary pull-right">Submit For Approval
+                    </button>
 
                 <?php } elseif ($_SESSION['login_role'] == 'dean' OR $_SESSION['login_role'] == 'designee') { ?>
 
                     <button id="save" type="submit" name="savedraft"
-                            onclick="//$('#approve').removeAttr('disabled');$('#save').addClass('hidden');"
                             class="btn-primary col-lg-3 col-md-7 col-sm-8 pull-right">
                         Save Draft
                     </button>
 
-                    <?php if($rowsexgoalout['GOAL_REPORT_STATUS'] == 'Pending Approval'): ?>
+                    <?php if ($rowsexgoalout['GOAL_REPORT_STATUS'] == 'Pending Approval'): ?>
                         <input type="submit" id="approve" name="approve" value="Approve"
                                class="btn-primary pull-right">
 
                         <input type="submit" id="reject" name="reject" value="Reject"
                                class="btn-primary pull-right">
-
-                    <?php endif; } ?>
-
+                    <?php endif;
+                } ?>
             </form>
         </div>
     </div>
-
 </div>
-
 
 <?php
 //Include Footer
@@ -312,15 +273,13 @@ require_once("../Resources/Includes/footer.php");
 ?>
 
 <!--Calender Bootstrap inclusion for date picker INPUT-->
-<script type="text/javascript">
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-</script>
 <!--<script src="../Resources/Library/js/tabchange.js"></script>-->
+<script>
+    $('#viewpoint option:not(:selected)').prop('disabled', true);
+</script>
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
+<script src="../Resources/Library/js/alert.js"></script>
 <script src="../Resources/Library/js/outcomecntrl.js"></script>
-

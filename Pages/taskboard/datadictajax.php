@@ -3,8 +3,11 @@ session_start();
 
 $author = $_SESSION['login_userid'];
 
-require_once("../../Resources/Includes/connect.php");
-// require our class
+require_once("../../Resources/Includes/Initialize.php");
+$initialize = new Initialize();
+$mysqli = $initialize->mysqli;
+
+// require Grid Class
 require_once("grid.php");
 
 if ($_SESSION['login_right'] == 7) {

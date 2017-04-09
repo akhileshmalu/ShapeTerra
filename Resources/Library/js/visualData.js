@@ -1,24 +1,40 @@
-function showAcademicYearView(academicYear){
-  //testing purposes only
-  $("#academic-chart").load("../Resources/Includes/visualData.php?functionNum=1&yearDescription="+academicYear,function(){
-    console.log("successfully loaded data");
-  });
-}
+function showVisualData() {
 
-function showFacultyDataByYear(academicYear){
-  $("#faculty-chart").load("../Resources/Includes/visualData.php?functionNum=2&yearDescription="+academicYear,function(){
-    console.log("successfully loaded data");
-  });
-}
+    var datatablename = $('#data-table-name').html().substr(30);
+    var academicYear = $('#fuayname').html();
+    var ouchoice = $('#ou').val();
+    var functionNumber;
 
-function showDiversityStudentDataByYear(academicYear){
-  $("#student-diversity-chart").load("../Resources/Includes/visualData.php?functionNum=3&yearDescription="+academicYear,function(){
-    console.log("successfully loaded data");
-  });
-}
+    switch (datatablename) {
 
-function showDiversityFacultyDataByYear(academicYear){
-  $("#faculty-diversity-chart").load("../Resources/Includes/visualData.php?functionNum=4&yearDescription="+academicYear,function(){
-    console.log("successfully loaded data");
-  });
+        case "IR_AC_Enrollments":
+            functionNumber = 1;
+            break;
+
+    case "IR_AC_DiversityStudent":
+      functionNumber = 2;
+      break;
+
+    case "IR_AC_DiversityPersonnel":
+     functionNumber = 3;
+      break;
+
+        default :
+            functionNumber = 6;
+            break;
+    }
+
+
+  // if(!functionNumber)
+  // $("#dataValidation").load("../Resources/Includes/ChartVisualizations.php?functionNum="+functionNumber+"&yearDescription="+academicYear+"&ouchoice="+ouchoice,function(){
+  //   console.log("successfully loaded data");
+  // });
+
+    var query = window.location.search.substring(1);
+
+    // if(!functionNumber)
+    $("#dataValidation").load("taskboard/visualFileUploadController.php?functionNum=" + functionNumber
+        + "&yearDescription=" + academicYear + "&ouchoice=" + ouchoice+"&"+query, function () {
+        console.log("successfully loaded data");
+    });
 }

@@ -1,42 +1,33 @@
 <?php
 
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
+require_once("../Resources/Includes/FILEUPLOAD.php");
+$fileupload = new FILEUPLOAD();
+$fileupload->checkSessionStatus();
+$connection = $fileupload->connection;
 
-/*
- * This Page controls Academic BluePrint Home.
- */
-
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-$error = array();
+$message = array();
 $errorflag =0;
-
-require_once ("../Resources/Includes/connect.php");
 
 $FUayname = $_GET['ayname'];
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 $_SESSION['FUayname'] = $FUayname;
-$notBackToDashboard = true;
 
 
-$sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU ='$ouid'; ";
 
-$resultbroad = $mysqli->query($sqlbroad);
-$rowbroad = $resultbroad->fetch_array(MYSQLI_NUM);
+$sqlbroad = "select BROADCAST_AY,OU_NAME, BROADCAST_STATUS_OTHERS,LastModified from broadcast inner join Hierarchy on broadcast.BROADCAST_OU = Hierarchy.ID_HIERARCHY where BROADCAST_AY='$bpayname' and BROADCAST_OU =:ouid; ";
+$resultbroad = $connection->prepare($sqlbroad);
+$resultbroad->bindParam(":ouid", $ouid, PDO::PARAM_INT);
+$resultbroad->execute();
+$rowbroad = $resultbroad->fetch(4);
 
 //Menu control for back to dashboard button
 //true: Dont show button
 //false: show button
-
+$notBackToDashboard = true;
 
 
 require_once("../Resources/Includes/header.php");
-
 // Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
@@ -71,16 +62,9 @@ require_once("../Resources/Includes/menu.php");
         <div class="col-xs-8">
             <h1 class="box-title"><?php echo $FUayname; ?> </h1>
             <p class="status"><span>Org Unit Name: </span> <?php echo $_SESSION['login_ouname']; ?></p>
-<!--            <p class="status"><span>User role: </span> --><?php //echo $rowsmenu['USER_RIGHT']; ?><!--</p>-->
+            <!--            <p class="status"><span>User role: </span> --><?php //echo $rowsmenu['USER_RIGHT']; ?><!--</p>-->
         </div>
 
-    </div>
-
-    <div id="main-box" class="information col-xs-10 col-xs-offset-1">
-        <div class="col-xs-8">
-            <h1 class="box-title"><span class="plus">+</span><span class="minus hidden">-</span> Information</h1>
-            <p class="hidden">Information here</p>
-        </div>
     </div>
 
     <div id="main-box" class="col-xs-10 col-xs-offset-1">
@@ -88,10 +72,11 @@ require_once("../Resources/Includes/menu.php");
         <h1 class="box-title">Select File Type for Action</h1>
         <label for ="fileupload">The overview below indicates the current status of each file type expected for the above Academic Year. Click any file type to  upload new or view content of previously uploaded files.</label>
         <div id="fileupload" style="margin-top: 10px; padding-left: 40px;">
-            <table class="grid" action="taskboard/fileuploadstatusajax.php" title="File Upload Contents">
+            <table class="fileupload" action="taskboard/fileuploadstatusajax.php" title="File Upload Contents">
                 <tr>
 
-                    <th col="NAME_UPLOADFILE" href="{{columns.LINK_UPLOADFILE}}?linkid={{columns.ID_UPLOADFILE}}"  width="225" type="text">Section</th>
+                    <th col="NAME_UPLOADFILE" href="uploadfile.php?linkid={{columns.ID_UPLOADFILE}}"  width="225"
+                        type="text">Section</th>
                     <th col="STATUS_UPLOADFILE" width="125" type="text">Status</th>
                     <th col="MOD_TIMESTAMP" width="150" type="text">Last Edited On</th>
                     <th col="FILE_AUTHOR"  width="130" type="text">Last Modified By</th>
@@ -117,4 +102,3 @@ require_once("../Resources/Includes/footer.php");
 <script src="../Resources/Library/js/calender.js"></script>
 <script src="../Resources/Library/js/chkbox.js"></script>
 <script src="../Resources/Library/js/taskboard.js"></script>
-

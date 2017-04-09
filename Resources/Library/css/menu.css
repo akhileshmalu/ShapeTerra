@@ -52,15 +52,13 @@
 nav{
 	padding-top: 20px;
 	background-color: #591B21;
-	/*Arbitrary height until content is added to match*/
-	height: 2000px;
 	min-width: 200px;
 }
 
 nav ul{
 	list-style: none;
 	padding-left: 0;
-	margin-left:0; 
+	margin-left:0;
 }
 
 nav ul li#header{
@@ -89,8 +87,8 @@ nav ul li#header a:hover, nav ul li#header a:visited, nav ul li#header a:active,
 }
 
 .icon.add {
-    border-top-width: 0;
-    border-bottom: 4px solid #fff;
+	border-top-width: 0;
+	border-bottom: 4px solid #fff;
 }
 
 nav ul li{
@@ -103,7 +101,7 @@ nav ul li#header{
 }
 
 nav ul li a{
-	color: #a0a5ab;
+	color: #9b7679;
 	padding-left: 5px;
 	font-size: 16px;
 	font-weight: 400;

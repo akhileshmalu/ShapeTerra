@@ -1,18 +1,14 @@
 <?php
 
-
 /*
  * This Page controls Data Element Add Screen.
  */
 
-/*
- * Session & Error control Initialization.
- */
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
+require_once("../Resources/Includes/Initialize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
 $notBackToDashboard = true;
 $error = array();
 $errorflag =0;
@@ -22,18 +18,12 @@ $elemstatus = $_GET['status'];
 
 $ayset = array();
 $aystring = null;
-
 $ouset = array();
 $oustring = null;
 
 $bptopic =array();
 $bptopicstring = null;
 
-
-/*
- * Connection to DataBase.
- */
-require_once ("../Resources/Includes/connect.php");
 
 /*
  * Local & Session variable Initialization
@@ -47,29 +37,50 @@ $author = $_SESSION['login_userid'];
 /*
  * SQL Existing Data Element Value
  */
-$sqldataelem = "SELECT * FROM Footnotes WHERE ID_FOOTNOTE ='$elemid'; ";
-$resultdataelem = $mysqli -> query($sqldataelem);
-$rowsdataelem = $resultdataelem -> fetch_assoc();
+$sqldataelem = "SELECT * FROM Footnotes WHERE ID_FOOTNOTE = :elemid; ";
+$resultdataelem = $connection->prepare($sqldataelem);
+$resultdataelem->bindParam(":elemid", $elemid, PDO::PARAM_INT);
+$resultdataelem->execute();
+
+$rowsdataelem = $resultdataelem->fetch(4);
+
+
 
 /*
  * Blueprint TopicAreas Value
  */
-$sqltopicareas = "SELECT * FROM TopicAreas where TOPIC_FOR_FOOTNOTES = 'Y';";
-$resulttopicareas = $mysqli -> query($sqltopicareas);
-
+try {
+    $sqltopicareas = "SELECT * FROM TopicAreas where TOPIC_FOR_FOOTNOTES = 'Y';";
+    $resulttopicareas = $connection->prepare($sqltopicareas);
+    $resulttopicareas->execute();
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 /*
  * Academic Years Value
  */
-$sqlay = "SELECT * FROM AcademicYears ORDER BY ACAD_YEAR_DESC DESC ;";
-$resultay = $mysqli->query($sqlay);
+try {
+    $sqlay = "SELECT * FROM AcademicYears ORDER BY ACAD_YEAR_DESC DESC ;";
+    $resultay = $connection->prepare($sqlay);
+    $resultay->execute();
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 /*
  * Impacted Units Value
  */
-$sqlou = "Select * from Hierarchy where OU_DATE_END IS NULL and OU_TYPE='Academic Unit';";
-$resultou = $mysqli -> query($sqlou);
-
+try {
+    $sqlou = "Select * from Hierarchy where OU_DATE_END IS NULL and OU_TYPE='Academic Unit';";
+    $resultou = $connection->prepare($sqlou);
+    $resultou->execute();
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 
 if(isset($_POST['save'])) {
@@ -91,17 +102,32 @@ if(isset($_POST['save'])) {
         $oustring .=$item.',';
     }
 
-    $narrative = nl2br($_POST['narrativevalue']);
+    $narrative = $initalize->mynl2br($_POST['narrativevalue']);
 
-    $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,  MOD_BY, MOD_TIMESTAMP) 
-VALUES ('$aystring','$oustring','$bptopicstring','$footnotetopic','$narrative','$author','$time');";
+    try {
 
-    if($mysqli->query($sqladdfoot)) {
-        $error[0] = "Your Footnote has been submitted for review.This will be accepted post approval.";
-    } else {
-        $error[0] = "Footnote could not be submitted.";
+        $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,  MOD_BY, MOD_TIMESTAMP)
+    VALUES (:aystring,:oustring,:bptopicstring,:footnotetopic,:narrative,:author,:timeStampmod);";
+
+        $sqladdfootresult = $connection->prepare($sqladdfoot);
+        $sqladdfootresult->bindParam(":aystring", $aystring, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":oustring", $oustring, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":bptopicstring", $bptopicstring, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":footnotetopic", $footnotetopic, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":narrative", $narrative, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
+
+
+        if ($sqladdfootresult->execute()) {
+            $error[0] = "Your Footnote has been submitted for review.This will be accepted post approval.";
+        } else {
+            $error[0] = "Footnote could not be submitted.";
+        }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
-
 
 }
 
@@ -124,15 +150,31 @@ if(isset($_POST['directsave'])) {
         $oustring .=$item.',';
     }
 
-    $narrative = nl2br($_POST['narrativevalue']);
+    $narrative = $initalize->mynl2br($_POST['narrativevalue']);
 
-    $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,FOOTNOTE_STATUS , MOD_BY, MOD_TIMESTAMP) 
-VALUES ('$aystring','$oustring','$bptopicstring','$footnotetopic','$narrative','Approved','$author','$time');";
+    try {
 
-    if($mysqli->query($sqladdfoot)) {
-        $error[0] = "Your Footnote has been added in Footnotes.";
-    } else {
-        $error[0] = "Footnote could not be submitted.";
+        $sqladdfoot = "INSERT INTO Footnotes (FOOTNOTE_ACAD_YEAR, FOOTNOTE_APPLIC_UNITS, FOOTNOTE_TOPIC, FOOTNOTE_DESC, FOOTNOTE_NARRATIVE,FOOTNOTE_STATUS , MOD_BY, MOD_TIMESTAMP)
+        VALUES (:aystring,:oustring,:bptopicstring,:footnotetopic,:narrative,'Approved',:author,:timeStampmod);";
+
+        $sqladdfootresult = $connection->prepare($sqladdfoot);
+        $sqladdfootresult->bindParam(":aystring", $aystring, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":oustring", $oustring, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":bptopicstring", $bptopicstring, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":footnotetopic", $footnotetopic, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":narrative", $narrative, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
+
+        if ($sqladdfootresult->execute()) {
+            $error[0] = "Your Footnote has been added in Footnotes.";
+        } else {
+            $error[0] = "Footnote could not be submitted.";
+        }
+
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 
 
@@ -159,47 +201,72 @@ if(isset($_POST['update'])) {
         $oustring .=$item.',';
     }
 
-    $narrative = nl2br($_POST['narrativevalue']);
+    $narrative = $initalize->mynl2br($_POST['narrativevalue']);
 
+    try {
 
-    $sqladdfoot = "UPDATE Footnotes SET FOOTNOTE_ACAD_YEAR = '$aystring', FOOTNOTE_APPLIC_UNITS = '$oustring', FOOTNOTE_TOPIC = '$bptopicstring',
- FOOTNOTE_DESC = '$footnotetopic', FOOTNOTE_NARRATIVE = '$narrative', FOOTNOTE_STATUS = 'Approved', MOD_BY = '$author', MOD_TIMESTAMP = '$time' where ID_FOOTNOTE = '$elemid';";
+        $sqladdfoot = "UPDATE Footnotes SET FOOTNOTE_ACAD_YEAR = :aystring, FOOTNOTE_APPLIC_UNITS = :oustring, FOOTNOTE_TOPIC = :bptopicstring,
+        FOOTNOTE_DESC = :footnotetopic, FOOTNOTE_NARRATIVE = :narrative, FOOTNOTE_STATUS = 'Approved', MOD_BY = :author, MOD_TIMESTAMP = :timeStampmod where ID_FOOTNOTE = :elemid;";
 
-    if($mysqli->query($sqladdfoot)) {
-        $error[0] = "Footnote has been updated.";
-    } else {
-        $error[0] = "Footnote could not be submitted.";
+        $sqladdfootresult = $connection->prepare($sqladdfoot);
+        $sqladdfootresult->bindParam(":aystring", $aystring, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":oustring", $oustring, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":bptopicstring", $bptopicstring, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":footnotetopic", $footnotetopic, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":narrative", $narrative, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":author", $author, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":timeStampmod", $time, PDO::PARAM_STR);
+        $sqladdfootresult->bindParam(":elemid", $elemid, PDO::PARAM_STR);
+
+        if($sqladdfootresult->execute()) {
+            $error[0] = "Footnote has been updated.";
+        } else {
+            $error[0] = "Footnote could not be submitted.";
+        }
+
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
-
-
 
 }
 
 
-if(isset($_POST['approve'])) {
+if (isset($_POST['approve'])) {
+    try {
+        $sqladdfoot = "update Footnotes SET FOOTNOTE_STATUS = 'Approved' where ID_FOOTNOTE = :elemid;";
+
+        $sqladdfootresult = $connection->prepare($sqladdfoot);
+        $sqladdfootresult->bindParam(":elemid", $elemid, PDO::PARAM_INT);
 
 
-    $sqladdfoot = "update Footnotes SET FOOTNOTE_STATUS = 'Approved' where ID_FOOTNOTE = '$elemid';";
-
-    if($mysqli->query($sqladdfoot)) {
-        $error[0] = "Footnote has been approved.";
-    } else {
-        $error[0] = "Footnote could not be approved.";
+        if($sqladdfootresult->execute()) {
+            $error[0] = "Footnote has been approved.";
+        } else {
+            $error[0] = "Footnote could not be approved.";
+        }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
-
 }
 
 if(isset($_POST['discard'])) {
+    try {
+        $sqladdfoot = "update Footnotes SET FOOTNOTE_STATUS = 'Archived' where ID_FOOTNOTE = :elemid;";
 
+        $sqladdfootresult = $connection->prepare($sqladdfoot);
+        $sqladdfootresult->bindParam(":elemid", $elemid, PDO::PARAM_INT);
 
-    $sqladdfoot = "update Footnotes SET FOOTNOTE_STATUS = 'Archived' where ID_FOOTNOTE = '$elemid';";
-
-    if($mysqli->query($sqladdfoot)) {
-        $error[0] = "This Footnote has been Archived & excluded from Footnotes.";
-    } else {
-        $error[0] = "This Footnote could not be Archived.";
+        if($sqladdfootresult->execute()) {
+            $error[0] = "This Footnote has been Archived & excluded from Footnotes.";
+        } else {
+            $error[0] = "This Footnote could not be Archived.";
+        }
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
-
 }
 
 
@@ -244,7 +311,7 @@ require_once("../Resources/Includes/menu.php");
                         </small>
                     </p>
                     <input id="ftitle" type="text" name="footnotetitle" <?php if($elemid == 0){ echo "onblur = 'check_availability_ftitle()' "; } ?> class="form-control"
-                        style="width: 60%;"  maxlength="255" value="<?php echo $rowsdataelem['FOOTNOTE_DESC']; ?>">
+                           style="width: 60%;"  maxlength="255" value="<?php echo $rowsdataelem['FOOTNOTE_DESC']; ?>">
                     <!--                        To display error if name is not unique-->
                     <p id="ftitle_status" ></p>
                 </div>
@@ -258,18 +325,18 @@ require_once("../Resources/Includes/menu.php");
                         <small><em>Indicate which years were impacted. Between which change occured.Select one or more.</em></small>
                     </p>
                     <div class="col-xs-12">
-                    <?php while ($rowsay = $resultay -> fetch_assoc()) {
-                        echo "<div class='col-lg-5'><div class='checkbox'><label><input type='checkbox' name='ay[]' value='". $rowsay['ACAD_YEAR_DESC']."'";
-                        $topicitem = explode(',',$rowsdataelem['FOOTNOTE_ACAD_YEAR']);
-                        foreach ($topicitem as $top) {
-                            if ($top == $rowsay['ACAD_YEAR_DESC']) {
-                                echo " checked";
+                        <?php while ($rowsay = $resultay->fetch(4)) {
+                            echo "<div class='col-lg-5'><div class='checkbox'><label><input type='checkbox' name='ay[]' value='". $rowsay['ACAD_YEAR_DESC']."'";
+                            $topicitem = explode(',',$rowsdataelem['FOOTNOTE_ACAD_YEAR']);
+                            foreach ($topicitem as $top) {
+                                if ($top == $rowsay['ACAD_YEAR_DESC']) {
+                                    echo " checked";
+                                }
                             }
+                            echo " >" . $rowsay['ACAD_YEAR_DESC'] . "</label></div></div>";
                         }
-                        echo " >" . $rowsay['ACAD_YEAR_DESC'] . "</label></div></div>";
-                    }
-                    ?>
-                </div>
+                        ?>
+                    </div>
                 </div>
 
                 <label for="bptopic" style="font-size: 18px;">Blueprint Topic(s) <span
@@ -279,17 +346,17 @@ require_once("../Resources/Includes/menu.php");
                         <small><em>Indicate which topic(s) were impacted. One or more is required.Select all that apply.</em></small>
                     </p>
                     <div class="col-xs-12">
-                    <?php while ($rowstopicareas = $resulttopicareas -> fetch_assoc()) {
-                        echo "<div class='col-lg-5'><div class='checkbox'><label><input type='checkbox' name='bptopic[]' value='". $rowstopicareas['ID_TOPIC']."'";
-                        $topicitem = explode(',',$rowsdataelem['FOOTNOTE_TOPIC']);
-                        foreach ($topicitem as $top) {
-                            if ($top == $rowstopicareas['ID_TOPIC']) {
-                                echo " checked";
+                        <?php while ($rowstopicareas = $resulttopicareas->fetch(4)) {
+                            echo "<div class='col-lg-5'><div class='checkbox'><label><input type='checkbox' name='bptopic[]' value='". $rowstopicareas['ID_TOPIC']."'";
+                            $topicitem = explode(',',$rowsdataelem['FOOTNOTE_TOPIC']);
+                            foreach ($topicitem as $top) {
+                                if ($top == $rowstopicareas['ID_TOPIC']) {
+                                    echo " checked";
+                                }
                             }
+                            echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'] . "</label></div></div>";
                         }
-                        echo ">" . $rowstopicareas['TOPIC_BRIEF_DESC'] . "</label></div></div>";
-                    }
-                    ?>
+                        ?>
                     </div>
                 </div>
 
@@ -300,7 +367,7 @@ require_once("../Resources/Includes/menu.php");
                         <small><em>Indicate which topic(s) were impacted. One or more is required.Select all that apply.</em></small>
                     </p>
                     <div class="col-xs-12">
-                        <?php while ($rowsou = $resultou -> fetch_assoc()) {
+                        <?php while ($rowsou = $resultou->fetch(4)) {
                             echo "<div class='col-lg-5'><div class='checkbox'><label><input type='checkbox' name='ou[]' value='". $rowsou['ID_HIERARCHY']."'";
                             $ouitem = explode(',',$rowsdataelem['FOOTNOTE_APPLIC_UNITS']);
                             foreach ($ouitem as $ou) {
@@ -383,9 +450,9 @@ require_once("../Resources/Includes/footer.php");
         $('[data-toggle="tooltip"]').tooltip()
     });
 
-//    function confirmaction() {
-//
-//    }
+    //    function confirmaction() {
+    //
+    //    }
 
 </script>
 <script src="../Resources/Library/js/uniqueness.js"></script>
@@ -394,4 +461,3 @@ require_once("../Resources/Includes/footer.php");
 <script type="text/javascript" src="../Resources/Library/js/moment.js"></script>
 <script type="text/javascript" src="../Resources/Library/js/bootstrap-datetimepicker.min.js"></script>
 <script src="../Resources/Library/js/calender.js"></script>
-

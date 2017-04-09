@@ -1,4 +1,5 @@
 <?php
+
 $error = "";
 $i=0;
 
@@ -12,23 +13,24 @@ $dynamictable = "<table border='1' cellpadding='10' class='table'><tr>";
 if (isset($_POST['submit'])) {
 
     $sql = $_POST['query'];
+    $sql = "SELECT * FROM `broadcast`;";
+    $result = $connection->prepare($sql);
 
-    IF ($result = $mysqli->query($sql)) {
+    IF ($result->execute()) {
 
           /*
              * Header of SQL file
              */
-            $fieldcnt = $result->field_count;
-            while ($i < $fieldcnt) {
-                $meta = $result->fetch_field();
-                $dynamictable .= "<th>" . $meta->name . "</th>";
+            $fieldcnt = $result->columnCount();
+            while ($meta = $result->getColumnMeta($i)) {
+                $dynamictable .= "<th>" . $meta[name] . "</th>";
                 $i++;
             }
 
             $dynamictable .= '</tr>';
 
             /* fetch associative array */
-            while ($row = $result->fetch_assoc()) {
+            while ($row = $result->fetch(2)) {
 
                 $dynamictable .= '<tr>';
                 foreach ($row as $value) {
@@ -41,8 +43,8 @@ if (isset($_POST['submit'])) {
             $dynamictable .= '</table>';
             $error = "Query Executed";
 
-            $result->free();
-            $mysqli->close();
+            $result = null;
+            $connection = null;
 
 
     } else {
@@ -71,7 +73,11 @@ require_once("../Resources/Includes/header.php");
  //Include Menu and Top Bar
 require_once("../Resources/Includes/menu.php");
 ?>
-
+<style>
+    html {
+        background-color: transparent;
+    }
+</style>
 
 <h1>Console for Shapeterra DB <a href="../Pages/login.php" class="btn-primary">Login</a></h1>
 

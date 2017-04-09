@@ -1,45 +1,71 @@
 <?php
-session_start();
-if(!$_SESSION['isLogged']) {
-    header("location:login.php");
-    die();
-}
-$error = array();
-$errorflag =0;
 
-require_once("../Resources/Includes/connect.php");
+require_once("../Resources/Includes/Initialize.php");
+$initalize = new Initialize();
+$initalize->checkSessionStatus();
+$connection = $initalize->connection;
+
+$message = array();
+$errorflag =0;
 /*
  * Query for Selecting academic Year
  */
-$sqlay = "Select * from AcademicYears";
-$resultay = $mysqli->query($sqlay);
+try
+{
+    $sqlay = "Select * from AcademicYears";
+    $resultay = $connection->prepare($sqlay);
+    $resultay->execute();
+}
+catch (PDOException $e)
+{
+    error_log($e->getMessage());
+    //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
+}
 
 
 
 if (isset($_POST['submit'])) {
 
-    if (!isset($_POST['startdate'])) {
-        $error[0] = "Please select a Start date for Academic Year";
-        $errorflag = 1;
-    }
-    if ($_POST['startdate'] >= $_POST['enddate']) {
-        $error[0] = "End date should be older than Start date.";
-        $errorflag = 1;
-    }
-
-    if ($errorflag != 1) {
-        $ayid = $_POST['AY'];
-        $startdate = $_POST['startdate'];
-        $enddate = $_POST['enddate'];
-        $censusdate = $_POST['censusdate'];
+    try {
 
 
-        $sql = "update AcademicYears set ACAD_YEAR_DATE_BEGIN ='$startdate', ACAD_YEAR_DATE_END ='$enddate',DATE_CENSUS ='$censusdate' where ID_ACAD_YEAR = '$ayid' ";
-        if ($mysqli->query($sql)) {
-            $error[0] = "Academic Year Updated Successfully.";
-        } else {
-            $error [0] = "Academic Year Could not be updated.";
+        if (!isset($_POST['startdate'])) {
+            $message[0] = "Please select a Start date for Academic Year";
+            $errorflag = 1;
         }
+        if ($_POST['startdate'] >= $_POST['enddate']) {
+            $message[0] = "End date should be older than Start date.";
+            $errorflag = 1;
+        }
+
+        if ($errorflag != 1) {
+            $ayid = $_POST['AY'];
+            $startdate = date("Y-m-d", strtotime($_POST['startdate']));
+            $enddate = date("Y-m-d", strtotime($_POST['enddate']));
+            $censusdate = date("Y-m-d", strtotime($_POST['censusdate']));
+
+
+            $sqlEditAy = "UPDATE `AcademicYears` SET ACAD_YEAR_DATE_BEGIN = :startdate, ACAD_YEAR_DATE_END = :enddate,
+            DATE_CENSUS = :censusdate WHERE ID_ACAD_YEAR = :ayid ";
+
+            $resultEditAy = $connection->prepare($sqlEditAy);
+            $resultEditAy->bindParam(':startdate', $startdate, 2);
+            $resultEditAy->bindParam(':enddate', $enddate, 2);
+            $resultEditAy->bindParam(':censusdate', $censusdate, 2);
+            $resultEditAy->bindParam(':ayid', $ayid, 1);
+
+            if ($resultEditAy->execute()) {
+                $message[0] = "Academic Year Updated Successfully.";
+            } else {
+                $message [0] = "Academic Year Could not be updated.";
+            }
+        }
+
+    }
+    catch (PDOException $e)
+    {
+        error_log($e->getMessage());
+        //SYSTEM::pLog($e->__toString(), $_SERVER['PHP_SELF']);
     }
 
 }
@@ -64,7 +90,7 @@ require_once("../Resources/Includes/menu.php");
     <div class="alert">
         <a href="#" class="close end"><span class="icon">9</span></a>
         <h1 class="title"></h1>
-        <p class="description"><?php foreach ($error as $value) echo $value; ?></p>
+        <p class="description"><?php foreach ($message as $value) echo $value; ?></p>
         <button type="button" redirect="account.php" class="end btn-primary">Close</button>
     </div>
 <?php } ?>
@@ -81,8 +107,12 @@ require_once("../Resources/Includes/menu.php");
                     <label for="AYgoal">Please select Academic Year:</label>
                     <select name="AY" class="form-control" id="AYgoal" required>
                         <option value=""></option>
-                        <?php while ($rowsay = $resultay->fetch_array(MYSQLI_NUM)): { ?>
-                            <option value="<?php echo $rowsay[0]; ?>" dummy1="<?php echo $rowsay[2]; ?>" dummy2="<?php echo $rowsay[3];?>" dummy3="<?php echo $rowsay[4]; ?>" > <?php echo $rowsay[1]; ?> </option>
+                        <?php while ($rowsay = $resultay->fetch(4)): { ?>
+                            <option value="<?php echo $rowsay[0]; ?>" dummy1="<?php echo date("m/d/Y", strtotime
+                            ($rowsay[2])); ?>"
+                                    dummy2="<?php echo date("m/d/Y", strtotime($rowsay[3]));?>"
+                                    dummy3="<?php echo date("m/d/Y", strtotime($rowsay[4])); ?>"
+                            > <?php echo $rowsay[1]; ?> </option>
                         <?php } endwhile; ?>
                     </select>
                 </div>

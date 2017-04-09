@@ -26,8 +26,8 @@
 
 h1,h2,h3,h4,h5,h6,p,a,li,button{
 	font-family: 'Open Sans', sans-serif !important;
-    font-weight: 600;
-    color:#333;
+	font-weight: 600;
+	color:#333;
 }
 
 .row{
@@ -43,6 +43,10 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	text-indent: 50px;
 }
 
+.no-indent{
+	text-indent: 0;
+}
+
 .form-indent{
 	margin-left: 25px;
 }
@@ -51,8 +55,12 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	display: none;
 }
 
+html{
+	background-color: #591B21;
+}
+
 /********************************************************
-* 
+*
 * Main Box Styles
 *
 ********************************************************/
@@ -70,13 +78,13 @@ h1,h2,h3,h4,h5,h6,p,a,li,button{
 	padding-left: 0px;
 	padding-right: 0px;
 	background-color: #F6F6F6;
-	height: 1980px;
+	padding-bottom: 150px;
 }
 
 #main-box{
 	background-color: #fff;
 	-webkit-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
-    -moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	-moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
 	box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
 	padding: 0px 25px 25px;
 	margin-top: 25px;
@@ -103,8 +111,9 @@ h2{
 #main-box select{
 	background-color: #F6F6F6 !important;
 	box-shadow: none;
-	padding: 15px 30px;
+	/*padding: 15px 30px;*/
 	font-size: 14px;
+	padding: 0px !important;
 }
 
 h1.box-title{
@@ -163,7 +172,7 @@ p.status span{
 }
 
 /********************************************************
-* 
+*
 * Button Styles
 *
 ********************************************************/
@@ -220,7 +229,7 @@ p.status span{
 	border:3px #9F0816 solid;
 	text-shadow: none;
 	box-shadow: none;
-}   
+}
 
 .btn-primary:active {
 	background-color: #9F0816;
@@ -233,7 +242,7 @@ p.status span{
 	border:3px #9F0816 solid;
 	text-shadow: none;
 	box-shadow: none;
-} 
+}
 
 .btn-primary.disabled, .btn-primary[disabled]{
 	background-color: #9C5C62;
@@ -293,14 +302,14 @@ p.status span{
 }
 
 /********************************************************
-* 
+*
 * List Styles
 *
 ********************************************************/
 
 #list{
 	margin-top: 45px;
-	padding-bottom: 125px;
+	padding-bottom: px;
 }
 
 #list ul.list-nav li{
@@ -321,7 +330,7 @@ p.status span{
 }
 
 /********************************************************
-* 
+*
 * Card Styles
 *
 ********************************************************/
@@ -329,7 +338,7 @@ p.status span{
 .card{
 	background-color: #fff;
 	-webkit-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
-    -moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	-moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
 	box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
 	padding: 15px 15px 15px;
 	margin-top: 25px;
@@ -375,13 +384,13 @@ a:hover .card #ay-year{
 	margin-top: -30px;
 	background-color: #fff;
 	-webkit-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
-    -moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
+	-moz-box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
 	box-shadow: 0px 0px 22px -2px rgba(0,0,0,0.35);
 	z-index: 0;
 }
 
 /********************************************************
-* 
+*
 * Overide Styles
 *
 ********************************************************/
@@ -391,7 +400,7 @@ a:hover .card #ay-year{
 }
 
 /********************************************************
-* 
+*
 * Other
 *
 ********************************************************/
@@ -399,4 +408,3 @@ a:hover .card #ay-year{
 .status-alert{
 	text-align: center;
 }
-

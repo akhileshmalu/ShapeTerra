@@ -182,7 +182,7 @@ div.gridWrapper .columns .cell.headerCell {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-
+  background: -webkit-linear-gradient(top, #fff 0%, #e4e4e4 100%);
   z-index: 2;
   min-width: 50px;
 }

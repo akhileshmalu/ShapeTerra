@@ -4,14 +4,15 @@ session_start();
 $ouid = $_SESSION['login_ouid'];
 $outype = $_SESSION['login_outype'];
 
-require_once("../../Resources/Includes/connect.php");
+require_once("../../Resources/Includes/Initialize.php");
+$initialize = new Initialize();
 
-// require our class
+// require grid class
 require_once("grid.php");
 
 
 // load grid with Service Upload Years
-$grid = new Grid("AcademicYears", $mysqli, array(
+$grid = new Grid("AcademicYears", $initialize->mysqli, array(
 
     "save" => false,
 
@@ -33,10 +34,3 @@ $grid = new Grid("AcademicYears", $mysqli, array(
 //    ),
 // "select" => 'selectFunction'
 ));
-
-
-
-
-?>
-
-
